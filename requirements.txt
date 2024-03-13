@@ -1,0 +1,10 @@
+asgiref==3.7.2
+beautifulsoup4==4.12.3
+Django==4.2.11
+django-bootstrap-v5==1.0.11
+fontawesomefree==6.5.1
+PyMySQL==1.1.0
+PyYAML==6.0.1
+soupsieve==2.5
+sqlparse==0.4.4
+typing_extensions==4.10.0
