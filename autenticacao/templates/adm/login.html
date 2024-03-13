@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fazer login</title>
+    {% load static %}    
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    {% load bootstrap5 %}
+    {# Load CSS and JavaScript #}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <!-- FONTAWESOME -->
+    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- CUSTOM CSS -->
+    <link rel="stylesheet" href="{% static '/css/template.css' %}">
+    <link rel="stylesheet" href="{% static '/css/login.css' %}">    
+</head>
+<body class="container-fluid">
+<div class="row">
+    <div id="bannerLogin" class="col">
+        <div class="filter d-flex flex-column">
+            <img class="m-auto img-fluid" src="{% static '/images/brasao.png' %}" alt="brasão de nova friburgo">
+            <span style="font-size: 10pt;" class="mb-2 ms-3">© SUBSECRETARIA DE TECNOLOGIA DA INFORMAÇÃO E COMUNICAÇÃO.</span>
+        </div>
+    </div>
+    <div class="col-4 d-flex" style="background-color: white !important;">
+        <div class="m-auto">
+            <div class="row">
+                <div class="col text-center">
+                  
+                    <a href="/">
+                        <img style="max-width: 300px;" class="img-fluid mb-5" src="{% static 'images/em-construcao.png' %}" alt="logo intranet">                
+                    </a>
+                </div>
+            </div>
+            {% if messages %}
+            <ul class="messages mb-4">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|safe }}</li>
+                {% endfor %}
+            </ul>
+            <style>
+                li{
+                    list-style: none;
+                }
+            </style>
+            {% endif %}
+            {% if error %}
+            <p class="bg-danger text-white mb-4 py-2 text-center">Usuário ou senha não conferem.</p>
+            {% endif %}
+            <h3>LOGIN</h3>
+            <form class="pt-3" method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">CPF ou Email:</label>
+                  <input name="username" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">                  
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">Password:</label>
+                  <input name="password" type="password" class="form-control" id="exampleInputPassword1">
+                </div>
+                <!-- <div class="mb-3 form-check">
+                  <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                  <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                </div> -->
+                <button type="submit" class="btn btn-primary w-100 mb-3">Entrar</button>
+                
+                <!-- <a href="{% url 'autenticacao:cadastrar_usuario' %}">
+                    <small>                        
+                            Quero me cadastrar                    
+                    </small>
+                </a>         -->
+                <br>                        
+                <a href="{% url 'autenticacao:passwd_reset' %}">
+                    <small>Esqueci minha senha</small>
+                </a>                
+            </form>
+        </div>
+    </div>
+</div>

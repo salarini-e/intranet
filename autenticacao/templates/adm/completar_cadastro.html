@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desenvolve NF - Cadastro de Aluno</title>
+    {% load static %}    
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    {% load bootstrap5 %}
+    {# Load CSS and JavaScript #}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <!-- FONTAWESOME -->
+    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- CUSTOM CSS -->
+    <link rel="stylesheet" href="{% static '/css/template.css' %}">
+    <link rel="stylesheet" href="{% static '/css/login.css' %}">    
+</head>
+<body class="container-fluid">
+<div class="row">
+    <div id="bannerLogin" class="col">
+        <div class="filter">
+            <img class="m-auto img-fluid" src="{% static '/images/brasao.png' %}" alt="brasão de nova friburgo">
+        </div>
+    </div>    
+    <div class="col-4 d-flex pb-5" style="overflow-y: scroll; max-height: 100vh;">
+        <div class="m-auto">
+            <a href="/">
+                <img class="mb-5 mt-5" src="{% static 'images/logo_cultura.png' %}" alt="">
+            </a>
+            <h2 class="text-center">Completar cadastro de aluno</h2>
+            {% if messages %}
+        <div class="messages my-4">
+            {% for message in messages %}
+            <div{% if message.tags %} class="{{ message.tags }} p-2 text-center"{% endif %}>{{ message|safe }}</div>
+            {% endfor %}
+        </div>
+        {% endif %} 
+            <form class="pt-3" method="POST">
+                {% csrf_token %}
+                {% bootstrap_form form %} 
+                <button type="submit" class="btn btn-primary w-100 mb-3">CADASTRAR-SE</button>
+                
+                <a href="/login">
+                    <small>
+                        Login
+                    </small>
+                </a>        
+            </form>
+        </div>
+    </div>
+</div>
+<style>    
+    .error{
+        background-color: red;
+        color: white;
+    }
+</style>
+<script>
+    function icpf(v){
+                v=v.replace(/\D/g,"")                    //Remove tudo o que nao e digito
+                v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+                v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+                                                        //de novo (para o segundo bloco de numeros)
+                v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hifen entre o terceiro e o quarto digitos
+                return v
+            }
+            function itel(v){
+                        v=v.replace(/\D/g,"")                 //Remove tudo o que nao e digito
+                        v=v.replace(/^(\d\d)(\d)/g,"($1) $2") //Coloca parenteses em volta dos dois primeiros digitos
+                        v=v.replace(/(\d{4})(\d)/,"$1-$2")    //Coloca hifen entre o quarto e o quinto digitos
+                        return v
+                    }
+    function mascara(o,f){
+                v_obj=o
+                v_fun=f
+                setTimeout("execmascara()",1)
+            }
+        
+    function execmascara(){
+                v_obj.value=v_fun(v_obj.value)
+            }
+</script>

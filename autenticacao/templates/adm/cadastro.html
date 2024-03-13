@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desenvolve NF - Cadastro de Pessoa </title>
+    {% load static %}    
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    {% load bootstrap5 %}
+    {# Load CSS and JavaScript #}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <!-- FONTAWESOME -->
+    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- CUSTOM CSS -->
+    <link rel="stylesheet" href="{% static '/css/template.css' %}">
+    <link rel="stylesheet" href="{% static '/css/login.css' %}">    
+</head>
+<body class="container-fluid">
+<div class="row">
+    <div id="bannerLogin" class="col">
+        <div class="filter">
+            <img class="m-auto img-fluid" src="{% static '/images/brasao.png' %}" alt="brasão de nova friburgo">
+        </div>
+    </div>    
+    <div class="col-4 d-flex pb-5" style="overflow-y: scroll; max-height: 100vh;">
+        <div class="m-auto">
+            <div class="row">
+                <div class="col text-center">
+                    <a href="/" class="mx-auto">
+                        <img style="max-width: 300px;" class="img-fluid mb-3" src="{% static 'images/logo_desenvolvenf_white.png' %}" alt="">                
+                    </a>
+                </div>
+            </div>
+            <h2 class="text-center">NOVO CADASTRO</h2>
+            {% if messages %}
+        <div class="messages my-4">
+            {% for message in messages %}
+            <div{% if message.tags %} class="{{ message.tags }} p-2 text-center"{% endif %}>{{ message|safe }}</div>
+            {% endfor %}
+        </div>
+        {% endif %} 
+            <form class="pt-3 px-5" method="POST">
+                {% csrf_token %}
+                {% bootstrap_form form_pessoa %} 
+
+                {% if error_senha.0 %}     
+                <p class="bg-danger text-white text-center py-2 mt-4 text-wrap" style="font-size: 11pt;">
+                   {{error_senha.1}}
+                </p>          
+                {% endif %}
+                
+                {% if not is_user %}
+                <div class="mb-3">  
+                    <label class="mb-2 {% if error_senha.0 %}text-danger{% endif %}" for="senha">
+                        Senha:
+                    </label>
+                    <input required class="form-control" type="password" name="password" id="senha">
+                </div>
+                <div class="mb-3">
+                    <label class="mb-2 {% if error_senha.0 %}text-danger{% endif %}" for="senha2">
+                        Repita a senha:
+                    </label>
+                    <input required class="form-control" type="password" name="password2" id="senha2">
+                </div>
+                {% endif %}
+                <div class="form-check">
+                    <input type="checkbox" name="consentimento" class="form-check-input" id="id_consentimento">
+                    <label class="form-check-label" for="id_consentimento">Eu concordo com os termos e condições e autorizo o uso dos meus dados pessoais conforme a <a href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Política de Privacidade</a>.</label>
+                </div>
+               
+                <button type="submit" class="btn btn-primary w-100 mb-3 mt-3">CADASTRAR-SE</button>
+                
+                <a href="/login">
+                    <small>
+                        Login
+                    </small>
+                </a>        
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Política de Privacidade</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-justify">
+            
+
+            <p>Esta Política de Privacidade descreve como a Prefeitura Municipal de Nova Friburgo coleta, usa e compartilha informações pessoais quando você usa este site. É essencial que você leia atentamente esta política antes de usar o site ou fornecer quaisquer informações pessoais. Ao usar o site, você concorda com as práticas descritas nesta política.</p>
+        
+            <b>Coleta de Informações Pessoais</b>
+        
+            <p>Ao usar este site, podemos coletar informações pessoais que você voluntariamente nos fornece durante o processo de cadastro ou ao preencher formulários. Isso pode incluir seu nome, endereço de e-mail, número de telefone e outras informações necessárias para os serviços fornecidos.</p>
+        
+            <b class="mt-3">Uso de Informações Pessoais</b>
+        
+            <p>As informações pessoais coletadas são utilizadas para fornecer os serviços solicitados e para melhorar a experiência do usuário. Podemos utilizar essas informações para entrar em contato com você, fornecer atualizações e informações relevantes, responder às suas solicitações e melhorar nossos serviços.</p>
+        
+            <b class="mt-3">Compartilhamento de Informações Pessoais</b>
+        
+            <p>Não compartilhamos suas informações pessoais com terceiros, exceto quando exigido por lei ou quando necessário para fornecer os serviços solicitados. Em alguns casos, podemos compartilhar informações com prestadores de serviços terceirizados que nos auxiliam na operação do site e na prestação de serviços. Esses prestadores de serviços estão obrigados a manter a confidencialidade das informações e a não utilizá-las para outros fins.</p>
+        
+            <b class="mt-3">Segurança das Informações Pessoais</b>
+        
+            <p>Implementamos medidas de segurança adequadas para proteger as informações pessoais contra acesso não autorizado, alteração, divulgação ou destruição. No entanto, observe que nenhum método de transmissão pela internet ou método de armazenamento eletrônico é totalmente seguro. Assim, não podemos garantir a segurança absoluta das informações pessoais.</p>
+        
+            <b class="mt-3">Seus Direitos de Privacidade</b>
+        
+            <p>Você tem o direito de acessar, corrigir, atualizar ou solicitar a exclusão de suas informações pessoais a qualquer momento. Para exercer esses direitos, entre em contato conosco através das informações fornecidas abaixo.</p>
+        
+            <b class="mt-3">Alterações nesta Política de Privacidade</b>
+        
+            <p>Reservamo-nos o direito de atualizar ou modificar esta política de privacidade a qualquer momento. Quaisquer alterações entrarão em vigor imediatamente após a publicação da política de privacidade revisada neste site.</p>                        
+        </div>
+        <div class="modal-footer flex-column">
+            <b class="mt-3">Contato</b>        
+            <p>Se tiver alguma dúvida sobre esta Política de Privacidade, entre em contato conosco.</p>
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Ok, entendi.</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<style>    
+    .error{
+        background-color: red;
+        color: white;
+    }
+</style>
+<script>
+    function icpf(v){
+                v=v.replace(/\D/g,"")                    //Remove tudo o que nao e digito
+                v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+                v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+                                                        //de novo (para o segundo bloco de numeros)
+                v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hifen entre o terceiro e o quarto digitos
+                return v
+            }
+    function itel(v){
+                        v=v.replace(/\D/g,"")                 //Remove tudo o que nao e digito
+                        v=v.replace(/^(\d\d)(\d)/g,"($1) $2") //Coloca parenteses em volta dos dois primeiros digitos
+                        console.log(v.length)
+                        if (v.length<14){
+                          v=v.replace(/(\d{4})(\d)/,"$1-$2")    //Coloca hifen entre o quarto e o quinto digitos
+                        }else{
+                          v=v.replace(/(\d{4,5})(\d)/,"$1-$2")    //Coloca hifen entre o quarto e o quinto digitos
+                        }
+                        
+                        return v
+            }
+    function icep(input) {
+            input.value = input.value.replace(/\D/g, '');
+
+            // Verifica se o valor tem pelo menos 5 dígitos
+            if (input.value.length > 5) {
+            // Insere o traço após o quinto dígito
+            input.value = input.value.substring(0, 5) + '-' + input.value.substring(5);
+            }
+            }
+    function mascara(o,f){
+                v_obj=o
+                v_fun=f
+                setTimeout("execmascara()",1)
+            }
+        
+    function execmascara(){
+                v_obj.value=v_fun(v_obj.value)
+            }
+
+    const cp_bairro = document.getElementById('id_bairro')
+    const cp_endereco = document.getElementById('id_endereco')
+
+    function getCEP(input){
+            icep(input)
+            v=input.value
+            if(v.length == 9){
+                let cep = v.replace("-","")
+                buscaEndereco(cep);
+
+            }
+            }
+    function buscaEndereco(cep){
+            let url = "https://viacep.com.br/ws/"+cep+"/json/";
+            fetch(url)
+            .then((response)=>{
+                response.json()
+                .then((data)=>{
+                    autoComplete(data)
+                })
+            })
+            }
+    function removeAccents(string) {
+            return string.replace(/[ÀÁÂÃÄÅàáâã]/g, "?")
+                .replace(/[ÈÉÊËÈèé]/g, "?")
+                .replace(/[ÌÍÎÏìíî]/g, "?")
+                .replace(/[ÒÓÔÕÖóòõ]/g, "?")
+                .replace(/[ÙÚÛÜùúû]/g, "?")
+                .replace(/[Çç]/g, "?")
+            }
+    async function autoComplete(end){
+        if (end.logradouro != undefined){
+            cp_endereco.value = end.logradouro;
+        }
+        if (end.bairro != undefined){
+            cp_bairro.value = end.bairro;
+            console.log(end)
+        }
+        }
+    
+    
+    function checkCPF(cpf){
+            const csrfTokenInput = document.querySelector("input[name='csrfmiddlewaretoken']");
+            const csrfToken = csrfTokenInput.value;
+            let url = "/cadastro/checkcpf/";
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ cpf: cpf })
+            })
+            .then((response)=>{
+                response.json()
+                .then((data)=>{
+                    const cpfInput = document.getElementById("id_cpf");
+                    let smallError = cpfInput.nextElementSibling; // Verifique se já existe um elemento irmão
+
+                    if (data.exists) {
+                        if (!smallError || smallError.tagName !== "SMALL") {
+                            smallError = document.createElement("small");
+                            smallError.classList.add("text-danger");
+                            cpfInput.parentNode.insertBefore(smallError, cpfInput.nextSibling);
+                        }
+                        smallError.textContent = data.message;
+                    } else {
+                        // Se exists for false, remova a mensagem de erro existente
+                        if (smallError && smallError.tagName === "SMALL") {
+                            smallError.remove();
+                        }
+                    }
+                })
+            })
+            }
+    
+</script>

@@ -1,0 +1,15 @@
+{% autoescape off %}
+Olá,
+
+Recebemos uma solicitação para redefinir a senha da sua conta para este endereço de e-mail. Para iniciar o processo de redefinição de senha para sua conta, clique no link abaixo.
+
+{{ protocol }}://desenvolve.novafriburgo.rj.gov.br{% url 'autenticacao:passwd_reset_confirm' uidb64=uid token=token %}
+
+Este link só pode ser usado uma vez. Se você precisar redefinir sua senha novamente, visite {{ protocol }}://desenvolve.novafribirgo.rj.gov.br e solicite outro vez a troca de senha.
+
+Se você não fez essa solicitação, simplesmente ignore este e-mail.
+
+Grato,
+A equipe do site.
+
+{% endautoescape %}

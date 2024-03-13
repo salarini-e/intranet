@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trocar Senha</title>
+    {% load static %}    
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    {% load bootstrap5 %}
+    {# Load CSS and JavaScript #}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <!-- FONTAWESOME -->
+    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- CUSTOM CSS -->
+    <link rel="stylesheet" href="{% static '/css/template.css' %}">
+    <link rel="stylesheet" href="{% static '/css/login.css' %}">    
+</head>
+<body class="container-fluid">
+<div class="row">
+    <div id="bannerLogin" class="col">
+        <div class="filter d-flex flex-column">
+            <img class="m-auto img-fluid" src="{% static '/images/brasao.png' %}" alt="brasão de nova friburgo">
+            <span style="font-size: 10pt;" class="mb-2 ms-3">© SECRETARIA DE CIÊNCIA, TECNOLOGIA, INOVAÇÃO E EDUCAÇÃO PROFISSIONALIZANTE E SUPERIOR.</span>
+        </div>
+    </div>
+    <div class="col-4 d-flex">
+        <div class="m-auto d-flex flex-column">
+            <a href="/" class="mx-auto">
+                <img style="max-width: 300px;" class="img-fluid mb-5" src="{% static 'images/logo_desenvolvenf_white.png' %}" alt="">                
+            </a>
+            {% if messages %}
+            <ul class="messages mb-4">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|safe }}</li>
+                {% endfor %}
+            </ul>
+            <style>
+                li{
+                    list-style: none;
+                }
+            </style>
+            {% endif %}
+            {% if error %}
+            <p class="bg-danger text-white mb-4 py-2 text-center">Usuário ou senha não conferem.</p>
+            {% endif %}
+
+            <h2>Senha alterada com sucesso</h2>
+        
+            <p class="text-justify mt-2 mb-2">Você já pode logar no sistema com sua nova senha</p>
+
+            <a href="{% url 'autenticacao:login' %}">
+                <small>                        
+                        Voltar                    
+                </small>
+            </a>                                           
+        </div>
+    </div>
+</div>
