@@ -14368,9 +14368,10 @@ button.close:focus {
     margin: 0 auto;
     width: 80px;
     height: 80px;
+    display: flex;
     border-radius: 50%;
     background: #fff;
-    padding-top: 10px
+    /* padding-top: 10px */
 }
 
 .app-card-doc .app-card-thumb-holder .icon-holder .pdf-file {

@@ -214,7 +214,7 @@
 					        </div>
 					    </li>
 					    <li class="nav-item has-submenu">
-					        <a class="nav-link submenu-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-softwares" aria-expanded="false" aria-controls="submenu-1">
+					        <a class="nav-link submenu-toggle {% block softwares %}{% endblock %}" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-softwares" aria-expanded="false" aria-controls="submenu-1">
 						        <span class="nav-icon">
                                     <i class="fa-solid fa-laptop-file"></i>
 						         </span>
@@ -225,10 +225,10 @@
                                     </svg>
 	                             </span>
 					        </a>
-					        <div id="submenu-softwares" class="collapse submenu submenu-softwares" data-bs-parent="#menu-accordion">
+					        <div id="submenu-softwares" class="collapse {% block showsoftware %}{% endblock %} submenu submenu-softwares" data-bs-parent="#menu-accordion">
 						        <ul class="submenu-list list-unstyled">
-							        <li class="submenu-item"><a class="submenu-link" href="{% url 'soft:sistemas' %}">Sistemas</a></li>
-							        <li class="submenu-item"><a class="submenu-link" href="{% url 'soft:downloads' %}">Downloads</a></li>							        
+							        <li class="submenu-item"><a class="submenu-link {% block sistemas %}{% endblock %}" href="{% url 'soft:sistemas' %}">Sistemas</a></li>
+							        <li class="submenu-item"><a class="submenu-link {% block downloads %}{% endblock %}" href="{% url 'soft:downloads' %}">Downloads</a></li>							        
 						        </ul>
 					        </div>
 					    </li>
