@@ -1,6 +1,18 @@
 {% extends 'template.html' %}
 {% block telefonia %}active{% endblock %}
 {% block main %}   		    
+				<style>
+					#message{
+						display: none;
+					}
+					#response-message{
+						font-weight: bold;
+						color: white;
+					}
+					.bg-gray{
+						background-color: rgba(128, 128, 128, 0.281) !important;
+					}
+				</style>
 			    <div class="row g-3 mb-4 align-items-center justify-content-between">
 				    <div class="col-auto">
 			            <h1 class="app-page-title mb-0">Ramais</h1>
@@ -15,7 +27,7 @@
 					                    </div>
 										{% if request.user.is_staff %}
 					                    <div class="col-auto">
-					                        <button id="openMo57u®dal" type="submit" class="btn app-btn-secondary">Adicionar ramal</button>
+					                        <button id="openModal" type="submit" class="btn app-btn-secondary">Adicionar ramal</button>
 					                    </div>
 										{% endif %}
 					                </div>
@@ -43,7 +55,7 @@
 				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#orders-cancelled" role="tab" aria-controls="orders-cancelled" aria-selected="false">Cancelled</a>
 				</nav>
 				 -->
-				 <div class="app-card alert alert-dismissible shadow-sm mb-4 bg-success border-left-decoration" role="alert">
+				 <div id="message" class="app-card alert alert-dismissible shadow-sm mb-4 bg-success border-left-decoration" role="alert">
 				    <div class="inner">
 					    <div class="app-card-body px-3 px-lg-4">						    
 						    <div class="row gx-5 gy-3">
@@ -71,8 +83,8 @@
 												<th class="cel">Secretaria</th>
 												<th class="cell">Setor</th>
 												<th class="cell">Referência</th>
-												<th class="cell">Ramal</th>												
-												<th class="cell">Webex</th>	
+												<th class="cell">Responsável</th>
+												<th class="cell">Ramal</th>																								
 											</tr>
 										</thead>
 										<tbody>
@@ -86,8 +98,8 @@
 												<td class="cell"><span class="truncate">{{ramal.secretaria}}</span></td>
 												<td class="cell">{{ramal.setor}}</td>
 												<td class="cell">{{ramal.referencia}}</td>
-												<td class="cell">{{ramal.numero}}</td>		
-												<td class="cell"><a class="btn-sm app-btn-secondary rounded py-1 px-4" href="{{ramal.webex}}">View</a></td>										
+												<td class="cell">{{ramal.responsavel}}</td>
+												<td class="cell">{{ramal.numero}}</td>														
 											</tr>					
 											{% endfor %}								
 										</tbody>
@@ -258,28 +270,32 @@
 						<div class="col-12 col-md-12">							
 									<div class="settings-form">
 										<div class="mb-3">
-											<label for="setting-input-1" class="form-label">Secretaria<span class="ms-2" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover focus"  data-bs-placement="top" data-bs-content="This is a Bootstrap popover example. You can use popover to provide extra info."><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-info-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-											<path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-											<path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z"/>
-											<circle cx="8" cy="4.5" r="1"/>
-											</svg></span></label>
-											<input type="text" class="form-control" id="setting-input-1" required>
+											<label for="setting-input-1" class="form-label">Secretaria</label>
+											<select class="form-select" id="setting-input-1" name="secretarua" id="" onchange="callSetor(this)">
+												<option value="none">Selecione uma secretaria</option>
+												{% for secretaria in secretarias %}
+												<option value="{{secretaria.id}}">{{secretaria.nome}}</option>
+												{% endfor %}																								
+											</select>											
 										</div>
 										<div class="mb-3">
 											<label for="setting-input-2" class="form-label">Setor</label>
-											<input type="text" class="form-control" id="setting-input-2" required>
+											<select class="form-select" id="setting-input-2" name="secretarua" id="">												
+												<option value="none"></option>												
+											</select>											
+											<!-- <input type="text" class="form-control" id="setting-input-2" required> -->
 										</div>
 										<div class="mb-3">
-											<label for="setting-input-2" class="form-label">Referencia</label>
-											<input type="text" maxlength="64" class="form-control" id="setting-input-3" required>
+											<label for="setting-input-3" class="form-label">Referência</label>
+											<input type="text" maxlength="164" class="form-control" id="setting-input-3" required>
 										</div>
 										<div class="mb-3">
-											<label for="setting-input-3" class="form-label">Número</label>
-											<input type="text" maxlength="4" class="form-control" id="setting-input-4" required>
+											<label for="setting-input-4" class="form-label">Responsável</label>
+											<input type="text" maxlength="164" class="form-control" id="setting-input-4" required>
 										</div>
 										<div class="mb-3">
-											<label for="setting-input-4" class="form-label">Webex</label>
-											<input type="text" class="form-control" id="setting-input-5">
+											<label for="setting-input-5" class="form-label">Número</label>
+											<input type="text" maxlength="5" class="form-control" id="setting-input-5" required>
 										</div>
 										<button onclick="cadastrarRamal('{{csrf_token}}')" class="btn app-btn-primary">Cadastrar</button>
 									</div>								
@@ -295,4 +311,10 @@
 				<script src="/static/js/openModal.js"></script>
 				<script src="/static/js/request.js"></script>
 				<script src="/static/js/telefonia.js"></script>
+				<script>									
+					function callSetor(e){
+						var url = "{% url 'tel:api' %}getSetores/"+e.value+"/"; 
+						getRequest(url, montarSelect);
+					}
+				</script>
 {% endblock %}

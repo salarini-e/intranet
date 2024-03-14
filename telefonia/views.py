@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import JsonResponse
+from instituicoes.models import Secretaria, Setor
 from .models import Ramal
 from .forms import RamalForm
 
@@ -8,10 +9,18 @@ from .forms import RamalForm
 def index(request):
     ramais = Ramal.objects.all()
     context={
-        'ramais': ramais
+        'ramais': ramais,
+        'secretarias': Secretaria.objects.all(),
     }
     return render(request, 'telefonia/index.html', context)
 
+@login_required
+def getSetores(request, id):
+    secretaria = Secretaria.objects.get(id=id)
+    setores = Setor.objects.filter(secretaria=secretaria)
+    setores = [{'id': setor.id, 'nome': setor.nome} for setor in setores]
+    return JsonResponse({'setores': setores})
+                        
 @login_required
 def criarRamal(request):
     #apenas telefonista pode usar essa função
@@ -30,8 +39,8 @@ def criarRamal(request):
                                  'ramal': {'secretaria': form.cleaned_data['secretaria'].nome, 
                                            'setor': form.cleaned_data['setor'].nome, 
                                            'referencia': form.cleaned_data['referencia'], 
-                                           'numero': form.cleaned_data['numero'], 
-                                           'webex': form.cleaned_data['webex']
+                                           'responsavel': form.cleaned_data['responsavel'], 
+                                           'numero': form.cleaned_data['numero'],                                            
                                            }
                                 })
         

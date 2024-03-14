@@ -5,11 +5,12 @@ function inserirRamalNoTopoTabela(ramal) {
 
     // Adiciona as células com os dados do ramal
     novaLinha.innerHTML = `
-        <td class="cell"><span class="truncate">${ramal.secretaria}</span></td>
-        <td class="cell">${ramal.setor}</td>
-        <td class="cell">${ramal.referencia}</td>
-        <td class="cell">${ramal.numero}</td>
-        <td class="cell"><a class="btn-sm app-btn-secondary rounded py-1 px-4" href="${ramal.webex}">View</a></td>
+        <td class="cell bg-gray"><i class="fa-solid fa-pen-to-square"></i></td>
+        <td class="cell bg-gray"><span class="truncate">${ramal.secretaria}</span></td>
+        <td class="cell bg-gray">${ramal.setor}</td>
+        <td class="cell bg-gray">${ramal.referencia}</td>
+        <td class="cell bg-gray">${ramal.responsavel}</td>
+        <td class="cell bg-gray">${ramal.numero}</td>        
     `;
 
     // Insere a nova linha no topo da tabela
@@ -24,8 +25,8 @@ function cadastrarRamal(csrf_token){
     formData.append('secretaria', document.getElementById('setting-input-1').value);
     formData.append('setor', document.getElementById('setting-input-2').value);
     formData.append('referencia', document.getElementById('setting-input-3').value);
-    formData.append('numero', document.getElementById('setting-input-4').value);
-    formData.append('webex', document.getElementById('setting-input-5').value);
+    formData.append('responsavel', document.getElementById('setting-input-4').value);
+    formData.append('numero', document.getElementById('setting-input-5').value);    
 
     formData.append('csrfmiddlewaretoken', csrf_token);
 
@@ -37,7 +38,29 @@ function cadastrarRamal(csrf_token){
             modal.style.display = 'none';            
             inserirRamalNoTopoTabela(data.ramal);						
             document.getElementById('response-message').innerText = data.message;
+            document.getElementById('message').style.display = 'block';
         }
          
     });
 }	
+
+function montarSelect(dados) {						
+						
+    if (typeof dados === 'string') {
+        dados = JSON.parse(dados);
+    }
+    
+    var select = document.getElementById("setting-input-2");
+    select.innerHTML = '<option value="none">Selecione um setor</option>';
+
+    if (dados && Array.isArray(dados.setores)) {
+        dados.setores.forEach(function(setor) {
+            var option = document.createElement("option"); 
+            option.value = setor.id;
+            option.textContent = setor.nome; 
+            select.appendChild(option); 
+        });
+    } else {
+        console.error("A propriedade 'setores' não está presente ou não é um array nos dados recebidos.");
+    }
+}

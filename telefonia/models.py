@@ -12,9 +12,9 @@ class Ramal(models.Model):
     
     secretaria=models.ForeignKey(Secretaria, on_delete=models.CASCADE, verbose_name='Secretaria')
     setor=models.ForeignKey(Setor, on_delete=models.CASCADE, verbose_name='Setor')
-    referencia=models.CharField(max_length=64, verbose_name='Referência')
-    numero=models.CharField(max_length=4, verbose_name='Número')
-    webex=models.CharField(max_length=64, verbose_name='Webex', blank=True, null=True)
+    referencia=models.CharField(max_length=164, verbose_name='Referência')
+    responsavel=models.CharField(max_length=164, verbose_name='Responsável')
+    numero=models.CharField(max_length=5, verbose_name='Número')    
     
     
     dt_inclusao=models.DateField(auto_now_add=True, verbose_name='Data de inclusão')
