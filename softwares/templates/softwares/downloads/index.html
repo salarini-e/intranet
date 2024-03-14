@@ -1,0 +1,98 @@
+{% extends 'template.html' %}
+{% block softwares %}active{% endblock %}
+{% block showsoftware %}show{% endblock %}
+{% block downloads %}active{% endblock %}
+{% block main %}   
+			    <div class="row g-3 mb-4 align-items-center justify-content-between">
+				    <div class="col-auto">
+			            <h1 class="app-page-title mb-0">Downloads</h1>
+				    </div>
+				    <div class="col-auto">
+					     <div class="page-utilities">
+						    <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+							    <div class="col-auto">
+								    <form class="docs-search-form row gx-1 align-items-center">
+					                    <div class="col-auto">
+					                        <input type="text" id="search-docs" name="searchdocs" class="form-control search-docs" placeholder="Buscar...">
+					                    </div>
+					                    <div class="col-auto">
+					                        <button type="submit" class="btn app-btn-secondary">Buscar</button>
+					                    </div>
+					                </form>
+					                
+							    </div><!--//col-->
+							    <div class="col-auto">
+								    
+								    <select class="form-select w-auto">
+										  <option selected="" value="option-1">Todos</option>
+										  {% for tipo in tipos %}
+										  <option value="{{tipo.id}}">{{tipo.nome}}</option>										  
+										  {% endfor %}
+									</select>
+							    </div>
+                                {% if request.user.is_superuser %}
+							    <div class="col-auto">
+								    <a class="btn app-btn-primary" href="#"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-upload me-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                    <path fill-rule="evenodd" d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                                    </svg>Upload</a>
+							    </div>
+                                {% endif %}
+						    </div><!--//row-->
+					    </div><!--//table-utilities-->
+				    </div><!--//col-auto-->
+			    </div><!--//row-->
+			    <div class="row g-4">
+                    {% for software in softwares %}
+				    <div class="col-6 col-md-4 col-xl-3 col-xxl-2">
+					    <div class="app-card app-card-doc shadow-sm h-100">
+						    <div class="app-card-thumb-holder p-3">
+							    <span class="icon-holder">	                                
+                                    {% if software.imagem %}
+                                    <img class="m-auto" src="{{software.imagem.url}}" alt="file_icon" style="width: 60px; height: 60px;">
+                                    {% else %}
+                                    <svg class="svg-inline--fa fa-file-zipper zip-file" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-zipper" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg=""><path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM96 48c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zm0 64c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zm0 64c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zm-6.3 71.8c3.7-14 16.4-23.8 30.9-23.8h14.8c14.5 0 27.2 9.7 30.9 23.8l23.5 88.2c1.4 5.4 2.1 10.9 2.1 16.4c0 35.2-28.8 63.7-64 63.7s-64-28.5-64-63.7c0-5.5 .7-11.1 2.1-16.4l23.5-88.2zM112 336c-8.8 0-16 7.2-16 16s7.2 16 16 16h32c8.8 0 16-7.2 16-16s-7.2-16-16-16H112z"></path></svg>
+                                    {% endif %}
+	                            </span>	                            
+                                <span class="badge" style="border-radius: 50% !important; color: white; background-color: rgb(73, 73, 73);"><i class="fa-solid fa-info"></i></span>
+						    </div>
+						    <div class="app-card-body p-3 has-card-actions">
+							    				
+                                <h4 class="app-doc-title truncate mb-0"><a href="#file-link" class="nome">{{ software.nome }}</a></h4>
+                                <div class="app-doc-meta">
+                                    <ul class="list-unstyled mb-0">
+                                        <li><span class="text-muted">Tipo:</span> <span class="tipo">{{ software.tipo }}</span> </li>
+                                        <li><span class="text-muted">Tamanho:</span> {{ software.tamanho }} </li>
+                                    </ul>
+                                </div>
+							    <div class="app-card-actions">
+								    <div class="dropdown">
+									    <a href="{% url 'soft:download_file' software.id %}" style="color: black;">
+										    <i class="fa-solid fa-arrow-down"></i>
+                                        </a><!--//dropdown-toggle-->
+								    </div><!--//dropdown-->
+						        </div><!--//app-card-actions-->
+								    
+						    </div><!--//app-card-body-->
+
+						</div><!--//app-card-->
+				    </div><!--//col-->
+				    {% endfor %}
+				    
+			    </div><!--//row-->
+			    <!-- <nav class="app-pagination mt-5">
+					<ul class="pagination justify-content-center">
+						<li class="page-item disabled">
+							<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+					    </li>
+						<li class="page-item active"><a class="page-link" href="#">1</a></li>
+						<li class="page-item"><a class="page-link" href="#">2</a></li>
+						<li class="page-item"><a class="page-link" href="#">3</a></li>
+						<li class="page-item">
+						    <a class="page-link" href="#">Next</a>
+						</li>
+					</ul>
+				</nav> -->
+		    </div><!--//container-fluid-->
+	    </div><!--//app-content-->
+{% endblock%}
