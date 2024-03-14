@@ -28,6 +28,10 @@ email_user = env_vars['email_sistema']
 email_pass = env_vars['email_pw']
 sqlite_mode = env_vars['sqlite_mode']
 
+SMB_USER = env_vars['SMB_USER']
+SMB_PASSWD = env_vars['SMB_PASSWD']
+SMB_SERVER = env_vars['SMB_SERVER']
+SMB_DOMAIN = env_vars['SMB_DOMAIN']
 DEBUG = debug_mode
 
 ALLOWED_HOSTS = ['*']
@@ -70,7 +74,8 @@ INSTALLED_APPS = [
     'core',
     'instituicoes',
     'telefonia',
-    'formfacil'
+    'formfacil',
+    'softwares'
 ]
 
 MIDDLEWARE = [

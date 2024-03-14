@@ -7,5 +7,6 @@ urlpatterns = [
     path('', include('core.urls')),
     path('instituicoes/', include('instituicoes.urls')),
     path('telefonia/', include('telefonia.urls')),
+    path('softwares/', include('softwares.urls')),
     path('formfacil/', include('formfacil.urls')),
 ]
