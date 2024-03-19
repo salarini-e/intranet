@@ -11,5 +11,6 @@ urlpatterns = [
     path('telefonia/', include('telefonia.urls')),
     path('softwares/', include('softwares.urls')),
     path('formfacil/', include('formfacil.urls')),
+    path('chamados/', include('chamados.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

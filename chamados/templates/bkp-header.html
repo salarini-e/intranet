@@ -1,0 +1,19 @@
+{% load django_bootstrap5 %}
+{% comment %} FAÇA O HEADER AQUI {% endcomment %}
+<header class="row">
+    <nav>
+    <link rel="stylesheet" href="/static/css/header.css">
+    
+    <div class="logo-container">
+        <a href="{% url "mainPage" %}"><img src="/static/img/prefeitura-footer.png" alt="Logo da PMNF"></a>
+        {% if user.is_staff %}
+            <div id="div-link">
+            <a href="{% url "chamados:atendentes" %}"><button class="btn-header">Atendentes</button></a>
+            <a href="{% url "chamados:servidores" %}"><button class="btn-header">Servidores</button></a>
+        </div>
+        {% endif %}
+        <a class="logout-btn" href="{% url 'chamados:sairFunc' %}">Sair    <img width="20" src="/static/img/logout.png"></a>
+    </div>
+</nav>
+</head>
+

@@ -1,0 +1,23 @@
+{% extends "template.html" %}
+{% block title %}
+Abrir Chamado
+{% endblock  %}
+{% block chamados %}active{% endblock %}
+{% block main %}
+<link rel="stylesheet" href="/static/css/cadastro.css">
+<h3>Adicionar setor</h3>
+<div class="row">
+    <form class="form-setor" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type='submit'> Adicionar Setor </button>
+    </form>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#id_secretaria').select2();
+    });
+</script>
+<script src="/static/js/addSetor.js"></script>
+
+{% endblock %}

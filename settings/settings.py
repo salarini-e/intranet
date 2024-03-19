@@ -60,22 +60,25 @@ el_api_token = env_vars['el_api_token']
 el_id_client = env_vars['el_id_client']
 
 INSTALLED_APPS = [
+    #terceiros
+    'bootstrap5',
+    'fontawesomefree',
+    'daphne',
+    #default
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #terceiros
-    'bootstrap5',
-    'fontawesomefree',
     #custom
     'autenticacao',
     'core',
     'instituicoes',
     'telefonia',
     'formfacil',
-    'softwares'
+    'softwares',
+    'chamados',
 ]
 
 MIDDLEWARE = [

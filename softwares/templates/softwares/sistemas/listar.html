@@ -12,8 +12,10 @@
 					     <div class="page-utilities">
 						    <div class="row g-2 justify-content-start justify-content-md-end align-items-center">							    
 							    <div class="col-auto">
-									{% if request.user.is_superuser %}
-								    <a class="btn app-btn-primary" href="#"><i class="fa-solid fa-plus me-2"></i>Tipo de Sistema</a>
+									
+									<a class="btn app-btn-primary" href="{% url 'soft:sistemas' %}"><i class="fa-solid fa-rotate-left"></i> Voltar</a>
+								    {% if request.user.is_superuser %}
+									<a class="btn app-btn-primary" href="#"><i class="fa-solid fa-plus me-2"></i>Sistema</a>
 									{% endif %}
 							    </div>
 						    </div><!--//row-->
@@ -21,20 +23,16 @@
 				    </div><!--//col-auto-->
 			    </div><!--//row-->
 			    <div class="row g-4">
-                    {% for tipo in tipos %}
+                    {% for sistema in sistemas %}
 				    <div class="col-6 col-md-4 col-xl-3 col-xxl-2">
 					    <div class="app-card app-card-doc shadow-sm  h-100">
 						    <div class="app-card-thumb-holder p-3">
 							    <div class="app-card-thumb">
-	                                <img class="thumb-image" src="{{tipo.imagem.url}}" alt="">
+	                                <img class="thumb-image" src="{{sistema.imagem.url}}" alt="">
 	                            </div>
-	                             <a class="app-card-link-mask" href="{% url 'soft:sistemas_listar' tipo.slug %}"></a>
+	                             <a class="app-card-link-mask" href="{{sistema.url}}"></a>
 						    </div>
-						    <div class="app-card-body p-3 has-card-actions">
-							    
-							    <h4 class="app-doc-title truncate mb-0"><a href="#file-link">{{tipo.nome}}</a></h4>
-							    															    
-						    </div><!--//app-card-body-->
+		
 
 						</div><!--//app-card-->
 				    </div><!--//col-->

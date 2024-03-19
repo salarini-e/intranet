@@ -1,0 +1,98 @@
+.login-form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    margin-top: 28px;
+    margin-bottom: 28px;
+    height: 75%;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.login-form input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.login-form input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.container-fluid{
+    padding-left: 0;
+    padding-right: 0;
+}
+
+#btn-login-left{
+    margin: 15px;
+    margin-left: 0;
+    padding: 10px;
+}
+
+#btn-login-right{
+    margin: 15px;
+    margin-right: 0;
+    padding: 5px;
+}
+
+/* .footer{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+} */
+@media screen and (min-width:320px) and (max-width:378px) {
+    .login-form{
+        width:85%;
+        margin: 0 auto;
+    }
+    .a-login{
+        font-size: 15px;
+        margin-top: -10px;
+    }
+}
+@media screen and (min-width:378px) and (max-width:450px){
+    .login-form{
+        width:85%;
+        margin: 0 auto;
+    }
+    .a-login{
+        font-size: 15px;
+    }
+    .login-form button{
+        margin-top: 5px;
+    }
+    #footer-form-login{
+        display: flex;
+        justify-content: space-between;
+    }
+}
+@media screen and (min-width:450px){
+    #footer-form-login{
+        display: flex;
+        justify-content: space-between;
+    }
+    .login-form button{
+        margin-top: 5px;
+    }
+}
+
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  

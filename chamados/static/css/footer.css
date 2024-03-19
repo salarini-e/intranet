@@ -1,0 +1,23 @@
+.texto-footer{
+    font-family: 'Inter', sans-sarif;
+    font-size: 18px;
+}
+
+@media screen and (min-width:320px) and (max-width:450px) {
+    .mobile-flex-column{
+        display: block;
+    }
+    .img-fluid{
+        width: 180px;
+    }
+    .col ul{
+        margin-top: 20px;
+    }
+}
+
+footer{
+    background: rgb(0, 66, 158);
+}
+#ul-footer{
+    color: white;
+}

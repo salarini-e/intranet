@@ -1,0 +1,30 @@
+{% extends "template.html" %}
+{% block title %}
+Editar Chamado
+{% endblock  %}
+{% block chamados %}active{% endblock %}
+{% block main %}
+<link rel="stylesheet" href="/static/css/form-chamado.css">
+<div id="div-edita-chamado">
+    <div class="row">                                                               
+        <form class="form-main" method="POST">
+            <h2 style="text-align: center; margin-bottom: 30px">Editar Chamado</h2>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button id="save-button" type="submit" class="btn btn-primary">
+            Salvar
+            </button>
+        </form>
+                          
+      </div>
+</div>
+
+
+  <script>
+    $(document).ready(function() {
+      $('#id_setor').select2();
+      $('#id_secretaria').select2();
+      $('#id_requisitante').select2();
+    });
+  </script>
+{% endblock %}

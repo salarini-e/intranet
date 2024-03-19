@@ -1,0 +1,33 @@
+{% extends "template.html" %}
+{% block title %}
+{{servidor.nome}}
+{% endblock  %}
+{% block chamados %}active{% endblock %}
+{% block main %}
+<link rel="stylesheet" href="/static/css/servidor.css">
+<div class="row">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Matricula</th>
+                <th>E-Mail</th>
+                <th>Contato</th>
+                <th>Setor</th>
+                <th>Secretaria</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{servidor.nome}}</td>
+                <td>{{servidor.matricula}}</td>
+                <td>{{servidor.email}}</td>
+                <td>{{servidor.contato}}</td>
+                <td>{{servidor.setor}}</td>
+                <td>{{servidor.setor.secretaria}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

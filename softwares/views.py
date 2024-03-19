@@ -5,16 +5,14 @@ from .functions import store
 from .models import *
 
 def sistemas(request):
+    tipos = TipoSistema.objects.all()
+    return render(request, 'softwares/sistemas/index.html', context={'tipos': tipos})
 
-    store = store()
-                 
-    softwares = store.glob("/TI/DOWNLOADS_INTRANET/")
-    softwares_ = []
+def sistemas_listar(request, slug):
+    tipo = get_object_or_404(TipoSistema, slug=slug)
+    sistemas = Sistemas.objects.filter(tipo=tipo)
+    return render(request, 'softwares/sistemas/listar.html', context={'sistemas': sistemas, 'tipo': tipo})
     
-    for software in softwares:        
-        softwares_.append({'name': software[0].replace('  N', '').replace(' ', ''), 'file': f'{software[0]}', 'size': round((int(software[2])/(1024 * 1024)),1), 'date': software[3].strftime('%d/%m/%Y %H:%M:%S')})
-    return render(request, 'softwares/sistemas/index.html', context={'softwares': softwares_})
-
 def downloads(request):
     softwares = Downloads.objects.all()
     tipos = TipoDownload.objects.all()

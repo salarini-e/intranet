@@ -1,0 +1,59 @@
+{% extends "template.html" %}
+{% block title %}
+Servidores
+{% endblock  %}
+{% block chamados %}active{% endblock %}
+{% block main %}
+<script src="/static/js/listaServidores.js"></script>
+<link rel="stylesheet" href="/static/css/listaServidores.css">
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        {% if user.is_staff %}
+          <th>Apagar</th>
+        {% endif %}    
+        <th>Nome</th>
+        <th>E-mail</th>
+        <th>Contato</th>
+        <th>Setor</th>
+        <th>Detalhes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for servidor in servidores %}
+      <tr>
+        {% if user.is_staff %}
+        <td>
+          <a class="btn-apagar" data-servidor-id="{{servidor.id}}">
+            <button class="btn btn-danger button-abrir-chamado"><i class="bi bi-trash-fill"></i></button>
+          </a>
+        </td>
+        {% endif %}
+        <td>{{servidor.nome}}</td>
+        <td>{{servidor.email}}</td>
+        <td>{{servidor.contato}}</td>
+        <td>{{servidor.setor}}</td>
+        <td>
+          <a href="{% url 'chamados:servidor' servidor.id %}">
+            <button class="btn btn-primary button-abrir-chamado"><i class="bi bi-box-arrow-up-right"></i></button>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div id="modal">
+  <div class="modal-content">
+    <span class="fechar-sair">&times;</span>
+    <p style="font-size: 17px;">Deseja apagar o servidor?</p>
+    <div class="button-container">
+      <button type="button" id="buttonNo">Não</button>
+      <button type="button" id="buttonYes">Sim</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
