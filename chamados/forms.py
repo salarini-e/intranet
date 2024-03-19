@@ -15,34 +15,34 @@ class Chamado_Form(ModelForm):
             'descricao': 'Descrição',
         }
         
-class SearchForm(Form):
+# class SearchForm(Form):
 
-    REQUISITANTE_CHOICES = [(None,'-')]+[(obj.id, obj.nome) for obj in Servidor.objects.all()]
-    TIPO_CHOICES = [(None,'-')]+[(obj.id, obj.nome) for obj in Tipo.objects.all()]
-    PRIORIDADE_CHOICES = (
-        ('0', 'Baixa'),
-        ('1', 'Média'),
-        ('2', 'Alta'),
-        ('3', 'Todas')
-    )    
-    SETOR_CHOICES = [(None,'-')]+[(obj.id, obj.nome) for obj in Setor.objects.all()]
-    STATUS_CHOICES = (
-        ('0', 'Aberto'),
-        ('1', 'Pendente'),
-        ('2', 'Finalizado'),
-        ('3', 'Todos')
-    )
+#     REQUISITANTE_CHOICES = [(None,'-')]+[(obj.id, obj.nome) for obj in Servidor.objects.all()]
+#     TIPO_CHOICES = [(None,'-')]+[(obj.id, obj.nome) for obj in Tipo.objects.all()]
+#     PRIORIDADE_CHOICES = (
+#         ('0', 'Baixa'),
+#         ('1', 'Média'),
+#         ('2', 'Alta'),
+#         ('3', 'Todas')
+#     )    
+#     SETOR_CHOICES = [(None,'-')]+[(obj.id, obj.nome) for obj in Setor.objects.all()]
+#     STATUS_CHOICES = (
+#         ('0', 'Aberto'),
+#         ('1', 'Pendente'),
+#         ('2', 'Finalizado'),
+#         ('3', 'Todos')
+#     )
     
-    numero = forms.CharField(label='Número', max_length=10, required=False)
-    assunto = forms.CharField(label='Assunto', required=False)
-    requisitante = forms.ChoiceField(label='Requisitante', choices=REQUISITANTE_CHOICES, required=False)
-    tipo = forms.ChoiceField(label='Tipo', choices=TIPO_CHOICES, required=False)
-    prioridade = forms.ChoiceField(label='Prioridade', choices=PRIORIDADE_CHOICES, required=False)
-    setor = forms.ChoiceField(label='Setor', choices=SETOR_CHOICES, required=False)
-    status = forms.ChoiceField(label='Status', choices=STATUS_CHOICES, required=False)
+#     numero = forms.CharField(label='Número', max_length=10, required=False)
+#     assunto = forms.CharField(label='Assunto', required=False)
+#     requisitante = forms.ChoiceField(label='Requisitante', choices=REQUISITANTE_CHOICES, required=False)
+#     tipo = forms.ChoiceField(label='Tipo', choices=TIPO_CHOICES, required=False)
+#     prioridade = forms.ChoiceField(label='Prioridade', choices=PRIORIDADE_CHOICES, required=False)
+#     setor = forms.ChoiceField(label='Setor', choices=SETOR_CHOICES, required=False)
+#     status = forms.ChoiceField(label='Status', choices=STATUS_CHOICES, required=False)
       
-    dataInicio = forms.DateField(label='Data início', widget=forms.DateInput(attrs={'type': 'date'}), required=False)
-    dataFim = forms.DateField(label='Data fim', widget=forms.DateInput(attrs={'type': 'date'}), required=False)
+#     dataInicio = forms.DateField(label='Data início', widget=forms.DateInput(attrs={'type': 'date'}), required=False)
+#     dataFim = forms.DateField(label='Data fim', widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     
 
 class editaChamadoForm(ModelForm):
