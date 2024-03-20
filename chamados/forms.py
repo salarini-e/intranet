@@ -1,117 +1,92 @@
 from django import forms
-from django.forms import ModelForm, ValidationError, Form
 from .models import *
-from django.contrib.auth.forms import UserCreationForm
 
-
-class Chamado_Form(ModelForm):
+class TipoChamadoForm(forms.ModelForm):
     class Meta:
-        model = Chamado
+        model = TipoChamado
+        fields = ['nome', 'sigla', 'descricao', 'user_inclusao']
         widgets = {
-            'tipo': forms.Select(attrs={'readonly': True}),
+            'nome': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'sigla': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control mb-3'}),
+            'user_inclusao': forms.HiddenInput(),
         }
-        exclude = ['tipo', 'dataAbertura', 'dataFechamento', 'prioridade', 'status', 'numero', 'atendente', 'requisitante', 'secretaria']
-        labels = {
-            'descricao': 'Descrição',
+
+class AtendenteForm(forms.ModelForm):
+    class Meta:
+        model = Atendente
+        fields = ['servidor', 'tipo', 'user_inclusao', 'ativo']
+        widgets = {
+            'servidor': forms.Select(attrs={'class': 'form-control mb-3'}),
+            'tipo': forms.SelectMultiple(attrs={'class': 'form-control mb-3'}),
+            'user_inclusao': forms.HiddenInput(),
+            'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
-        
-class SearchForm(Form):
 
-    REQUISITANTE_CHOICES = [(None,'-')]+[(obj.id, obj.nome) for obj in Servidor.objects.all()]
-    TIPO_CHOICES = [(None,'-')]+[(obj.id, obj.nome) for obj in Tipo.objects.all()]
-    PRIORIDADE_CHOICES = (
-        ('0', 'Baixa'),
-        ('1', 'Média'),
-        ('2', 'Alta'),
-        ('3', 'Todas')
-    )    
-    SETOR_CHOICES = [(None,'-')]+[(obj.id, obj.nome) for obj in Setor.objects.all()]
-    STATUS_CHOICES = (
-        ('0', 'Aberto'),
-        ('1', 'Pendente'),
-        ('2', 'Finalizado'),
-        ('3', 'Todos')
-    )
+class CriarChamadoForm(forms.ModelForm):
     
-    numero = forms.CharField(label='Número', max_length=10, required=False)
-    assunto = forms.CharField(label='Assunto', required=False)
-    requisitante = forms.ChoiceField(label='Requisitante', choices=REQUISITANTE_CHOICES, required=False)
-    tipo = forms.ChoiceField(label='Tipo', choices=TIPO_CHOICES, required=False)
-    prioridade = forms.ChoiceField(label='Prioridade', choices=PRIORIDADE_CHOICES, required=False)
-    setor = forms.ChoiceField(label='Setor', choices=SETOR_CHOICES, required=False)
-    status = forms.ChoiceField(label='Status', choices=STATUS_CHOICES, required=False)
-      
-    dataInicio = forms.DateField(label='Data início', widget=forms.DateInput(attrs={'type': 'date'}), required=False)
-    dataFim = forms.DateField(label='Data fim', widget=forms.DateInput(attrs={'type': 'date'}), required=False)
-    
+    def __init__(self, *args, **kwargs):                
+        super(CriarChamadoForm, self).__init__(*args, **kwargs)
 
-class editaChamadoForm(ModelForm):
+        if 'initial' in kwargs:
+            if 'secretaria' in kwargs['initial']:
+                self.fields['secretaria'].initial = kwargs['initial']['secretaria']
+
+
+    secretaria = forms.ModelChoiceField(queryset=Secretaria.objects.all(), empty_label='Selecione a secretaria', widget=forms.Select(attrs={'class': 'form-select mb-3', 'onchange': 'getSetores(this.value)'}))
     class Meta:
         model = Chamado
-        fields = ['secretaria', 'setor', 'requisitante','prioridade', 'status', 'atendente', 'tipo', 'descricao', 'assunto']
-        
-    def __init__(self, *args, **kwargs):
-        super(editaChamadoForm, self).__init__(*args, **kwargs)
-        self.fields['atendente'].required = False
-        self.fields['secretaria'].required = False
-        self.fields['setor'].required = False
-        self.fields['requisitante'].required = False
-    
-
-class ServidorForm(ModelForm):
-    
-    class Meta:
-        model = Servidor
-        fields = ['nome', 'contato', 'email', 'setor']
-    
-        labels = {
-            'nome': 'Nome Completo',
-            'contato': 'Telefone para contato (Completo, exemplo: +5522999991234)'
+        fields = ['secretaria', 'setor', 'telefone', 'requisitante', 'tipo', 'assunto'
+                  , 'descricao', 'user_inclusao', 'anexo']
+        widgets = {            
+            'setor': forms.Select(attrs={'class': 'form-select mb-3'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'requisitante': forms.Select(attrs={'class': 'form-control mb-3'}),
+            'tipo': forms.HiddenInput(),
+            'assunto': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'prioridade': forms.Select(attrs={'class': 'form-control mb-3'}),
+            'status': forms.Select(attrs={'class': 'form-control mb-3'}),            
+            'descricao': forms.Textarea(attrs={'class': 'form-control mb-3'}),            
+            'user_inclusao': forms.HiddenInput(),
+            'anexo': forms.ClearableFileInput(attrs={'class': 'form-control mb-3'}),
         }
-        
 
-class SetorForm(ModelForm):
     
+class MensagemForm(forms.ModelForm):
     class Meta:
-        model = Setor
-        fields = ['secretaria', 'nome', 'cep', 'bairro', 'logradouro']
+        model = Mensagem
+        fields = ['chamado', 'mensagem', 'anexo', 'user_inclusao']
+        widgets = {
+            'chamado': forms.HiddenInput(),
+            'mensagem': forms.Textarea(attrs={'class': 'form-control mb-3'}),
+            'anexo': forms.ClearableFileInput(attrs={'class': 'form-control mb-3'}),
+            'user_inclusao': forms.HiddenInput(),
+        }
 
-class ComentarioForm(ModelForm):
-    
-    class Meta:
-        model = Comentario
-        fields = ['texto', 'confidencial']
-        
-
-class OSInternet_Form(ModelForm):
+class OSInternetForm(forms.ModelForm):
     class Meta:
         model = OSInternet
+        fields = ['chamado', 'nofcip']
         widgets = {
-            'tipo': forms.Select(attrs={'readonly': True}),
-        }
-        exclude = ['dataAbertura', 'dataFechamento', 'prioridade', 'status', 'numero', 'atendente', 'requisitante', 'tipo', 'secretaria']
-        labels = {
-            'descricao': 'Descrição',
+            'chamado': forms.HiddenInput(),
+            'nofcip': forms.TextInput(attrs={'class': 'form-control mb-3'}),            
         }
 
-class OSSistema_Form(ModelForm):
-    class Meta:
-        model = OSSistema
-        widgets = {
-            'tipo': forms.Select(attrs={'readonly': True}),
-        }
-        exclude = ['dataAbertura', 'dataFechamento', 'prioridade', 'status', 'numero', 'atendente', 'requisitante', 'tipo', 'secretaria']
-        labels = {
-            'descricao': 'Descrição',
-        }
-
-class OSImpressora_Form(ModelForm):
+class OSImpressoraForm(forms.ModelForm):
     class Meta:
         model = OSImpressora
+        fields = ['chamado', 'n_serie', 'contador']
         widgets = {
-            'tipo': forms.Select(attrs={'readonly': True}),
+            'chamado': forms.HiddenInput(),            
+            'n_serie': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'contador': forms.TextInput(attrs={'class': 'form-control mb-3'}),            
         }
-        exclude = ['dataAbertura', 'dataFechamento', 'prioridade', 'status', 'numero', 'atendente', 'requisitante', 'tipo', 'secretaria']
-        labels = {
-            'descricao': 'Descrição',
+
+class OSSistemasForm(forms.ModelForm):
+    class Meta:
+        model = OSSistemas
+        fields = ['chamado', 'sistema']
+        widgets = {
+            'chamado': forms.HiddenInput(),
+            'sistema': forms.TextInput(attrs={'class': 'form-control mb-3'}),            
         }

@@ -1,150 +1,129 @@
 from django.db import models
+from instituicoes.models import *
 from django.contrib.auth.models import User
-from django.db.models import Count
-from django.contrib.auth.forms import UserCreationForm
-from django.core.mail import send_mail
 
-# Create your models here.
-class Tipo(models.Model):
-    nome = models.CharField(max_length=30, verbose_name='Nome do Serviço', blank=True)
-    sigla = models.CharField(max_length=3, verbose_name="Sigla", blank=True)
-    descricao = models.TextField(default='')
-    
-    def __str__(self):
-        return self.nome
-    
-class Secretaria(models.Model):
-    nome = models.CharField(max_length=70)
+import hashlib
+from django.utils import timezone
 
-    def total_chamados(self):
-        chamados_por_tipo = Chamado.objects.filter(secretaria=self).values('tipo__nome').annotate(total=Count('tipo')).order_by('tipo')
-        return chamados_por_tipo
+class TipoChamado(models.Model):
+    nome = models.CharField(max_length=164, verbose_name='Nome')
+    sigla = models.CharField(max_length=8, verbose_name='Sigla')
+    descricao = models.TextField(verbose_name='Descrição')
+    dt_inclusao = models.DateField(auto_now_add=True, verbose_name='Data de inclusão')
+    user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True)
 
     def __str__(self):
         return self.nome
-
-class Setor(models.Model):
-    secretaria = models.ForeignKey(Secretaria, verbose_name="Secretaria", on_delete=models.CASCADE)
-    nome = models.CharField(max_length=100, default='')
-    cep = models.CharField(max_length=8, default='')
-    bairro = models.CharField(max_length=50, default='')
-    logradouro = models.CharField(max_length=150, default='')
-
-    def total_chamados(self):
-        chamados_por_tipo = Chamado.objects.filter(setor=self).values('tipo__nome').annotate(total=Count('tipo')).order_by('tipo')
-        return chamados_por_tipo
     
+    class Meta:
+        verbose_name = 'Tipo de Chamado'
+        verbose_name_plural = 'Tipos de Chamados'
+
+class Atendente(models.Model):
+    servidor = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Servidor', null=True)
+    nome_servidor = models.CharField(max_length=64, verbose_name='Nome de usuário', blank=True, null=True)
+    tipo = models.ManyToManyField(TipoChamado)
+    dt_inclusao = models.DateField(auto_now_add=True, verbose_name='Data de inclusão')
+    user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True)
+    ativo = models.BooleanField(default=True, verbose_name='Ativo')
+
     def __str__(self):
-        return self.nome
+        return self.nome_servidor
     
-class Servidor(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    nome = models.CharField(max_length=75)
-    contato = models.CharField(max_length=11, default='Telefone')
-    email = models.EmailField(max_length=254, default='')
-    matricula = models.CharField(max_length=6, default='')
-    setor = models.ForeignKey(Setor, verbose_name='Setor', on_delete=models.CASCADE)
+    def setName(self):
+        if self.servidor:
+            self.nome_servidor=self.servidor.nome        
     
-    def __str__(self):
-        return self.nome
+    def save(self, *args, **kwargs):    
+        self.setName()
+        super().save(*args, **kwargs)
+    
+    class Meta:
+        verbose_name = 'Atendente'
+        verbose_name_plural = 'Atendentes'
 
-class Atendente(Servidor):
-    tipo = models.ManyToManyField(Tipo, verbose_name='Tipo')    
-    
 class Chamado(models.Model):
-    
-    prioridadeChoices = (
+    PRIORIDADE_CHOICES =(
+        ('', 'Não definida'),
         ('0', 'Baixa'),
         ('1', 'Média'),
-        ('2', 'Alta')
+        ('2', 'Alta')        
     )
-    
-    statusChoices = (
+
+    STATUS_CHOICES = (
         ('0', 'Aberto'),
-        ('1', 'Pendente'),
-        ('2', 'Finalizado'),
+        ('1', 'Em atendimento'),
+        ('2', 'Pendente'),        
+        ('3', 'Fechado'),
+        ('4', 'Finalizado'),
     )
-    
-    secretaria = models.ForeignKey(Secretaria, verbose_name='Secretaria', on_delete=models.CASCADE, null=True)
-    setor = models.ForeignKey(Setor, verbose_name='Setor', on_delete=models.CASCADE, null=True)
-    contato = models.CharField(max_length=11, default='Telefone')
-    requisitante = models.ForeignKey(Servidor, on_delete=models.CASCADE, related_name='requisitante')
-    tipo = models.ForeignKey(Tipo, on_delete=models.CASCADE)
-    assunto = models.CharField(max_length=150)
-    prioridade = models.CharField(max_length=1, choices=prioridadeChoices, default='0')
-    status = models.CharField(max_length=1, choices=statusChoices, default='0')
-    descricao = models.TextField(default='')
-    atendente = models.ForeignKey(Atendente, verbose_name='Atendente', on_delete=models.CASCADE, related_name='atendente', null=True, default=None)
-    dataAbertura = models.DateTimeField(auto_now_add=True)
-    dataFechamento = models.DateTimeField(null=True, blank=False)
-    numero = models.CharField(max_length=10, default=0)
-    anexo = models.ImageField(upload_to='images', default=None, null=True, blank=True)
-    
-    
-    def setNumero(self):
-        ultimoChamado = Chamado.objects.last()
-        if ultimoChamado:
-            self.numero = str((int(ultimoChamado.numero) + 1)).zfill(5)
-        else:
-            self.numero = '00001'
-        self.save()
 
-    def notificaAtendente(self):
-        atendentes = Atendente.objects.filter(tipo=self.tipo)
-        emailList = []
-        for atendente in atendentes:
-            emailList.append(atendente.user.email)
-            
-        
-        send_mail(
-            'Um Novo Chamado foi aberto!',
-            'Requisitante de nome ' + str(self.requisitante) + '\nNúmero do chamado: ' + self.numero + '\nCom o tipo: ' + str(self.tipo) + '\nNa data: ' + str(self.dataAbertura.strftime('%d/%m/%y')) + '\nAbriu um chamado com o assunto: ' + self.assunto + '\nE descrição: ' + self.descricao + '\nVeja os detalhes em: ' + '\nhttp://localhost:8000/chamado/' + str(self.id),
-            "sebsecretaria.ti@gmail.com",
-            emailList,
-            fail_silently=False,
-        )
-        
-            
-        return None
+    setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, verbose_name='Para qual secretaria é o chamado?', null=True)
+    telefone=models.CharField(max_length=14, verbose_name='Qual telefone para contato?')
+    requisitante = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Para quem é o chamado?', null=True, related_name="requisitante_chamados")
+    tipo = models.ForeignKey(TipoChamado, on_delete=models.SET_NULL, verbose_name='Tipo chamado', null=True)
+    assunto = models.CharField(max_length=64, verbose_name='Assunto do chamado')
+    prioridade = models.CharField(max_length=1, choices=PRIORIDADE_CHOICES, default='')
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
+    descricao = models.TextField(default='', verbose_name='Descrição do problema')
+    atendente = models.ForeignKey(Atendente, on_delete=models.SET_NULL, verbose_name='Atendente', null=True,related_name="chamados_atendente")
+    profissional_designado = models.ForeignKey(Atendente, on_delete=models.SET_NULL, verbose_name='Profissional designado', null=True, related_name="profissional_designado_chamados")
+    dt_inclusao = models.DateTimeField(auto_now_add=True, verbose_name='Data de inclusão')
+    user_inclusao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, null=True, verbose_name='Usuário que cadastrou', related_name="user_inclusao_chamados")
+    dt_atualizacao = models.DateTimeField(auto_now=True, verbose_name='Data de ultima atualização', null=True)
+    user_atualizacao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Usuário da ultima atualização', null=True, related_name="user_atualizacao_chamados")
+    dt_execucao = models.DateField(verbose_name='Data da execução do chamado', null=True)
+    dt_fechamento = models.DateTimeField(verbose_name='Data do fechamaneto do chamado', null=True)
+    n_protocolo = models.CharField(max_length=14, verbose_name='Número de protocolo', null=True)
+    anexo = models.FileField(upload_to='chamados/anexos/', default=None, verbose_name='Possui alguma foto ou print do problema? Caso sim, anexe-a abaixo.', null=True, blank=True)
+    hash=models.CharField(max_length=64)
 
-class Comentario(models.Model):
-    chamado = models.ForeignKey(Chamado, verbose_name='Chamado', on_delete=models.CASCADE)
-    quemComentou = models.ForeignKey(Servidor, verbose_name='quemComentou', on_delete=models.CASCADE)
-    dataHora = models.DateTimeField(auto_now_add=True)
-    texto = models.TextField(default='')
-    confidencial = models.BooleanField(default=False)
+    class Meta:
+        verbose_name = 'Chamado'
+        verbose_name_plural = 'Chamados'
 
-    def __str__(self):
-        return f'{self.chamado} - {self.texto}'
+    def gerar_hash(self):
+        
+        if not self.hash:            
+            hash_obj = hashlib.sha256()
+            hash_obj.update(str(self.id).encode('utf-8'))
+            self.hash = hash_obj.hexdigest()            
+            self.save()
     
-    def notificaEnvolvidos(self):
 
-        atendente = self.chamado.atendente
-        requisitante = self.chamado.requisitante            
-        emailList = []
-        
-        if atendente:
-            emailList.append(atendente.user.email)
-        if self.confidencial == False:
-            emailList.append(requisitante.user.email)
-        
-        send_mail(
-            'Há um novo comentário no seu chamado!',
-            self.quemComentou.nome + ":\n" + self.texto + "\nhttp://intranet.novafriburgo.rj.gov.br/chamado/" + str(self.chamado.id),
-            "sebsecretaria.ti@gmail.com",
-            emailList,
-            fail_silently=False,
-        )
-        
-            
-        return None    
-    
-class OSInternet(Chamado):
-    nofcip = models.CharField(max_length=8)
-    
-class OSImpressora(Chamado):
-    serie = models.CharField(max_length=8)
-    contador = models.PositiveIntegerField()
-    
-class OSSistema(Chamado):
-    sistema = models.CharField(max_length=50)
+class Mensagem(models.Model):
+    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')    
+    mensagem = models.TextField(verbose_name='Mensagem')
+    anexo = models.FileField(upload_to='chamados/anexos/', default=None, null=True, blank=True)
+    dt_inclusao = models.DateTimeField(auto_now_add=True, verbose_name='Data de inclusão')
+    user_inclusao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True, related_name="user_inclusao_mensagens")
+    confidencial = models.BooleanField(default=False, verbose_name='Confidencial')
+
+    class Meta:
+        verbose_name = 'Mensagem'
+        verbose_name_plural = 'Mensagens'
+
+class OSInternet(models.Model):
+    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado', null=True)
+    nofcip = models.CharField(max_length=64, verbose_name='Nofcip')
+
+    class Meta:
+        verbose_name = 'Ordem de Serviço - Internet'
+        verbose_name_plural = 'Ordens de Serviço - Internet'
+
+class OSImpressora(models.Model):
+    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado', null=True)
+    n_serie = models.CharField(max_length=64, verbose_name='Número de série')
+    contador = models.IntegerField(verbose_name='Contador')
+
+    class Meta:
+        verbose_name = 'Ordem de Serviço - Impressora'
+        verbose_name_plural = 'Ordens de Serviço - Impressora'
+
+class OSSistemas(models.Model):
+    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado', null=True)
+    sistema = models.CharField(max_length=64, verbose_name='Sistema')    
+
+    class Meta:
+        verbose_name = 'Ordem de Serviço - Sistemas'
+        verbose_name_plural = 'Ordens de Serviço - Sistemas'

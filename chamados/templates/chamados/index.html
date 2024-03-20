@@ -1,0 +1,176 @@
+{% extends 'template.html' %}
+{% block chamados %}active{% endblock %}
+{% block main %}   		    
+				<style>
+					#message{
+						display: none;
+					}
+					#response-message{
+						font-weight: bold;
+						color: white;
+					}
+					.bg-gray{
+						background-color: rgba(128, 128, 128, 0.281) !important;
+					}
+				</style>
+			    <div class="row g-3 mb-4 align-items-center justify-content-between">
+				    <div class="col-auto">
+			            <h1 class="app-page-title mb-0">Chamados</h1>
+				    </div>
+				    <div class="col-auto">
+					     <div class="page-utilities">
+						    <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+							    <div class="col-auto">
+								    <div class="table-search-form row gx-1 align-items-center">                                        
+					                    <!-- <div class="col-auto">
+					                        <input type="text" id="search-orders" name="searchorders" class="form-control search-orders" placeholder="Procurar...">
+					                    </div> -->
+										<div class="col-auto">
+					                        <button class="btn app-btn-secondary">
+                                                <i class="fa-solid fa-filter"></i>
+                                            </button>
+					                    </div>
+					                    <div class="col-auto">
+					                        <button id="openModal" class="btn app-btn-primary"><i class="fa-solid fa-plus me-2"></i>Novo chamado</button>
+					                    </div>
+										
+					                </div>
+					                
+							    </div>		
+						    </div>
+					    </div>
+				    </div>
+			    </div>
+			   
+			    
+			    <nav id="orders-table-tab" class="orders-table-tab app-nav-tabs nav shadow-sm flex-column flex-sm-row mb-4">
+				    <a class="flex-sm-fill text-sm-center nav-link active" id="orders-all-tab" data-bs-toggle="tab" href="#todos" role="tab" aria-controls="orders-all" aria-selected="true">Todos</a>
+				    <a class="flex-sm-fill text-sm-center nav-link"  id="orders-paid-tab" data-bs-toggle="tab" href="#abertos" role="tab" aria-controls="orders-paid" aria-selected="false">Abertos</a>
+				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-pending-tab" data-bs-toggle="tab" href="#em-atendimento" role="tab" aria-controls="orders-pending" aria-selected="false">Em atendimento</a>
+				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#pendente" role="tab" aria-controls="orders-cancelled" aria-selected="false">Pendente</a>
+					<a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#fechado" role="tab" aria-controls="orders-cancelled" aria-selected="false">Fechado</a>
+				</nav>
+				
+				 <div id="message" class="app-card alert alert-dismissible shadow-sm mb-4 bg-success border-left-decoration" role="alert">
+				    <div class="inner">
+					    <div class="app-card-body px-3 px-lg-4">						    
+						    <div class="row gx-5 gy-3">
+						        <div class="col-12 col-lg-9">							        
+							        <p id="response-message" class="text-light"></p>
+							    </div>
+
+						    </div>
+						    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					    </div>
+					    
+				    </div>
+			    </div>
+				<div class="tab-content" id="orders-table-tab-content">
+			        <div class="tab-pane fade show active" id="todos" role="tabpanel" aria-labelledby="orders-all-tab">
+					    <div class="app-card app-card-orders-table shadow-sm mb-5">
+						    <div class="app-card-body">
+							    <div class="table-responsive">
+							        <table class="table app-table-hover mb-0 text-left">
+										<thead>
+											<tr>
+												<th class="cell">ID</th>
+												<th class="cell">Protocolo</th>												
+												<th class="cell">Secretaria</th>
+												<th class="cell">Setor</th>
+												<th class="cell">Requisitante</th>
+												<th class="cell">Dt. solicitação</th>
+												<th class="cell">Dt. atualização</th>
+												<th class="cell">Prioridade</th>
+												<th class="cell">Status</th>
+												<th class="cell"></th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for chamado in chamados.todos %}
+											<tr>
+												<td class="cell">#{{chamado.id}}</td>
+												<td class="cell">{{chamado.n_protocolo}}</td>												
+												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
+												<td class="cell">{{chamado.setor.apelido}}</td>
+												<td class="cell">{{chamado.requisitante.nome}}</td>
+												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
+												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell">
+													{% if chamado.prioridade == '' %}
+													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
+													{% endif %}
+												</td>
+												<td class="cell">
+													{% if chamado.status == '0' %}
+													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '1' %}
+													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '2' %}
+													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '3' %}
+													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '4' %}
+													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
+													{% endif %}
+												</td>
+												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.id %}">View</a></td>
+											</tr>	
+											{% endfor %}										
+		
+										</tbody>
+									</table>
+						        </div><!--//table-responsive-->
+						       
+						    </div><!--//app-card-body-->		
+						</div><!--//app-card-->
+						<nav class="app-pagination">
+							<ul class="pagination justify-content-center">
+								<li class="page-item disabled">
+									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+							    </li>
+								<li class="page-item active"><a class="page-link" href="#">1</a></li>
+								<li class="page-item"><a class="page-link" href="#">2</a></li>
+								<li class="page-item"><a class="page-link" href="#">3</a></li>
+								<li class="page-item">
+								    <a class="page-link" href="#">Próxima</a>
+								</li>
+							</ul>
+						</nav>
+						
+			        </div><!--//tab-pane-->
+			        
+			        
+				<div id="myModal" class="modal">
+				<div class="modal-dialog">
+					<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">NOVO CHAMADO</h5>
+						<button class="btn btn-primary btn-close" id="closeModal">
+							
+						</button>	
+					</div>
+					<div class="modal-body">
+						<div class="col-12 col-md-12">			
+									<p><i><strong>Escolha o tipo de chamado:</strong></i></p>				
+									{% for tipo in tipos %}							
+									<a class="btn btn-secondary w-100 mb-2" href="{% url 'chamados:criar' tipo.sigla %}">
+										{{tipo.nome}}
+									</a>
+									{% endfor %}
+						</div>
+					</div>
+					<div class="modal-footer">
+						
+					</div>
+					</div>
+				</div>
+				</div>
+				
+				<script src="/static/js/openModal.js"></script>				
+{% endblock %}

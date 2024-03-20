@@ -1,9 +1,0 @@
-body{
-    padding: 0 !important;
-}
-
-#div-main {
-    width: 100%;
-    min-height: 450px;
-    display: grid;
-}

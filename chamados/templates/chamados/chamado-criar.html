@@ -1,0 +1,146 @@
+{% extends 'template.html' %}
+{% block chamados %}active{% endblock %}
+{% block main %}   		    
+
+				<style>
+					#message{
+						display: none;
+					}
+					#response-message{
+						font-weight: bold;
+						color: white;
+					}
+					.bg-gray{
+						background-color: rgba(128, 128, 128, 0.281) !important;
+					}
+				</style>
+				
+			    <div class="row g-3 mb-4 align-items-center justify-content-between">
+				    <div class="col-auto">
+			            <h1 class="app-page-title mb-0">Chamados</h1>
+				    </div>
+				    <div class="col-auto">
+					     <div class="page-utilities">
+						    <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+							    <div class="col-auto">
+								    <div class="table-search-form row gx-1 align-items-center">                                        
+					                    <!-- <div class="col-auto">
+					                        <input type="text" id="search-orders" name="searchorders" class="form-control search-orders" placeholder="Procurar...">
+					                    </div> -->										
+					                    <div class="col-auto">
+					                        <a href="{% url 'chamados:index' %}" class="btn btn-danger"><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
+					                    </div>
+										
+					                </div>
+					                
+							    </div>
+						    </div>
+					    </div>
+				    </div>
+			    </div>
+			   			    			    				 
+				<div class="app-card app-card-orders-table shadow-sm mb-5">
+				    <div class="app-card-body py-4 px-5">
+						<h4>NOVO CHAMADO</h4>
+						<form method="POST" enctype="multipart/form-data">
+							{% csrf_token %}
+							{{form}}
+							{% if form_ext %}
+							{{form_ext}}
+							{% endif %}
+							<button class="btn btn-primary">
+								Enviar
+							</button>
+						</form>
+						
+					</div>
+				</div>
+
+				
+				<div id="myModal" class="modal">
+				<div class="modal-dialog">
+					<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Adicionar ramal</h5>
+						<button class="btn btn-primary btn-close" id="closeModal">
+							
+						</button>	
+					</div>
+					<div class="modal-body">
+						<div class="col-12 col-md-12">							
+									<div class="settings-form">
+										<div class="mb-3">
+											<label for="setting-input-1" class="form-label">Secretaria</label>
+											<select class="form-select" id="setting-input-1" name="secretarua" id="" onchange="callSetor(this)">
+												<option value="none">Selecione uma secretaria</option>
+												{% for secretaria in secretarias %}
+												<option value="{{secretaria.id}}">{{secretaria.nome}}</option>
+												{% endfor %}																								
+											</select>											
+										</div>
+										<div class="mb-3">
+											<label for="setting-input-2" class="form-label">Setor</label>
+											<select class="form-select" id="setting-input-2" name="secretarua" id="">												
+												<option value="none"></option>												
+											</select>											
+											<!-- <input type="text" class="form-control" id="setting-input-2" required> -->
+										</div>
+										<div class="mb-3">
+											<label for="setting-input-3" class="form-label">Referência</label>
+											<input type="text" maxlength="164" class="form-control" id="setting-input-3" required>
+										</div>
+										<div class="mb-3">
+											<label for="setting-input-4" class="form-label">Responsável</label>
+											<input type="text" maxlength="164" class="form-control" id="setting-input-4" required>
+										</div>
+										<div class="mb-3">
+											<label for="setting-input-5" class="form-label">Número</label>
+											<input type="text" maxlength="5" class="form-control" id="setting-input-5" required>
+										</div>
+										<button onclick="cadastrarRamal('{{csrf_token}}')" class="btn app-btn-primary">Cadastrar</button>
+									</div>								
+						</div>
+					</div>
+					<div class="modal-footer">
+						
+					</div>
+					</div>
+				</div>
+				</div>
+				<script>
+					function montarSelect(data){
+						if (typeof data === "string") {							
+							data = JSON.parse(data);
+						}
+						if(data.setores){
+							var select = document.getElementById('id_setor');
+							select.innerHTML = '';
+							var option = document.createElement('option');
+							option.value = '';
+							option.text = '---------';
+							select.appendChild(option);
+							for(var i = 0; i < data.setores.length; i++){
+								var option = document.createElement('option');
+								option.value = data.setores[i].id;
+								option.text = data.setores[i].nome;
+								select.appendChild(option);
+							}
+						} else {
+							console.error("Dados inválidos retornados pela solicitação AJAX");
+						}
+					}					
+					function getSetores(id){
+						var url = "{% url 'ins:api' %}get-setores/"+id+"/"; 
+						getRequest(url, montarSelect);
+					}
+				</script>
+				<!-- <script src="/static/js/openModal.js"></script> -->
+				<script src="/static/js/request.js"></script>				
+				<script>									
+					function callSetor(e){
+						var url = "{% url 'tel:api' %}getSetores/"+e.value+"/"; 
+						getRequest(url, montarSelect);
+					}					
+				</script>
+				  
+{% endblock %}

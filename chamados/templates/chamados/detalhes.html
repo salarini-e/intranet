@@ -1,0 +1,224 @@
+{% extends 'template.html' %}
+{% block chamados %}active{% endblock %}
+{% block main %}   		    
+				<style>
+					#message{
+						display: none;
+					}
+					#response-message{
+						font-weight: bold;
+						color: white;
+					}
+					.bg-gray{
+						background-color: rgba(128, 128, 128, 0.281) !important;
+					}
+				</style>
+			    <div class="row g-3 mb-4 align-items-center justify-content-between">
+				    <div class="col-auto">
+			            <h1 class="app-page-title mb-0">Chamado {{chamado.n_protocolo}}</h1>
+				    </div>
+				    <div class="col-auto">
+					     <div class="page-utilities">
+						    <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+							    <div class="col-auto">
+								    <div class="table-search-form row gx-1 align-items-center">                                        
+					                    <!-- <div class="col-auto">
+					                        <input type="text" id="search-orders" name="searchorders" class="form-control search-orders" placeholder="Procurar...">
+					                    </div> -->
+										<div class="col-auto">
+					                        <button class="btn app-btn-secondary">
+                                                <i class="fa-solid fa-filter"></i>
+                                            </button>
+					                    </div>
+					                    <div class="col-auto">
+					                        <button id="openModal" class="btn app-btn-primary"><i class="fa-solid fa-print me-2"></i>Imprimir</button>
+					                    </div>
+										
+					                </div>
+					                
+							    </div>		
+						    </div>
+					    </div>
+				    </div>
+			    </div>
+			   
+							
+				
+				 <div id="message" class="app-card alert alert-dismissible shadow-sm mb-4 bg-success border-left-decoration" role="alert">
+				    <div class="inner">
+					    <div class="app-card-body px-3 px-lg-4">						    
+						    <div class="row gx-5 gy-3">
+						        <div class="col-12 col-lg-9">							        
+							        <p id="response-message" class="text-light"></p>
+							    </div>
+
+						    </div>
+						    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					    </div>
+					    
+				    </div>
+			    </div>
+				<div class="row g-4 settings-section">
+	                <div class="col-12 col-md-4">
+		                <div class="app-card shadow-sm p-4" style="height: 100%;">
+							<div class="app-card-body">
+								<h3 class="section-title">CHAMADO ID #{{chamado.id}}</h3>
+		                		<div class="section-intro">
+									<p><strong>Tipo:</strong><br>{{chamado.tipo.nome}}</p>
+									<p><strong>Requisitante:</strong> <br>{{chamado.requisitante.nome}}</p>
+									<p><strong>Contato:</strong> <br>{{chamado.telefone}}</p>
+								</div>
+							</div>
+						</div>
+	                </div>
+	                <div class="col-12 col-md-8">
+		                <div class="app-card app-card-settings shadow-sm p-4">
+						    
+						    <div class="app-card-body">
+								<div class="row">
+									<div class="col">
+										<div class="mb-2"><strong>Assunto:</strong> {{chamado.assunto|capfirst}}</div>
+										
+									</div>
+									<div class="col d-flex">
+										<div class="ms-auto mb-2"><strong>Status:</strong> <span class="badge bg-success">Active</span></div>										
+										<div class="ms-4 mb-2"><strong>Prioridade:</strong> <span class="badge bg-success">Active</span></div>
+									</div>
+								</div>
+							    
+							    
+							    <div class="mb-2"><strong>Descrição:</strong> {{chamado.descricao}}</div>
+							    <div class="mb-2"><strong>Anexo:</strong> {% if chamado.anexo %}<a href="#">Ver anexo <i class="fa-solid fa-paperclip ms-1"></i></a>{% else %}<i>Não há.</i>{% endif %}</div>
+								<div class="mb-2"><strong>Secretaria:</strong> {{chamado.setor.secretaria.nome}}</div>
+								<div class="mb-4"><strong>Setor:</strong> {{chamado.setor.nome}}</div>
+							    <div class="row justify-content-between">
+								    <div class="col-auto">
+								        <a class="btn app-btn-primary" href="#"><i class="fa-solid fa-comment me-2"></i> Enviar mensagem</a>
+								    </div>
+								    <div class="col-auto">
+								        <a class="btn app-btn-secondary" href="#"><i class="fa-solid fa-pen-to-square"></i> Editar chamado</a>
+								    </div>
+							    </div>
+								    
+						    </div><!--//app-card-body-->
+						    
+						</div><!--//app-card-->
+	                </div>
+                </div>
+				<div class="row my-3">
+	                <div class="col col-md">
+		                <div class="app-card shadow-sm p-4">
+							<div class="app-card-body">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row my-3">
+	                <div class="col col-md">
+		                <div class="app-card shadow-sm p-4">
+							<div class="app-card-body">
+								<h3 class="section-title mb-4"><i class="fa-solid fa-comments me-3"></i>Mensagens</h3>
+		                		<div class="section-intro mb-2">
+									<div class="row">
+										<div class="col d-flex">
+											<strong>Atendente</strong>
+											<i class="ms-auto">20/03/2023 14:00</i>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col d-flex">
+											<p>Olá, poderia informar algo mais?</p>											
+
+										</div>
+									</div>									
+								</div>
+								<hr>
+								<div class="section-intro mb-2">
+									<div class="row">
+										<div class="col d-flex">
+											<strong>Luis Eduardo Cordeiro Salarini</strong>
+											<i class="ms-auto">21/03/2023 09:42</i>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col d-flex">
+											<p>Estou enviando um print da tela.</p>
+											<a href="#" class="my-auto ms-auto"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</a>
+
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div class="section-intro mb-2">
+									<div class="row">
+										<div class="col d-flex">
+											<strong>Atendente</strong>
+											<i class="ms-auto">21/03/2023 13:02</i>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col d-flex">
+											<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio, pariatur dolor fugiat ut dignissimos quis illum sunt officia maiores at architecto reprehenderit nisi voluptates inventore voluptas ipsum dolore, voluptatum laborum?</p>											
+										</div>
+									</div>									
+								</div>
+								<hr>
+								<div class="section-intro mb-2">
+									<div class="row">
+										<div class="col d-flex">
+											<strong>Luis Eduardo Cordeiro Salarini</strong>
+											<i class="ms-auto">21/03/2023 19:10</i>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col d-flex">
+											<p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Obcaecati labore repellendus odio at eum voluptates</p>											
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div id="msg" class="row" style="display: none;">
+									<div class="col">
+										<form>
+											<h5>Nova mensagem</h5>
+											{% csrf_token %}
+											{{form}}
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+	                </div>
+				</div>
+						
+			        
+			        </div>
+			        
+				<div id="myModal" class="modal">
+				<div class="modal-dialog">
+					<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">NOVO CHAMADO</h5>
+						<button class="btn btn-primary btn-close" id="closeModal">
+							
+						</button>	
+					</div>
+					<div class="modal-body">
+						<div class="col-12 col-md-12">			
+									<p><i><strong>Escolha o tipo de chamado:</strong></i></p>				
+									{% for tipo in tipos %}							
+									<a class="btn btn-secondary w-100 mb-2" href="{% url 'chamados:criar' tipo.sigla %}">
+										{{tipo.nome}}
+									</a>
+									{% endfor %}
+						</div>
+					</div>
+					<div class="modal-footer">
+						
+					</div>
+					</div>
+				</div>
+				</div>
+				
+				<script src="/static/js/openModal.js"></script>				
+{% endblock %}

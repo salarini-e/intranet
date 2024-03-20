@@ -9,9 +9,9 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.settings')
 
 application = get_asgi_application()
 
-import chamados.routing
+# import chamados.routing
 
-application = ProtocolTypeRouter({
-    'http': application,
-    'websocket': AllowedHostsOriginValidator(AuthMiddlewareStack(URLRouter(chamados.routing.websocket_urlspatters)))
-})
+# application = ProtocolTypeRouter({
+#     'http': application,
+#     'websocket': AllowedHostsOriginValidator(AuthMiddlewareStack(URLRouter(chamados.routing.websocket_urlspatters)))
+# })

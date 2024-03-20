@@ -1,17 +1,36 @@
-#formulario para cadatrar secretaris e setores
-
 from django import forms
-from .models import Secretaria, Setor
+from .models import Secretaria, Setor, Servidor
 
 class SecretariaForm(forms.ModelForm):
     class Meta:
         model = Secretaria
-        fields = ['nome', 'sigla', 'telefone', 'email', 'endereco', 'descricao']
+        fields = ['nome', 'apelido','sigla', 'user_inclusao']
+        widgets = {
+            'user_inclusao': forms.HiddenInput()
+        }
 
 class SetorForm(forms.ModelForm):
     class Meta:
         model = Setor
-        fields = ['nome', 'sigla', 'telefone', 'email', 'endereco', 'descricao', 'secretaria']
+        fields = ['nome', 'apelido', 'sigla', 'cep', 'bairro', 'endereco', 'user_inclusao']
         widgets = {
             'secretaria': forms.Select(attrs={'class': 'form-control'}),
+            'user_inclusao': forms.HiddenInput()
+        }
+
+class ServidorForm(forms.ModelForm):
+    class Meta:
+        model = Servidor
+        fields = ['nome', 'cpf', 'dt_nascimento', 'matricula', 'telefone', 'email', 'setor', 'ativo', 'user_inclusao']        
+        widgets = {
+            'setor': forms.Select(attrs={'class': 'form-control'}),
+            'user_inclusao': forms.HiddenInput()
+        }
+
+class ServidorEditForm(forms.ModelForm):
+    class Meta:
+        model = Servidor
+        fields = ['nome', 'cpf', 'dt_nascimento', 'matricula', 'telefone', 'email', 'setor']
+        widgets = {
+            'setor': forms.Select(attrs={'class': 'form-control'}),
         }
