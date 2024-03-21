@@ -1,6 +1,8 @@
 from django import forms
 from .models import *
 
+from django_select2 import forms as s2forms
+
 class TipoChamadoForm(forms.ModelForm):
     class Meta:
         model = TipoChamado
@@ -23,6 +25,11 @@ class AtendenteForm(forms.ModelForm):
             'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
+class RequisitanteWidget(s2forms.ModelSelect2Widget):
+    search_fields = [
+        "nome__icontains",        
+    ]
+
 class CriarChamadoForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):                
@@ -33,22 +40,27 @@ class CriarChamadoForm(forms.ModelForm):
                 self.fields['secretaria'].initial = kwargs['initial']['secretaria']
 
 
-    secretaria = forms.ModelChoiceField(queryset=Secretaria.objects.all(), empty_label='Selecione a secretaria', widget=forms.Select(attrs={'class': 'form-select mb-3', 'onchange': 'getSetores(this.value)'}))
+    secretaria = forms.ModelChoiceField(queryset=Secretaria.objects.all(), empty_label='Selecione a secretaria', widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'getSetores(this.value)', 'required': 'required'}))
     class Meta:
         model = Chamado
         fields = ['secretaria', 'setor', 'telefone', 'requisitante', 'tipo', 'assunto'
                   , 'descricao', 'user_inclusao', 'anexo']
         widgets = {            
-            'setor': forms.Select(attrs={'class': 'form-select mb-3'}),
-            'telefone': forms.TextInput(attrs={'class': 'form-control mb-3'}),
-            'requisitante': forms.Select(attrs={'class': 'form-control mb-3'}),
+            'setor': forms.Select(attrs={'class': 'form-select'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'requisitante': forms.Select(attrs={'class': 'form-control'}),
+            'requisitante': RequisitanteWidget(attrs={'class': 'form-control'}),
             'tipo': forms.HiddenInput(),
-            'assunto': forms.TextInput(attrs={'class': 'form-control mb-3'}),
-            'prioridade': forms.Select(attrs={'class': 'form-control mb-3'}),
-            'status': forms.Select(attrs={'class': 'form-control mb-3'}),            
-            'descricao': forms.Textarea(attrs={'class': 'form-control mb-3'}),            
+            'assunto': forms.TextInput(attrs={'class': 'form-control'}),
+            'prioridade': forms.Select(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),            
+            'descricao': forms.Textarea(attrs={'class': 'form-control'}),            
             'user_inclusao': forms.HiddenInput(),
-            'anexo': forms.ClearableFileInput(attrs={'class': 'form-control mb-3'}),
+            'anexo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
+
+        labels = {
+            'secretaria': 'Para qual secretaria é o chamado?',
         }
 
     

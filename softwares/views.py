@@ -1,7 +1,5 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import FileResponse, HttpResponse
-
-from .functions import store
 from .models import *
 
 def sistemas(request):

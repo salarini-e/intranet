@@ -80,6 +80,7 @@
 												<th class="cell">Requisitante</th>
 												<th class="cell">Dt. solicitação</th>
 												<th class="cell">Dt. atualização</th>
+												<th class="cell">Msg's</th>
 												<th class="cell">Prioridade</th>
 												<th class="cell">Status</th>
 												<th class="cell"></th>
@@ -95,6 +96,7 @@
 												<td class="cell">{{chamado.requisitante.nome}}</td>
 												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
 												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell">{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
 												<td class="cell">
 													{% if chamado.prioridade == '' %}
 													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>

@@ -61,9 +61,8 @@ el_id_client = env_vars['el_id_client']
 
 INSTALLED_APPS = [
     #terceiros
-    'bootstrap5',
-    'fontawesomefree',
-    'daphne',
+    'fontawesomefree',    
+    'django_select2',
     #default
     'django.contrib.admin',
     'django.contrib.auth',
@@ -112,14 +111,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'settings.wsgi.application'
 ASGI_APPLICATION = 'settings.asgi.application'
 
-CHANNEL_LAYERS = {
-    'default':{
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG':{
-            'hosts':[('127.0.0.1', 6379)],
-        }
-    }
-}
+# CHANNEL_LAYERS = {
+#     'default':{
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG':{
+#             'hosts':[('127.0.0.1', 6379)],
+#         }
+#     }
+# }
 
 if sqlite_mode:
     DATABASES = {
@@ -142,6 +141,17 @@ else:
             }
     }
 
+CACHES = {    
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+SELECT2_CACHE_BACKEND = "default"
 
 AUTH_PASSWORD_VALIDATORS = [
     {

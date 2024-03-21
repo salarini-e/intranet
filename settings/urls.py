@@ -12,5 +12,6 @@ urlpatterns = [
     path('softwares/', include('softwares.urls')),
     path('formfacil/', include('formfacil.urls')),
     path('chamados/', include('chamados.urls')),
+    path("select2/", include("django_select2.urls")),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

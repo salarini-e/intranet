@@ -11,7 +11,21 @@
 					}
 					.bg-gray{
 						background-color: rgba(128, 128, 128, 0.281) !important;
+					}										
+					#msg .form-body textarea{
+						height: 100px;
+						width: 70%;
 					}
+					#msg .form-body .div-anexo{
+						display: flex;
+						margin-left: 20px;
+						padding: 0.6rem;
+						height: 100px;						
+						border: 1px solid #e7e9ed;						
+						border-radius: var(--bs-border-radius);
+    					color: #5d6778;
+					}
+					
 				</style>
 			    <div class="row g-3 mb-4 align-items-center justify-content-between">
 				    <div class="col-auto">
@@ -32,6 +46,9 @@
 					                    </div>
 					                    <div class="col-auto">
 					                        <button id="openModal" class="btn app-btn-primary"><i class="fa-solid fa-print me-2"></i>Imprimir</button>
+					                    </div>
+										<div class="col-auto">
+					                        <a href="{% url 'chamados:index' %}" class="btn btn-danger" style="color: white;"><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
 					                    </div>
 										
 					                </div>
@@ -72,7 +89,7 @@
 						</div>
 	                </div>
 	                <div class="col-12 col-md-8">
-		                <div class="app-card app-card-settings shadow-sm p-4">
+		                <div class="app-card app-card-settings shadow-sm p-4"  style="height: 100%;">
 						    
 						    <div class="app-card-body">
 								<div class="row">
@@ -87,17 +104,31 @@
 								</div>
 							    
 							    
-							    <div class="mb-2"><strong>Descrição:</strong> {{chamado.descricao}}</div>
-							    <div class="mb-2"><strong>Anexo:</strong> {% if chamado.anexo %}<a href="#">Ver anexo <i class="fa-solid fa-paperclip ms-1"></i></a>{% else %}<i>Não há.</i>{% endif %}</div>
+							    <div class="mb-2"><strong>Descrição:</strong> <br>{{chamado.descricao}}</div>							    
 								<div class="mb-2"><strong>Secretaria:</strong> {{chamado.setor.secretaria.nome}}</div>
-								<div class="mb-4"><strong>Setor:</strong> {{chamado.setor.nome}}</div>
+								<div class="mb-2"><strong>Setor:</strong> {{chamado.setor.nome}}</div>
 							    <div class="row justify-content-between">
 								    <div class="col-auto">
-								        <a class="btn app-btn-primary" href="#"><i class="fa-solid fa-comment me-2"></i> Enviar mensagem</a>
+								        {% if ext %}
+										{% if chamado.tipo.sigla == 'IMP' %}
+										
+											<div class="mb-2"><strong>Número de serie:</strong> {{ext.n_serie}}</div>
+											<div class="mb-2"><strong>Contador:</strong> {{ext.contador}}</div>
+										{% elif chamado.tipo.sigla == 'INT' %}
+											<div class="mb-2"><strong>NOFCIP:</strong> {{ext.nofcip}}</div>									
+										{% elif chamado.tipo.sigla == 'SIS' %}
+											<div class="mb-2"><strong>Sistema:</strong> {{ext.sistema}}</div>									
+										{% endif %}
+										{% endif %}
 								    </div>
-								    <div class="col-auto">
-								        <a class="btn app-btn-secondary" href="#"><i class="fa-solid fa-pen-to-square"></i> Editar chamado</a>
+									{% if chamado.anexo %}
+								    <div class="col-auto d-flex">
+								        <button onclick="visualizarAnexo(url)" class="my-auto btn app-btn-secondary">
+											<i class="fa-solid fa-paperclip me-2"></i>
+											Ver anexo
+										</button >
 								    </div>
+									{% endif %}
 							    </div>
 								    
 						    </div><!--//app-card-body-->
@@ -105,84 +136,91 @@
 						</div><!--//app-card-->
 	                </div>
                 </div>
+				{% if atendente.exists %}
 				<div class="row my-3">
 	                <div class="col col-md">
 		                <div class="app-card shadow-sm p-4">
 							<div class="app-card-body">
+								<div class="row">
+									<div class="col d-flex">										
+										<div class="mx-auto">
+											<strong>Atribuir status:</strong> 
+											<select class="form-select" name="atendente" id="id_atendente">
+												<option value="">Selecione um atendente</option>
+												{% for atendente in atendentes %}
+												<option value="{{atendente.id}}">{{atendente.servidor.nome}}</option>		
+												{% endfor %}										
+											</select>
+										</div>			
+										<div class="mx-auto">
+											<strong>Atribuir prioridade:</strong> 
+											<select class="form-select" name="atendente" id="id_atendente">
+												<option value="">Selecione um atendente</option>
+												{% for atendente in atendentes %}
+												<option value="{{atendente.id}}">{{atendente.servidor.nome}}</option>		
+												{% endfor %}										
+											</select>
+										</div>					
+										<div class="mx-auto">
+											<strong>Atribuir profissional:</strong> 
+											<select class="form-select" name="atendente" id="id_atendente">
+												<option value="">Selecione um atendente</option>
+												{% for atendente in atendentes %}
+												<option value="{{atendente.id}}">{{atendente.servidor.nome}}</option>		
+												{% endfor %}										
+											</select>
+										</div>											
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="row my-3">
+				{% endif %}
+				<div class="row my-3  mb-5">
 	                <div class="col col-md">
 		                <div class="app-card shadow-sm p-4">
 							<div class="app-card-body">
-								<h3 class="section-title mb-4"><i class="fa-solid fa-comments me-3"></i>Mensagens</h3>
+								<div class="row mb-3">
+									<div class="col d-flex">
+										<h3 class="section-title mb-4"><i class="fa-solid fa-comments me-3"></i>Mensagens</h3>										
+									</div>
+								</div>
+								{% for mensagem in mensagens %}
+								<hr>
 		                		<div class="section-intro mb-2">
 									<div class="row">
 										<div class="col d-flex">
-											<strong>Atendente</strong>
-											<i class="ms-auto">20/03/2023 14:00</i>
+											<strong>{{mensagem.autor}}</strong>
+											<i class="ms-auto">{{mensagem.dt_inclusao|date:"d/m/y"}} {{mensagem.dt_inclusao|date:"H:i"}}</i>
 										</div>
 									</div>
 									<div class="row">
 										<div class="col d-flex">
-											<p>Olá, poderia informar algo mais?</p>											
-
+											<p>{{mensagem.mensagem}}</p>											
+											{% if mensagem.anexo %}<button onclick="visualizarAnexo(url)" class="my-auto ms-auto"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</button>{% endif %}
 										</div>
 									</div>									
 								</div>
+								{% endfor %}								
 								<hr>
-								<div class="section-intro mb-2">
-									<div class="row">
-										<div class="col d-flex">
-											<strong>Luis Eduardo Cordeiro Salarini</strong>
-											<i class="ms-auto">21/03/2023 09:42</i>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col d-flex">
-											<p>Estou enviando um print da tela.</p>
-											<a href="#" class="my-auto ms-auto"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</a>
-
-										</div>
-									</div>
-								</div>
-								<hr>
-								<div class="section-intro mb-2">
-									<div class="row">
-										<div class="col d-flex">
-											<strong>Atendente</strong>
-											<i class="ms-auto">21/03/2023 13:02</i>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col d-flex">
-											<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio, pariatur dolor fugiat ut dignissimos quis illum sunt officia maiores at architecto reprehenderit nisi voluptates inventore voluptas ipsum dolore, voluptatum laborum?</p>											
-										</div>
-									</div>									
-								</div>
-								<hr>
-								<div class="section-intro mb-2">
-									<div class="row">
-										<div class="col d-flex">
-											<strong>Luis Eduardo Cordeiro Salarini</strong>
-											<i class="ms-auto">21/03/2023 19:10</i>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col d-flex">
-											<p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Obcaecati labore repellendus odio at eum voluptates</p>											
-										</div>
-									</div>
-								</div>
-								<hr>
-								<div id="msg" class="row" style="display: none;">
+								<div id="msg" class="row">
 									<div class="col">
-										<form>
-											<h5>Nova mensagem</h5>
-											{% csrf_token %}
-											{{form}}
+										<div class="w-100 d-flex">											
+												<div style="width: 67%;"><h5>Nova mensagem</h5></div>
+												<div><h5>Anexo <small style="color: #b4bbc7;">(Caso haja)</small></h5></div>
+										</div>
+										<form class="w-100" method="POST">											
+											<div class="form-body d-flex">
+												{% csrf_token %}
+												<textarea name="mensagem" cols="40" rows="10" class="form-control mb-3" required id="id_mensagem"></textarea>
+												<div class="div-anexo">													
+													<input type="file" name="anexo" class="form-control m-auto" id="id_anexo">
+													<input type="hidden" name="chamado" id="id_chamado" value="{{chamado.id}}">
+													<input type="hidden" name="user_inclusao" id="id_user_inclusao" {{servidor}}>
+												</div>
+											</div>									
+											<button type="submit" class="btn app-btn-primary my-auto" href="#"><i class="fa-solid fa-comment me-2"></i> Enviar mensagem</button>
 										</form>
 									</div>
 								</div>
@@ -194,23 +232,18 @@
 			        
 			        </div>
 			        
-				<div id="myModal" class="modal">
+				<div id="anexo" class="modal">
 				<div class="modal-dialog">
 					<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title">NOVO CHAMADO</h5>
-						<button class="btn btn-primary btn-close" id="closeModal">
+						<h5 class="modal-title">VISUALIZAR ANEXO</h5>
+						<button class="btn btn-primary btn-close" onclick="closeModal('anexo')">
 							
 						</button>	
 					</div>
 					<div class="modal-body">
 						<div class="col-12 col-md-12">			
-									<p><i><strong>Escolha o tipo de chamado:</strong></i></p>				
-									{% for tipo in tipos %}							
-									<a class="btn btn-secondary w-100 mb-2" href="{% url 'chamados:criar' tipo.sigla %}">
-										{{tipo.nome}}
-									</a>
-									{% endfor %}
+									<img id="anexo-url" src="" alt="">
 						</div>
 					</div>
 					<div class="modal-footer">
@@ -220,5 +253,14 @@
 				</div>
 				</div>
 				
-				<script src="/static/js/openModal.js"></script>				
+				<script src="/static/js/openModal.js"></script>		
+				<script>
+					function visualizarAnexo(url){
+						document.getElementById('anexo_url').src = url;
+						openModal('anexo');
+					}
+					function sendMSG(){
+
+					}
+				</script>		
 {% endblock %}

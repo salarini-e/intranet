@@ -58,7 +58,7 @@ class Chamado(models.Model):
         ('4', 'Finalizado'),
     )
 
-    setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, verbose_name='Para qual secretaria é o chamado?', null=True)
+    setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, verbose_name='Para qual setor é o chamado?', null=True)
     telefone=models.CharField(max_length=14, verbose_name='Qual telefone para contato?')
     requisitante = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Para quem é o chamado?', null=True, related_name="requisitante_chamados")
     tipo = models.ForeignKey(TipoChamado, on_delete=models.SET_NULL, verbose_name='Tipo chamado', null=True)
@@ -90,6 +90,18 @@ class Chamado(models.Model):
             self.hash = hash_obj.hexdigest()            
             self.save()
     
+    def gerar_protocolo(self):  
+
+        if not self.n_protocolo:
+            prefixo = self.tipo.sigla  
+            id_formatado = str(self.id).zfill(6)          
+            self.n_protocolo = f"{prefixo}{id_formatado}"
+            self.save()
+        
+    def get_total_msg(self):        
+        count = Mensagem.objects.filter(chamado=self).count()
+        print(count)
+        return count
 
 class Mensagem(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')    
@@ -99,6 +111,13 @@ class Mensagem(models.Model):
     user_inclusao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True, related_name="user_inclusao_mensagens")
     confidencial = models.BooleanField(default=False, verbose_name='Confidencial')
 
+    def autor(self):        
+        atendente = Atendente.objects.filter(servidor=self.user_inclusao)
+        if atendente.exists():
+            return 'Atendente'
+        else:
+            return self.user_inclusao
+        
     class Meta:
         verbose_name = 'Mensagem'
         verbose_name_plural = 'Mensagens'

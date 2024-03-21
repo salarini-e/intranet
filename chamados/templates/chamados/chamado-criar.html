@@ -1,7 +1,7 @@
 {% extends 'template.html' %}
 {% block chamados %}active{% endblock %}
 {% block main %}   		    
-
+				{{ form.media.css }}
 				<style>
 					#message{
 						display: none;
@@ -12,6 +12,12 @@
 					}
 					.bg-gray{
 						background-color: rgba(128, 128, 128, 0.281) !important;
+					}
+					label{
+						margin-top: 15px;
+					}
+					#id_descricao{
+						height: 100px;
 					}
 				</style>
 				
@@ -28,7 +34,7 @@
 					                        <input type="text" id="search-orders" name="searchorders" class="form-control search-orders" placeholder="Procurar...">
 					                    </div> -->										
 					                    <div class="col-auto">
-					                        <a href="{% url 'chamados:index' %}" class="btn btn-danger"><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
+					                        <a href="{% url 'chamados:index' %}" class="btn btn-danger" style="color: white;"><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
 					                    </div>
 										
 					                </div>
@@ -48,7 +54,7 @@
 							{% if form_ext %}
 							{{form_ext}}
 							{% endif %}
-							<button class="btn btn-primary">
+							<button class="btn app-btn-primary mt-3">
 								Enviar
 							</button>
 						</form>
@@ -57,56 +63,7 @@
 				</div>
 
 				
-				<div id="myModal" class="modal">
-				<div class="modal-dialog">
-					<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">Adicionar ramal</h5>
-						<button class="btn btn-primary btn-close" id="closeModal">
-							
-						</button>	
-					</div>
-					<div class="modal-body">
-						<div class="col-12 col-md-12">							
-									<div class="settings-form">
-										<div class="mb-3">
-											<label for="setting-input-1" class="form-label">Secretaria</label>
-											<select class="form-select" id="setting-input-1" name="secretarua" id="" onchange="callSetor(this)">
-												<option value="none">Selecione uma secretaria</option>
-												{% for secretaria in secretarias %}
-												<option value="{{secretaria.id}}">{{secretaria.nome}}</option>
-												{% endfor %}																								
-											</select>											
-										</div>
-										<div class="mb-3">
-											<label for="setting-input-2" class="form-label">Setor</label>
-											<select class="form-select" id="setting-input-2" name="secretarua" id="">												
-												<option value="none"></option>												
-											</select>											
-											<!-- <input type="text" class="form-control" id="setting-input-2" required> -->
-										</div>
-										<div class="mb-3">
-											<label for="setting-input-3" class="form-label">Referência</label>
-											<input type="text" maxlength="164" class="form-control" id="setting-input-3" required>
-										</div>
-										<div class="mb-3">
-											<label for="setting-input-4" class="form-label">Responsável</label>
-											<input type="text" maxlength="164" class="form-control" id="setting-input-4" required>
-										</div>
-										<div class="mb-3">
-											<label for="setting-input-5" class="form-label">Número</label>
-											<input type="text" maxlength="5" class="form-control" id="setting-input-5" required>
-										</div>
-										<button onclick="cadastrarRamal('{{csrf_token}}')" class="btn app-btn-primary">Cadastrar</button>
-									</div>								
-						</div>
-					</div>
-					<div class="modal-footer">
-						
-					</div>
-					</div>
-				</div>
-				</div>
+				
 				<script>
 					function montarSelect(data){
 						if (typeof data === "string") {							
@@ -134,7 +91,7 @@
 						getRequest(url, montarSelect);
 					}
 				</script>
-				<!-- <script src="/static/js/openModal.js"></script> -->
+				
 				<script src="/static/js/request.js"></script>				
 				<script>									
 					function callSetor(e){
@@ -142,5 +99,6 @@
 						getRequest(url, montarSelect);
 					}					
 				</script>
-				  
+				<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+				{{ form.media.js }}						  
 {% endblock %}
