@@ -123,7 +123,7 @@
 								    </div>
 									{% if chamado.anexo %}
 								    <div class="col-auto d-flex">
-								        <button onclick="visualizarAnexo(url)" class="my-auto btn app-btn-secondary">
+								        <button onclick="visualizarAnexo('{{chamado.anexo.url}}')" class="my-auto btn app-btn-secondary">
 											<i class="fa-solid fa-paperclip me-2"></i>
 											Ver anexo
 										</button >
@@ -198,7 +198,7 @@
 									<div class="row">
 										<div class="col d-flex">
 											<p>{{mensagem.mensagem}}</p>											
-											{% if mensagem.anexo %}<button onclick="visualizarAnexo(url)" class="my-auto ms-auto"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</button>{% endif %}
+											{% if mensagem.anexo %}<button onclick="visualizarAnexo('{{mensagem.anexo.url}}')" class="my-auto ms-auto"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</button>{% endif %}
 										</div>
 									</div>									
 								</div>
@@ -210,14 +210,14 @@
 												<div style="width: 67%;"><h5>Nova mensagem</h5></div>
 												<div><h5>Anexo <small style="color: #b4bbc7;">(Caso haja)</small></h5></div>
 										</div>
-										<form class="w-100" method="POST">											
+										<form class="w-100" method="POST" enctype="multipart/form-data">											
 											<div class="form-body d-flex">
 												{% csrf_token %}
 												<textarea name="mensagem" cols="40" rows="10" class="form-control mb-3" required id="id_mensagem"></textarea>
 												<div class="div-anexo">													
 													<input type="file" name="anexo" class="form-control m-auto" id="id_anexo">
 													<input type="hidden" name="chamado" id="id_chamado" value="{{chamado.id}}">
-													<input type="hidden" name="user_inclusao" id="id_user_inclusao" {{servidor}}>
+													<input type="hidden" name="user_inclusao" id="id_user_inclusao" value='{{servidor.id}}'>
 												</div>
 											</div>									
 											<button type="submit" class="btn app-btn-primary my-auto" href="#"><i class="fa-solid fa-comment me-2"></i> Enviar mensagem</button>

@@ -123,7 +123,7 @@ class Mensagem(models.Model):
         verbose_name_plural = 'Mensagens'
 
 class OSInternet(models.Model):
-    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado', null=True)
+    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado', null=True, blank=True)
     nofcip = models.CharField(max_length=64, verbose_name='Nofcip')
 
     class Meta:
@@ -131,7 +131,7 @@ class OSInternet(models.Model):
         verbose_name_plural = 'Ordens de Serviço - Internet'
 
 class OSImpressora(models.Model):
-    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado', null=True)
+    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado', null=True, blank=True)
     n_serie = models.CharField(max_length=64, verbose_name='Número de série')
     contador = models.IntegerField(verbose_name='Contador')
 
@@ -140,7 +140,7 @@ class OSImpressora(models.Model):
         verbose_name_plural = 'Ordens de Serviço - Impressora'
 
 class OSSistemas(models.Model):
-    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado', null=True)
+    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado', null=True, blank=True)
     sistema = models.CharField(max_length=64, verbose_name='Sistema')    
 
     class Meta:

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import TipoChamado, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente
+from .models import TipoChamado, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem
 from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm,
                     MensagemForm, AtendenteForm, TipoChamadoForm)
 from django.contrib.auth.decorators import login_required
@@ -42,9 +42,12 @@ def criarChamado(request, sigla):
             chamado.user_inclusao = servidor
             chamado.save()
             chamado.gerar_hash()
+            print('Opa')
             if sigla in forms:                
+                print('Uhul!')
                 if form_ext.is_valid():
-                    ext = form_ext.save(commit=False)
+                    print('Yha!')
+                    ext = form_ext.save()
                     ext.chamado = chamado
                     ext.save()
             
@@ -68,7 +71,17 @@ def detalhes(request, id):
     
     chamado = Chamado.objects.get(id=id)
     servidor = Servidor.objects.get(user=request.user)
-    
+    if request.method == 'POST':
+        form = MensagemForm(request.POST, request.FILES)
+        if form.is_valid():
+            mensagem = form.save(commit=False)
+            mensagem.chamado = chamado
+            mensagem.user_inclusao = servidor
+            mensagem.save()            
+            message.success(request, 'Mensagem enviada com sucesso!')
+        else:
+            print(form.errors)
+
     extensoes = {
         'IMP': OSImpressora,
         'INT': OSInternet,
@@ -81,9 +94,10 @@ def detalhes(request, id):
 
     context = {
         'chamado': chamado,
-        'ext': extensao,        
+        'ext': extensao,    
+        'servidor': servidor,    
         'atendentes': Atendente.objects.filter(ativo=True),
-        'atendente': Atendente.objects.filter(servidor=servidor),
-        'form': MensagemForm()
+        'atendente': Atendente.objects.filter(servidor=servidor),   
+        'mensagens': Mensagem.objects.filter(chamado=chamado),     
     }
     return render(request, 'chamados/detalhes.html', context)
