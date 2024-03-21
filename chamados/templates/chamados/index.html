@@ -121,7 +121,7 @@
 													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
 													{% endif %}
 												</td>
-												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.id %}">View</a></td>
+												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">View</a></td>
 											</tr>	
 											{% endfor %}										
 		

@@ -4,7 +4,7 @@ from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistem
                     MensagemForm, AtendenteForm, TipoChamadoForm)
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages as message
-
+from django.http import JsonResponse
 # Create your views here.
 @login_required
 def index(request):
@@ -42,6 +42,7 @@ def criarChamado(request, sigla):
             chamado.user_inclusao = servidor
             chamado.save()
             chamado.gerar_hash()
+            chamado.gerar_protocolo()
             print('Opa')
             if sigla in forms:                
                 print('Uhul!')
@@ -67,11 +68,12 @@ def criarChamado(request, sigla):
     return render(request, 'chamados/chamado-criar.html', context)
 
 @login_required
-def detalhes(request, id):
+def detalhes(request, hash):
     
-    chamado = Chamado.objects.get(id=id)
+    chamado = Chamado.objects.get(hash=hash)
     servidor = Servidor.objects.get(user=request.user)
     if request.method == 'POST':
+        print(request.POST)
         form = MensagemForm(request.POST, request.FILES)
         if form.is_valid():
             mensagem = form.save(commit=False)
@@ -98,6 +100,30 @@ def detalhes(request, id):
         'servidor': servidor,    
         'atendentes': Atendente.objects.filter(ativo=True),
         'atendente': Atendente.objects.filter(servidor=servidor),   
-        'mensagens': Mensagem.objects.filter(chamado=chamado),     
+        'mensagens': Mensagem.objects.filter(chamado=chamado),   
+        'prioridades': chamado.PRIORIDADE_CHOICES,
+        'status': chamado.STATUS_CHOICES,         
     }
     return render(request, 'chamados/detalhes.html', context)
+
+@login_required
+def attChamado(request, hash):
+    servidor = Servidor.objects.get(user=request.user)
+    atendente = Atendente.objects.filter(servidor=servidor)
+    if atendente.exists():
+        chamado = Chamado.objects.get(hash=hash)
+        if request.POST:
+            print(request.POST)
+            atributo = request.POST['atributo']
+            if atributo == 'status':
+                chamado.status = request.POST['valor']                
+            elif atributo == 'prioridade':
+                chamado.prioridade = request.POST['valor']
+            elif atributo == 'atendente':
+                chamado.atendente = Atendente.objects.get(id=request.POST['valor'])                
+            else:                
+                return JsonResponse({'status': 400})
+            chamado.save()  
+            message.success(request, f'{atributo.capitalize()} atualizado com sucesso!')
+            return JsonResponse({'status': 200})    
+    return JsonResponse({'status': 403})

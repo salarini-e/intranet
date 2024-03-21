@@ -124,7 +124,7 @@ class Mensagem(models.Model):
 
 class OSInternet(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado', null=True, blank=True)
-    nofcip = models.CharField(max_length=64, verbose_name='Nofcip')
+    nofcip = models.CharField(max_length=64, verbose_name='NOFCIP')
 
     class Meta:
         verbose_name = 'Ordem de Serviço - Internet'

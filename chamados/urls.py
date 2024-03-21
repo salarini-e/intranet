@@ -8,5 +8,6 @@ app_name = 'chamados'
 urlpatterns = [
     path('', views.index, name='index'),        
     path('criar-chamado/<sigla>/', views.criarChamado, name='criar'),
-    path('<id>/detalhes/', views.detalhes, name='detalhes'),    
+    path('<hash>/detalhes/', views.detalhes, name='detalhes'),    
+    path('<hash>/detalhes/att/', views.attChamado, name='attChamado'),    
 ]

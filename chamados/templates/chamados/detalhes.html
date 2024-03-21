@@ -98,8 +98,30 @@
 										
 									</div>
 									<div class="col d-flex">
-										<div class="ms-auto mb-2"><strong>Status:</strong> <span class="badge bg-success">Active</span></div>										
-										<div class="ms-4 mb-2"><strong>Prioridade:</strong> <span class="badge bg-success">Active</span></div>
+										<div class="ms-auto mb-2"><strong>Status:</strong> 
+											{% if chamado.status == '0' %}
+											<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
+											{% elif chamado.status == '1' %}
+											<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
+											{% elif chamado.status == '2' %}
+											<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
+											{% elif chamado.status == '3' %}
+											<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
+											{% elif chamado.status == '4' %}
+											<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
+											{% endif %}
+										</div>										
+										<div class="ms-4 mb-2"><strong>Prioridade:</strong> 
+											{% if chamado.prioridade == '' %}
+											<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
+											{% elif chamado.prioridade == '0' %}
+											<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
+											{% elif chamado.prioridade == '1' %}
+											<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
+											{% elif chamado.prioridade == '2' %}
+											<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
+											{% endif %}
+										</div>
 									</div>
 								</div>
 							    
@@ -145,25 +167,25 @@
 									<div class="col d-flex">										
 										<div class="mx-auto">
 											<strong>Atribuir status:</strong> 
-											<select class="form-select" name="atendente" id="id_atendente">
-												<option value="">Selecione um atendente</option>
-												{% for atendente in atendentes %}
-												<option value="{{atendente.id}}">{{atendente.servidor.nome}}</option>		
+											<select class="form-select" name="status" id="id_status" onchange="attChamado('status', this.value)">
+												<option value="">Selecione um status</option>
+												{% for s in status %}
+												<option value="{{s.0}}">{{s.1}}</option>		
 												{% endfor %}										
 											</select>
 										</div>			
 										<div class="mx-auto">
 											<strong>Atribuir prioridade:</strong> 
-											<select class="form-select" name="atendente" id="id_atendente">
-												<option value="">Selecione um atendente</option>
-												{% for atendente in atendentes %}
-												<option value="{{atendente.id}}">{{atendente.servidor.nome}}</option>		
+											<select class="form-select" name="prioridade" id="id_prioridade" onchange="attChamado('prioridade', this.value)">
+												<option value="">Selecione uma prioridade</option>
+												{% for prioridade in prioridades %}
+												<option value="{{prioridade.0}}">{{prioridade.1}}</option>		
 												{% endfor %}										
 											</select>
 										</div>					
 										<div class="mx-auto">
 											<strong>Atribuir profissional:</strong> 
-											<select class="form-select" name="atendente" id="id_atendente">
+											<select class="form-select" name="atendente" id="id_atendente" onchange="attChamado('atendente', this.value)">
 												<option value="">Selecione um atendente</option>
 												{% for atendente in atendentes %}
 												<option value="{{atendente.id}}">{{atendente.servidor.nome}}</option>		
@@ -254,13 +276,21 @@
 				</div>
 				
 				<script src="/static/js/openModal.js"></script>		
+				<script src="/static/js/request.js"></script>		
 				<script>
 					function visualizarAnexo(url){
-						document.getElementById('anexo_url').src = url;
+						document.getElementById('anexo-url').src = url;
 						openModal('anexo');
 					}
-					function sendMSG(){
+					function attChamado(atributo, valor){
+						
+						var form = new FormData();												
+						
+						form.append('csrfmiddlewaretoken', '{{csrf_token}}');
+						form.append('atributo', atributo);
+						form.append('valor', valor);
 
+						postRequest("{% url 'chamados:attChamado' chamado.hash %}", form)
 					}
 				</script>		
 {% endblock %}
