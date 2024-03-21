@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     #terceiros
     'fontawesomefree',    
     'django_select2',
+    "bootstrap5",
     #default
     'django.contrib.admin',
     'django.contrib.auth',
