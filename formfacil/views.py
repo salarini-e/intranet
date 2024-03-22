@@ -23,7 +23,7 @@ def IndicacaoComitePSP(request):
     return render(request, 'formfacil/formfacil_form.html', context)
 
 
-def IndicacaoComitePSP(request):
+def Webex(request):
     if request.method == 'POST':
         form = FormCadastroWebex(request.POST)
         if form.is_valid():
