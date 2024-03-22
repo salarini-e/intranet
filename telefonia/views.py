@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import JsonResponse
-from instituicoes.models import Secretaria, Setor
-from .models import Ramal
+from instituicoes.models import Secretaria, Setor, Servidor
+from .models import Ramal, Telefonista
 from .forms import RamalForm
 
 @login_required
@@ -11,6 +11,7 @@ def index(request):
     context={
         'ramais': ramais,
         'secretarias': Secretaria.objects.all(),
+        'telefonista': Telefonista.objects.filter(servidor = Servidor.objects.get(user=request.user))
     }
     return render(request, 'telefonia/index.html', context)
 

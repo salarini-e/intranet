@@ -20,3 +20,15 @@ class FormIndicacaoComitePSPForm(forms.ModelForm):
     #     for field_name, field in self.fields.items():
     #         field.widget.attrs['class'] = 'form-control'
     #         field.widget.attrs['required'] = True
+        
+class FormCadastroWebex(forms.ModelForm):
+    class Meta:
+        model = CadastroWebex
+        fields = ['secretaria', 'setor', 'nome', 'email', 'ramal']
+        widgets ={
+            'secretaria': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'setor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'ramal': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+        }

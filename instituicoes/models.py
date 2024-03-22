@@ -16,6 +16,9 @@ class Secretaria(models.Model):
     dt_inclusao=models.DateField(auto_now_add=True, verbose_name='Data de inclusão')
     user_inclusao=models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True)
 
+    def get_total_setores(self):        
+        return Setor.objects.filter(secretaria = self).count()
+
 class Setor(models.Model):
     def __str__(self):
         return self.nome

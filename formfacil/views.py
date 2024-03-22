@@ -22,3 +22,25 @@ def IndicacaoComitePSP(request):
         }
     return render(request, 'formfacil/formfacil_form.html', context)
 
+
+def IndicacaoComitePSP(request):
+    if request.method == 'POST':
+        form = FormCadastroWebex(request.POST)
+        if form.is_valid():
+            form.save()
+            context = {
+                'titulo': 'Formulário de cadastro de usuário no WEBEX',    
+                'subtitulo': 'Subsecretaria de TI',
+                'mensagem': "<span class='text-success'><i class='fa-solid fa-circle-check me-2'></i>Formulário enviado com sucesso!</span>"
+            }
+            return render(request, 'formfacil/formfacil_success.html', context)
+    else:
+        form = FormCadastroWebex()
+    context = {
+            'form': form,
+            'titulo': 'Formulário de cadastro de usuário no WEBEX',    
+                'subtitulo': 'Subsecretaria de TI',
+                'mensagem': "<span class='text-success'>Formulário enviado com sucesso!</span>"
+        }
+    return render(request, 'formfacil/formfacil_form.html', context)
+

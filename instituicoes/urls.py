@@ -4,7 +4,8 @@ from . import views
 
 app_name='ins'
 urlpatterns = [
-    path('api/', views.api, name='api'),
-    path('api/criar-instituicao/', views.criar_instituicao, name='criar_instituicao'),
+    path('', views.index, name='index'),
+    path('criar-secretaria/', views.criar_secretaria, name='criar_secretaria'),
+    path('api/', views.api, name='api'),    
     path('api/get-setores/<id>/', views.getSetores, name='getSetores'),
 ]

@@ -1,19 +1,37 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import *
+from .forms import *
+from django.contrib import messages
+
+@login_required
+def index(request):
+    secretarias = Secretaria.objects.all()
+    context = {
+        'secretarias': secretarias
+    }
+    return render(request, 'instituicoes/index.html', context)
 
 @login_required
 def api(request):
     return JsonResponse({'status': 200})
 
 @login_required
-def criar_instituicao(request):
+def criar_secretaria(request):
     if request.method == 'POST':
-        print(request.POST)
-        return JsonResponse({'result': True})
+        form = SecretariaForm(request.POST)        
+        if form.is_valid():
+            secretaria = form.save()
+            messages.success(request, f'Secretaria {secretaria.nome} cadastrada com sucesso!')
+            return redirect('ins:index')            
     else:
-        return JsonResponse({'result': False})
+        form = SecretariaForm()
+    context = {
+        'form': form,
+        'model_name': 'Secretaria'
+    }
+    return render(request, 'instituicoes/form.html', context)
 
 @login_required    
 def criar_setor(request):

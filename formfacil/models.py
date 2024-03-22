@@ -13,3 +13,14 @@ class FormIndicacaoComitePSP(models.Model):
 
     def __str__(self):
         return self.nome
+    
+class CadastroWebex(models.Model):
+    secretaria = models.CharField(max_length=100)
+    setor = models.CharField(max_length=100)
+    nome = models.CharField(max_length=100, verbose_name='Nome completo')    
+    email = models.EmailField(verbose_name='Email')
+    ramal = models.CharField(max_length=15, verbose_name='Telefone')    
+    dt_inclusao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.nome} - {self.secretaria}'

@@ -6,6 +6,10 @@ class SecretariaForm(forms.ModelForm):
         model = Secretaria
         fields = ['nome', 'apelido','sigla', 'user_inclusao']
         widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'apelido': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'sigla': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+
             'user_inclusao': forms.HiddenInput()
         }
 
