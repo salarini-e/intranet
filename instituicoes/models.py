@@ -37,6 +37,9 @@ class Setor(models.Model):
     dt_inclusao=models.DateField(auto_now_add=True, verbose_name='Data de inclusão')
     user_inclusao=models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True)
 
+    def get_total_servidores(self):
+        return Servidor.objects.filter(setor = self).count()
+    
 class Servidor(models.Model):
     def __str__(self):
         return self.nome
@@ -47,10 +50,10 @@ class Servidor(models.Model):
     
     user=models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True)
     nome=models.CharField(max_length=64, verbose_name='Nome')    
-    cpf=models.CharField(max_length=14, verbose_name='CPF')    
+    cpf=models.CharField(max_length=14, verbose_name='CPF', unique=True)    
     dt_nascimento=models.DateField(verbose_name='Data de nascimento')
-    matricula=models.CharField(max_length=14, verbose_name='Matrícula')
-    telefone=models.CharField(max_length=14, verbose_name='Telefone')
+    matricula=models.CharField(max_length=14, verbose_name='Matrícula', unique=True)
+    telefone=models.CharField(max_length=15, verbose_name='Telefone')
     email=models.EmailField(max_length=64, verbose_name='E-mail')
     setor=models.ForeignKey(Setor, on_delete=models.CASCADE, verbose_name='Setor')
     dt_inclusao=models.DateField(auto_now_add=True, verbose_name='Data de inclusão')

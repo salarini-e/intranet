@@ -8,12 +8,19 @@ from django.http import JsonResponse
 # Create your views here.
 @login_required
 def index(request):
+    servidor = Servidor.objects.get(user=request.user)
+    atendente = Atendente.objects.filter(servidor=servidor)
+    if atendente.exists():
+        chamados = Chamado.objects.all()
+    else:
+        chamados = Chamado.objects.filter(requisitante=servidor)
+    
     chamados = {
-        'todos': Chamado.objects.all(),
-        'abertos': Chamado.objects.filter(status='0'),
-        'em_atendimento': Chamado.objects.filter(status='1'),
-        'pendentes': Chamado.objects.filter(status='2'),
-        'fechados': Chamado.objects.filter(status='3'),        
+        'todos': chamados,
+        'abertos':chamados.filter(status='0'),
+        'em_atendimento':chamados.filter(status='1'),
+        'pendentes':chamados.filter(status='2'),
+        'fechados':chamados.filter(status='3'),        
     }
     context={
         'tipos': TipoChamado.objects.all(),

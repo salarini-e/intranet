@@ -12,10 +12,18 @@
 					.bg-gray{
 						background-color: rgba(128, 128, 128, 0.281) !important;
 					}
+					.app-card{
+						width: 48%;
+					}
+					@media(max-width: 768px) {
+						.app-card{
+							width: 90%;
+					}
+					}
 				</style>
 			    <div class="row g-3 mb-4 align-items-center justify-content-between">
 				    <div class="col-auto">
-			            <h1 class="app-page-title mb-0">Secretarias</h1>
+			            <h1 class="app-page-title mb-0">{{secretaria.nome}}</h1>
 				    </div>
 				    <div class="col-auto">
 					     <div class="page-utilities">
@@ -23,10 +31,13 @@
 							    <div class="col-auto">
 								    <div class="table-search-form row gx-1 align-items-center">
 					                    <div class="col-auto">
-					                        <input type="text" id="search-ramais" name="searchramais" class="form-control search-orders" placeholder="Procurar...">
+					                        <input type="text" id="search-setores" name="searchsetores" class="form-control search-orders" placeholder="Procurar...">
+					                    </div>	
+										<div class="col-auto">
+					                        <a href="{% url 'ins:criar_setor' secretaria.id %}" class="btn app-btn-secondary">Adicionar setor</a>
 					                    </div>										
 					                    <div class="col-auto">
-					                        <a href="{% url 'ins:criar_secretaria' %}" class="btn app-btn-secondary">Adicionar secretaria</a>
+					                        <a href="{% url 'ins:index' %}" class="btn app-btn-secondary">Voltar</a>
 					                    </div>																				
 					                </div>					            
 							    </div>
@@ -35,43 +46,32 @@
 				    </div>
 			    </div>
 			   			    			
-				<div class="tab-content" id="orders-table-tab-content">
-			        <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
-					    <div class="app-card app-card-orders-table shadow-sm mb-5">
-						    <div class="app-card-body">
-							    <div class="table-responsive">
-							        <table class="table app-table-hover mb-0 text-left">
-										<thead>
-											<tr>												
-												<th></th>												
-												<th class="cell">Secretaria</th>
-												<th class="cell">Apelido</th>
-												<th class="cell">Sigla</th>
-												<th class="cell">Qnt. setores</th>
-												<th></th>												
-											</tr>
-										</thead>
-										<tbody>
-											{% for secretaria in secretarias %}
-											<tr>												
-												<td class="cell">
-													<a href="{% url 'ins:editar_secretaria' secretaria.id %}"><i class="fa-solid fa-pen-to-square"></i></a>
-												</td>												
-												<td class="cell">{{secretaria.nome}}</td>
-												<td class="cell">{{secretaria.apelido}}</td>
-												<td class="cell">{{secretaria.sigla}}</td>
-												<td class="cell">{{secretaria.get_total_setores}}</td>												
-												<td class="cell"><a href="{% url 'ins:setores' secretaria.id %}">Setores</a></td>														
-											</tr>					
-											{% endfor %}								
-										</tbody>
-									</table>
-						        </div><!--//table-responsive-->
-						       
-						    </div><!--//app-card-body-->		
-						</div><!--//app-card-->											
-			        </div><!--//tab-pane-->			        			        
-				</div><!--//tab-content-->
+				<div class="row g-4 settings-section">
+	                <div class="col-12 col-md-12 d-flex flex-wrap">
+						{% for setor in setores %}
+		                <div class="app-card shadow-sm p-4 mb-3" style="margin-right: auto; margin-left: auto;">
+							<div class="app-card-body d-flex flex-column h-100">
+								<h3 class="section-title">{{setor.nome}}</h3>
+		                		<div class="section-intro">
+									<p>
+										<strong>Endereço:</strong><br>
+										{{setor.endereco}}, {{setor.bairro}} - {{setor.cep}}
+									</p>
+									<p>
+										<strong>Qnt. de servidores:</strong> <br>{{chamado.requisitante.nome}}
+										{{setor.get_total_servidores}}
+									</p>									
+								</div>
+								<div class="w-100 d-flex mt-auto">
+									<button class="btn app-btn-secondary me-auto"><i class="fa-solid fa-pen-to-square me-1"></i>Editar setor</button>
+									<button class="btn app-btn-secondary"><i class="fa-solid fa-users-gear me-1"></i>Listar servidores</button>
+									<button class="btn app-btn-primary ms-2"><i class="fa-solid fa-user-plus me-1"></i> Adicionar servidor</button>
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+	                </div>
+				</div>
 				<div id="myModal" class="modal">
 				<div class="modal-dialog">
 					<div class="modal-content">
@@ -123,49 +123,27 @@
 				</div>
 				</div>
 				
-				<script src="/static/js/openModal.js"></script>
+				<!-- <script src="/static/js/openModal.js"></script> -->
 				<script src="/static/js/request.js"></script>
 				<script src="/static/js/telefonia.js"></script>
 				<script>									
-					function callSetor(e){
-						var url = "{% url 'tel:api' %}getSetores/"+e.value+"/"; 
-						getRequest(url, montarSelect);
-					}
-
 					
-					function filtrarRamais() {
+					function filtrarSetores() {
 					
-						var filtro = document.getElementById('search-ramais').value.toUpperCase();					
-						var linhas = document.querySelectorAll('.app-table-hover tbody tr');
-
-						// Itera sobre as linhas da tabela
-						for (var i = 0; i < linhas.length; i++) {
-							var linha = linhas[i];
-							var colunas = linha.getElementsByTagName('td');
-							var mostrar = false;
-
-							// Itera sobre as colunas da linha
-							for (var j = 0; j < colunas.length; j++) {
-								var coluna = colunas[j];
-								if (coluna) {
-									var texto = coluna.textContent || coluna.innerText;
-									// Verifica se o texto da coluna contém o filtro
-									if (texto.toUpperCase().indexOf(filtro) > -1) {
-										mostrar = true;
-										break;
-									}
-								}
-							}
-
-							// Mostra ou oculta a linha dependendo do resultado da busca
-							if (mostrar) {
-								linha.style.display = "";
+						var filtro = document.getElementById('search-setores').value.toUpperCase();						
+						var cardsSetores = document.querySelectorAll('.settings-section .app-card');
+						
+						cardsSetores.forEach(function(card) {
+							var nomeSetor = card.querySelector('.section-title').textContent.toUpperCase();
+							
+							if (nomeSetor.indexOf(filtro) > -1) {
+								card.style.display = "";
 							} else {
-								linha.style.display = "none";
+								card.style.display = "none";
 							}
-						}
+						});
 					}
 					
-					document.getElementById('search-ramais').addEventListener('input', filtrarRamais);
+					document.getElementById('search-setores').addEventListener('input', filtrarSetores);
 				</script>
 {% endblock %}

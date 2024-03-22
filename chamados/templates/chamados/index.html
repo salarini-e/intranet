@@ -47,8 +47,8 @@
 				    <a class="flex-sm-fill text-sm-center nav-link active" id="orders-all-tab" data-bs-toggle="tab" href="#todos" role="tab" aria-controls="orders-all" aria-selected="true">Todos</a>
 				    <a class="flex-sm-fill text-sm-center nav-link"  id="orders-paid-tab" data-bs-toggle="tab" href="#abertos" role="tab" aria-controls="orders-paid" aria-selected="false">Abertos</a>
 				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-pending-tab" data-bs-toggle="tab" href="#em-atendimento" role="tab" aria-controls="orders-pending" aria-selected="false">Em atendimento</a>
-				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#pendente" role="tab" aria-controls="orders-cancelled" aria-selected="false">Pendente</a>
-					<a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#fechado" role="tab" aria-controls="orders-cancelled" aria-selected="false">Fechado</a>
+				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#pendentes" role="tab" aria-controls="orders-cancelled" aria-selected="false">Pendente</a>
+					<a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#fechados" role="tab" aria-controls="orders-cancelled" aria-selected="false">Fechado</a>
 				</nav>
 				
 				 <div id="message" class="app-card alert alert-dismissible shadow-sm mb-4 bg-success border-left-decoration" role="alert">
@@ -146,8 +146,326 @@
 						</nav>
 						
 			        </div><!--//tab-pane-->
-			        
-			        
+			        <div class="tab-pane fade" id="abertos" role="tabpanel" aria-labelledby="orders-all-tab">
+					    <div class="app-card app-card-orders-table shadow-sm mb-5">
+						    <div class="app-card-body">
+							    <div class="table-responsive">
+							        <table class="table app-table-hover mb-0 text-left">
+										<thead>
+											<tr>
+												<th class="cell">ID</th>
+												<th class="cell">Protocolo</th>												
+												<th class="cell">Secretaria</th>
+												<th class="cell">Setor</th>
+												<th class="cell">Requisitante</th>
+												<th class="cell">Dt. solicitação</th>
+												<th class="cell">Dt. atualização</th>
+												<th class="cell">Msg's</th>
+												<th class="cell">Prioridade</th>
+												<th class="cell">Status</th>
+												<th class="cell"></th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for chamado in chamados.abertos %}
+											<tr>
+												<td class="cell">#{{chamado.id}}</td>
+												<td class="cell">{{chamado.n_protocolo}}</td>												
+												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
+												<td class="cell">{{chamado.setor.apelido}}</td>
+												<td class="cell">{{chamado.requisitante.nome}}</td>
+												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
+												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell">{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
+												<td class="cell">
+													{% if chamado.prioridade == '' %}
+													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
+													{% endif %}
+												</td>
+												<td class="cell">
+													{% if chamado.status == '0' %}
+													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '1' %}
+													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '2' %}
+													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '3' %}
+													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '4' %}
+													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
+													{% endif %}
+												</td>
+												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">View</a></td>
+											</tr>	
+											{% endfor %}										
+		
+										</tbody>
+									</table>
+						        </div><!--//table-responsive-->
+						       
+						    </div><!--//app-card-body-->		
+						</div><!--//app-card-->
+						<nav class="app-pagination">
+							<ul class="pagination justify-content-center">
+								<li class="page-item disabled">
+									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+							    </li>
+								<li class="page-item active"><a class="page-link" href="#">1</a></li>
+								<li class="page-item"><a class="page-link" href="#">2</a></li>
+								<li class="page-item"><a class="page-link" href="#">3</a></li>
+								<li class="page-item">
+								    <a class="page-link" href="#">Próxima</a>
+								</li>
+							</ul>
+						</nav>
+						
+			        </div><!--//tab-pane-->
+			        <div class="tab-pane fade" id="em-atendimento" role="tabpanel" aria-labelledby="orders-all-tab">
+					    <div class="app-card app-card-orders-table shadow-sm mb-5">
+						    <div class="app-card-body">
+							    <div class="table-responsive">
+							        <table class="table app-table-hover mb-0 text-left">
+										<thead>
+											<tr>
+												<th class="cell">ID</th>
+												<th class="cell">Protocolo</th>												
+												<th class="cell">Secretaria</th>
+												<th class="cell">Setor</th>
+												<th class="cell">Requisitante</th>
+												<th class="cell">Dt. solicitação</th>
+												<th class="cell">Dt. atualização</th>
+												<th class="cell">Msg's</th>
+												<th class="cell">Prioridade</th>
+												<th class="cell">Status</th>
+												<th class="cell"></th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for chamado in chamados.em_atendimento %}
+											<tr>
+												<td class="cell">#{{chamado.id}}</td>
+												<td class="cell">{{chamado.n_protocolo}}</td>												
+												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
+												<td class="cell">{{chamado.setor.apelido}}</td>
+												<td class="cell">{{chamado.requisitante.nome}}</td>
+												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
+												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell">{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
+												<td class="cell">
+													{% if chamado.prioridade == '' %}
+													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
+													{% endif %}
+												</td>
+												<td class="cell">
+													{% if chamado.status == '0' %}
+													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '1' %}
+													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '2' %}
+													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '3' %}
+													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '4' %}
+													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
+													{% endif %}
+												</td>
+												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">View</a></td>
+											</tr>	
+											{% endfor %}										
+		
+										</tbody>
+									</table>
+						        </div><!--//table-responsive-->
+						       
+						    </div><!--//app-card-body-->		
+						</div><!--//app-card-->
+						<nav class="app-pagination">
+							<ul class="pagination justify-content-center">
+								<li class="page-item disabled">
+									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+							    </li>
+								<li class="page-item active"><a class="page-link" href="#">1</a></li>
+								<li class="page-item"><a class="page-link" href="#">2</a></li>
+								<li class="page-item"><a class="page-link" href="#">3</a></li>
+								<li class="page-item">
+								    <a class="page-link" href="#">Próxima</a>
+								</li>
+							</ul>
+						</nav>
+						
+			        </div><!--//tab-pane-->
+					<div class="tab-pane fade" id="pendentes" role="tabpanel" aria-labelledby="orders-all-tab">
+					    <div class="app-card app-card-orders-table shadow-sm mb-5">
+						    <div class="app-card-body">
+							    <div class="table-responsive">
+							        <table class="table app-table-hover mb-0 text-left">
+										<thead>
+											<tr>
+												<th class="cell">ID</th>
+												<th class="cell">Protocolo</th>												
+												<th class="cell">Secretaria</th>
+												<th class="cell">Setor</th>
+												<th class="cell">Requisitante</th>
+												<th class="cell">Dt. solicitação</th>
+												<th class="cell">Dt. atualização</th>
+												<th class="cell">Msg's</th>
+												<th class="cell">Prioridade</th>
+												<th class="cell">Status</th>
+												<th class="cell"></th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for chamado in chamados.pendentes %}
+											<tr>
+												<td class="cell">#{{chamado.id}}</td>
+												<td class="cell">{{chamado.n_protocolo}}</td>												
+												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
+												<td class="cell">{{chamado.setor.apelido}}</td>
+												<td class="cell">{{chamado.requisitante.nome}}</td>
+												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
+												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell">{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
+												<td class="cell">
+													{% if chamado.prioridade == '' %}
+													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
+													{% endif %}
+												</td>
+												<td class="cell">
+													{% if chamado.status == '0' %}
+													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '1' %}
+													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '2' %}
+													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '3' %}
+													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '4' %}
+													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
+													{% endif %}
+												</td>
+												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">View</a></td>
+											</tr>	
+											{% endfor %}										
+		
+										</tbody>
+									</table>
+						        </div><!--//table-responsive-->
+						       
+						    </div><!--//app-card-body-->		
+						</div><!--//app-card-->
+						<nav class="app-pagination">
+							<ul class="pagination justify-content-center">
+								<li class="page-item disabled">
+									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+							    </li>
+								<li class="page-item active"><a class="page-link" href="#">1</a></li>
+								<li class="page-item"><a class="page-link" href="#">2</a></li>
+								<li class="page-item"><a class="page-link" href="#">3</a></li>
+								<li class="page-item">
+								    <a class="page-link" href="#">Próxima</a>
+								</li>
+							</ul>
+						</nav>
+						
+			        </div><!--//tab-pane-->
+					<div class="tab-pane fade" id="fechados" role="tabpanel" aria-labelledby="orders-all-tab">
+					    <div class="app-card app-card-orders-table shadow-sm mb-5">
+						    <div class="app-card-body">
+							    <div class="table-responsive">
+							        <table class="table app-table-hover mb-0 text-left">
+										<thead>
+											<tr>
+												<th class="cell">ID</th>
+												<th class="cell">Protocolo</th>												
+												<th class="cell">Secretaria</th>
+												<th class="cell">Setor</th>
+												<th class="cell">Requisitante</th>
+												<th class="cell">Dt. solicitação</th>
+												<th class="cell">Dt. atualização</th>
+												<th class="cell">Msg's</th>
+												<th class="cell">Prioridade</th>
+												<th class="cell">Status</th>
+												<th class="cell"></th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for chamado in chamados.fechados %}
+											<tr>
+												<td class="cell">#{{chamado.id}}</td>
+												<td class="cell">{{chamado.n_protocolo}}</td>												
+												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
+												<td class="cell">{{chamado.setor.apelido}}</td>
+												<td class="cell">{{chamado.requisitante.nome}}</td>
+												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
+												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell">{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
+												<td class="cell">
+													{% if chamado.prioridade == '' %}
+													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
+													{% endif %}
+												</td>
+												<td class="cell">
+													{% if chamado.status == '0' %}
+													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '1' %}
+													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '2' %}
+													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '3' %}
+													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '4' %}
+													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
+													{% endif %}
+												</td>
+												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">View</a></td>
+											</tr>	
+											{% endfor %}										
+		
+										</tbody>
+									</table>
+						        </div><!--//table-responsive-->
+						       
+						    </div><!--//app-card-body-->		
+						</div><!--//app-card-->
+						<nav class="app-pagination">
+							<ul class="pagination justify-content-center">
+								<li class="page-item disabled">
+									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+							    </li>
+								<li class="page-item active"><a class="page-link" href="#">1</a></li>
+								<li class="page-item"><a class="page-link" href="#">2</a></li>
+								<li class="page-item"><a class="page-link" href="#">3</a></li>
+								<li class="page-item">
+								    <a class="page-link" href="#">Próxima</a>
+								</li>
+							</ul>
+						</nav>
+						
+			        </div><!--//tab-pane-->
 				<div id="myModal" class="modal">
 				<div class="modal-dialog">
 					<div class="modal-content">

@@ -220,7 +220,7 @@
 									<div class="row">
 										<div class="col d-flex">
 											<p>{{mensagem.mensagem}}</p>											
-											{% if mensagem.anexo %}<button onclick="visualizarAnexo('{{mensagem.anexo.url}}')" class="my-auto ms-auto"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</button>{% endif %}
+											{% if mensagem.anexo %}<button onclick="visualizarAnexo('{{mensagem.anexo.url}}')" class="my-auto ms-auto btn app-btn-secondary"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</button>{% endif %}
 										</div>
 									</div>									
 								</div>
@@ -265,7 +265,7 @@
 					</div>
 					<div class="modal-body">
 						<div class="col-12 col-md-12">			
-									<img id="anexo-url" src="" alt="">
+									<img id="anexo-url" class="img-fluid" src="" alt="">
 						</div>
 					</div>
 					<div class="modal-footer">
