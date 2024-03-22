@@ -40,7 +40,7 @@ def IndicacaoComitePSP(request):
             'form': form,
             'titulo': 'Formulário de cadastro de usuário no WEBEX',    
                 'subtitulo': 'Subsecretaria de TI',
-                'mensagem': "<span class='text-success'>Formulário enviado com sucesso!</span>"
+                'mensagem': "Formulário para levantamento de usuários cadastrados no sistema WEBEX."
         }
     return render(request, 'formfacil/formfacil_form.html', context)
 
