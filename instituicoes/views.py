@@ -23,10 +23,12 @@ def criar_secretaria(request):
         form = SecretariaForm(request.POST)        
         if form.is_valid():
             secretaria = form.save()
+            secretaria.user_inclusao = request.user
+            secretaria.save()
             messages.success(request, f'Secretaria {secretaria.nome} cadastrada com sucesso!')
             return redirect('ins:index')            
     else:
-        form = SecretariaForm()
+        form = SecretariaForm(initial={'user_inclusao': request.user.id})
     context = {
         'form': form,
         'model_name': 'Secretaria'
