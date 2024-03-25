@@ -10,4 +10,6 @@ urlpatterns = [
     path('criar-chamado/<sigla>/', views.criarChamado, name='criar'),
     path('<hash>/detalhes/', views.detalhes, name='detalhes'),    
     path('<hash>/detalhes/att/', views.attChamado, name='attChamado'),    
+    path('<hash>/iniciar-atendimento/', views.iniciar_atendimento, name='inicializar'),
+    path('<hash>/finalizar-atendimento/', views.finalizar_atendimento, name='finalizar'),
 ]

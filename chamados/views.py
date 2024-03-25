@@ -1,19 +1,25 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import TipoChamado, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem
 from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm,
                     MensagemForm, AtendenteForm, TipoChamadoForm)
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages as message
 from django.http import JsonResponse
+from django.utils import timezone
 # Create your views here.
+
 @login_required
 def index(request):
     servidor = Servidor.objects.get(user=request.user)
     atendente = Atendente.objects.filter(servidor=servidor)
     if atendente.exists():
         chamados = Chamado.objects.all()
+        atendente = atendente.first()
+        designados = chamados.filter(profissional_designado=atendente)
     else:
         chamados = Chamado.objects.filter(requisitante=servidor)
+        atendente = None
+        designados = []
     
     chamados = {
         'todos': chamados,
@@ -21,10 +27,12 @@ def index(request):
         'em_atendimento':chamados.filter(status='1'),
         'pendentes':chamados.filter(status='2'),
         'fechados':chamados.filter(status='3'),        
+        'designados': designados
     }
     context={
         'tipos': TipoChamado.objects.all(),
-        'chamados': chamados
+        'chamados': chamados,
+        'atendente': atendente
     }
     return render(request, 'chamados/index.html', context)
 
@@ -60,7 +68,7 @@ def criarChamado(request, sigla):
                     ext.save()
             
             message.success(request, 'Chamado criado com sucesso! Seu protocolo é {}'.format(chamado.n_protocolo))            
-            form = CriarChamadoForm(initial={'secretaria': servidor.setor.secretaria.id, 'setor': servidor.setor.id, 'telefone': servidor.telefone, 'tipo': tipo, 'requisitante': servidor.id, 'user_inclusao': request.user})
+            return redirect('chamados:index')
     else:
         form = CriarChamadoForm(initial={'secretaria': servidor.setor.secretaria.id, 'setor': servidor.setor.id, 'telefone': servidor.telefone, 'tipo': tipo, 'requisitante': servidor.id, 'user_inclusao': request.user})
         form_ext = None
@@ -123,14 +131,32 @@ def attChamado(request, hash):
             print(request.POST)
             atributo = request.POST['atributo']
             if atributo == 'status':
-                chamado.status = request.POST['valor']                
+                chamado.status = request.POST['valor']   
+                if request.POST['valor'] == '4':
+                    chamado.dt_fechamento = timezone.now()             
             elif atributo == 'prioridade':
                 chamado.prioridade = request.POST['valor']
             elif atributo == 'atendente':
-                chamado.atendente = Atendente.objects.get(id=request.POST['valor'])                
+                chamado.profissional_designado = Atendente.objects.get(id=request.POST['valor'])                
             else:                
                 return JsonResponse({'status': 400})
             chamado.save()  
             message.success(request, f'{atributo.capitalize()} atualizado com sucesso!')
             return JsonResponse({'status': 200})    
     return JsonResponse({'status': 403})
+
+def iniciar_atendimento(request, hash):
+    chamado = Chamado.objects.get(hash=hash)
+    chamado.dt_inicio_execucao = timezone.now()
+    chamado.status = '1'
+    chamado.save()
+    message.success(request, f'Atendimento iniciado ao chamado {chamado.n_protocolo}!')
+    return redirect('chamados:index')
+
+def finalizar_atendimento(request, hash):
+    chamado = Chamado.objects.get(hash=hash)
+    chamado.dt_execucao = timezone.now()
+    chamado.status = '3'
+    chamado.save()
+    message.success(request, f'Atendimento finalizado ao chamado {chamado.n_protocolo}!')
+    return redirect('chamados:index')

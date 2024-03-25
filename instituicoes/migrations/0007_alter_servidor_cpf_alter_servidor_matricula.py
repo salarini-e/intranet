@@ -10,11 +10,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='servidor',
-            name='cpf',
-            field=models.CharField(max_length=14, unique=True, verbose_name='CPF'),
-        ),
+        # migrations.AlterField(
+        #     model_name='servidor',
+        #     name='cpf',
+        #     field=models.CharField(max_length=14, unique=True, verbose_name='CPF'),
+        # ),
         migrations.AlterField(
             model_name='servidor',
             name='matricula',

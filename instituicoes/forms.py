@@ -97,6 +97,9 @@ class ServidorForm(forms.ModelForm):
             check_digit = 0
         if check_digit != int(cpf[10]):
             raise ValidationError(('CPF inválido'), code='invalid2')
+        
+        if Servidor.objects.filter(cpf=cpf).exists():
+            raise ValidationError(('CPF já cadastrado'), code='invalid2')
         return cpf
 
 class ServidorEditForm(forms.ModelForm):

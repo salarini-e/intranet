@@ -35,15 +35,7 @@
 					     <div class="page-utilities">
 						    <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
 							    <div class="col-auto">
-								    <div class="table-search-form row gx-1 align-items-center">                                        
-					                    <!-- <div class="col-auto">
-					                        <input type="text" id="search-orders" name="searchorders" class="form-control search-orders" placeholder="Procurar...">
-					                    </div> -->
-										<div class="col-auto">
-					                        <button class="btn app-btn-secondary">
-                                                <i class="fa-solid fa-filter"></i>
-                                            </button>
-					                    </div>
+								    <div class="table-search-form row gx-1 align-items-center">                                        					           
 					                    <div class="col-auto">
 					                        <button id="openModal" class="btn app-btn-primary"><i class="fa-solid fa-print me-2"></i>Imprimir</button>
 					                    </div>
@@ -75,6 +67,39 @@
 					    
 				    </div>
 			    </div>
+				{% if messages %}
+				<div class="alert alert-dismissible shadow-sm bg-success border-left-decoration" role="alert">
+				    <div class="inner">
+					    <div class="app-card-body px-3 px-lg-4">						    
+						    <div class="row gx-5 gy-3">
+						        <div class="col-12 col">
+							        <div class="text-light" style="color: white;">
+							        {% for message in messages %}
+							        {{message}}
+							        {% endfor %}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endif %}
+				<div class="row my-3">
+	                <div class="col col-md">
+		                <div class="app-card shadow-sm p-4">
+							<div class="app-card-body">
+								<div class="row">
+									<div class="col d-flex">
+										<div>Dt. Solicitação: <strong class="ms-3">{{chamado.dt_inclusao|date:"d/m/Y H:i"}}</strong></div>										
+										{% if chamado.dt_fechamento %}
+										<div class="ms-auto">Dt. conclusão: <strong class="ms-3">{{chamado.dt_fechamento|date:"d/m/Y H:i"}}</strong></div>
+										{% endif %}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="row g-4 settings-section">
 	                <div class="col-12 col-md-4">
 		                <div class="app-card shadow-sm p-4" style="height: 100%;">
@@ -158,6 +183,37 @@
 						</div><!--//app-card-->
 	                </div>
                 </div>
+				{% if chamado.profissional_designado %}
+				<div class="row my-3">
+	                <div class="col col-md">
+		                <div class="app-card shadow-sm p-4">
+							<div class="app-card-body">
+								<div class="row">
+									<div class="col d-flex">
+										<div class="my-auto">Profissional designado: <strong class="ms-2">{{chamado.profissional_designado}}</strong></div>
+										{% if not chamado.dt_inicio_execucao %}
+											<a href="{% url 'chamados:inicializar' chamado.hash %}" class="btn btn-danger" style="color: white;">														
+												<i class="fa-solid fa-stopwatch me-2"></i>Iniciar atendimento												
+											</a>
+										{% elif not chamado.dt_execucao %}
+											<a href="{% url 'chamados:finalizar' chamado.hash %}" class="btn app-btn-primary" style="color: white;">														
+												<i class="fa-solid fa-circle-check me-2"></i>Finalizar atendimento
+											</a>
+										{% else %}
+											<div class="ms-auto">Dt. execução: <strong class="ms-1">{{chamado.dt_execucao|date:"d/m/Y H:i"}}</strong></div>
+											<div class="ms-4">Duração: <strong class="ms-1">{{chamado.get_duracao_execucao}}</strong></div>
+										{% endif %}
+										
+										
+										
+										
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endif %}
 				{% if atendente.exists %}
 				<div class="row my-3">
 	                <div class="col col-md">
@@ -291,6 +347,11 @@
 						form.append('valor', valor);
 
 						postRequest("{% url 'chamados:attChamado' chamado.hash %}", form)
+						// esperar 5 segundos e recarregar a página
+						setTimeout(function(){
+							window.location.replace("{% url 'chamados:detalhes' chamado.hash %}");
+						}, 500);					
+
 					}
 				</script>		
 {% endblock %}

@@ -26,7 +26,7 @@
 					                        <input type="text" id="search-orders" name="searchorders" class="form-control search-orders" placeholder="Procurar...">
 					                    </div> -->
 										<div class="col-auto">
-					                        <button class="btn app-btn-secondary">
+					                        <button class="btn app-btn-secondary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                                                 <i class="fa-solid fa-filter"></i>
                                             </button>
 					                    </div>
@@ -41,10 +41,35 @@
 					    </div>
 				    </div>
 			    </div>
-			   
-			    
+				<div class="collapse mb-4 border-0" id="collapseExample">
+					<div class="card card-body d-flex">
+						<div>
+							<i class="fa-solid fa-filter"></i> Filtros
+						</div>
+					</div>
+				  </div>
+			    {% if messages %}
+				<div class="alert alert-dismissible shadow-sm bg-success border-left-decoration" role="alert">
+				    <div class="inner">
+					    <div class="app-card-body px-3 px-lg-4">						    
+						    <div class="row gx-5 gy-3">
+						        <div class="col-12 col">
+							        <div class="text-light" style="color: white;">
+							        {% for message in messages %}
+							        {{message}}
+							        {% endfor %}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endif %}
 			    <nav id="orders-table-tab" class="orders-table-tab app-nav-tabs nav shadow-sm flex-column flex-sm-row mb-4">
-				    <a class="flex-sm-fill text-sm-center nav-link active" id="orders-all-tab" data-bs-toggle="tab" href="#todos" role="tab" aria-controls="orders-all" aria-selected="true">Todos</a>
+					{% if atendente %}
+					<a class="flex-sm-fill text-sm-center nav-link active" id="orders-designados-tab" data-bs-toggle="tab" href="#designados" role="tab" aria-controls="orders-designados" aria-selected="true">Designados</a>
+					{% endif %}
+				    <a class="flex-sm-fill text-sm-center nav-link {% if not atendente %}active{% endif %}" id="orders-all-tab" data-bs-toggle="tab" href="#todos" role="tab" aria-controls="orders-all" aria-selected="true">Todos</a>
 				    <a class="flex-sm-fill text-sm-center nav-link"  id="orders-paid-tab" data-bs-toggle="tab" href="#abertos" role="tab" aria-controls="orders-paid" aria-selected="false">Abertos</a>
 				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-pending-tab" data-bs-toggle="tab" href="#em-atendimento" role="tab" aria-controls="orders-pending" aria-selected="false">Em atendimento</a>
 				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#pendentes" role="tab" aria-controls="orders-cancelled" aria-selected="false">Pendente</a>
@@ -66,14 +91,105 @@
 				    </div>
 			    </div>
 				<div class="tab-content" id="orders-table-tab-content">
-			        <div class="tab-pane fade show active" id="todos" role="tabpanel" aria-labelledby="orders-all-tab">
+					<div class="tab-pane fade {%if atendente %}show active{% endif %}" id="designados" role="tabpanel" aria-labelledby="orders-all-tab">
 					    <div class="app-card app-card-orders-table shadow-sm mb-5">
 						    <div class="app-card-body">
 							    <div class="table-responsive">
 							        <table class="table app-table-hover mb-0 text-left">
 										<thead>
 											<tr>
-												<th class="cell">ID</th>
+												<th class="cell"></th>
+												<th class="cell">Protocolo</th>												
+												<th class="cell">Secretaria</th>
+												<th class="cell">Setor</th>
+												<th class="cell">Requisitante</th>
+												<th class="cell">Dt. solicitação</th>
+												<th class="cell">Dt. atualização</th>
+												<th class="cell">Msg's</th>
+												<th class="cell">Prioridade</th>
+												<th class="cell">Status</th>
+												<th class="cell"></th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for chamado in chamados.designados %}
+											<tr>
+												<td class="cell">
+													{% if not chamado.dt_inicio_execucao %}
+													<a href="{% url 'chamados:inicializar' chamado.hash %}" class="btn btn-danger" style="color: white;">														
+														<i class="fa-solid fa-stopwatch me-2"></i>Iniciar atendimento												
+													</a>
+													{% elif not chamado.dt_execucao %}
+													<a href="{% url 'chamados:finalizar' chamado.hash %}" class="btn app-btn-primary" style="color: white;">														
+														<i class="fa-solid fa-circle-check me-2"></i>Finalizar atendimento
+													</a>
+													{% else %}
+													Duração: {{chamado.get_duracao_execucao}}
+													{% endif %}
+												</td>
+												<td class="cell">{{chamado.n_protocolo}}</td>												
+												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
+												<td class="cell">{{chamado.setor.apelido}}</td>
+												<td class="cell">{{chamado.requisitante.nome}}</td>
+												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
+												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell">{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
+												<td class="cell">
+													{% if chamado.prioridade == '' %}
+													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
+													{% elif chamado.prioridade == '0' %}
+													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
+													{% endif %}
+												</td>
+												<td class="cell">
+													{% if chamado.status == '0' %}
+													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '1' %}
+													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '2' %}
+													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '3' %}
+													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
+													{% elif chamado.status == '4' %}
+													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
+													{% endif %}
+												</td>
+												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">View</a></td>
+											</tr>	
+											{% endfor %}										
+		
+										</tbody>
+									</table>
+						        </div><!--//table-responsive-->
+						       
+						    </div><!--//app-card-body-->		
+						</div><!--//app-card-->
+						<nav class="app-pagination">
+							<ul class="pagination justify-content-center">
+								<li class="page-item disabled">
+									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+							    </li>
+								<li class="page-item active"><a class="page-link" href="#">1</a></li>
+								<li class="page-item"><a class="page-link" href="#">2</a></li>
+								<li class="page-item"><a class="page-link" href="#">3</a></li>
+								<li class="page-item">
+								    <a class="page-link" href="#">Próxima</a>
+								</li>
+							</ul>
+						</nav>
+						
+			        </div><!--//tab-pane-->
+			        <div class="tab-pane fade {%if not atendente %}show active{% endif %}" id="todos" role="tabpanel" aria-labelledby="orders-all-tab">
+					    <div class="app-card app-card-orders-table shadow-sm mb-5">
+						    <div class="app-card-body">
+							    <div class="table-responsive">
+							        <table class="table app-table-hover mb-0 text-left">
+										<thead>
+											<tr>
 												<th class="cell">Protocolo</th>												
 												<th class="cell">Secretaria</th>
 												<th class="cell">Setor</th>
@@ -89,7 +205,6 @@
 										<tbody>
 											{% for chamado in chamados.todos %}
 											<tr>
-												<td class="cell">#{{chamado.id}}</td>
 												<td class="cell">{{chamado.n_protocolo}}</td>												
 												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
 												<td class="cell">{{chamado.setor.apelido}}</td>
@@ -153,7 +268,6 @@
 							        <table class="table app-table-hover mb-0 text-left">
 										<thead>
 											<tr>
-												<th class="cell">ID</th>
 												<th class="cell">Protocolo</th>												
 												<th class="cell">Secretaria</th>
 												<th class="cell">Setor</th>
@@ -169,7 +283,6 @@
 										<tbody>
 											{% for chamado in chamados.abertos %}
 											<tr>
-												<td class="cell">#{{chamado.id}}</td>
 												<td class="cell">{{chamado.n_protocolo}}</td>												
 												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
 												<td class="cell">{{chamado.setor.apelido}}</td>
@@ -233,7 +346,6 @@
 							        <table class="table app-table-hover mb-0 text-left">
 										<thead>
 											<tr>
-												<th class="cell">ID</th>
 												<th class="cell">Protocolo</th>												
 												<th class="cell">Secretaria</th>
 												<th class="cell">Setor</th>
@@ -249,7 +361,6 @@
 										<tbody>
 											{% for chamado in chamados.em_atendimento %}
 											<tr>
-												<td class="cell">#{{chamado.id}}</td>
 												<td class="cell">{{chamado.n_protocolo}}</td>												
 												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
 												<td class="cell">{{chamado.setor.apelido}}</td>
@@ -313,7 +424,6 @@
 							        <table class="table app-table-hover mb-0 text-left">
 										<thead>
 											<tr>
-												<th class="cell">ID</th>
 												<th class="cell">Protocolo</th>												
 												<th class="cell">Secretaria</th>
 												<th class="cell">Setor</th>
@@ -329,7 +439,6 @@
 										<tbody>
 											{% for chamado in chamados.pendentes %}
 											<tr>
-												<td class="cell">#{{chamado.id}}</td>
 												<td class="cell">{{chamado.n_protocolo}}</td>												
 												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
 												<td class="cell">{{chamado.setor.apelido}}</td>
@@ -393,7 +502,6 @@
 							        <table class="table app-table-hover mb-0 text-left">
 										<thead>
 											<tr>
-												<th class="cell">ID</th>
 												<th class="cell">Protocolo</th>												
 												<th class="cell">Secretaria</th>
 												<th class="cell">Setor</th>
@@ -409,7 +517,6 @@
 										<tbody>
 											{% for chamado in chamados.fechados %}
 											<tr>
-												<td class="cell">#{{chamado.id}}</td>
 												<td class="cell">{{chamado.n_protocolo}}</td>												
 												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
 												<td class="cell">{{chamado.setor.apelido}}</td>

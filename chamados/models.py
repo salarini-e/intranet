@@ -72,7 +72,8 @@ class Chamado(models.Model):
     user_inclusao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, null=True, verbose_name='Usuário que cadastrou', related_name="user_inclusao_chamados")
     dt_atualizacao = models.DateTimeField(auto_now=True, verbose_name='Data de ultima atualização', null=True)
     user_atualizacao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Usuário da ultima atualização', null=True, related_name="user_atualizacao_chamados")
-    dt_execucao = models.DateField(verbose_name='Data da execução do chamado', null=True)
+    dt_inicio_execucao = models.DateTimeField(verbose_name='Data do inicio da execução do chamado', null=True)
+    dt_execucao = models.DateTimeField(verbose_name='Data o fim daa execução do chamado', null=True)
     dt_fechamento = models.DateTimeField(verbose_name='Data do fechamaneto do chamado', null=True)
     n_protocolo = models.CharField(max_length=14, verbose_name='Número de protocolo', null=True)
     anexo = models.FileField(upload_to='chamados/anexos/', default=None, verbose_name='Possui alguma foto ou print do problema? Caso sim, anexe-a abaixo.', null=True, blank=True)
@@ -102,6 +103,11 @@ class Chamado(models.Model):
         count = Mensagem.objects.filter(chamado=self).count()
         print(count)
         return count
+    
+    def get_duracao_execucao(self):
+        if self.dt_inicio_execucao and self.dt_execucao:
+            return self.dt_execucao - self.dt_inicio_execucao
+        return None
 
 class Mensagem(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')    
