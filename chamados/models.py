@@ -35,7 +35,7 @@ class Atendente(models.Model):
     ativo = models.BooleanField(default=True, verbose_name='Ativo')
 
     def __str__(self):
-        return self.nome_servidorx
+        return self.nome_servidor
     
     def setName(self):
         if self.servidor:
