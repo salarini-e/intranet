@@ -194,11 +194,11 @@
 									<div class="col d-flex">
 										<div class="my-auto">Profissional designado: <strong class="ms-2">{{chamado.profissional_designado}}</strong></div>
 										{% if not chamado.dt_inicio_execucao %}
-											<a href="{% url 'chamados:inicializar' chamado.hash %}" class="btn btn-danger" style="color: white;">														
+											<a href="{% url 'chamados:inicializar' chamado.hash %}" class="btn btn-danger ms-auto" style="color: white;">														
 												<i class="fa-solid fa-stopwatch me-2"></i>Iniciar atendimento												
 											</a>
 										{% elif not chamado.dt_execucao %}
-											<a href="{% url 'chamados:finalizar' chamado.hash %}" class="btn app-btn-primary" style="color: white;">														
+											<a href="{% url 'chamados:finalizar' chamado.hash %}" class="btn app-btn-primary ms-auto" style="color: white;">														
 												<i class="fa-solid fa-circle-check me-2"></i>Finalizar atendimento
 											</a>
 										{% else %}
