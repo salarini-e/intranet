@@ -21,9 +21,9 @@ class TipoChamado(models.Model):
 
 class Atendente(models.Model):
     NIVEL_CHOICES = (
-        ('0', 'Nível 0 - Help Desk'),
-        ('1', 'Nível 1 - Suporte Técnico'),
-        ('2', 'Nível 2 - Administração'),
+        ('0', 'Nível 1 - Help Desk'),
+        ('1', 'Nível 2 - Suporte Técnico'),
+        ('2', 'Nível 3 - Administração'),
 
     )
     servidor = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Servidor', null=True)

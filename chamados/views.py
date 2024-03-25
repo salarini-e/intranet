@@ -101,7 +101,7 @@ def detalhes(request, hash):
         'IMP': OSImpressora,
         'INT': OSInternet,
         'SIS': OSSistemas,
-        'TEL': OSTelefoniaForm,
+        'TEL': OSTelefonia,
     }
     if chamado.tipo.sigla in extensoes:
         extensao = extensoes[chamado.tipo.sigla].objects.get(chamado=chamado)
