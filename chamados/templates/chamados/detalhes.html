@@ -183,6 +183,8 @@
 						</div><!--//app-card-->
 	                </div>
                 </div>
+				
+				{% if atendente.exists %}
 				{% if chamado.profissional_designado %}
 				<div class="row my-3">
 	                <div class="col col-md">
@@ -214,7 +216,6 @@
 					</div>
 				</div>
 				{% endif %}
-				{% if atendente.exists %}
 				<div class="row my-3">
 	                <div class="col col-md">
 		                <div class="app-card shadow-sm p-4">
