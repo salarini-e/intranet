@@ -20,15 +20,22 @@ class TipoChamado(models.Model):
         verbose_name_plural = 'Tipos de Chamados'
 
 class Atendente(models.Model):
+    NIVEL_CHOICES = (
+        ('0', 'Nível 0 - Help Desk'),
+        ('1', 'Nível 1 - Suporte Técnico'),
+        ('2', 'Nível 2 - Administração'),
+
+    )
     servidor = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Servidor', null=True)
     nome_servidor = models.CharField(max_length=64, verbose_name='Nome de usuário', blank=True, null=True)
+    nivel = models.CharField(max_length=1, choices=NIVEL_CHOICES, default='0')
     tipo = models.ManyToManyField(TipoChamado)
     dt_inclusao = models.DateField(auto_now_add=True, verbose_name='Data de inclusão')
     user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True)
     ativo = models.BooleanField(default=True, verbose_name='Ativo')
 
     def __str__(self):
-        return self.nome_servidor
+        return self.nome_servidorx
     
     def setName(self):
         if self.servidor:
