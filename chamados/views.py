@@ -13,11 +13,11 @@ def index(request):
     servidor = Servidor.objects.get(user=request.user)
     atendente = Atendente.objects.filter(servidor=servidor)
     if atendente.exists():
-        chamados = Chamado.objects.all()
+        chamados = Chamado.objects.all().order_by('-dt_inclusao')
         atendente = atendente.first()
         designados = chamados.filter(profissional_designado=atendente)
     else:
-        chamados = Chamado.objects.filter(requisitante=servidor)
+        chamados = Chamado.objects.filter(requisitante=servidor).order_by('-dt_inclusao')
         atendente = None
         designados = []
     
