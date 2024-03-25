@@ -35,7 +35,7 @@ class Atendente(models.Model):
     ativo = models.BooleanField(default=True, verbose_name='Ativo')
 
     def __str__(self):
-        return self.nome_servidor
+        return self.nome_servidor   
     
     def setName(self):
         if self.servidor:
@@ -159,3 +159,11 @@ class OSSistemas(models.Model):
     class Meta:
         verbose_name = 'Ordem de Serviço - Sistemas'
         verbose_name_plural = 'Ordens de Serviço - Sistemas'
+
+class OSTelefonia(models.Model):
+    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado', null=True, blank=True)
+    ramal = models.CharField(max_length=20, verbose_name='Ramal')
+
+    class Meta:
+        verbose_name = 'Ordem de Serviço - Telefonia'
+        verbose_name_plural = 'Ordens de Serviço - Telefonia'

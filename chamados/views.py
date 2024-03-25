@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import TipoChamado, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem
+from .models import TipoChamado, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem, OSTelefonia
 from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm,
-                    MensagemForm, AtendenteForm, TipoChamadoForm)
+                    MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm)
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages as message
 from django.http import JsonResponse
@@ -42,7 +42,8 @@ def criarChamado(request, sigla):
     forms ={
         'IMP': OSImpressoraForm,
         'INT': OSInternetForm,
-        'SIS': OSSistemasForm
+        'SIS': OSSistemasForm,
+        'TEL': OSTelefoniaForm,
     }
     servidor = Servidor.objects.get(user=request.user)
     tipo = TipoChamado.objects.get(sigla=sigla)
@@ -58,11 +59,8 @@ def criarChamado(request, sigla):
             chamado.save()
             chamado.gerar_hash()
             chamado.gerar_protocolo()
-            print('Opa')
             if sigla in forms:                
-                print('Uhul!')
                 if form_ext.is_valid():
-                    print('Yha!')
                     ext = form_ext.save()
                     ext.chamado = chamado
                     ext.save()
@@ -102,7 +100,8 @@ def detalhes(request, hash):
     extensoes = {
         'IMP': OSImpressora,
         'INT': OSInternet,
-        'SIS': OSSistemas
+        'SIS': OSSistemas,
+        'TEL': OSTelefoniaForm,
     }
     if chamado.tipo.sigla in extensoes:
         extensao = extensoes[chamado.tipo.sigla].objects.get(chamado=chamado)

@@ -102,3 +102,12 @@ class OSSistemasForm(forms.ModelForm):
             'chamado': forms.HiddenInput(),
             'sistema': forms.TextInput(attrs={'class': 'form-control mb-3'}),            
         }
+
+class OSTelefoniaForm(forms.ModelForm):
+    class Meta:
+        model = OSTelefonia
+        fields = ['chamado', 'ramal']
+        widgets = {
+            'chamado': forms.HiddenInput(),
+            'ramal': forms.TextInput(attrs={'class': 'form-control mb-3'}),            
+        }
