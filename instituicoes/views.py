@@ -75,7 +75,7 @@ def criar_setor(request, id):
             setor.user_inclusao = request.user
             setor.save()
             messages.success(request, f'Setor {setor.nome} cadastrada com sucesso!')
-            return redirect('ins:setores')            
+            return redirect('ins:setores', id=secretaria.id)            
     else:
         form = SetorForm(initial={'secretaria': secretaria.id ,'user_inclusao': request.user.id})
     context = {
