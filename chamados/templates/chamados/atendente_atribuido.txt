@@ -13,7 +13,7 @@ Descrição: {{chamado.descricao}}
 Local: {{chamado.setor.secretaria.nome}} - {{chamado.setor.nome}}
 Requisitante: {{chamado.requisitante.nome}}
 
-Email gerado automaticamente pelo sistema Intranet.
+Email gerado automaticamente pelo sistema {{site_name}}.
 
 Grato,
 A equipe de TI.
