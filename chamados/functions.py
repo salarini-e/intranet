@@ -11,25 +11,24 @@ from instituicoes.models import Servidor
 
 def enviar_email_atendente(request, chamado):
     
-    servidor = Servidor.objects.filter(user=request.user)
-    if servidor.exists():
-        for user in servidor:
+    servidor = chamado.profissional_designado
+    if servidor:        
             subject = "Novo chamado atribuido a você."
             email_template_name = "chamados/atendente_atribuido.txt"
             c = {
-                "email": user.email,
+                "email": servidor.email,
                 'domain': 'intranet.novafriburgo.rj.gov.br',
                 'chamado': chamado,
                 'site_name': 'Intranet',
-                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                "user": user,
+                "uid": urlsafe_base64_encode(force_bytes(servidor.pk)),
+                "servidor": servidor,
                 'url': redirect('chamados:detalhes', hash=chamado.hash).url,
                 'protocol': 'https',
             }
             email = render_to_string(email_template_name, c)
             try:
-                send_mail(subject, email, user.email, [
-                            user.email], fail_silently=False)
+                send_mail(subject, email, servidor.email, [
+                            servidor.email], fail_silently=False)
             except BadHeaderError:
                 return HttpResponse('Invalid header found.')
             return redirect("autenticacao:passwd_reset_done")
