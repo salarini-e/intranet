@@ -48,7 +48,7 @@
 							        <table class="table app-table-hover mb-0 text-left">
 										<thead>
 											<tr>
-												{% if request.user.is_staff %}
+												{% if request.user.is_staff or telefonista.exists %}
 												<th>Editar</th>
 												{% endif %}
 												<th class="cel">Secretaria</th>
@@ -61,7 +61,7 @@
 										<tbody>
 											{% for ramal in ramais %}
 											<tr>
-												{% if request.user.is_staff %}
+												{% if request.user.is_staff or telefonista.exists %}
 												<td class="cell">
 													<i class="fa-solid fa-pen-to-square"></i>
 												</td>
