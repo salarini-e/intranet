@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from instituicoes.models import Servidor
 
-def enviar_email_atendente(request, chamado):
+def enviar_email_atendente(servidor, chamado):
     
     servidor = chamado.profissional_designado
     if servidor:        
