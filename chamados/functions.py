@@ -30,7 +30,7 @@ def enviar_email_atendente(request, chamado):
                 send_mail(subject, email, servidor.email, [
                             servidor.email], fail_silently=False)
             except BadHeaderError:
-                return HttpResponse('Invalid header found.')
-            return redirect("autenticacao:passwd_reset_done")
+                return 'Falha ao enviar email.', 400
+            return 'Email enviado com sucesso.', 200
     else:
-        messages.error(request, 'Email não cadastrado no sistema.')
+        return 'Email não cadastrado no sistema.', 404

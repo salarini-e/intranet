@@ -138,7 +138,12 @@ def attChamado(request, hash):
                 chamado.prioridade = request.POST['valor']
             elif atributo == 'atendente':
                 chamado.profissional_designado = Atendente.objects.get(id=request.POST['valor'])                
-                enviar_email_atendente(chamado.profissional_designado.servidor, chamado)
+                msg, status = enviar_email_atendente(chamado.profissional_designado.servidor, chamado)
+                if status == 200:
+                    message.success(request, msg)
+                else:
+                    message.success(request, msg)
+                
             else:                
                 return JsonResponse({'status': 400})
             chamado.save()  
