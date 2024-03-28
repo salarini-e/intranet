@@ -10,25 +10,22 @@ from django.contrib import messages
 from instituicoes.models import Servidor
 
 def enviar_email_atendente(servidor, chamado):
-    
-    if servidor:        
-            subject = "Novo chamado atribuido a você."
-            email_template_name = "chamados/atendente_atribuido.txt"
-            c = {
-                "email": servidor.email,
-                'domain': 'intranet.novafriburgo.rj.gov.br',
-                'chamado': chamado,
-                'site_name': 'Intranet',                
-                "servidor": servidor,
-                'url': redirect('chamados:detalhes', hash=chamado.hash).url,
-                'protocol': 'https',
-            }
-            email = render_to_string(email_template_name, c)
-            try:
-                send_mail(subject, email, servidor.email, [servidor.email], fail_silently=False)
-            except Exception as e:
-                print(e)
-                return 'Falha ao enviar email.', 400
-            return 'Email enviado com sucesso.', 200
-    else:
-        return 'Email não cadastrado no sistema.', 404
+          
+    subject = "Novo chamado atribuido a você."
+    email_template_name = "chamados/atendente_atribuido.txt"
+    c = {
+        "email": servidor.email,
+        'domain': 'intranet.novafriburgo.rj.gov.br',
+        'chamado': chamado,
+        'site_name': 'Intranet',                
+        "servidor": servidor,
+        'url': redirect('chamados:detalhes', hash=chamado.hash).url,
+        'protocol': 'https',
+    }
+    email = render_to_string(email_template_name, c)
+    try:
+        send_mail(subject, email, servidor.email, [servidor.email], fail_silently=False)
+    except Exception as e:
+        print(e)
+        return 'Falha ao enviar email.', 400
+    return 'Email enviado com sucesso.', 200
