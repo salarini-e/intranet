@@ -1,5 +1,5 @@
 {% autoescape off %}
-Olá <b>{{servidor.nome}}</b>,
+Olá {{servidor.nome}},
 Um chamado foi atribuido a você! Sua conta aponta para este endereço de e-mail. 
 Para iniciar o atendimento deste chamado, acesse o link abaixo e clique em "Iniciar atendimento".
 {{ protocol }}://{{domain}}{{url}}
