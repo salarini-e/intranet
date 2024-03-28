@@ -1,0 +1,111 @@
+{% extends 'template.html' %}
+{% block telefonia %}active{% endblock %}
+{% block main %}   		    
+				<style>
+					#message{
+						display: none;
+					}
+					#response-message{
+						font-weight: bold;
+						color: white;
+					}
+					.bg-gray{
+						background-color: rgba(128, 128, 128, 0.281) !important;
+					}
+					input{
+						width: 300px !important;
+					}
+				</style>
+			    <div class="row g-3 mb-4 align-items-center justify-content-between">
+				    <div class="col-auto">
+			            <h1 class="app-page-title mb-0">
+							{{title}}
+						</h1>
+				    </div>
+				    <div class="col-auto">
+					     <div class="page-utilities">
+						    <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+							    <div class="col-auto">
+								    <div class="table-search-form row gx-1 align-items-center">					                    						
+					                    <div class="col-auto">
+					                        <a href="{{url_back}}" class="btn app-btn-secondary">Voltar</a>
+					                    </div>																				
+					                </div>					            
+							    </div>
+						    </div>
+					    </div>
+				    </div>
+			    </div>
+			   			    			
+				<div class="tab-content" id="orders-table-tab-content">
+			        <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
+					    <div class="app-card app-card-orders-table shadow-sm mb-5">
+						    <div class="app-card-body d-flex py-5">
+							    <form method="POST" class="mx-auto">
+									{% csrf_token %}
+									{{form}}
+									<br>
+									<button type="submit" class="btn app-btn-primary">Cadastrar</button>
+								</form>
+						       
+						    </div><!--//app-card-body-->		
+						</div><!--//app-card-->											
+			        </div><!--//tab-pane-->			        			        
+				</div><!--//tab-content-->
+				
+				
+				
+				<script src="/static/js/request.js"></script>
+				<script src="/static/js/telefonia.js"></script>
+				<script>									
+					function callSetor(e){
+						var url = "{% url 'tel:api' %}getSetores/"+e.value+"/"; 
+						getRequest(url, montarSelect);
+					}
+								
+
+					function icpf(v){
+						v=v.replace(/\D/g,"")                    //Remove tudo o que nao e digito
+						v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+						v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+																//de novo (para o segundo bloco de numeros)
+						v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hifen entre o terceiro e o quarto digitos
+						return v
+					}
+					function itel(v){
+                        v=v.replace(/\D/g,"")                 //Remove tudo o que nao e digito
+                        v=v.replace(/^(\d\d)(\d)/g,"($1) $2") //Coloca parenteses em volta dos dois primeiros digitos
+                        console.log(v.length)
+                        if (v.length<14){
+                          v=v.replace(/(\d{4})(\d)/,"$1-$2")    //Coloca hifen entre o quarto e o quinto digitos
+                        }else{
+                          v=v.replace(/(\d{4,5})(\d)/,"$1-$2")    //Coloca hifen entre o quarto e o quinto digitos
+                        }
+                        
+                        return v
+            		}
+					function icep(input) {
+						input.value = input.value.replace(/\D/g, '');
+
+						// Verifica se o valor tem pelo menos 5 dígitos
+						if (input.value.length > 5) {
+						// Insere o traço após o quinto dígito
+						input.value = input.value.substring(0, 5) + '-' + input.value.substring(5);
+						}
+					}
+					function mascara(o,f){
+								v_obj=o
+								v_fun=f
+								setTimeout("execmascara()",1)
+							}
+						
+					function execmascara(){
+								v_obj.value=v_fun(v_obj.value)
+							}
+
+					const cp_bairro = document.getElementById('id_bairro')
+					const cp_endereco = document.getElementById('id_endereco')
+
+				
+				</script>
+{% endblock %}

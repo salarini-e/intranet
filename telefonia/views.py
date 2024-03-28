@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from instituicoes.models import Secretaria, Setor, Servidor
 from .models import Ramal, Telefonista
 from .forms import RamalForm
+from django.http import HttpResponseForbidden
+from django.contrib import messages
 
 @login_required
 def index(request):
@@ -48,6 +50,27 @@ def criarRamal(request):
         else:
             print(form.errors)
             return JsonResponse({'status': 400, 'message': 'Erro ao cadastrar ramal!'})
+        return JsonResponse({'status': 200})
+    else:
+        return JsonResponse({'status': 403})
+    
+@login_required
+def editar_ramal(request, ramal_id):
+    #apenas telefonista pode usar essa função
+    #fazer um decorator para isso
+    telefonista = Telefonista.objects.filter(servidor = Servidor.objects.get(user=request.user))
+    if not telefonista.exists() or not request.user.is_superuser:
+        return HttpResponseForbidden('Você não tem permissão para acessar essa página!')
+    if request.method == 'POST': 
+        ramal = Ramal.objects.get(id=ramal_id)
+        form = RamalForm(request.POST, instance=ramal)                
+        if form.is_valid():
+            ramal=form.save()
+            messages.success(request, f'Ramal {ramal.numero} editado com sucesso!')
+            return redirect('telefonia:index')
+        else:
+            print(form.errors)
+            return JsonResponse({'status': 400, 'message': 'Erro ao editar ramal!'})
         return JsonResponse({'status': 200})
     else:
         return JsonResponse({'status': 403})

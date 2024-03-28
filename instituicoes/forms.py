@@ -26,7 +26,7 @@ class SetorForm(forms.ModelForm):
             'sigla': forms.TextInput(attrs={'class': 'form-control mb-3'}),
             'cep': forms.TextInput(attrs={'class': 'form-control mb-3', 'onkeydown': 'icep(this)','onblur':'getCEP(this)'}),
             'bairro': forms.TextInput(attrs={'class': 'form-control mb-3'}),
-            'endereco': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'endereco': forms.TextInput(attrs={'class': 'form-control mb-3', 'onchange': 'getCEP(this)'}),
             'secretaria': forms.HiddenInput(),
             'user_inclusao': forms.HiddenInput()
         }
