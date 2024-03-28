@@ -1,0 +1,21 @@
+{% autoescape off %}
+Olá <b>{{servidor.nome}}</b>,
+Um chamado foi atribuido a você! Sua conta aponta para este endereço de e-mail. 
+Para iniciar o atendimento deste chamado, acesse o link abaixo e clique em "Iniciar atendimento".
+{{ protocol }}://{{domain}}{{url}}
+
+Número do chamado: {{chamado.n_protocolo}}
+Status: {{chamado.get_status_display}}
+Prioridade: {{chamado.get_prioridade_display}}
+Tipo: {{chamado.tipo.nome}}
+Assunto: {{chamado.assunto}}
+Descrição: {{chamado.descricao}}
+Local: {{chamado.setor.secretaria.nome}} - {{chamado.setor.nome}}
+Requisitante: {{chamado.requisitante.nome}}
+
+Email gerado automaticamente pelo sistema Intranet.
+
+Grato,
+A equipe de TI.
+
+{% endautoescape %}

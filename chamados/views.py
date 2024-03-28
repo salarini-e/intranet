@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages as message
 from django.http import JsonResponse
 from django.utils import timezone
+from .functions import enviar_email_atendente
 # Create your views here.
 
 @login_required
@@ -137,6 +138,7 @@ def attChamado(request, hash):
                 chamado.prioridade = request.POST['valor']
             elif atributo == 'atendente':
                 chamado.profissional_designado = Atendente.objects.get(id=request.POST['valor'])                
+                enviar_email_atendente(chamado.profissional_designado.servidor, chamado)
             else:                
                 return JsonResponse({'status': 400})
             chamado.save()  
