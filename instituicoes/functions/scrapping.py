@@ -38,7 +38,8 @@ def df_servidores():
             # Encontre o botão "Próximo" e clique nele
             next_button = driver.find_element(By.XPATH, '//a[@data-args="PBN"]')
             next_button.click()
-            time.sleep(2)  # Aguarde um pouco para que a próxima página seja carregada
+            WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//a[@data-args="PBN"]')))
+            # time.sleep(2)  # Aguarde um pouco para que a próxima página seja carregada
         except:
             # Se não houver mais botão "Próximo", saia do loop
             break
@@ -52,8 +53,10 @@ def df_servidores():
 
 def save_servidores(df):
     for index, row in df.iterrows():
-        servidor = Meta_Servidores()
-        servidor.nome = row['Coluna 2']
-        servidor.matricula = row['Coluna 3']
+        servidor = Meta_Servidores.objects.create(
+            nome =  row['Coluna 2'],
+            matricula = row['Coluna 3']
+        )
+        
         servidor.save()
     return True
