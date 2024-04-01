@@ -4,6 +4,9 @@ from django.contrib.auth.views import PasswordResetConfirmView, PasswordResetDon
 
 app_name='autenticacao'
 urlpatterns = [
+    path('conta/', views.conta, name='conta'),
+    path('conta/alterar-foto/', views.alterarFoto, name='alterar_foto'),
+    path('conta/alterar-senha/', views.alterarSenha, name='alterar_senha'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     

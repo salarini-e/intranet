@@ -67,10 +67,12 @@ def editar_ramal(request, ramal_id):
         if form.is_valid():
             ramal=form.save()
             messages.success(request, f'Ramal {ramal.numero} editado com sucesso!')
-            return redirect('telefonia:index')
-        else:
-            print(form.errors)
-            return JsonResponse({'status': 400, 'message': 'Erro ao editar ramal!'})
-        return JsonResponse({'status': 200})
+            return redirect('telefonia:index')                    
     else:
-        return JsonResponse({'status': 403})
+        ramal = Ramal.objects.get(id=ramal_id)
+        form = RamalForm(instance=ramal)
+    conetxt = {
+            'form': form,
+            'title': 'Editar ramal'
+    }
+    return render(request, 'telefonia/editar_ramal.html', conetxt)

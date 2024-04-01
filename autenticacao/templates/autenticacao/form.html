@@ -1,0 +1,62 @@
+{% extends 'template.html' %}
+{% block main %}  
+		<style>
+			.errorlist {
+				list-style: none;
+			}
+			.errorlist, li {
+				margin: 0;
+				padding: 0;
+			}
+		</style>
+	    <div class="app-content pt-3 p-md-3 p-lg-4">
+		    <div class="container-xl">
+			    
+			    <h1 class="app-page-title">{{titulo}}</h1>
+                <div class="row gy-4">
+	                <div class="col-12 col-md-12">
+		                <div class="app-card app-card-settings shadow-sm p-4">
+						    
+						    <div class="app-card-body row">
+							    <form method="POST" class="settings-form col" style="max-width: 300px; margin: auto;">										
+									{% csrf_token %}
+																								
+								    <div class="mb-3">
+									    <label for="setting-input-1" class="form-label">Senha antiga</label>	
+											<path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+											<path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z"/>
+											<circle cx="8" cy="4.5" r="1"/>
+											</svg></span></label>
+									    <input type="password" class="form-control" id="setting-input-1" name="old_password" required>
+										<small class="text-danger">
+											{{form.errors.old_password}}
+										</small>
+									</div>
+									<div class="mb-3">
+									    <label for="setting-input-2" class="form-label">Nova senha</label>
+									    <input type="password" class="form-control" id="setting-input-2" name="new_password1"  required>
+										{{form.errors.new_password}}
+									</div>
+								    <div class="mb-3">
+									    <label for="setting-input-3" class="form-label">Confirme a nova senha</label>
+									    <input type="password" class="form-control" id="setting-input-3" name="new_password2" required>
+										<small class="text-danger">
+											{{form.errors.new_password2}}	
+										</small>
+									</div>
+									
+									<button type="submit" class="btn app-btn-primary" >Alterar senha</button>
+							    </form>
+								<div class="col d-flex">
+									<span class="helptext m-auto"><ul><li>Sua senha não pode ser muito parecida com o resto das suas informações pessoais.</li><li>Sua senha precisa conter pelo menos 8 caracteres.</li><li>Sua senha não pode ser uma senha comumente utilizada.</li><li>Sua senha não pode ser inteiramente numérica.</li></ul></span>
+								</div>
+						    </div><!--//app-card-body-->
+						    
+						</div><!--//app-card-->
+	                </div>               
+                </div><!--//row-->
+			    
+		    </div><!--//container-fluid-->
+	    </div><!--//app-content-->
+
+{% endblock %}

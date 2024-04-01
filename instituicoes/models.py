@@ -56,6 +56,7 @@ class Servidor(models.Model):
     telefone=models.CharField(max_length=15, verbose_name='Telefone')
     email=models.EmailField(max_length=64, verbose_name='E-mail')
     setor=models.ForeignKey(Setor, on_delete=models.CASCADE, verbose_name='Setor')
+    avatar=models.ImageField(upload_to='avatars/', null=True, blank=True)
     dt_inclusao=models.DateField(auto_now_add=True, verbose_name='Data de inclusão')
     user_inclusao=models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True, related_name='servidor_user_inclusao')
     ativo  = models.BooleanField(default=True)

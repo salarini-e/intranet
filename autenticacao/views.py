@@ -47,6 +47,59 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
+from instituicoes.models import Secretaria, Setor, Servidor
+def conta(request):
+    if request.method == 'POST':
+        servidor = Servidor.objects.get(user=request.user)
+        servidor.avatar = request.FILES['foto']
+        servidor.save()
+    context = {
+        'servidor': Servidor.objects.get(user=request.user)
+    }
+    return render(request, 'autenticacao/index.html', context)
+
+def alterarSenha(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('autenticacao:conta')                    
+            
+    else:
+        form = PasswordChangeForm(request.user)
+    context = {
+        'form': form,
+        'titulo': 'Mudar Senha'
+    }
+    return render(request, 'autenticacao/form_senha.html', context)
+
+def alterarFoto(request):
+    if request.method == 'POST':
+        servidor = Servidor.objects.get(user=request.user)
+        servidor.foto = request.FILES['foto']
+        servidor.save()
+        return redirect('autenticacao:conta')
+    
+    context = {
+        'servidor': Servidor.objects.get(user=request.user)
+    }
+    return render(request, 'autenticacao/form.html', context)
+
+def alterarDados(request):
+    if request.method == 'POST':
+        servidor = Servidor.objects.get(user=request.user)
+        servidor.nome = request.POST['nome']
+        servidor.email = request.POST['email']
+        servidor.telefone = request.POST['telefone']
+        servidor.celular = request.POST['celular']
+        servidor.save()
+        return redirect('autenticacao:conta')
+    
+    context = {
+        'servidor': Servidor.objects.get(user=request.user)
+    }
+    return render(request, 'autenticacao/form.html', context)
+
 def login_view(request):
     context = {}
     if request.user.is_authenticated:
