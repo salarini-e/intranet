@@ -66,10 +66,11 @@ class Servidor(models.Model):
         # Verifique se houve uma alteração no avatar
         if self.pk:  # Se o objeto já existe no banco de dados
             try:
-                old_avatar = Servidor.objects.get(pk=self.pk).avatar
-                if self.avatar and self.avatar != old_avatar:  # Se houver um novo avatar
-                    if os.path.isfile(old_avatar.path):  # Verifique se o arquivo antigo existe
-                        os.remove(old_avatar.path)  # Exclua o arquivo antigo
+                servidor = Servidor.objects.get(pk=self.pk)
+                
+                if servidor.avatar and self.avatar and self.avatar != servidor.avatar:  # Se houver um novo avatar
+                    if os.path.isfile(servidor.avatar.path):  # Verifique se o arquivo antigo existe
+                        os.remove(servidor.avatar.path)  # Exclua o arquivo antigo
             except Servidor.DoesNotExist:
                 pass  # Se não houver objeto anterior, apenas passe
         super().save(*args, **kwargs)
