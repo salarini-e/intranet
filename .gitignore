@@ -70,7 +70,7 @@ instance/
 
 # Scrapy stuff:
 .scrapy
-
+chromedriver
 # Sphinx documentation
 docs/_build/
 

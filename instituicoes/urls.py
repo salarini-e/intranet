@@ -15,4 +15,7 @@ urlpatterns = [
 
     path('api/', views.api, name='api'),    
     path('api/get-setores/<id>/', views.getSetores, name='getSetores'),
+
+
+    path('get-servidores-from-site/90e7d30f99c6d6b95a29f40f68f46d53ad40b46a6b4a08e41d8532ee396f17a/', views.get_servidores_from_site, name='get_servidores_from_site')
 ]

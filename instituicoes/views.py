@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import *
 from django.contrib import messages
-
+from .functions.scrapping import df_servidores, save_servidores
 @login_required
 def index(request):
     secretarias = Secretaria.objects.all()
@@ -133,3 +133,12 @@ def adicionar_servidor(request, id, id_setor):
 def getSetores(request, id):
     setores = Setor.objects.filter(secretaria=id).values('id', 'nome')
     return JsonResponse({'setores': list(setores)})
+
+@login_required
+def get_servidores_from_site(request):
+    df = df_servidores()
+    try:
+        save_servidores(df)
+    except:
+        return HttpResponse('Erro ao importar servidores!')
+    return HttpResponse('Servidores importados com sucesso!')

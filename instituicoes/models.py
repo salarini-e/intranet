@@ -75,3 +75,14 @@ class Servidor(models.Model):
                 pass  # Se não houver objeto anterior, apenas passe
         super().save(*args, **kwargs)
     
+class Meta_Servidores(models.Model):
+    def __str__(self):
+        return self.nome
+    
+    class Meta:
+        verbose_name = 'Meta-servidor'
+        verbose_name_plural = 'Meta-servidores (Lista de servidores do site da prefeitura)'
+    
+    nome=models.CharField(max_length=64, verbose_name='Nome')    
+    matricula=models.CharField(max_length=14, verbose_name='Matrícula', unique=True)
+    dt_inclusao=models.DateField(auto_now_add=True, verbose_name='Data de inclusão')
