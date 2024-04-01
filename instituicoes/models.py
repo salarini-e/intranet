@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import os
 
 class Secretaria(models.Model):
    
@@ -60,4 +61,16 @@ class Servidor(models.Model):
     dt_inclusao=models.DateField(auto_now_add=True, verbose_name='Data de inclusão')
     user_inclusao=models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True, related_name='servidor_user_inclusao')
     ativo  = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        # Verifique se houve uma alteração no avatar
+        if self.pk:  # Se o objeto já existe no banco de dados
+            try:
+                old_avatar = Servidor.objects.get(pk=self.pk).avatar
+                if self.avatar and self.avatar != old_avatar:  # Se houver um novo avatar
+                    if os.path.isfile(old_avatar.path):  # Verifique se o arquivo antigo existe
+                        os.remove(old_avatar.path)  # Exclua o arquivo antigo
+            except Servidor.DoesNotExist:
+                pass  # Se não houver objeto anterior, apenas passe
+        super().save(*args, **kwargs)
     
