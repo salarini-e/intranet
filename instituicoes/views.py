@@ -142,7 +142,7 @@ def getSetores(request, id):
 @login_required
 def get_servidores_from_site(request):
    
-    arquivo_excel = '/home/eduardo/Documentos/Github/intranet/grdData.xlsx'    
+    arquivo_excel = '/home/sistemas/intranet/site/intranet/grdData.xlsx'    
     df = pd.read_excel(arquivo_excel)
     
     for index, row in df.iterrows():
