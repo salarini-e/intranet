@@ -1,7 +1,7 @@
 {% load static %}
 {% load custom %}
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="pt-br" data-bs-theme="{{ request.user|get_tema }}"> 
 <head>
     <title>Intranet PMNF - Bem-vindo</title>
     
@@ -329,8 +329,7 @@
 	    
 	    <footer class="app-footer w-100">
 		    <div class="container text-center py-3">	         
-            <small class="copyright">© Subsecretaria de Tecnologia da Informação e Comunicação - 2024</small>
-		       
+            <small class="copyright">© Subsecretaria de Tecnologia da Informação e Comunicação - 2024</small>			
 		    </div>
 	    </footer>
 	    
@@ -348,6 +347,24 @@
     <!-- Page Specific JS -->
     <!-- <script src="/static/js/app.js"></script>  -->
 
+	<!-- <link rel="stylesheet" href="https://code.s4d.io/widget-space/production/main.css">
+	<script src="https://code.s4d.io/widget-space/production/bundle.js"></script>	
+		<div id="my-webex-widget" />
+	<script>
+	var widgetEl = document.getElementById('my-webex-widget');
+	
+	webex.widget(widgetEl).spaceWidget({
+		accessToken: 'OTJkZjM3ODItZTY0MC00ZGQ5LTg1NTctYTg0ZTUyZGI2MzBhMDMwNmViNGEtYzA0_P0A1_e5c281af-e52d-4327-b536-d6ff626743ff',
+		destinationId: 'eduardo.pmnf@gmail.com',
+		destinationType: 'email',
+		spaceActivities: {"files":true,"meet":true,"message":true,"people":true},
+		initialActivity: 'message',
+		secondaryActivitiesFullWidth: false,
+		composerActions: {"files":true,"meet":true,"message":true,"people":true},
+		disablePresence: false,
+		disableFlags: false
+	});
+	</script> -->
 </body>
 </html> 
 

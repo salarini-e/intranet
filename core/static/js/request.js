@@ -23,6 +23,9 @@ function getRequest(url, callback) {
         if (xhr.readyState === 4 && xhr.status === 200) { 
             callback(xhr.responseText);
         }
+        else if (xhr.readyState === 4 && xhr.status === 404) {
+            callback(404);
+        }
     };
 
     xhr.open("GET", url, true); 

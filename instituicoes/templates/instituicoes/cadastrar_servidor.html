@@ -1,0 +1,221 @@
+{% extends 'template.html' %}
+{% block telefonia %}active{% endblock %}
+{% block main %}   		    
+				<style>
+					#message{
+						padding: 0px 20px;
+					}
+					.bg-gray{
+						background-color: rgba(128, 128, 128, 0.281) !important;
+					}
+					input{
+						width: 300px !important;
+					}
+				</style>
+			    <div class="row g-3 mb-4 align-items-center justify-content-between">
+				    <div class="col-auto">
+			            <h1 class="app-page-title mb-0">
+							Cadastro de servidor público
+						</h1>
+				    </div>
+				    <!-- <div class="col-auto">
+					     <div class="page-utilities">
+						    <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+							    <div class="col-auto">
+								    <div class="table-search-form row gx-1 align-items-center">					                    						
+					                    <div class="col-auto">
+					                        <a href="#" class="btn app-btn-secondary">Voltar</a>
+					                    </div>																				
+					                </div>					            
+							    </div>
+						    </div>
+					    </div>
+				    </div> -->
+			    </div>
+			   			    			
+				<div class="tab-content" id="orders-table-tab-content">
+			        <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
+					    <div class="app-card app-card-orders-table shadow-sm mb-5">
+						    <div class="app-card-body d-flex py-5">
+							    <form method="POST" class="mx-auto">
+									{% if messages %}
+									<div class="alert alert-danger " id="message">
+										{% for message in messages %}
+										<p id="response-message">{{ message }}{{message.status}}</p>
+										{% endfor %}
+									</div>
+									{% endif %}
+									
+									{% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="matricula" class="form-label">Sua matrícula</label>
+                                        <div class="d-flex">
+											<input type="text" class="form-control" id="matricula" name="matricula" required>
+											<button type="button" class="btn btn-secondary ms-2" onclick="callMetaServidor()">Validar</button>
+										</div>
+                                        <small id="error" class="text-danger">
+                                            
+                                        </small>
+                                    </div>
+									<div id="novos-inputs">
+
+									</div>
+                                    
+									<br>
+									<button type="submit" class="btn app-btn-primary">Cadastrar</button>
+								</form>
+						       
+						    </div><!--//app-card-body-->		
+						</div><!--//app-card-->											
+			        </div><!--//tab-pane-->			        			        
+				</div><!--//tab-content-->
+				
+				
+				
+				<script src="/static/js/request.js"></script>
+				
+				<script>		
+					function errorCPF(response){
+						response = JSON.parse(response);
+						var cpfSmall = document.getElementById('errorCPF');
+						cpfSmall.innerText = response.msg;
+					}
+					function checkInputLength(inputId) {
+						var input = document.getElementById(inputId);
+						if(input.value.length === 14) {
+							getRequest("{% url 'ins:testar_cpf' %}" + "?cpf=" + input.value, errorCPF);
+						} else {
+							console.log(input.value.length)
+						}
+					}
+                    function montarSelect(response){    
+						var form = document.getElementById('novos-inputs');
+						form.innerHTML = '';
+						console.log(response)
+                        if (response == 404){                            
+                            document.getElementById('error').innerHTML = 'Servidor não encontrado';
+                        }else{
+                            document.getElementById('error').innerHTML = '';
+                            // Create input for name
+                            var nameInput = document.createElement("input");
+                            nameInput.type = "text";
+                            nameInput.className = "form-control mb-3";
+                            nameInput.id = "name";
+                            nameInput.name = "name";
+                            nameInput.required = true;
+							nameInput.readOnly = true; 
+                            var nameLabel = document.createElement("label");
+                            nameLabel.for = "name";
+                            nameLabel.className = "form-label";
+                            nameLabel.innerHTML = "Nome";
+
+                            // Create input for CPF Oculto
+                            var cpfOcultoInput = document.createElement("input");
+                            cpfOcultoInput.type = "text";
+                            cpfOcultoInput.className = "form-control mb-3";
+                            cpfOcultoInput.id = "cpf_oculto";
+                            cpfOcultoInput.name = "cpf_oculto";
+                            cpfOcultoInput.required = true;
+							cpfOcultoInput.readOnly = true; // Make the input read-only
+                            var cpfOcultoLabel = document.createElement("label");
+                            cpfOcultoLabel.for = "cpf";
+                            cpfOcultoLabel.className = "form-label";
+                            cpfOcultoLabel.innerHTML = "CPF";
+							
+							
+							
+							// Create input for CPF
+							var cpfInput = document.createElement("input");
+                            cpfInput.type = "text";
+                            cpfInput.className = "form-control";
+                            cpfInput.id = "cpf";
+                            cpfInput.name = "cpf";
+                            cpfInput.required = true;
+							
+                            var cpfLabel = document.createElement("label");
+                            cpfLabel.for = "cpf";
+                            cpfLabel.className = "form-label";
+                            cpfLabel.innerHTML = "Confirme seu CPF";
+							var cpfSmall = document.createElement("small");
+							cpfSmall.id = "errorCPF";
+							cpfSmall.className = "text-danger";
+							
+
+                            // Append to form                            
+                            form.appendChild(nameLabel);
+                            form.appendChild(nameInput);
+                            form.appendChild(cpfOcultoLabel);
+                            form.appendChild(cpfOcultoInput);
+							form.appendChild(cpfLabel);
+                            form.appendChild(cpfInput);
+							form.appendChild(cpfSmall);
+
+                            
+                        	response = JSON.parse(response);
+							
+							nameInput.value = response.nome;
+							cpfOcultoInput.value = response.cpf;
+
+							cpfInput.addEventListener('keyup', function (e) {
+								mascara(cpfInput, icpf);
+								checkInputLength(cpfInput.id);
+							});
+                        }
+                        
+                    }
+					function callMetaServidor(){
+						// document.getElementById('response-message').display = 'none';
+                        var matricula = document.getElementById('matricula').value; 
+                        var url = "{% url 'ins:getServidor' %}" + "?matricula=" + matricula; 
+
+						getRequest(url, montarSelect);
+					}
+			
+					
+
+					
+					function itel(v){
+                        v=v.replace(/\D/g,"")                 //Remove tudo o que nao e digito
+                        v=v.replace(/^(\d\d)(\d)/g,"($1) $2") //Coloca parenteses em volta dos dois primeiros digitos
+                        console.log(v.length)
+                        if (v.length<14){
+                          v=v.replace(/(\d{4})(\d)/,"$1-$2")    //Coloca hifen entre o quarto e o quinto digitos
+                        }else{
+                          v=v.replace(/(\d{4,5})(\d)/,"$1-$2")    //Coloca hifen entre o quarto e o quinto digitos
+                        }
+                        
+                        return v
+            		}
+					function icpf(v){
+						v=v.replace(/\D/g,"")                    //Remove tudo o que nao e digito
+						v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+						v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+																//de novo (para o segundo bloco de numeros)
+						v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hifen entre o terceiro e o quarto digitos
+						return v
+					}
+					function mascara(o,f){
+								v_obj=o
+								v_fun=f
+								setTimeout("execmascara()",1)
+							}
+						
+					function execmascara(){
+								v_obj.value=v_fun(v_obj.value)
+							}
+
+					
+				
+                    document.getElementById('matricula').addEventListener('input', function (e) {
+                        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                    });
+
+					document.querySelector('form').addEventListener('keydown', function(e) {
+						if (e.keyCode == 13) {
+							e.preventDefault();
+							return false;
+						}
+					});
+
+				</script>
+{% endblock %}

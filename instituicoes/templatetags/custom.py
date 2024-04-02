@@ -13,3 +13,12 @@ def get_avatar(request):
             return '/static/images/user.png'
     except:
         return '/static/images/user.png'
+
+@register.filter
+def get_tema(user):
+    if user.last_name == '0':
+        return 'light'
+    elif user.last_name == '1':
+        return 'dark'
+    else:
+        return 'light'

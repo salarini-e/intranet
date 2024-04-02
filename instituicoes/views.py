@@ -4,11 +4,12 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import *
 from django.contrib import messages
-from .functions.scrapping import df_servidores, save_servidores
 
 from .models import Meta_Servidores
 from datetime import datetime
 import pandas as pd
+
+from .functions.validation import validate_cpf
 
 @login_required
 def index(request):
@@ -141,7 +142,8 @@ def getSetores(request, id):
 
 @login_required
 def get_servidores_from_site(request):
-   
+    if True:
+        return HttpResponse("Você não tem autorização!")
     arquivo_excel = '/home/sistemas/intranet/site/intranet/grdData.xlsx'    
     df = pd.read_excel(arquivo_excel)
     
@@ -168,3 +170,69 @@ def get_servidores_from_site(request):
         servidor.save()
 
     return HttpResponse("Dados importados com sucesso!")
+
+def cadastrar_servidor(request):
+    if request.method == 'POST':
+        
+        cpf_oculto = request.POST.get('cpf_oculto')
+        cpf_oculto = cpf_oculto.replace('*', '')
+        cpf = request.POST.get('cpf')
+        if cpf_oculto in cpf:
+            print("Os dígitos ocultos estão contidos no CPF completo.")
+        else:
+            messages.error(request, 'CPF incorreto!')
+            
+        
+    return render(request, 'instituicoes/cadastrar_servidor.html')
+
+def api_get_servidor(request):
+    dict_mapeamento = {
+    'SEC MUNIC FINANCAS,PLANEJAMENTO,DESENV ECON GESTAO': 'Secretaria Municipal de Finanças, Planejamento, Desenvolvimento Econômico e Gestão',
+    'CONTROLADORIA GERAL': 'Controladoria Geral',
+    'PROCURADORIA GERAL': 'Procuradoria Geral do Município',
+    'SECRETARIA MUNICIPAL DA CASA CIVIL - EGCP': 'Secretaria Municipal da Casa Civil',
+    'SECRETARIA MUN DE AGRICULTURA E DES RURAL': 'Secretaria Municipal de Agricultura e Desenvolvimento Rural',
+    'SEC MUN DE ASSIST SOCIAL DIREITOS HUMANOS TRABALHO': 'Secretaria Municipal de Assistência Social, Direitos Humanos, Trabalho e Políticas Públicas para a Juventude',
+    'SEC MUN CIENCIA,TEC,INOV E ENSINO PROF. E SUPERIOR': 'Secretaria Municipal de Ciência, Tecnologia, Inovação e Educação Profissionalizante e Superior',
+    'SECRETARIA MUN DE CULTURA': 'Secretaria Municipal de Cultura',
+    'SECRETARIA MUNICIPAL DE DEFESA CIVIL': 'Secretaria Municipal de Defesa Civil',
+    'SECRETARIA MUNICIPAL DE EDUCACAO': 'Secretaria Municipal de Educação',
+    'SEC MUN DE ESPORTES E LAZER': 'Secretaria Municipal de Esportes e Lazer',
+    'SECRETARIA MUNICIPAL DE GOVERNO': 'Secretaria de Governo',
+    'SECRETARIA MUNICIPAL DE INFRAESTRUTURA E LOGISTICA': 'Secretaria Municipal de Infraestrutura e Logística',
+    'SEC MUN DE MEIO AMBIENTE E DESENV URBANO SUSTENTAV': 'Secretaria Municipal de Meio Ambiente e Desenvolvimento Urbano Sustentável',
+    'SECRETARIA MUNICIPAL DE OBRAS': 'Secretaria Municipal de Obras',
+    'SEC MUN DE ORDEM E MOBILIDADE URBANA': 'Secretaria Municipal de Ordem e Mobilidade Urbana',
+    'SECRETARIA MUNICIPAL DE SAUDE': 'Secretaria Municipal de Saúde',
+    'SECRETARIA MUN DE SERVICOS PUBLICOS': 'Secretaria Municipal de Serviços Públicos',
+    'SECRETARIA MUN DE TURISMO E MARKETING DA CIDADE': 'Secretaria Municipal de Turismo e Marketing da Cidade',
+    'SUBPREFEITURA DE CAMPO DO COELHO': 'Subprefeitura de Campo do Coelho',
+    'SUBPREFEITURA DE CONSELHEIRO PAULINO': 'Subprefeitura de Conselheiro Paulino',
+    'SUBPREFEITURA DE LUMIAR E SAO PEDRO DA SERRA': 'Subprefeitura de Lumiar e São Pedro da Serra',
+    'SUBPREFEITURA DE OLARIA E CONEGO': 'Subprefeitura de Olaria e Cônego',
+    'FUNDACAO D. JOAO VI DE NOVA FRIBURGO': 'Fundação Dom João VI de Nova Friburgo',
+    'SECRETARIA MUNICIPAL DE POLITICAS SOBRE DROGAS': 'Secretaria Municipal de Políticas Sobre Drogas',
+    'CRAS': 'CRAS',
+    'CREAS': 'CREAS',
+    'QUADRO SUPLEMENTAR-LEI COMPLEM.30/2007': 'QUADRO SUPLEMENTAR-LEI COMPLEM.30/2007'
+}
+    matricula = request.GET.get('matricula', None)
+    # Remove leading zeros from matricula if present
+    if matricula is not None:
+        matricula = matricula.lstrip('0')
+    if matricula is not None:
+        try:
+            servidor = Meta_Servidores.objects.get(matricula=matricula)
+            
+            return JsonResponse({'nome': servidor.nome, 'cpf': servidor.cpf})
+            # secretaria = Secretaria.objects.get(nome=dict_mapeamento[servidor.secretaria])
+            # setores = Setor.objects.filter(secretaria=secretaria)
+            # return JsonResponse({'nome': servidor.nome, 'cpf': servidor.cpf, 'secretaria': {'id': secretaria.id, 'nome': secretaria.nome, 'setores': [{'id': setor.id, 'nome': setor.nome} for setor in setores]}})
+        except Meta_Servidores.DoesNotExist:
+            return JsonResponse({'error': 'Servidor not found'}, status=404)
+    else:
+        return JsonResponse({'error': 'No matricula provided'}, status=400)
+    
+def api_teste_cpf(request):
+    cpf = request.GET.get('cpf', None)    
+    return JsonResponse({'msg': validate_cpf(cpf)})

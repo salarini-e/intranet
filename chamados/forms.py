@@ -44,7 +44,7 @@ class CriarChamadoForm(forms.ModelForm):
     class Meta:
         model = Chamado
         fields = ['secretaria', 'setor', 'telefone', 'requisitante', 'tipo', 'assunto'
-                  , 'descricao', 'user_inclusao', 'anexo']
+                  , 'descricao', 'periodo_preferencial', 'user_inclusao', 'anexo']
         widgets = {            
             'setor': forms.Select(attrs={'class': 'form-select'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control'}),

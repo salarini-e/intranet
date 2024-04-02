@@ -49,6 +49,16 @@ class Atendente(models.Model):
         verbose_name = 'Atendente'
         verbose_name_plural = 'Atendentes'
 
+class PeriodoPreferencial(models.Model):
+    nome = models.CharField(max_length=64, verbose_name='Nome')
+    
+    def __str__(self):
+        return self.nome
+
+    class Meta:
+        verbose_name = 'Período Preferencial'
+        verbose_name_plural = 'Períodos Preferenciais'
+
 class Chamado(models.Model):
     PRIORIDADE_CHOICES =(
         ('', 'Não definida'),
@@ -65,6 +75,7 @@ class Chamado(models.Model):
         ('4', 'Finalizado'),
     )
 
+
     setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, verbose_name='Para qual setor é o chamado?', null=True)
     telefone=models.CharField(max_length=14, verbose_name='Qual telefone para contato?')
     requisitante = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Para quem é o chamado?', null=True, related_name="requisitante_chamados")
@@ -73,6 +84,8 @@ class Chamado(models.Model):
     prioridade = models.CharField(max_length=1, choices=PRIORIDADE_CHOICES, default='')
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
     descricao = models.TextField(default='', verbose_name='Descrição do problema')
+    periodo_preferencial = models.ManyToManyField(PeriodoPreferencial, verbose_name='Período preferencial')
+    dt_agendamento = models.DateTimeField(verbose_name='Data agendada para o atendimento', null=True, blank=True)
     atendente = models.ForeignKey(Atendente, on_delete=models.SET_NULL, verbose_name='Atendente', null=True,related_name="chamados_atendente")
     profissional_designado = models.ForeignKey(Atendente, on_delete=models.SET_NULL, verbose_name='Profissional designado', null=True, related_name="profissional_designado_chamados")
     dt_inclusao = models.DateTimeField(auto_now_add=True, verbose_name='Data de inclusão')
