@@ -38,8 +38,8 @@ def df_servidores():
             # Encontre o botão "Próximo" e clique nele
             next_button = driver.find_element(By.XPATH, '//a[@data-args="PBN"]')
             next_button.click()
-            WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//a[@data-args="PBN"]')))
-            # time.sleep(2)  # Aguarde um pouco para que a próxima página seja carregada
+            # WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//a[@data-args="PBN"]')))
+            time.sleep(4)  # Aguarde um pouco para que a próxima página seja carregada
         except:
             # Se não houver mais botão "Próximo", saia do loop
             break

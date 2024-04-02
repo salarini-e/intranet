@@ -5,11 +5,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
 
-# Configuração do Selenium
-options = webdriver.ChromeOptions()
-# options.add_argument('--ignore-certificate-errors')
-# options.add_argument('--incognito')
-# options.add_argument('--headless')  # Execute o Chrome em modo headless (sem interface gráfica)
+
+import openpyxl
+excel_file_path = "dados.xlsx"
+
+
+options = webdriver.ChromeOptions()    
 
 # Inicialização do driver do Chrome
 driver = webdriver.Chrome(options=options)
@@ -35,10 +36,12 @@ while True:
             data.append([col_2, col_3])
 
     try:
+
         # Encontre o botão "Próximo" e clique nele
         next_button = driver.find_element(By.XPATH, '//a[@data-args="PBN"]')
         next_button.click()
-        time.sleep(2)  # Aguarde um pouco para que a próxima página seja carregada
+        # WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//a[@data-args="PBN"]')))
+        time.sleep(4)  # Aguarde um pouco para que a próxima página seja carregada
     except:
         # Se não houver mais botão "Próximo", saia do loop
         break
@@ -48,3 +51,16 @@ driver.quit()
 
 # Criar um DataFrame pandas com os dados coletados
 df = pd.DataFrame(data, columns=["Coluna 2", "Coluna 3"])
+
+df.to_excel(excel_file_path, index=False)
+
+workbook = openpyxl.load_workbook(excel_file_path)
+worksheet = workbook.active
+
+# Definir largura automática das colunas
+for column_cells in worksheet.columns:
+    length = max(len(str(cell.value)) for cell in column_cells)
+    worksheet.column_dimensions[column_cells[0].column_letter].width = length + 2
+
+# Salvar as alterações no arquivo Excel
+workbook.save(excel_file_path)

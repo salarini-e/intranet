@@ -5,6 +5,11 @@ from .models import *
 from .forms import *
 from django.contrib import messages
 from .functions.scrapping import df_servidores, save_servidores
+
+from .models import Meta_Servidores
+from datetime import datetime
+import pandas as pd
+
 @login_required
 def index(request):
     secretarias = Secretaria.objects.all()
@@ -136,9 +141,30 @@ def getSetores(request, id):
 
 @login_required
 def get_servidores_from_site(request):
-    df = df_servidores()
-    try:
-        save_servidores(df)
-    except:
-        return HttpResponse('Erro ao importar servidores!')
-    return HttpResponse('Servidores importados com sucesso!')
+   
+    arquivo_excel = '/home/eduardo/Documentos/Github/intranet/grdData.xlsx'    
+    df = pd.read_excel(arquivo_excel)
+    
+    for index, row in df.iterrows():
+
+        nome = row['Nome']
+        matricula = row['Matricula']
+        lotacao = row['Lotacao']
+        cpf = row['CPF']
+        
+
+        if Meta_Servidores.objects.filter(matricula=matricula).exists():
+            continue
+
+        
+        servidor = Meta_Servidores(
+            nome=nome,
+            matricula=matricula,
+            secretaria=lotacao,
+            cpf=cpf,
+            dt_inclusao=datetime.now()  # Data de inclusão definida como o momento atual
+        )
+                
+        servidor.save()
+
+    return HttpResponse("Dados importados com sucesso!")

@@ -85,4 +85,6 @@ class Meta_Servidores(models.Model):
     
     nome=models.CharField(max_length=164, verbose_name='Nome')    
     matricula=models.CharField(max_length=14, verbose_name='Matrícula', unique=True)
+    secretaria = models.CharField(max_length=164, verbose_name='Secretaria')    
+    cpf=models.CharField(max_length=14, verbose_name='Parte do CPF')    
     dt_inclusao=models.DateField(auto_now_add=True, verbose_name='Data de inclusão')

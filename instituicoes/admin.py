@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Secretaria, Setor, Servidor
+from .models import Secretaria, Setor, Servidor, Meta_Servidores
 
 @admin.register(Secretaria)
 class SecretariaAdmin(admin.ModelAdmin):
@@ -18,3 +18,9 @@ class ServidorAdmin(admin.ModelAdmin):
     list_display = ('nome', 'cpf', 'dt_nascimento', 'matricula', 'telefone', 'email', 'setor', 'dt_inclusao', 'user_inclusao', 'ativo')
     list_filter = ('dt_inclusao', 'user_inclusao', 'ativo', 'setor')
     search_fields = ('nome', 'cpf', 'matricula', 'telefone', 'email')
+
+@admin.register(Meta_Servidores)
+class MetaServidoresAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'matricula', 'secretaria', 'cpf', 'dt_inclusao')
+    search_fields = ['nome', 'matricula', 'secretaria', 'cpf']
+    readonly_fields = ('dt_inclusao',)
