@@ -156,12 +156,12 @@
                             var nameInput = document.createElement("input");
                             nameInput.type = "text";
                             nameInput.className = "form-control bg-readonly mb-3";
-                            nameInput.id = "name";
-                            nameInput.name = "name";
+                            nameInput.id = "nome";
+                            nameInput.name = "nome";
                             nameInput.required = true;
 							nameInput.readOnly = true; 
                             var nameLabel = document.createElement("label");
-                            nameLabel.for = "name";
+                            nameLabel.for = "nome";
                             nameLabel.className = "form-label";
                             nameLabel.innerHTML = "Nome";
 
@@ -235,7 +235,7 @@
                            
                             // Create select for Setor
                             var setorSelect = document.createElement("select");
-                            setorSelect.className = "form-control";
+                            setorSelect.className = "form-select";
                             setorSelect.id = "setor";
                             setorSelect.required = true;
                             setorSelect.readOnly = true; 
@@ -255,7 +255,7 @@
                             
                             var optionSetor = document.createElement("option");
                             optionSetor.value = 0;
-                            optionSetor.text = 'Outro';
+                            optionSetor.text = 'Outro';                            
                             setorSelect.add(optionSetor);
 
                             setorSelect.tabIndex = "-1";
@@ -272,6 +272,7 @@
                             otherSetorInput.style.display = "none";
                             otherSetorInput.id = "outro";
                             otherSetorInput.name = "outro";
+                            otherSetorInput.required = false;
 
                             // Append to form
                             form.appendChild(otherSetorInput);
@@ -305,10 +306,25 @@
                             telefoneLabel.for = "telefone";
                             telefoneLabel.className = "form-label";
                             telefoneLabel.innerHTML = "Digite seu telefone";
-
                             // Append to form
                             form.appendChild(telefoneLabel);
                             form.appendChild(telefoneInput);
+                            
+                            // Create input for Data de Nascimento
+                            var dtNascimentoInput = document.createElement("input");
+                            dtNascimentoInput.type = "date";
+                            dtNascimentoInput.className = "form-control mb-3";                        
+                            dtNascimentoInput.id = "dt_nascimento";
+                            dtNascimentoInput.name = "dt_nascimento";
+                            dtNascimentoInput.required = true;
+                            // Create label for Data de Nascimento
+                            var dtNascimentoLabel = document.createElement("label");
+                            dtNascimentoLabel.for = "dt_nascimento";
+                            dtNascimentoLabel.className = "form-label";
+                            dtNascimentoLabel.innerHTML = "Digite sua data de nascimento";
+                            // Append to form
+                            form.appendChild(dtNascimentoLabel);
+                            form.appendChild(dtNascimentoInput);
                             
 
                             setorSelect.addEventListener('change', function() {                                
@@ -318,6 +334,7 @@
                                 } else {
                                     otherSetorInput.style.display = "none";
                                     otherSetorInput.value = '';
+                                    otherSetorInput.required = false;
                                 }
                             });
 

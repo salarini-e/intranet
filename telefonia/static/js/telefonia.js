@@ -50,7 +50,7 @@ function montarSelect(dados) {
         dados = JSON.parse(dados);
     }
     
-    var select = document.getElementById("setting-input-2");
+    var select = document.getElementById(id_select);
     select.innerHTML = '<option value="none">Selecione um setor</option>';
 
     if (dados && Array.isArray(dados.setores)) {

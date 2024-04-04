@@ -63,7 +63,9 @@
 											<tr>
 												{% if request.user.is_staff or telefonista.exists %}
 												<td class="cell">
-													<i class="fa-solid fa-pen-to-square"></i>
+													<a href="{% url 'tel:editar_ramal' ramal.id %}">
+														<i class="fa-solid fa-pen-to-square"></i>
+													</a>
 												</td>
 												{% endif %}
 												<td class="cell">{{ramal.secretaria}}</td>

@@ -284,10 +284,10 @@ def cadastro_user(request):
         if cpf_oculto in cpf:
             form = ServidorForm2(request.POST)        
             if form.is_valid():
-                servidor = form.save()
+                servidor = form.save(commit=False)
                 servidor.setor = form.get_setor(request)
                 servidor.user = form.create_user()
-                servidor.user_inclusao = request.user
+                servidor.user_inclusao = None
                 servidor.save()
                 messages.success(request, f'Servidor {servidor.nome} cadastrada com sucesso!')
         

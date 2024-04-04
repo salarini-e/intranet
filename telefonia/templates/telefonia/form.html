@@ -57,7 +57,28 @@
 				
 				<script src="/static/js/request.js"></script>
 				<script src="/static/js/telefonia.js"></script>
-				<script>									
+				<script>					
+				
+					function montarSelect(dados) {						
+						
+						if (typeof dados === 'string') {
+							dados = JSON.parse(dados);
+						}
+						
+						var select = document.getElementById('id_setor');
+						select.innerHTML = '<option value="none">Selecione um setor</option>';
+					
+						if (dados && Array.isArray(dados.setores)) {
+							dados.setores.forEach(function(setor) {
+								var option = document.createElement("option"); 
+								option.value = setor.id;
+								option.textContent = setor.nome; 
+								select.appendChild(option); 
+							});
+						} else {
+							console.error("A propriedade 'setores' não está presente ou não é um array nos dados recebidos.");
+						}
+					}				
 					function callSetor(e){
 						var url = "{% url 'tel:api' %}getSetores/"+e.value+"/"; 
 						getRequest(url, montarSelect);

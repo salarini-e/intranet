@@ -105,7 +105,7 @@ class ServidorForm(forms.ModelForm):
 class ServidorForm2(forms.ModelForm):
     
     secretaria = forms.CharField(label='Secretaria', widget=forms.TextInput(attrs={'class': 'form-control mb-3'}))
-    outro = forms.CharField(label='Outro', widget=forms.TextInput(attrs={'class': 'form-control mb-3'}))
+    outro = forms.CharField(label='Outro', widget=forms.TextInput(attrs={'class': 'form-control mb-3', 'required': False}), required=False)
 
     class Meta:
         model = Servidor
@@ -128,7 +128,8 @@ class ServidorForm2(forms.ModelForm):
         user.save()
         return user
     def get_setor(self, request):
-        if self.cleaned_data['setor'] == 0:
+        
+        if request.POST['setor'] == 0:
             try:
                 setor=Setor.objects.create(nome=self.cleaned_data['outro'],
                                  apelido='Sem setor', 
@@ -140,8 +141,9 @@ class ServidorForm2(forms.ModelForm):
                                  )
             except:
                 raise ValidationError(('Erro ao criar setor'), code='invalid2')
-            return setor        
-        return Setor.objects.get(id=request.POST['setor'])
+            return setor
+        setor = Setor.objects.get(id=request.POST['setor'])
+        return setor
         
     def clean_cpf(self):
         cpf = self.validate_cpf(self.cleaned_data["cpf"])

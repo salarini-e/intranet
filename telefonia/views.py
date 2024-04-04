@@ -59,7 +59,7 @@ def editar_ramal(request, ramal_id):
     #apenas telefonista pode usar essa função
     #fazer um decorator para isso
     telefonista = Telefonista.objects.filter(servidor = Servidor.objects.get(user=request.user))
-    if not telefonista.exists() or not request.user.is_superuser:
+    if not telefonista.exists() and not request.user.is_superuser:
         return HttpResponseForbidden('Você não tem permissão para acessar essa página!')
     if request.method == 'POST': 
         ramal = Ramal.objects.get(id=ramal_id)
@@ -73,6 +73,7 @@ def editar_ramal(request, ramal_id):
         form = RamalForm(instance=ramal)
     conetxt = {
             'form': form,
-            'title': 'Editar ramal'
+            'title': 'Editar ramal',
+            'url_back': redirect('tel:index').url
     }
-    return render(request, 'telefonia/editar_ramal.html', conetxt)
+    return render(request, 'telefonia/form.html', conetxt)
