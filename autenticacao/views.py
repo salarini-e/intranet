@@ -63,7 +63,7 @@ def alterarSenha(request):
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             form.save()
-            return redirect('autenticacao:conta')                    
+            return redirect('/')                    
             
     else:
         form = PasswordChangeForm(request.user)
