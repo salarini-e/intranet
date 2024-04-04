@@ -131,14 +131,15 @@ class ServidorForm2(forms.ModelForm):
         
         if request.POST['setor'] == 0:
             try:
-                setor=Setor.objects.create(nome=self.cleaned_data['outro'],
+                setor=Setor(nome=self.cleaned_data['outro'],
                                  apelido='Sem setor', 
                                  sigla='SS', 
                                  cep='00000-000', 
                                  bairro='Sem bairro', 
                                  endereco='Sem endereço', 
                                  secretaria=Secretaria.objects.get(id=request.POST['secretaria']), 
-                                 )
+                            )
+                setor.save()
             except:
                 raise ValidationError(('Erro ao criar setor'), code='invalid2')
             return setor
