@@ -190,11 +190,15 @@
                             cpfInput.name = "cpf";
                             cpfInput.required = true;
 							
+                            
                             var cpfLabel = document.createElement("label");
                             cpfLabel.for = "cpf";
                             cpfLabel.className = "form-label";
                             cpfLabel.innerHTML = "Confirme seu CPF";
-							var cpfSmall = document.createElement("small");
+							
+                            var divErrorCpf = document.createElement("div");
+                            divErrorCpf.className = "row";
+                            var cpfSmall = document.createElement("small");
 							cpfSmall.id = "errorCPF";
 							cpfSmall.className = "text-danger";
 							
@@ -225,7 +229,8 @@
                             form.appendChild(cpfOcultoInput);
 							form.appendChild(cpfLabel);
                             form.appendChild(cpfInput);
-							form.appendChild(cpfSmall);
+                            form.appendChild(divErrorCpf)
+							divErrorCpf.appendChild(cpfSmall);
                             form.appendChild(secretariaLabel);
                             form.appendChild(secretariaSelect);
                             
