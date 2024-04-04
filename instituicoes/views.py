@@ -13,7 +13,7 @@ from .functions.validation import validate_cpf
 
 @login_required
 def index(request):
-    secretarias = Secretaria.objects.all()
+    secretarias = Secretaria.objects.all().order_by('nome')
     context = {
         'secretarias': secretarias
     }
@@ -137,7 +137,7 @@ def adicionar_servidor(request, id, id_setor):
 
 @login_required 
 def getSetores(request, id):
-    setores = Setor.objects.filter(secretaria=id).values('id', 'nome')
+    setores = Setor.objects.filter(secretaria=id).values('id', 'nome').order_by('nome')
     return JsonResponse({'setores': list(setores)})
 
 @login_required
