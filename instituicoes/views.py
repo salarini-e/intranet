@@ -171,20 +171,6 @@ def get_servidores_from_site(request):
 
     return HttpResponse("Dados importados com sucesso!")
 
-def cadastrar_servidor(request):
-    if request.method == 'POST':
-        
-        cpf_oculto = request.POST.get('cpf_oculto')
-        cpf_oculto = cpf_oculto.replace('*', '')
-        cpf = request.POST.get('cpf')
-        if cpf_oculto in cpf:
-            print("Os dígitos ocultos estão contidos no CPF completo.")
-        else:
-            messages.error(request, 'CPF incorreto!')
-            
-        
-    return render(request, 'instituicoes/cadastrar_servidor.html')
-
 def api_get_servidor(request):
     dict_mapeamento = {
     'SEC MUNIC FINANCAS,PLANEJAMENTO,DESENV ECON GESTAO': 'Secretaria Municipal de Finanças, Planejamento, Desenvolvimento Econômico e Gestão',
@@ -223,8 +209,17 @@ def api_get_servidor(request):
     if matricula is not None:
         try:
             servidor = Meta_Servidores.objects.get(matricula=matricula)
-            
-            return JsonResponse({'nome': servidor.nome, 'cpf': servidor.cpf})
+            print(servidor.secretaria)
+            print(dict_mapeamento[servidor.secretaria])
+            try:
+                secretaria = Secretaria.objects.get(nome=dict_mapeamento[servidor.secretaria])
+                setores = Setor.objects.filter(secretaria=secretaria)
+                print(secretaria)
+                print(setores)
+            except Exception as e:
+                print(e)
+                pass
+            return JsonResponse({'nome': servidor.nome, 'cpf': servidor.cpf, 'secretaria': {'id': secretaria.id, 'nome': secretaria.nome}, 'setores': [{'id': setor.id, 'nome': setor.nome} for setor in setores]})
             # secretaria = Secretaria.objects.get(nome=dict_mapeamento[servidor.secretaria])
             # setores = Setor.objects.filter(secretaria=secretaria)
             # return JsonResponse({'nome': servidor.nome, 'cpf': servidor.cpf, 'secretaria': {'id': secretaria.id, 'nome': secretaria.nome, 'setores': [{'id': setor.id, 'nome': setor.nome} for setor in setores]}})

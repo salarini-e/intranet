@@ -255,79 +255,86 @@ class PasswordResetCompleteView(PasswordContextMixin, TemplateView):
         context['login_url'] = resolve_url(settings.LOGIN_URL)
         return context
 
-
+from instituicoes.forms import ServidorForm2
 def cadastro_user(request):
     
-    form_pessoa = ''
-    pessoa = ''
-    is_user = False
-
     if request.user.is_authenticated:
-        is_user = True
+        return redirect('/')
 
-        try:
-            pessoa = Pessoa.objects.get(user=request.user)
-            form_pessoa = Form_Pessoa(initial={'email': request.user.email}, instance=pessoa)
-            
-        except Exception as e:
-            form_pessoa = Form_Pessoa(initial={'email': request.user.email})
-    else:
-        form_pessoa = Form_Pessoa()
+       
 
     if request.method == "POST":
-        if pessoa:
-            form_pessoa = Form_Pessoa(request.POST, instance=pessoa)
+        """
+        'csrfmiddlewaretoken': ['MD2KkFbCaaV1X8jUHnC4xOmKjuSuQqpJDR2y4u6v6Ig2dKWeBLL3lh4yE2auEm3O'], 
+        'matricula': ['63508'], 
+        'name': ['LUIS EDUARDO CORDEIRO SALARINI'], 
+        'cpf_oculto': ['***.535.177-**'], 
+        'cpf': ['152.535.177-07'], 
+        'secretaria': ['1'], 
+        'setor': ['0'], 
+        'outro': ['Teste'], 
+        'email': ['eduardo.pmnf@gmail.com'], 
+        'telefone': ['(22) 99252-2121'], 
+        'consentimento': ['on']}>
+
+        """        
+        cpf_oculto = request.POST.get('cpf_oculto')
+        cpf_oculto = cpf_oculto.replace('*', '')
+        cpf = request.POST.get('cpf')
+        if cpf_oculto in cpf:
+            form = ServidorForm2(request.POST)        
+            if form.is_valid():
+                servidor = form.save()
+                servidor.setor = form.get_setor(request)
+                servidor.user = form.create_user()
+                servidor.user_inclusao = request.user
+                servidor.save()
+                messages.success(request, f'Servidor {servidor.nome} cadastrada com sucesso!')
+        
+                return redirect('/')            
+            else:
+                print(form.errors)
+                messages.error(request, 'Erro ao cadastrar servidor.')
         else:
-            form_pessoa = Form_Pessoa(request.POST)
+            messages.error(request, 'CPF incorreto!')
+            
+        
+        if False:
 
-        if form_pessoa.is_valid():
+        
+            user = User.objects.create_user(
+                username=request.POST['email'], email=request.POST['email'], password=request.POST['password'])
+            user.first_name = request.POST['nome']
+            user.save()
 
-            # com o objetivo de diminuir a identação, e não sendo possível utilizar guard clauses, optei em 
-            # verificar o is_user duas vezes
-            if is_user or request.POST['password'] == request.POST['password2']:
-                if is_user or len(request.POST['password']) >= 8:
-                    try:
-                        user = ''
+            # servidor = form_pessoa.save(commit=False)
+            # servidor.user = user
 
-                        if is_user:
-                            user = User.objects.get(id=request.user.id)
-                            user.email = request.POST['email']
-                            user.save()
-                        else:
-                            user = User.objects.create_user(
-                                username=request.POST['email'], email=request.POST['email'], password=request.POST['password'])
-                            user.first_name = request.POST['nome']
-                            user.save()
-
-                        pessoa = form_pessoa.save(commit=False)
-                        pessoa.user = user
-
-                        pessoa.save()
-                        messages.success(request, 'Usuário cadastrado com sucesso!')
-                        user = authenticate(request, username=request.POST['email'], password=request.POST['password'])
-                        if user is not None:
-                                login(request, user)
-                                if pessoa.possui_cnpj:
-                                    return redirect('empreendedor:cadastrar_empresa')
-                                try:
-                                    return redirect(request.GET['next'])
-                                except:
-                                    return redirect('/')
-                        else:
-                                context = {
-                                    'error': True,
-                                }
-                    except Exception as e:
-                        messages.error(
-                            request, 'Email de usuário já cadastrado')
+            #             pessoa.save()
+            #             messages.success(request, 'Usuário cadastrado com sucesso!')
+            #             user = authenticate(request, username=request.POST['email'], password=request.POST['password'])
+            #             if user is not None:
+            #                     login(request, user)
+            #                     if pessoa.possui_cnpj:
+            #                         return redirect('empreendedor:cadastrar_empresa')
+            #                     try:
+            #                         return redirect(request.GET['next'])
+            #                     except:
+            #                         return redirect('/')
+            #             else:
+            #                     context = {
+            #                         'error': True,
+            #                     }
+            #         except Exception as e:
+            #             messages.error(
+            #                 request, 'Email de usuário já cadastrado')
                         
-                messages.error(
-                    request, 'A senha deve possuir pelo menos 8 caracteres')
-            else:                
-                messages.error(request, 'As senhas digitadas não se coincidem')
+            #     messages.error(
+            #         request, 'A senha deve possuir pelo menos 8 caracteres')
+            # else:                
+            #     messages.error(request, 'As senhas digitadas não se coincidem')
     context = {
-        'form_pessoa': form_pessoa,
-        'is_user': is_user
+        
     }    
     return render(request, 'adm/cadastro.html', context)
 
@@ -350,3 +357,18 @@ def checkCPF(request):
 
         return JsonResponse(response_data)
     return JsonResponse({})
+
+
+def cadastrar_servidor(request):
+    if request.method == 'POST':
+        
+        cpf_oculto = request.POST.get('cpf_oculto')
+        cpf_oculto = cpf_oculto.replace('*', '')
+        cpf = request.POST.get('cpf')
+        if cpf_oculto in cpf:
+            print("Os dígitos ocultos estão contidos no CPF completo.")
+        else:
+            messages.error(request, 'CPF incorreto!')
+            
+        
+    return render(request, 'instituicoes/cadastrar_servidor.html')

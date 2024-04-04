@@ -41,31 +41,23 @@
             {% endfor %}
         </div>
         {% endif %} 
-            <form class="pt-3 px-5" method="POST">
-                {% csrf_token %}
-                {% bootstrap_form form_pessoa %} 
-
-                {% if error_senha.0 %}     
-                <p class="bg-danger text-white text-center py-2 mt-4 text-wrap" style="font-size: 11pt;">
-                   {{error_senha.1}}
-                </p>          
-                {% endif %}
+            <form class="pt-3 px-5" method="POST">                
                 
-                {% if not is_user %}
-                <div class="mb-3">  
-                    <label class="mb-2 {% if error_senha.0 %}text-danger{% endif %}" for="senha">
-                        Senha:
-                    </label>
-                    <input required class="form-control" type="password" name="password" id="senha">
-                </div>
+                {% csrf_token %}
                 <div class="mb-3">
-                    <label class="mb-2 {% if error_senha.0 %}text-danger{% endif %}" for="senha2">
-                        Repita a senha:
-                    </label>
-                    <input required class="form-control" type="password" name="password2" id="senha2">
+                    <label for="matricula" class="form-label">Sua matrícula</label>
+                    <div class="d-flex">
+                        <input type="text" class="form-control" id="matricula" name="matricula" required>
+                        <button type="button" class="btn btn-secondary ms-2" onclick="callMetaServidor()">Validar</button>
+                    </div>
+                    <small id="error" class="text-danger">
+                        
+                    </small>
                 </div>
-                {% endif %}
-                <div class="form-check">
+                <div id="novos-inputs" class="mb-3">
+
+                </div>
+                <div class="form-check mt-3">
                     <input type="checkbox" name="consentimento" class="form-check-input" id="id_consentimento">
                     <label class="form-check-label" for="id_consentimento">Eu concordo com os termos e condições e autorizo o uso dos meus dados pessoais conforme a <a href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Política de Privacidade</a>.</label>
                 </div>
@@ -132,16 +124,226 @@
         color: white;
     }
 </style>
-<script>
-    function icpf(v){
-                v=v.replace(/\D/g,"")                    //Remove tudo o que nao e digito
-                v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
-                v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
-                                                        //de novo (para o segundo bloco de numeros)
-                v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hifen entre o terceiro e o quarto digitos
-                return v
-            }
-    function itel(v){
+<script src="/static/js/request.js"></script>
+				
+				<script>		
+					function errorCPF(response){
+						response = JSON.parse(response);                        
+						var cpfSmall = document.getElementById('errorCPF');
+						cpfSmall.innerText = response.msg;
+					}
+					function checkInputLength(inputId) {
+						var input = document.getElementById(inputId);
+						if(input.value.length === 14) {
+                            console.log(input.value.length)
+							getRequest("{% url 'ins:testar_cpf' %}" + "?cpf=" + input.value, errorCPF);
+						} else {
+							console.log(input.value.length)
+						}
+					}
+
+               
+                    
+                    function montarSelect(response){    
+						var form = document.getElementById('novos-inputs');
+						form.innerHTML = '';
+						console.log(response)
+                        if (response == 404){                            
+                            document.getElementById('error').innerHTML = 'Servidor não encontrado';
+                        }else{
+                            document.getElementById('error').innerHTML = '';
+                            // Create input for name
+                            var nameInput = document.createElement("input");
+                            nameInput.type = "text";
+                            nameInput.className = "form-control bg-readonly mb-3";
+                            nameInput.id = "name";
+                            nameInput.name = "name";
+                            nameInput.required = true;
+							nameInput.readOnly = true; 
+                            var nameLabel = document.createElement("label");
+                            nameLabel.for = "name";
+                            nameLabel.className = "form-label";
+                            nameLabel.innerHTML = "Nome";
+
+                            // Create input for CPF Oculto
+                            var cpfOcultoInput = document.createElement("input");
+                            cpfOcultoInput.type = "text";
+                            cpfOcultoInput.className = "form-control bg-readonly mb-3";
+                            cpfOcultoInput.id = "cpf_oculto";
+                            cpfOcultoInput.name = "cpf_oculto";
+                            cpfOcultoInput.required = true;
+							cpfOcultoInput.readOnly = true; // Make the input read-only
+                            var cpfOcultoLabel = document.createElement("label");
+                            cpfOcultoLabel.for = "cpf";
+                            cpfOcultoLabel.className = "form-label";
+                            cpfOcultoLabel.innerHTML = "CPF";
+							
+							
+							
+							// Create input for CPF
+							var cpfInput = document.createElement("input");
+                            cpfInput.type = "text";
+                            cpfInput.className = "form-control";
+                            cpfInput.id = "cpf";
+                            cpfInput.name = "cpf";
+                            cpfInput.required = true;
+							
+                            var cpfLabel = document.createElement("label");
+                            cpfLabel.for = "cpf";
+                            cpfLabel.className = "form-label";
+                            cpfLabel.innerHTML = "Confirme seu CPF";
+							var cpfSmall = document.createElement("small");
+							cpfSmall.id = "errorCPF";
+							cpfSmall.className = "text-danger";
+							
+                            // Create select for Secretaria
+                            var secretariaSelect = document.createElement("select");
+                            secretariaSelect.className = "form-select bg-readonly";
+                            secretariaSelect.id = "secretaria";
+                            secretariaSelect.required = true;
+                            secretariaSelect.readOnly = true; 
+                            secretariaSelect.name = "secretaria"
+                            var secretariaLabel = document.createElement("label");
+                            secretariaLabel.for = "secretaria";
+                            secretariaLabel.className = "form-label mt-3";
+                            secretariaLabel.innerHTML = "Secretaria";
+
+                            // Create options for select
+                            var option1 = document.createElement("option");                           
+                            secretariaSelect.add(option1);
+                            secretariaSelect.tabIndex = "-1";
+                            secretariaSelect.setAttribute("aria-disabled", "true");
+
+
+
+                            // Append to form                            
+                            form.appendChild(nameLabel);
+                            form.appendChild(nameInput);
+                            form.appendChild(cpfOcultoLabel);
+                            form.appendChild(cpfOcultoInput);
+							form.appendChild(cpfLabel);
+                            form.appendChild(cpfInput);
+							form.appendChild(cpfSmall);
+                            form.appendChild(secretariaLabel);
+                            form.appendChild(secretariaSelect);
+                            
+                        	response = JSON.parse(response);
+                            option1.value = response.secretaria.id;
+                            option1.text = response.secretaria.nome;                       
+							nameInput.value = response.nome;
+							cpfOcultoInput.value = response.cpf;
+                           
+                            // Create select for Setor
+                            var setorSelect = document.createElement("select");
+                            setorSelect.className = "form-control";
+                            setorSelect.id = "setor";
+                            setorSelect.required = true;
+                            setorSelect.readOnly = true; 
+                            setorSelect.name = "setor"
+                            var setorLabel = document.createElement("label");
+                            setorLabel.for = "setor";
+                            setorLabel.className = "form-label mt-3";
+                            setorLabel.innerHTML = "Selecione seu setor";
+
+                            // Assuming response.setores is the setores data
+                            for (var i = 0; i < response.setores.length; i++) {
+                                var optionSetor = document.createElement("option");
+                                optionSetor.value = response.setores[i].id;
+                                optionSetor.text = response.setores[i].nome;
+                                setorSelect.add(optionSetor);
+                            }
+                            
+                            var optionSetor = document.createElement("option");
+                            optionSetor.value = 0;
+                            optionSetor.text = 'Outro';
+                            setorSelect.add(optionSetor);
+
+                            setorSelect.tabIndex = "-1";
+                            setorSelect.setAttribute("aria-disabled", "true");
+                            
+                            // Append to form                            
+                            form.appendChild(setorLabel);
+                            form.appendChild(setorSelect);
+
+                            // Create hidden input for other setor
+                            var otherSetorInput = document.createElement("input");
+                            otherSetorInput.className = "form-control mt-2";
+                            otherSetorInput.placeholder = "Digite o nome do setor";
+                            otherSetorInput.style.display = "none";
+                            otherSetorInput.id = "outro";
+                            otherSetorInput.name = "outro";
+
+                            // Append to form
+                            form.appendChild(otherSetorInput);
+                            
+                            // Create input for Email
+                            var emailInput = document.createElement("input");
+                            emailInput.type = "email";
+                            emailInput.className = "form-control mb-3";                            
+                            emailInput.id = "email";
+                            emailInput.name = "email";
+                            emailInput.required = true;
+                            // Create label for Email
+                            var emailLabel = document.createElement("label");
+                            emailLabel.for = "email";
+                            emailLabel.className = "form-label mt-3";
+                            emailLabel.innerHTML = "Digite seu email";
+
+                            // Append to form
+                            form.appendChild(emailLabel);
+                            form.appendChild(emailInput);
+
+                            // Create input for Telefone
+                            var telefoneInput = document.createElement("input");
+                            telefoneInput.type = "tel";
+                            telefoneInput.className = "form-control mb-3";                        
+                            telefoneInput.id = "telefone";
+                            telefoneInput.name = "telefone";
+                            telefoneInput.required = true;
+                            // Create label for Telefone
+                            var telefoneLabel = document.createElement("label");
+                            telefoneLabel.for = "telefone";
+                            telefoneLabel.className = "form-label";
+                            telefoneLabel.innerHTML = "Digite seu telefone";
+
+                            // Append to form
+                            form.appendChild(telefoneLabel);
+                            form.appendChild(telefoneInput);
+                            
+
+                            setorSelect.addEventListener('change', function() {                                
+                                if (this.value == '0') {
+                                    otherSetorInput.style.display = "block";
+                                    otherSetorInput.required = true;
+                                } else {
+                                    otherSetorInput.style.display = "none";
+                                    otherSetorInput.value = '';
+                                }
+                            });
+
+							cpfInput.addEventListener('keyup', function (e) {                                
+								mascara(cpfInput, icpf);
+                                checkInputLength(cpfInput.id);
+								
+							});
+                            telefoneInput.addEventListener('keyup', function (e) {
+								mascara(telefoneInput, itel);								
+							});
+                        }
+                        
+                    }
+					function callMetaServidor(){
+						// document.getElementById('response-message').display = 'none';
+                        var matricula = document.getElementById('matricula').value; 
+                        var url = "{% url 'ins:getServidor' %}" + "?matricula=" + matricula; 
+
+						getRequest(url, montarSelect);
+					}
+			
+					
+
+					
+					function itel(v){
                         v=v.replace(/\D/g,"")                 //Remove tudo o que nao e digito
                         v=v.replace(/^(\d\d)(\d)/g,"($1) $2") //Coloca parenteses em volta dos dois primeiros digitos
                         console.log(v.length)
@@ -152,100 +354,43 @@
                         }
                         
                         return v
-            }
-    function icep(input) {
-            input.value = input.value.replace(/\D/g, '');
+            		}
+					function icpf(v){
+						v=v.replace(/\D/g,"")                    //Remove tudo o que nao e digito
+						v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+						v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+																//de novo (para o segundo bloco de numeros)
+						v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hifen entre o terceiro e o quarto digitos
+						return v
+					}
+					function mascara(o,f){
+								v_obj=o
+								v_fun=f
+								setTimeout("execmascara()",1)
+							}
+						
+					function execmascara(){
+								v_obj.value=v_fun(v_obj.value)
+							}
 
-            // Verifica se o valor tem pelo menos 5 dígitos
-            if (input.value.length > 5) {
-            // Insere o traço após o quinto dígito
-            input.value = input.value.substring(0, 5) + '-' + input.value.substring(5);
-            }
-            }
-    function mascara(o,f){
-                v_obj=o
-                v_fun=f
-                setTimeout("execmascara()",1)
-            }
-        
-    function execmascara(){
-                v_obj.value=v_fun(v_obj.value)
-            }
+					
+				
+                    document.getElementById('matricula').addEventListener('input', function (e) {
+                        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                    });
 
-    const cp_bairro = document.getElementById('id_bairro')
-    const cp_endereco = document.getElementById('id_endereco')
+					document.querySelector('form').addEventListener('keydown', function(e) {
+						if (e.keyCode == 13) {
+							e.preventDefault();
+							return false;
+						}
+					});
 
-    function getCEP(input){
-            icep(input)
-            v=input.value
-            if(v.length == 9){
-                let cep = v.replace("-","")
-                buscaEndereco(cep);
-
-            }
-            }
-    function buscaEndereco(cep){
-            let url = "https://viacep.com.br/ws/"+cep+"/json/";
-            fetch(url)
-            .then((response)=>{
-                response.json()
-                .then((data)=>{
-                    autoComplete(data)
-                })
-            })
-            }
-    function removeAccents(string) {
-            return string.replace(/[ÀÁÂÃÄÅàáâã]/g, "?")
-                .replace(/[ÈÉÊËÈèé]/g, "?")
-                .replace(/[ÌÍÎÏìíî]/g, "?")
-                .replace(/[ÒÓÔÕÖóòõ]/g, "?")
-                .replace(/[ÙÚÛÜùúû]/g, "?")
-                .replace(/[Çç]/g, "?")
-            }
-    async function autoComplete(end){
-        if (end.logradouro != undefined){
-            cp_endereco.value = end.logradouro;
-        }
-        if (end.bairro != undefined){
-            cp_bairro.value = end.bairro;
-            console.log(end)
-        }
-        }
-    
-    
-    function checkCPF(cpf){
-            const csrfTokenInput = document.querySelector("input[name='csrfmiddlewaretoken']");
-            const csrfToken = csrfTokenInput.value;
-            let url = "/cadastro/checkcpf/";
-            fetch(url,{
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrfToken,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ cpf: cpf })
-            })
-            .then((response)=>{
-                response.json()
-                .then((data)=>{
-                    const cpfInput = document.getElementById("id_cpf");
-                    let smallError = cpfInput.nextElementSibling; // Verifique se já existe um elemento irmão
-
-                    if (data.exists) {
-                        if (!smallError || smallError.tagName !== "SMALL") {
-                            smallError = document.createElement("small");
-                            smallError.classList.add("text-danger");
-                            cpfInput.parentNode.insertBefore(smallError, cpfInput.nextSibling);
-                        }
-                        smallError.textContent = data.message;
-                    } else {
-                        // Se exists for false, remova a mensagem de erro existente
-                        if (smallError && smallError.tagName === "SMALL") {
-                            smallError.remove();
-                        }
+				</script>
+                <style>
+                    .bg-readonly{
+                        background-color: #b5cfec !important;
+                        pointer-events: none;
+                        touch-action: none;
                     }
-                })
-            })
-            }
-    
-</script>
+                </style>

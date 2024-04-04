@@ -17,4 +17,6 @@ urlpatterns = [
 
     path('cadastro/', views.cadastro_user, name='cadastrar_usuario'),
     path('cadastro/checkcpf/', views.checkCPF, name='checkcpf'),    
+
+    path('cadastro-servidor/', views.cadastrar_servidor, name='cadastrar_servidor'),
 ]

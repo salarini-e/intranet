@@ -54,7 +54,7 @@
             <form class="pt-3" method="POST">
                 {% csrf_token %}
                 <div class="mb-3">
-                  <label for="exampleInputEmail1" class="form-label">CPF ou Email:</label>
+                  <label for="exampleInputEmail1" class="form-label">Matrícula:</label>
                   <input name="username" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">                  
                 </div>
                 <div class="mb-3">
@@ -67,11 +67,11 @@
                 </div> -->
                 <button type="submit" class="btn btn-primary w-100 mb-3">Entrar</button>
                 
-                <!-- <a href="{% url 'autenticacao:cadastrar_usuario' %}">
+                <a href="{% url 'autenticacao:cadastrar_usuario' %}">
                     <small>                        
                             Quero me cadastrar                    
                     </small>
-                </a>         -->
+                </a>        
                 <br>                        
                 <a href="{% url 'autenticacao:passwd_reset' %}">
                     <small>Esqueci minha senha</small>

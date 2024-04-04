@@ -59,7 +59,7 @@ class Servidor(models.Model):
     setor=models.ForeignKey(Setor, on_delete=models.CASCADE, verbose_name='Setor')
     avatar=models.ImageField(upload_to='avatars/', null=True, blank=True)
     dt_inclusao=models.DateField(auto_now_add=True, verbose_name='Data de inclusão')
-    user_inclusao=models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True, related_name='servidor_user_inclusao')
+    user_inclusao=models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', blank=True, null=True, related_name='servidor_user_inclusao')
     ativo  = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
