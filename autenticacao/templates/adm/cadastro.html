@@ -263,7 +263,8 @@
                             var optionSetor = document.createElement("option");
                             optionSetor.value = 0;
                             optionSetor.text = 'Outro';                            
-                            setorSelect.add(optionSetor);
+                            setorSelect.add(optionSetor);                            
+                            
 
                             setorSelect.tabIndex = "-1";
                             setorSelect.setAttribute("aria-disabled", "true");
@@ -276,7 +277,12 @@
                             var otherSetorInput = document.createElement("input");
                             otherSetorInput.className = "form-control mt-2";
                             otherSetorInput.placeholder = "Digite o nome do setor";
-                            otherSetorInput.style.display = "none";
+                            if (response.setores.length == 0) {
+                                otherSetorInput.style.display = "block";
+                            }else{
+                                otherSetorInput.style.display = "none";    
+                            }
+                            
                             otherSetorInput.id = "outro";
                             otherSetorInput.name = "outro";
                             otherSetorInput.required = false;
