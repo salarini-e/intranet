@@ -129,7 +129,7 @@ class ServidorForm2(forms.ModelForm):
         return user
     def get_setor(self, request):
         
-        if request.POST['setor'] == 0:
+        if request.POST['setor'] == '0':
             try:
                 setor=Setor(nome=self.cleaned_data['outro'],
                                  apelido='Sem setor', 
