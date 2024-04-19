@@ -54,7 +54,8 @@ class CriarChamadoForm(forms.ModelForm):
             'assunto': forms.TextInput(attrs={'class': 'form-control'}),
             'prioridade': forms.Select(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),            
-            'descricao': forms.Textarea(attrs={'class': 'form-control'}),            
+            'descricao': forms.Textarea(attrs={'class': 'form-control'}),  
+            'periodo_preferencial': forms.CheckboxSelectMultiple(),
             'user_inclusao': forms.HiddenInput(),
             'anexo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }

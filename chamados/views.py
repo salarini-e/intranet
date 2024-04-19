@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import TipoChamado, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem, OSTelefonia
+from .models import TipoChamado, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem, OSTelefonia, PeriodoPreferencial
 from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm,
                     MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm)
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages as message
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from .functions import enviar_email_atendente
 # Create your views here.
@@ -166,3 +166,12 @@ def finalizar_atendimento(request, hash):
     chamado.save()
     message.success(request, f'Atendimento finalizado ao chamado {chamado.n_protocolo}!')
     return redirect('chamados:index')
+
+#criar periodos
+def criar_periodos(request):
+    if PeriodoPreferencial.objects.all().exists():
+        return HttpResponse("OK. Periodos já criados.")
+
+    PeriodoPreferencial.objects.create(nome="Manhã")
+    PeriodoPreferencial.objects.create(nome="Tarde")    
+    return HttpResponse("OK. Periodos criados com sucesso!")

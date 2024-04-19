@@ -12,4 +12,6 @@ urlpatterns = [
     path('<hash>/detalhes/att/', views.attChamado, name='attChamado'),    
     path('<hash>/iniciar-atendimento/', views.iniciar_atendimento, name='inicializar'),
     path('<hash>/finalizar-atendimento/', views.finalizar_atendimento, name='finalizar'),
+
+    path('criar-periodos/', views.criar_periodos, name='criar_periodos')
 ]

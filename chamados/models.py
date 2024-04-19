@@ -84,7 +84,7 @@ class Chamado(models.Model):
     prioridade = models.CharField(max_length=1, choices=PRIORIDADE_CHOICES, default='')
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
     descricao = models.TextField(default='', verbose_name='Descrição do problema')
-    periodo_preferencial = models.ManyToManyField(PeriodoPreferencial, verbose_name='Período preferencial')
+    periodo_preferencial = models.ManyToManyField(PeriodoPreferencial, verbose_name='Escolha o período que você pode ser atendido')
     dt_agendamento = models.DateTimeField(verbose_name='Data agendada para o atendimento', null=True, blank=True)
     atendente = models.ForeignKey(Atendente, on_delete=models.SET_NULL, verbose_name='Atendente', null=True,related_name="chamados_atendente")
     profissional_designado = models.ForeignKey(Atendente, on_delete=models.SET_NULL, verbose_name='Profissional designado', null=True, related_name="profissional_designado_chamados")
