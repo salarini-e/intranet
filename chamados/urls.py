@@ -13,5 +13,8 @@ urlpatterns = [
     path('<hash>/iniciar-atendimento/', views.iniciar_atendimento, name='inicializar'),
     path('<hash>/finalizar-atendimento/', views.finalizar_atendimento, name='finalizar'),
 
-    path('criar-periodos/', views.criar_periodos, name='criar_periodos')
+    path('criar-periodos/', views.criar_periodos, name='criar_periodos'),
+    path('api/', views.index, name='api'),
+    path('api/setor/', views.api_criar_setor, name='api_criar_setor'),
+    path('api/servidor/', views.api_criar_servidor, name='api_criar_servidor')
 ]

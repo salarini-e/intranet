@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
-from .models import TipoChamado, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem, OSTelefonia, PeriodoPreferencial
-from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm,
-                    MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm)
+from .models import TipoChamado, Secretaria, Setor, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem, OSTelefonia, PeriodoPreferencial
+from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm, ServidorForm,
+                    MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm, CriarSetorForm)
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages as message
 from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from .functions import enviar_email_atendente
+from django.contrib.auth.models import User
 # Create your views here.
 
 @login_required
@@ -36,7 +37,6 @@ def index(request):
         'atendente': atendente
     }
     return render(request, 'chamados/index.html', context)
-
 
 @login_required
 def criarChamado(request, sigla):
@@ -77,7 +77,9 @@ def criarChamado(request, sigla):
 
     context={
         'form': form,
-        'form_ext': form_ext
+        'form_ext': form_ext,
+        'form_setor': CriarSetorForm(prefix='setor', initial={'user_inclusao': request.user.id}),
+        'form_user': ServidorForm(prefix='servidor', initial={'user_inclusao': request.user.id})
     }
     return render(request, 'chamados/chamado-criar.html', context)
 
@@ -175,3 +177,37 @@ def criar_periodos(request):
     PeriodoPreferencial.objects.create(nome="Manhã")
     PeriodoPreferencial.objects.create(nome="Tarde")    
     return HttpResponse("OK. Periodos criados com sucesso!")
+
+def api_criar_setor(request):
+    if request.method == 'POST':
+        print(request.POST)
+        data = request.POST
+        setor = Setor.objects.create(
+            nome=data['nome'],
+            apelido=data['apelido'],
+            sigla=data['sigla'],
+            cep=data['cep'],
+            bairro=data['bairro'],
+            endereco=data['endereco'],
+            secretaria=Secretaria.objects.get(id=data['secretaria']),
+        )
+        return JsonResponse({'status': 200, 'message': 'Setor criado com sucesso!'})
+    return JsonResponse({'status': 400, 'message': 'Erro ao criar setor!'})
+
+
+
+def api_criar_servidor(request):
+    if request.method == 'POST':
+        print(request.POST)
+        form = ServidorForm(request.POST)                    
+        if form.is_valid():
+            servidor = form.save()    
+            servidor.user = form.create_user()
+            servidor.user_inclusao = request.user
+            servidor.save()
+        else:
+            print(form.errors)
+            return JsonResponse({'status': 400, 'message': 'Erro ao criar usuário!'})
+        
+        return JsonResponse({'status': 200, 'message': 'Usuário criado com sucesso!'})        
+    return JsonResponse({'status': 400})

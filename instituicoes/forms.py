@@ -31,11 +31,10 @@ class SetorForm(forms.ModelForm):
             'user_inclusao': forms.HiddenInput()
         }
 
-class ServidorForm(forms.ModelForm):
-    username = forms.CharField(label='Nome de usuário', widget=forms.TextInput(attrs={'class': 'form-control mb-3'}))
+class ServidorForm(forms.ModelForm):    
     class Meta:
         model = Servidor
-        fields = ['username', 'nome', 'cpf', 'dt_nascimento', 'matricula', 'telefone', 'email', 'setor', 'ativo', 'user_inclusao']        
+        fields = ['nome', 'cpf', 'dt_nascimento', 'matricula', 'telefone', 'email', 'setor', 'ativo', 'user_inclusao']        
         widgets = {            
             'nome': forms.TextInput(attrs={'class': 'form-control mb-3'}),
             'cpf': forms.TextInput(attrs={'class': 'form-control mb-3', 'onkeydown': 'mascara(this, icpf)'}),
@@ -50,7 +49,7 @@ class ServidorForm(forms.ModelForm):
         }
     
     def create_user(self):
-        user = User.objects.create_user(self.cleaned_data['username'], self.cleaned_data['email'], self.cleaned_data['cpf'])
+        user = User.objects.create_user(self.cleaned_data['matricula'], self.cleaned_data['email'], self.cleaned_data['cpf'])
         user.save()
         return user
     
