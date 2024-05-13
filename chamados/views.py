@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import TipoChamado, Secretaria, Setor, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem, OSTelefonia, PeriodoPreferencial
 from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm, ServidorForm,
-                    MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm, CriarSetorForm)
+                    MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm, CriarSetorForm, Form_Agendar_Atendimento)
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages as message
 from django.http import JsonResponse, HttpResponse
@@ -123,6 +123,47 @@ def detalhes(request, hash):
     }
     return render(request, 'chamados/detalhes.html', context)
 
+
+@login_required
+def detalhes_imprimir(request, hash):
+    
+    chamado = Chamado.objects.get(hash=hash)
+    servidor = Servidor.objects.get(user=request.user)
+    if request.method == 'POST':
+        print(request.POST)
+        form = MensagemForm(request.POST, request.FILES)
+        if form.is_valid():
+            mensagem = form.save(commit=False)
+            mensagem.chamado = chamado
+            mensagem.user_inclusao = servidor
+            mensagem.save()            
+            message.success(request, 'Mensagem enviada com sucesso!')
+        else:
+            print(form.errors)
+
+    extensoes = {
+        'IMP': OSImpressora,
+        'INT': OSInternet,
+        'SIS': OSSistemas,
+        'TEL': OSTelefonia,
+    }
+    if chamado.tipo.sigla in extensoes:
+        extensao = extensoes[chamado.tipo.sigla].objects.get(chamado=chamado)
+    else:
+        extensao = None
+
+    context = {
+        'chamado': chamado,
+        'ext': extensao,    
+        'servidor': servidor,    
+        'atendentes': Atendente.objects.filter(ativo=True),
+        'atendente': Atendente.objects.filter(servidor=servidor),   
+        'mensagens': Mensagem.objects.filter(chamado=chamado),   
+        'prioridades': chamado.PRIORIDADE_CHOICES,
+        'status': chamado.STATUS_CHOICES,         
+    }
+    return render(request, 'chamados/detalhes-imprimir.html', context)
+
 @login_required
 def attChamado(request, hash):
     servidor = Servidor.objects.get(user=request.user)
@@ -211,3 +252,15 @@ def api_criar_servidor(request):
         
         return JsonResponse({'status': 200, 'message': 'Usuário criado com sucesso!'})        
     return JsonResponse({'status': 400})
+
+def agendar_atendimento(request, hash):
+    instance = Chamado.objects.get(hash=hash)
+    if request.method == 'POST':
+        form = Form_Agendar_Atendimento(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            message.success(request, 'Atendimento agendado com sucesso!')
+            return redirect('chamados:detalhes', hash=hash)
+    else:
+        form = Form_Agendar_Atendimento()
+    return render(request, 'chamados/generic_form.html', {'form': form, 'titulo': 'Agendar Atendimento', 'chamado': instance})

@@ -1,0 +1,104 @@
+<div class="documento-a4">
+	<h1 class="app-page-title mb-0">Chamado {{chamado.n_protocolo}}</h1>
+	<div><strong>Dt. Solicitação:</strong> {{chamado.dt_inclusao|date:"d/m/Y H:i"}}									
+	{% if chamado.dt_fechamento %}
+	<span style="margin-left: 10px;"><strong class="ms-3">Dt. conclusão: </strong>{{chamado.dt_fechamento|date:"d/m/Y H:i"}}</span></div>
+	{% endif %}
+								
+	{% if chamado.dt_agendamento %}
+	<span style="margin-left: 10px;"><strong class="ms-3">Dt. agendada p/ atendimento: </strong>{{chamado.dt_agendamento|date:"d/m/Y H:i"}}</span></div>
+	{% endif %}
+	<div class="section-intro">
+		<strong>Tipo:</strong>{{chamado.tipo.nome}}<br>
+		<strong>Requisitante:</strong> {{chamado.requisitante.nome}}<br>
+		<strong>Contato:</strong> {{chamado.telefone}}<br>
+	</div>
+	<br>
+	<div class="mb-2">
+		<strong>Assunto:</strong> {{chamado.assunto|capfirst}}<br>
+		<strong>Status:</strong> {{chamado.get_status_display}}<br>
+		<strong>Prioridade:</strong> {{chamado.get_prioridade_display}}<br>
+		<strong>Secretaria:</strong> {{chamado.setor.secretaria.nome}}<br>
+		<strong>Setor:</strong> {{chamado.setor.nome}}<br>
+		<strong>Período preferêncial:</strong> 
+		{% for periodo in chamado.periodo_preferencial.all %}
+			{{ periodo }}
+			{% if not forloop.last %}/{% endif %}
+		{% endfor %}<br>
+		<strong>Descrição:</strong> {{chamado.descricao}}<br>
+									
+		<br>
+
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				{% if ext %}
+				{% if chamado.tipo.sigla == 'IMP' %}
+				
+					<div class="mb-2"><strong>Número de serie:</strong> {{ext.n_serie}}</div>
+					<div class="mb-2"><strong>Contador:</strong> {{ext.contador}}</div>
+				{% elif chamado.tipo.sigla == 'INT' %}
+					<div class="mb-2"><strong>NOFCIP:</strong> {{ext.nofcip}}</div>									
+				{% elif chamado.tipo.sigla == 'SIS' %}
+					<div class="mb-2"><strong>Sistema:</strong> {{ext.sistema}}</div>									
+				{% endif %}
+				{% endif %}
+			</div>									
+		</div>
+							
+				
+		<h3 class="section-title mb-4"><i class="fa-solid fa-comments me-3"></i>Mensagens</h3>												
+		{% for mensagem in mensagens %}
+		<hr>
+		<div class="section-intro mb-2">
+			<div class="row">
+				<div class="col d-flex">
+					<strong>{{mensagem.autor}}</strong>
+					<i class="ms-auto">{{mensagem.dt_inclusao|date:"d/m/y"}} {{mensagem.dt_inclusao|date:"H:i"}}</i>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col d-flex">
+					<p>{{mensagem.mensagem}}</p>											
+					{% if mensagem.anexo %}<button onclick="visualizarAnexo('{{mensagem.anexo.url}}')" class="my-auto ms-auto btn app-btn-secondary"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</button>{% endif %}
+				</div>
+			</div>									
+		</div>
+		{% endfor %}								
+		<hr>										        
+	</div>
+			        
+	{% if chamado.anexo %}
+	<h4>Anexo</h4>
+	<img src="{{chamado.anexo.url}}" alt="anexo" class="img-fluid">								    
+	{% endif %}
+	
+	<style>
+	.documento-a4 {
+		font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+		font-style: normal !important;
+		width: 794px; /* Defina aqui a largura em pixels */
+		margin: 0 auto; /* Isso centralizará o elemento na página */
+		background-color: #ffffff; /* Cor de fundo opcional */
+		padding: 20px; /* Adicione espaço de preenchimento se desejar */		
+	}
+	strong{
+		line-height: 30px;
+	}
+	.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+	</style>					
+</div>
+
+<script>
+	// Função para imprimir a página
+	function imprimirPagina() {
+		window.print(); // Chama a função de impressão do navegador
+	}
+
+	// Chama a função de impressão assim que a página é carregada
+	window.onload = function() {
+		imprimirPagina();
+	};
+</script>

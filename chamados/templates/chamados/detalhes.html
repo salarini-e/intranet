@@ -37,7 +37,7 @@
 							    <div class="col-auto">
 								    <div class="table-search-form row gx-1 align-items-center">                                        					           
 					                    <div class="col-auto">
-					                        <button id="openModal" class="btn app-btn-primary"><i class="fa-solid fa-print me-2"></i>Imprimir</button>
+					                        <a href="{% url 'chamados:imprimir' chamado.hash %}" target="_blank" class="btn app-btn-primary"><i class="fa-solid fa-print me-2"></i>Imprimir</a>
 					                    </div>
 										<div class="col-auto">
 					                        <a href="{% url 'chamados:index' %}" class="btn btn-danger" style="color: white;"><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
@@ -154,6 +154,13 @@
 							    <div class="mb-2"><strong>Descrição:</strong> <br>{{chamado.descricao}}</div>							    
 								<div class="mb-2"><strong>Secretaria:</strong> {{chamado.setor.secretaria.nome}}</div>
 								<div class="mb-2"><strong>Setor:</strong> {{chamado.setor.nome}}</div>
+								<div class="mb-2"><strong>Período preferêncial:</strong> 
+									{% for periodo in chamado.periodo_preferencial.all %}
+										{{ periodo }}
+										{% if not forloop.last %}/{% endif %}
+									{% endfor %}							
+								</div>
+
 							    <div class="row justify-content-between">
 								    <div class="col-auto">
 								        {% if ext %}
@@ -185,7 +192,7 @@
                 </div>
 				
 				{% if atendente.exists %}
-				{% if chamado.profissional_designado %}
+				{% if chamado.profissional_designado  or request.user.is_superuser %}
 				<div class="row my-3">
 	                <div class="col col-md">
 		                <div class="app-card shadow-sm p-4">
@@ -193,12 +200,21 @@
 								<div class="row">
 									<div class="col d-flex">
 										<div class="my-auto">Profissional designado: <strong class="ms-2">{{chamado.profissional_designado}}</strong></div>
+										{% if chamado.dt_agendamento %}
+										<div class="ms-auto my-auto me-3 text-center">
+											<div class="w-100">Data atendimento:<strong class="ms-2">{{chamado.dt_agendamento|date:"d/m/Y"}}</strong></div>
+										</div>
+										{% else %}
+										<a href="{% url 'chamados:agendar_atendimento' chamado.hash %}" class="btn btn-success ms-auto" style="color: white;">														
+											<i class="fa-regular fa-calendar me-2"></i>Agendar atendimento												
+										</a>
+										{% endif %}
 										{% if not chamado.dt_inicio_execucao %}
-											<a href="{% url 'chamados:inicializar' chamado.hash %}" class="btn btn-danger ms-auto" style="color: white;">														
+											<a href="{% url 'chamados:inicializar' chamado.hash %}" class="btn btn-danger ms-2" style="color: white;">														
 												<i class="fa-solid fa-stopwatch me-2"></i>Iniciar atendimento												
 											</a>
 										{% elif not chamado.dt_execucao %}
-											<a href="{% url 'chamados:finalizar' chamado.hash %}" class="btn app-btn-primary ms-auto" style="color: white;">														
+											<a href="{% url 'chamados:finalizar' chamado.hash %}" class="btn app-btn-primary ms-2" style="color: white;">														
 												<i class="fa-solid fa-circle-check me-2"></i>Finalizar atendimento
 											</a>
 										{% else %}
@@ -214,6 +230,8 @@
 					</div>
 				</div>
 				{% endif %}
+				{% if atendente.nivel == '0' or request.user.is_superuser %}
+				
 				<div class="row my-3">
 	                <div class="col col-md">
 		                <div class="app-card shadow-sm p-4">
@@ -253,6 +271,7 @@
 						</div>
 					</div>
 				</div>
+				{% endif %}
 				{% endif %}
 				<div class="row my-3  mb-5">
 	                <div class="col col-md">

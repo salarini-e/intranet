@@ -12,7 +12,8 @@ urlpatterns = [
     path('<hash>/detalhes/att/', views.attChamado, name='attChamado'),    
     path('<hash>/iniciar-atendimento/', views.iniciar_atendimento, name='inicializar'),
     path('<hash>/finalizar-atendimento/', views.finalizar_atendimento, name='finalizar'),
-
+    path('<hash>/detalhes/agendar', views.agendar_atendimento, name='agendar_atendimento'),    
+    path('<hash>/detalhes/imprimir', views.detalhes_imprimir, name='imprimir'),    
     path('criar-periodos/', views.criar_periodos, name='criar_periodos'),
     path('api/', views.index, name='api'),
     path('api/setor/', views.api_criar_setor, name='api_criar_setor'),
