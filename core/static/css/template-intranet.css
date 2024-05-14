@@ -13551,6 +13551,29 @@ button.close:focus {
     border: 1px solid #15a362;
     background: #fff
 }
+.app-btn-dark {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+}
+
+.app-btn-dark:hover, .app-btn-primary:active {
+    color: #fff;
+    background: #585858;
+    border-color: #585858;
+}
+
+.app-btn-purple {
+    background: #83359B;
+    color: #fff;
+    border-color: #83359B;
+}
+
+.app-btn-purple:hover, .app-btn-primary:active {
+    color: #fff;
+    background: #585858;
+    border-color: #585858;
+}
 
 .btn-light {
     background: #f5f6fe;

@@ -29,7 +29,7 @@
 				</style>
  <div class="row g-3 mb-4 align-items-center justify-content-between">
 	<div class="col-auto">
-		<h1 class="app-page-title mb-0">Chamado {{chamado.n_protocolo}}</h1>
+		<h1 class="app-page-title mb-0">{{titulo}}</h1>
 	</div>
 	<div class="col-auto">
 		 <div class="page-utilities">
@@ -37,7 +37,7 @@
 				<div class="col-auto">
 					<div class="table-search-form row gx-1 align-items-center">                                        					           						
 						<div class="col-auto">
-							<a href="{% url 'chamados:detalhes' chamado.hash %}" class="btn btn-danger" style="color: white;"><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
+							<a href="{{back_url}}" class="btn btn-danger" style="color: white;"><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
 						</div>
 						
 					</div>
@@ -52,13 +52,12 @@
 		<div class="app-card shadow-sm p-4">
 			<div class="app-card-body">
 				<div class="row">
-					<div class="col d-flex flex-column">
-						<div>Dt. Solicitação: <strong class="ms-3">{{chamado.dt_inclusao|date:"d/m/Y H:i"}}</strong></div>										
+					<div class="col d-flex flex-column">						
 						<form method="POST" class="mt-3">
 							{% csrf_token %}
 							{{ form }}
 							<button class="btn btn-primary">
-								Agendar
+								{{submit_text}}
 							</button>
 						</form>
 					</div>

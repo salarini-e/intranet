@@ -12,6 +12,12 @@
 					.bg-gray{
 						background-color: rgba(128, 128, 128, 0.281) !important;
 					}
+					.alert-success {
+						background-color: rgb(0, 128, 0);
+					}
+					.alert-danger {
+						background-color: rgb(173, 12, 12);
+					}
 				</style>
 			    <div class="row g-3 mb-4 align-items-center justify-content-between">
 				    <div class="col-auto">
@@ -49,21 +55,21 @@
 					</div>
 				  </div>
 			    {% if messages %}
-				<div class="alert alert-dismissible shadow-sm bg-success border-left-decoration" role="alert">
+				{% for message in messages %}
+				<div class="alert alert-dismissible shadow-sm {{message.tags}} border-left-decoration" role="alert">
 				    <div class="inner">
 					    <div class="app-card-body px-3 px-lg-4">						    
 						    <div class="row gx-5 gy-3">
-						        <div class="col-12 col">
-							        <div class="text-light" style="color: white;">
-							        {% for message in messages %}
-							        {{message}}
-							        {% endfor %}
-									</div>
+						        <div class="col-12 col">									
+							        <div class="text-light" style="color: white;">							        
+							        {{message}}							        
+									</div>									
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+				{% endfor %}
 				{% endif %}
 			    <nav id="orders-table-tab" class="orders-table-tab app-nav-tabs nav shadow-sm flex-column flex-sm-row mb-4">
 					{% if atendente %}
@@ -116,13 +122,23 @@
 											<tr>
 												<td class="cell">
 													{% if not chamado.dt_inicio_execucao %}
-													<a href="{% url 'chamados:inicializar' chamado.hash %}" class="btn btn-danger" style="color: white;">														
+													<a href="{% url 'chamados:inicializar' chamado.hash %}" class="btn btn-danger w-100" style="color: white;">														
 														<i class="fa-solid fa-stopwatch me-2"></i>Iniciar atendimento												
 													</a>
 													{% elif not chamado.dt_execucao %}
-													<a href="{% url 'chamados:finalizar' chamado.hash %}" class="btn app-btn-primary" style="color: white;">														
-														<i class="fa-solid fa-circle-check me-2"></i>Finalizar atendimento
+													{% if chamado.check_pause %}
+													<a href="{% url 'chamados:retomar' chamado.hash %}" class="btn app-btn-purple" style="color: white;">														
+														<i class="fa-solid fa-play me-2"></i>Retomar atendimento
 													</a>
+													{% else %}
+													<a href="{% url 'chamados:pausar' chamado.hash %}" class="btn app-btn-dark" style="color: white;">														
+														<i class="fa-solid fa-pause me-2"></i>Pausar
+													</a>
+													<a href="{% url 'chamados:finalizar' chamado.hash %}" class="btn app-btn-primary" style="color: white;">														
+														<i class="fa-solid fa-check me-2"></i>Finalizar
+													</a>
+													{% endif %}
+													
 													{% else %}
 													Duração: {{chamado.get_duracao_execucao}}
 													{% endif %}
@@ -215,11 +231,11 @@
 												<td class="cell">
 													{% if chamado.prioridade == '' %}
 													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '1' %}
+													{% elif chamado.prioridade == '0' %}
 													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '2' %}
+													{% elif chamado.prioridade == '1' %}
 													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '3' %}
+													{% elif chamado.prioridade == '2' %}
 													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
 													{% endif %}
 												</td>
@@ -293,11 +309,11 @@
 												<td class="cell">
 													{% if chamado.prioridade == '' %}
 													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '1' %}
+													{% elif chamado.prioridade == '0' %}
 													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '2' %}
+													{% elif chamado.prioridade == '1' %}
 													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '3' %}
+													{% elif chamado.prioridade == '2' %}
 													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
 													{% endif %}
 												</td>
@@ -371,11 +387,11 @@
 												<td class="cell">
 													{% if chamado.prioridade == '' %}
 													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '1' %}
+													{% elif chamado.prioridade == '0' %}
 													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '2' %}
+													{% elif chamado.prioridade == '1' %}
 													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '3' %}
+													{% elif chamado.prioridade == '2' %}
 													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
 													{% endif %}
 												</td>
@@ -449,11 +465,11 @@
 												<td class="cell">
 													{% if chamado.prioridade == '' %}
 													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '1' %}
+													{% elif chamado.prioridade == '0' %}
 													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '2' %}
+													{% elif chamado.prioridade == '1' %}
 													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '3' %}
+													{% elif chamado.prioridade == '2' %}
 													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
 													{% endif %}
 												</td>
@@ -527,11 +543,11 @@
 												<td class="cell">
 													{% if chamado.prioridade == '' %}
 													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '1' %}
+													{% elif chamado.prioridade == '0' %}
 													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '2' %}
+													{% elif chamado.prioridade == '1' %}
 													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '3' %}
+													{% elif chamado.prioridade == '2' %}
 													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
 													{% endif %}
 												</td>

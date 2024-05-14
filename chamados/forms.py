@@ -229,3 +229,17 @@ class Form_Agendar_Atendimento(forms.ModelForm):
             raise forms.ValidationError("A data de agendamento não pode ser no passado.")
 
         return dt_agendamento
+    
+class Form_Motivo_Pausa(forms.ModelForm):
+    class Meta:
+        model = Pausas_Execucao_do_Chamado
+        fields = ('motivo',)
+        widgets = {
+            'motivo': forms.Textarea(attrs={'class': 'form-control mb-3'}),
+        }
+    
+    def clean_motivo(self):
+        motivo = self.cleaned_data.get('motivo')
+        if motivo == '':
+            raise forms.ValidationError("O motivo não pode ser vazio.")
+        return motivo

@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from .models import TipoChamado, Secretaria, Setor, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem, OSTelefonia, PeriodoPreferencial
+from .models import TipoChamado, Secretaria, Setor, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem, OSTelefonia, PeriodoPreferencial, Pausas_Execucao_do_Chamado
 from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm, ServidorForm,
-                    MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm, CriarSetorForm, Form_Agendar_Atendimento)
+                    MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm, CriarSetorForm, Form_Agendar_Atendimento,
+                    Form_Motivo_Pausa)
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages as message
 from django.http import JsonResponse, HttpResponse
@@ -9,6 +10,7 @@ from django.utils import timezone
 from .functions import enviar_email_atendente
 from django.contrib.auth.models import User
 # Create your views here.
+from django.urls import reverse
 
 @login_required
 def index(request):
@@ -88,8 +90,7 @@ def detalhes(request, hash):
     
     chamado = Chamado.objects.get(hash=hash)
     servidor = Servidor.objects.get(user=request.user)
-    if request.method == 'POST':
-        print(request.POST)
+    if request.method == 'POST':        
         form = MensagemForm(request.POST, request.FILES)
         if form.is_valid():
             mensagem = form.save(commit=False)
@@ -97,8 +98,8 @@ def detalhes(request, hash):
             mensagem.user_inclusao = servidor
             mensagem.save()            
             message.success(request, 'Mensagem enviada com sucesso!')
-        else:
-            print(form.errors)
+        # else:
+        #     print(form.errors)
 
     extensoes = {
         'IMP': OSImpressora,
@@ -130,7 +131,7 @@ def detalhes_imprimir(request, hash):
     chamado = Chamado.objects.get(hash=hash)
     servidor = Servidor.objects.get(user=request.user)
     if request.method == 'POST':
-        print(request.POST)
+        
         form = MensagemForm(request.POST, request.FILES)
         if form.is_valid():
             mensagem = form.save(commit=False)
@@ -138,8 +139,8 @@ def detalhes_imprimir(request, hash):
             mensagem.user_inclusao = servidor
             mensagem.save()            
             message.success(request, 'Mensagem enviada com sucesso!')
-        else:
-            print(form.errors)
+        # else:
+        #     print(form.errors)
 
     extensoes = {
         'IMP': OSImpressora,
@@ -171,7 +172,7 @@ def attChamado(request, hash):
     if atendente.exists():
         chamado = Chamado.objects.get(hash=hash)
         if request.POST:
-            print(request.POST)
+            # print(request.POST)
             atributo = request.POST['atributo']
             if atributo == 'status':
                 chamado.status = request.POST['valor']   
@@ -194,13 +195,58 @@ def attChamado(request, hash):
             return JsonResponse({'status': 200})    
     return JsonResponse({'status': 403})
 
-def iniciar_atendimento(request, hash):
+def iniciar_atendimento(request, hash):    
     chamado = Chamado.objects.get(hash=hash)
+    if not chamado.dt_agendamento:
+        message.error(request, 'Atendimento não pode ser iniciado sem agendamento!')
+        return redirect('chamados:index')
     chamado.dt_inicio_execucao = timezone.now()
     chamado.status = '1'
     chamado.save()
     message.success(request, f'Atendimento iniciado ao chamado {chamado.n_protocolo}!')
     return redirect('chamados:index')
+
+def retomar_atendimento(request, hash):
+    chamado = Chamado.objects.get(hash=hash)
+    intervalo = Pausas_Execucao_do_Chamado.objects.filter(chamado=chamado).last()
+    intervalo.dt_fim = timezone.now()
+    intervalo.user_fim = Servidor.objects.get(user=request.user)
+    intervalo.save()
+    chamado.status = '1'
+    chamado.save()
+    message.success(request, f'Retomado o atendimento do chamado {chamado.n_protocolo}!')
+    return redirect('chamados:index')
+
+def pausar_atendimento(request, hash):
+    chamado = Chamado.objects.get(hash=hash)
+    intervalo = Pausas_Execucao_do_Chamado.objects.create(
+        chamado=chamado,
+        dt_inicio=timezone.now(),        
+        user_inclusao=Servidor.objects.get(user=request.user)
+    
+    )    
+    chamado.status = '2'
+    chamado.save()
+    message.success(request, f'Atendimento do chamado {chamado.n_protocolo} pausado!')
+    return redirect('chamados:motivo', hash=hash)
+
+def declarar_motivo_pausa(request, hash):
+    chamado = Chamado.objects.get(hash=hash)
+    instance = Pausas_Execucao_do_Chamado.objects.filter(chamado=chamado, user_inclusao=Servidor.objects.get(user=request.user)).last()
+    if request.method == 'POST':
+        form = Form_Motivo_Pausa(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()            
+            return redirect('chamados:index')
+    else:
+        form = Form_Motivo_Pausa()
+    context = {
+        'form': form, 
+               'titulo': f'Motivo da paus do chamado {chamado.n_protocolo}', 
+               'back_url': reverse('chamados:index'),
+               'submit_text': 'Enviar'
+               }
+    return render(request, 'chamados/generic_form.html', context)
 
 def finalizar_atendimento(request, hash):
     chamado = Chamado.objects.get(hash=hash)
@@ -221,7 +267,7 @@ def criar_periodos(request):
 
 def api_criar_setor(request):
     if request.method == 'POST':
-        print(request.POST)
+        # print(request.POST)
         data = request.POST
         setor = Setor.objects.create(
             nome=data['nome'],
@@ -235,11 +281,9 @@ def api_criar_setor(request):
         return JsonResponse({'status': 200, 'message': 'Setor criado com sucesso!'})
     return JsonResponse({'status': 400, 'message': 'Erro ao criar setor!'})
 
-
-
 def api_criar_servidor(request):
     if request.method == 'POST':
-        print(request.POST)
+        # print(request.POST)
         form = ServidorForm(request.POST)                    
         if form.is_valid():
             servidor = form.save()    
@@ -247,7 +291,7 @@ def api_criar_servidor(request):
             servidor.user_inclusao = request.user
             servidor.save()
         else:
-            print(form.errors)
+            # print(form.errors)
             return JsonResponse({'status': 400, 'message': 'Erro ao criar usuário!'})
         
         return JsonResponse({'status': 200, 'message': 'Usuário criado com sucesso!'})        
@@ -263,4 +307,10 @@ def agendar_atendimento(request, hash):
             return redirect('chamados:detalhes', hash=hash)
     else:
         form = Form_Agendar_Atendimento()
-    return render(request, 'chamados/generic_form.html', {'form': form, 'titulo': 'Agendar Atendimento', 'chamado': instance})
+    context = {'form': form, 
+               'titulo': f'Chamado {instance.n_protocolo}', 
+               'back_url': reverse('chamados:detalhes', args=[instance.hash]),
+               'submit_text': 'Agendar'
+               }
+    return render(request, 'chamados/generic_form.html', context)
+

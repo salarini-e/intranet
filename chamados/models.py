@@ -93,7 +93,7 @@ class Chamado(models.Model):
     dt_atualizacao = models.DateTimeField(auto_now=True, verbose_name='Data de ultima atualização', null=True)
     user_atualizacao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Usuário da ultima atualização', null=True, related_name="user_atualizacao_chamados")
     dt_inicio_execucao = models.DateTimeField(verbose_name='Data do inicio da execução do chamado', null=True)
-    dt_execucao = models.DateTimeField(verbose_name='Data o fim daa execução do chamado', null=True)
+    dt_execucao = models.DateTimeField(verbose_name='Data o fim da execução do chamado', null=True)
     dt_fechamento = models.DateTimeField(verbose_name='Data do fechamaneto do chamado', null=True)
     n_protocolo = models.CharField(max_length=14, verbose_name='Número de protocolo', null=True)
     anexo = models.FileField(upload_to='chamados/anexos/', default=None, verbose_name='Possui alguma foto ou print do problema? Caso sim, anexe-a abaixo.', null=True, blank=True)
@@ -103,6 +103,9 @@ class Chamado(models.Model):
         verbose_name = 'Chamado'
         verbose_name_plural = 'Chamados'
 
+    def __str__(self):
+        return self.n_protocolo
+    
     def gerar_hash(self):
         
         if not self.hash:            
@@ -121,14 +124,47 @@ class Chamado(models.Model):
         
     def get_total_msg(self):        
         count = Mensagem.objects.filter(chamado=self).count()
-        print(count)
+        # print(count)
         return count
     
     def get_duracao_execucao(self):
         if self.dt_inicio_execucao and self.dt_execucao:
-            return self.dt_execucao - self.dt_inicio_execucao
+            intervalos = Pausas_Execucao_do_Chamado.objects.filter(chamado=self)
+            if intervalos.exists():
+                total_pausa = timezone.timedelta()
+                for intervalo in intervalos:                        
+                    total_pausa += intervalo.dt_fim - intervalo.dt_inicio
+                    
+                return self.dt_execucao - self.dt_inicio_execucao - total_pausa
+            else:
+                return self.dt_execucao - self.dt_inicio_execucao
         return None
 
+    def check_pause(self):
+        pausas = Pausas_Execucao_do_Chamado.objects.filter(chamado=self)
+        if pausas.exists():
+            if pausas.last().dt_fim:
+                print(1)
+                return False
+            print(2)
+            return True
+        print(3)
+        return False
+    
+class Pausas_Execucao_do_Chamado(models.Model):
+    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')
+    dt_inicio = models.DateTimeField(verbose_name='Data de início da pausa')
+    dt_fim = models.DateTimeField(verbose_name='Data de fim da pausa', null=True, blank=True)
+    motivo = models.TextField(verbose_name='Motivo da pausa', null=True, blank=True)
+    user_inclusao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True, related_name="user_inclusao_pausas", blank=True)
+    user_fim = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Usuário de finalização', null=True, related_name="user_finalizacao_pausas", blank=True)
+
+    class Meta:
+        verbose_name = 'Pausa na execução do chamado'
+        verbose_name_plural = 'Pausas na execução do chamado'
+        
+    def __str__(self):
+        return f"Pausa do Chamado {self.chamado.n_protocolo} - {self.dt_inicio} até {self.dt_fim if self.dt_fim else 'em andamento'}"
 class Mensagem(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')    
     mensagem = models.TextField(verbose_name='Mensagem')

@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
-from .models import TipoChamado, Atendente, Chamado, Mensagem, OSInternet, OSImpressora, OSSistemas, PeriodoPreferencial
+from .models import TipoChamado, Atendente, Chamado, Mensagem, OSInternet, OSImpressora, OSSistemas, PeriodoPreferencial, Pausas_Execucao_do_Chamado
 
 @admin.register(TipoChamado)
 class TipoChamadoAdmin(admin.ModelAdmin):
@@ -44,3 +44,9 @@ class OSSistemasAdmin(admin.ModelAdmin):
 class PeriodoPreferencialAdmin(admin.ModelAdmin):
     list_display = ('nome',)    
     search_fields = ('nome',)
+
+@admin.register(Pausas_Execucao_do_Chamado)
+class PausasExecucaoChamadoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'chamado', 'dt_inicio', 'dt_fim', 'user_inclusao', 'user_fim')
+    list_filter = ('dt_inicio', 'dt_fim')
+    search_fields = ('chamado__n_protocolo',)
