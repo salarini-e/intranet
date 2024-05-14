@@ -33,7 +33,11 @@
 	</script>
 </head> 
 
-<body class="app">   	
+<body class="app">   
+	<div id="preloader" class="preloader">
+		<img class="logo-icon me-2" src="/static/brasao.ico" alt="logo"><span class="logo-text">INTRANET</span>
+		<div class="spinner"></div>
+	  </div>	
     <header class="app-header fixed-top">	   	            
         <div class="app-header-inner">  
 	        <div class="container-fluid py-2">
@@ -355,7 +359,7 @@
     <script src="/static/js/index-charts.js"></script>  -->
     
     <!-- Page Specific JS -->
-    <!-- <script src="/static/js/app.js"></script>  -->
+    <script src="/static/js/app.js"></script> 
 
 	<!-- <link rel="stylesheet" href="https://code.s4d.io/widget-space/production/main.css">
 	<script src="https://code.s4d.io/widget-space/production/bundle.js"></script>	
@@ -375,6 +379,12 @@
 		disableFlags: false
 	});
 	</script> -->
+	<script>
+		window.onload = function() {
+			var preloader = document.getElementById('preloader');
+			preloader.style.display = 'none';
+		};
+	</script>
 </body>
 </html> 
 
