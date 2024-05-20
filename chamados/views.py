@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages as message
 from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
-from .functions import enviar_email_atendente
+from .functions import enviar_email_atendente, Email_Chamado
 from django.contrib.auth.models import User
 # Create your views here.
 from django.urls import reverse
@@ -68,7 +68,10 @@ def criarChamado(request, sigla):
                     ext.chamado = chamado
                     ext.save()
             
-            message.success(request, 'Chamado criado com sucesso! Seu protocolo é {}'.format(chamado.n_protocolo))            
+            message.success(request, 'Chamado criado com sucesso! Seu protocolo é {}'.format(chamado.n_protocolo))    
+            mensagem, status = Email_Chamado(chamado).chamado_criado()
+            if status == 400:
+                message.error(request, mensagem)
             return redirect('chamados:index')
     else:
         form = CriarChamadoForm(initial={'secretaria': servidor.setor.secretaria.id, 'setor': servidor.setor.id, 'telefone': servidor.telefone, 'tipo': tipo, 'requisitante': servidor.id, 'user_inclusao': servidor.id})
@@ -182,11 +185,20 @@ def attChamado(request, hash):
                 chamado.prioridade = request.POST['valor']
             elif atributo == 'atendente':
                 chamado.profissional_designado = Atendente.objects.get(id=request.POST['valor'])                
-                msg, status = enviar_email_atendente(chamado.profissional_designado.servidor, chamado)
-                if status == 200:
-                    message.success(request, msg)
+                
+                mensagem, status = Email_Chamado(chamado).notificar_solicitante('Seu chamado foi atualizado!')
+                if status == 400:
+                    message.error(request, mensagem)
                 else:
-                    message.success(request, msg)
+                    message.success(request, mensagem)
+
+                mensagem_atendente, status_atendente = Email_Chamado(chamado).atribuir_atendente('Chamado atribuído a você!')
+                if status_atendente == 400:
+                    message.error(request, mensagem_atendente)
+                    
+                elif status_atendente == 200:
+                    message.success(request, mensagem_atendente)
+                
                 
             else:                
                 return JsonResponse({'status': 400})
@@ -204,6 +216,10 @@ def iniciar_atendimento(request, hash):
     chamado.status = '1'
     chamado.save()
     message.success(request, f'Atendimento iniciado ao chamado {chamado.n_protocolo}!')
+    mensagem, status = Email_Chamado(chamado).notificar_solicitante('Seu chamado está em atendimento!')
+    if status == 400:
+        message.error(request, mensagem)
+        
     return redirect('chamados:index')
 
 def retomar_atendimento(request, hash):
@@ -215,6 +231,11 @@ def retomar_atendimento(request, hash):
     chamado.status = '1'
     chamado.save()
     message.success(request, f'Retomado o atendimento do chamado {chamado.n_protocolo}!')
+    mensagem, status = Email_Chamado(chamado).notificar_solicitante('Seu chamado está em atendimento!')
+    if status == 400:
+        message.error(request, mensagem)
+        
+    return redirect('chamados:index')
     return redirect('chamados:index')
 
 def pausar_atendimento(request, hash):
@@ -228,6 +249,9 @@ def pausar_atendimento(request, hash):
     chamado.status = '2'
     chamado.save()
     message.success(request, f'Atendimento do chamado {chamado.n_protocolo} pausado!')
+    mensagem, status = Email_Chamado(chamado).notificar_solicitante('O atendimento do seu chamado foi interrompido!')
+    if status == 400:
+        message.error(request, mensagem)
     return redirect('chamados:motivo', hash=hash)
 
 def declarar_motivo_pausa(request, hash):
@@ -254,6 +278,9 @@ def finalizar_atendimento(request, hash):
     chamado.status = '3'
     chamado.save()
     message.success(request, f'Atendimento finalizado ao chamado {chamado.n_protocolo}!')
+    mensagem, status = Email_Chamado(chamado).notificar_solicitante('Seu chamado foi finalizado!')
+    if status == 400:
+        message.error(request, mensagem)
     return redirect('chamados:index')
 
 #criar periodos
@@ -302,8 +329,11 @@ def agendar_atendimento(request, hash):
     if request.method == 'POST':
         form = Form_Agendar_Atendimento(request.POST, instance=instance)
         if form.is_valid():
-            form.save()
+            chamado=form.save()
             message.success(request, 'Atendimento agendado com sucesso!')
+            mensagem, status = Email_Chamado(chamado).notificar_solicitante('O atendimento do seu chamado foi agendado!')
+            if status == 400:
+                message.error(request, mensagem)
             return redirect('chamados:detalhes', hash=hash)
     else:
         form = Form_Agendar_Atendimento()

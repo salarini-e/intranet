@@ -205,18 +205,29 @@
 											<div class="w-100">Data atendimento:<strong class="ms-2">{{chamado.dt_agendamento|date:"d/m/Y"}}</strong></div>
 										</div>
 										{% else %}
-										<a href="{% url 'chamados:agendar_atendimento' chamado.hash %}" class="btn btn-success ms-auto" style="color: white;">														
+										<a href="{% url 'chamados:agendar_atendimento' chamado.hash %}" class="btn btn-success ms-auto me-2" style="color: white;">														
 											<i class="fa-regular fa-calendar me-2"></i>Agendar atendimento												
 										</a>
 										{% endif %}
+
 										{% if not chamado.dt_inicio_execucao %}
-											<a href="{% url 'chamados:inicializar' chamado.hash %}" class="btn btn-danger ms-2" style="color: white;">														
-												<i class="fa-solid fa-stopwatch me-2"></i>Iniciar atendimento												
-											</a>
+										<a href="{% url 'chamados:inicializar' chamado.hash %}" class="btn btn-danger" style="color: white;">														
+											<i class="fa-solid fa-stopwatch me-2"></i>Iniciar atendimento											
+										</a>
 										{% elif not chamado.dt_execucao %}
-											<a href="{% url 'chamados:finalizar' chamado.hash %}" class="btn app-btn-primary ms-2" style="color: white;">														
-												<i class="fa-solid fa-circle-check me-2"></i>Finalizar atendimento
+											{% if chamado.check_pause %}
+											<a href="{% url 'chamados:retomar' chamado.hash %}" class="btn app-btn-purple" style="color: white;">														
+												<i class="fa-solid fa-play me-2"></i>Retomar atendimento
 											</a>
+											{% else %}
+											<a href="{% url 'chamados:pausar' chamado.hash %}" class="btn app-btn-dark me-2" style="color: white;">														
+												<i class="fa-solid fa-pause me-2"></i>Pausar atendimento
+											</a>
+											<a href="{% url 'chamados:finalizar' chamado.hash %}" class="btn app-btn-primary" style="color: white;">														
+												<i class="fa-solid fa-check me-2"></i>Finalizar atendimento
+											</a>
+											{% endif %}
+							
 										{% else %}
 											<div class="ms-auto">Dt. execução: <strong class="ms-1">{{chamado.dt_execucao|date:"d/m/Y H:i"}}</strong></div>
 											<div class="ms-4">Duração: <strong class="ms-1">{{chamado.get_duracao_execucao}}</strong></div>

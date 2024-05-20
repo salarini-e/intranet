@@ -123,19 +123,19 @@
 												<td class="cell">
 													{% if not chamado.dt_inicio_execucao %}
 													<a href="{% url 'chamados:inicializar' chamado.hash %}" class="btn btn-danger w-100" style="color: white;">														
-														<i class="fa-solid fa-stopwatch me-2"></i>Iniciar atendimento												
+														<i class="fa-solid fa-stopwatch me-2"></i>Iniciar												
 													</a>
 													{% elif not chamado.dt_execucao %}
 													{% if chamado.check_pause %}
-													<a href="{% url 'chamados:retomar' chamado.hash %}" class="btn app-btn-purple" style="color: white;">														
-														<i class="fa-solid fa-play me-2"></i>Retomar atendimento
+													<a href="{% url 'chamados:retomar' chamado.hash %}" class="btn app-btn-purple w-100" style="color: white;">														
+														<i class="fa-solid fa-play me-2"></i>Retomar 
 													</a>
 													{% else %}
 													<a href="{% url 'chamados:pausar' chamado.hash %}" class="btn app-btn-dark" style="color: white;">														
-														<i class="fa-solid fa-pause me-2"></i>Pausar
+														<i class="fa-solid fa-pause"></i>
 													</a>
 													<a href="{% url 'chamados:finalizar' chamado.hash %}" class="btn app-btn-primary" style="color: white;">														
-														<i class="fa-solid fa-check me-2"></i>Finalizar
+														<i class="fa-solid fa-check"></i>
 													</a>
 													{% endif %}
 													

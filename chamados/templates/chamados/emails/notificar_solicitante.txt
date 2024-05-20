@@ -1,0 +1,25 @@
+{% autoescape off %}
+Olá {{chamado.requisitante.nome}},
+
+Informamos que houve uma atualização no seu chamado #{{chamado.n_protocolo}}. Seguem algumas informações sobre o progresso até o momento:
+{% if chamado.dt_agendamento %}
+Data agendada para atendimento: {{chamado.dt_agendamento|date:"d/m/Y"}}
+{% endif %}
+Protocolo: {{chamado.n_protocolo}}
+Título do Chamado: {{chamado.assunto}}
+Data da Criação: {{chamado.dt_inclusao}}
+Secretaria: {{chamado.setor.secretaria.nome}}
+Setor: {{chamado.setor.nome}}
+Status: {{chamado.get_status_display}}
+Prioridade: {{chamado.get_prioridade_display}}
+Período de preferência: {% for periodo in chamado.periodo_preferencial.all %}{{ periodo }}{% if not forloop.last %}/{% endif %}{% endfor %}		
+Descrição do Problema/Solicitação:
+{{chamado.descricao}}
+
+Mais detalhes: {{ protocol }}://{{domain}}{{url}}
+Email gerado automaticamente pelo sistema {{site_name}}.
+
+Grato,
+A equipe de TI.
+
+{% endautoescape %}

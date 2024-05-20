@@ -1,0 +1,35 @@
+{% autoescape off %}
+Olá {{chamado.requisitante.nome}},
+
+Espero que esta mensagem encontre você bem.
+
+Gostaria de notificar a abertura de um novo chamado para [descrição breve do problema ou solicitação]. Seguem os detalhes completos para sua referência:
+
+Título do Chamado: {{chamado.assunto}}
+Data da Criação: {{chamado.dt_inclusao}}
+Secretaria: {{chamado.setor.secretaria.nome}}
+Setor: {{chamado.setor.nome}}
+Prioridade: {{chamado.get_prioridade_display}}
+
+Descrição do Problema/Solicitação:
+{{chamado.descricao}}
+
+Passos já Tomados:
+[Se aplicável, descreva qualquer ação já tomada para tentar resolver o problema antes da abertura do chamado.]
+
+Anexos:
+[Se houver, mencione qualquer documento ou imagem anexa que possa ajudar na resolução.]
+
+Contato para Mais Informações:
+
+E-mail: [Seu E-mail]
+Telefone: [Seu Telefone]
+Agradeço desde já pela atenção e fico à disposição para quaisquer informações adicionais que possam ser necessárias para a resolução deste chamado.
+
+Atenciosamente,
+
+[Seu Nome]
+[Seu Cargo]
+[Seu Departamento]
+
+Este modelo pode ser ajustado conforme a necessidade, adicionando ou removendo seções relevantes para melhor atender ao contexto da sua organização ou situação específica.
