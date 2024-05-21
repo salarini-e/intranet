@@ -11,19 +11,16 @@
 					     <div class="page-utilities">
 						    <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
 							    <div class="col-auto">
-								    <form class="docs-search-form row gx-1 align-items-center">
+								    <form id="search-form" class="docs-search-form row gx-1 align-items-center">
 					                    <div class="col-auto">
 					                        <input type="text" id="search-docs" name="searchdocs" class="form-control search-docs" placeholder="Buscar...">
-					                    </div>
-					                    <div class="col-auto">
-					                        <button type="submit" class="btn app-btn-secondary">Buscar</button>
-					                    </div>
+					                    </div>					                    
 					                </form>
 					                
 							    </div><!--//col-->
 							    <div class="col-auto">
 								    
-								    <select class="form-select w-auto">
+								    <select id="filter-select" class="form-select w-auto">
 										  <option selected="" value="option-1">Todos</option>
 										  {% for tipo in tipos %}
 										  <option value="{{tipo.id}}">{{tipo.nome}}</option>										  
@@ -32,7 +29,7 @@
 							    </div>
                                 {% if request.user.is_superuser %}
 							    <div class="col-auto">
-								    <a class="btn app-btn-primary" href="#"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-upload me-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+								    <a class="btn app-btn-primary" href="/admin/softwares/downloads/add/" target="_blank"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-upload me-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
                                     <path fill-rule="evenodd" d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
                                     </svg>Upload</a>
@@ -94,31 +91,56 @@
 								    <div class="dropdown">
 									    <a href="{% url 'soft:download_file' software.id %}" style="color: black;">
 										    <i class="fa-solid fa-arrow-down"></i>
-                                        </a><!--//dropdown-toggle-->
-								    </div><!--//dropdown-->
-						        </div><!--//app-card-actions-->
+                                        </a>
+								    </div>
+						        </div>
 								{% endif %}
 								    
-						    </div><!--//app-card-body-->
+						    </div>
 
-						</div><!--//app-card-->
-				    </div><!--//col-->
+						</div>
+				    </div>
 				    {% endfor %}
 				    
-			    </div><!--//row-->
-			    <!-- <nav class="app-pagination mt-5">
-					<ul class="pagination justify-content-center">
-						<li class="page-item disabled">
-							<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-					    </li>
-						<li class="page-item active"><a class="page-link" href="#">1</a></li>
-						<li class="page-item"><a class="page-link" href="#">2</a></li>
-						<li class="page-item"><a class="page-link" href="#">3</a></li>
-						<li class="page-item">
-						    <a class="page-link" href="#">Next</a>
-						</li>
-					</ul>
-				</nav> -->
-		    </div><!--//container-fluid-->
-	    </div><!--//app-content-->
+			    </div>
+			    
+		    </div>
+	    </div>
+		<script>
+			// Filter by search input
+			const searchInput = document.getElementById('search-docs');
+			searchInput.addEventListener('input', () => {
+				const searchTerm = searchInput.value.toLowerCase();
+				const softwareNames = document.querySelectorAll('.nome');
+				
+				softwareNames.forEach((name) => {
+					const softwareName = name.textContent.toLowerCase();
+					const softwareCard = name.closest('.app-card');
+					
+					if (softwareName.includes(searchTerm)) {
+						softwareCard.style.display = 'block';
+					} else {
+						softwareCard.style.display = 'none';
+					}
+				});
+			});
+
+			// Filter by select option
+			const filterSelect = document.getElementById('filter-select');
+			filterSelect.addEventListener('change', () => {
+				const selectedOption = filterSelect.value;
+				const softwareTypes = document.querySelectorAll('.tipo');
+				
+				softwareTypes.forEach((type) => {
+					const softwareType = type.textContent;
+					const softwareCard = type.closest('.app-card');
+					
+					if (selectedOption === 'option-1' || softwareType === selectedOption) {
+						softwareCard.style.display = 'block';
+					} else {
+						softwareCard.style.display = 'none';
+					}
+				});
+			});
+		</script>
 {% endblock%}
