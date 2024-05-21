@@ -57,6 +57,6 @@ def index(request):
         'total_chamados': total_chamados,
         'chamados_abertos_30dias': chamados_abertos_30dias,
         'chamados_fechados_30dias': chamados_fechados_30dias,
-        'media_diaria': media_diaria
+        'media_diaria': "{:.1f}".format(media_diaria)
     }
     return render(request, 'index.html', context)
