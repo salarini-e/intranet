@@ -69,12 +69,16 @@ class CriarChamadoForm(forms.ModelForm):
 
 
     secretaria = forms.ModelChoiceField(queryset=Secretaria.objects.all(), empty_label='Selecione a secretaria', widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'getSetores(this.value)', 'required': 'required'}))
+    # secretaria = SecretariaWidget(attrs={'class': 'form-control mb-3','onchange': 'getSetores(this.value)', 'required': 'required'})
     class Meta:
         model = Chamado
         fields = ['secretaria', 'setor', 'telefone', 'requisitante', 'tipo', 'assunto'
                   , 'descricao', 'periodo_preferencial', 'user_inclusao', 'anexo']
         widgets = {                        
+            # 'secretaria': SecretariaWidget(attrs={'class': 'form-control mb-3','onchange': 'getSetores(this.value)', 'required': 'required'}),
             'setor': forms.Select(attrs={'class': 'form-select'}),
+            'secretaria': SecretariaWidget(attrs={'class': 'form-control mb-3','onchange': 'getSetores(this.value)', 'required': 'required'}),
+            # 'setor': SetorWidget(attrs={'class': 'form-control mb-3'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control'}),
             # 'requisitante': forms.Select(attrs={'class': 'form-control'}),
             'requisitante': RequisitanteWidget(attrs={'class': 'form-control'}),

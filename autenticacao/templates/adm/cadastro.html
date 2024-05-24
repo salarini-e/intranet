@@ -48,7 +48,7 @@
                     <label for="matricula" class="form-label">Sua matrícula</label>
                     <div class="d-flex">
                         <input type="text" class="form-control" id="matricula" name="matricula" required>
-                        <button type="button" class="btn btn-secondary ms-2" onclick="callMetaServidor()">Validar</button>
+                        <button id="validar" type="button" class="btn btn-success ms-2" onclick="callMetaServidor()">Validar</button>
                     </div>
                     <div class="row">
                         <small id="error" class="text-danger">
@@ -64,7 +64,7 @@
                     <label class="form-check-label" for="id_consentimento">Eu concordo com os termos e condições e autorizo o uso dos meus dados pessoais conforme a <a href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Política de Privacidade</a>.</label>
                 </div>
                
-                <button type="submit" class="btn btn-primary w-100 mb-3 mt-3">CADASTRAR-SE</button>
+                <button id="cadastrar" type="submit" class="btn btn-primary w-100 mb-3 mt-3">CADASTRAR-SE</button>
                 
                 <a href="/login">
                     <small>
@@ -129,6 +129,26 @@
 <script src="/static/js/request.js"></script>
 				
 				<script>		
+                    var podeCadastrar= false;
+                    var buttonCadastrar = document.getElementById('cadastrar');
+                    var buttonValidar = document.getElementById('validar');
+                    buttonCadastrar.addEventListener('mouseenter', function(e) {                        
+                        buttonValidar.classList.add('shake');
+                        if (!podeCadastrar) {
+                            buttonCadastrar.classList.add('disabled');
+                        }
+                    });
+                    buttonCadastrar.addEventListener('click', function(e) {
+                        if (!podeCadastrar) {
+                            e.preventDefault();                                
+                        }else{                            
+                            form.submit();
+                        }
+                        
+                    });
+                    buttonCadastrar.addEventListener('animationend', function() {
+                        buttonValidar.classList.remove('shake');
+                    });
 					function errorCPF(response){
 						response = JSON.parse(response);                        
 						var cpfSmall = document.getElementById('errorCPF');
@@ -364,11 +384,19 @@
                         
                     }
 					function callMetaServidor(){
+                        podeCadastrar = true;
+                        if (buttonCadastrar.classList.contains('disabled')) {
+                            buttonCadastrar.classList.remove('disabled');
+                        }
 						// document.getElementById('response-message').display = 'none';
                         var matricula = document.getElementById('matricula').value; 
                         var url = "{% url 'ins:getServidor' %}" + "?matricula=" + matricula; 
 
-						getRequest(url, montarSelect);
+						getRequest(url, montarSelect);                        
+                        document.getElementById('validar').classList.remove('btn-success');
+                        document.getElementById('validar').classList.add('btn-secondary');
+                        document.getElementById('cadastrar').disabled = false;
+
 					}
 			
 					
@@ -416,12 +444,28 @@
 							return false;
 						}
 					});
-
+                   
+                    
 				</script>
                 <style>
                     .bg-readonly{
                         background-color: #b5cfec !important;
                         pointer-events: none;
                         touch-action: none;
+                    }
+                    .shake{
+                        animation: shake 0.5s ease-in-out;
+                    }
+
+                    @keyframes shake {
+                        0% { transform: translateX(0); }
+                        20% { transform: translateX(-10px); }
+                        40% { transform: translateX(10px); }
+                        60% { transform: translateX(-10px); }
+                        80% { transform: translateX(10px); }
+                        100% { transform: translateX(0); }
+                    }
+                    #cadastrar:disabled {                        
+                        cursor: not-allowed;
                     }
                 </style>
