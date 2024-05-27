@@ -222,7 +222,7 @@
 										<tbody>
 											{% for chamado in chamados.todos %}
 											<tr>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.n_protocolo}}</td>												
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}> <a href="{% url 'chamados:detalhes' chamado.hash %}">{{chamado.n_protocolo}}</a></td>												
 												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.secretaria.apelido}}</td>
 												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.apelido}}</td>
 												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.requisitante.nome}}</td>
