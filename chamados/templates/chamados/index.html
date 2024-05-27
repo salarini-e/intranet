@@ -206,16 +206,16 @@
 							        <table class="table app-table-hover mb-0 text-left">
 										<thead>
 											<tr>
-												<th class="cell">Protocolo</th>												
-												<th class="cell">Secretaria</th>
-												<th class="cell">Setor</th>
-												<th class="cell">Requisitante</th>
-												<th class="cell">Dt. solicitação</th>
-												<th class="cell">Dt. atualização</th>
-												<th class="cell">Designados</th>
-												<th class="cell">Msg's</th>
-												<th class="cell">Prioridade</th>
-												<th class="cell">Status</th>
+												<th class="cell sortable">Protocolo</th>												
+												<th class="cell sortable">Secretaria</th>
+												<th class="cell sortable">Setor</th>
+												<th class="cell sortable">Requisitante</th>
+												<th class="cell sortable">Dt. solicitação</th>
+												<th class="cell sortable">Dt. atualização</th>
+												<th class="cell sortable">Designados</th>
+												<th class="cell sortable">Msg's</th>
+												<th class="cell sortable">Prioridade</th>
+												<th class="cell sortable">Status</th>
 												<th class="cell"></th>
 											</tr>
 										</thead>
@@ -617,5 +617,61 @@
 				</div>
 				</div>
 				
-				<script src="/static/js/openModal.js"></script>				
+				<script src="/static/js/openModal.js"></script>			
+				<script>
+					function sortTable(table, column, asc = true) {
+						const dirModifier = asc ? 1 : -1;
+						const tBody = table.tBodies[0];
+						const rows = Array.from(tBody.querySelectorAll("tr"));
+
+						// Ordenar cada linha
+						const sortedRows = rows.sort((a, b) => {
+							const aColText = a.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+							const bColText = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+
+							return aColText > bColText ? (1 * dirModifier) : (-1 * dirModifier);
+						});
+
+						// Remover todas as linhas do corpo da tabela
+						while (tBody.firstChild) {
+							tBody.removeChild(tBody.firstChild);
+						}
+
+						// Re-adicionar as linhas ordenadas
+						tBody.append(...sortedRows);
+
+						// Lembrar a ordem atual e adicionar ícones de ordenação
+						table.querySelectorAll("th").forEach(th => {
+							th.classList.remove("th-sort-asc", "th-sort-desc");
+							th.querySelectorAll(".sort-icon").forEach(icon => icon.remove());
+						});
+
+						const sortIcon = document.createElement("i");
+						sortIcon.classList.add("fa-solid", "sort-icon", asc ? "fa-sort-up" : "fa-sort-down");
+						table.querySelector(`th:nth-child(${column + 1})`).classList.toggle("th-sort-asc", asc);
+						table.querySelector(`th:nth-child(${column + 1})`).classList.toggle("th-sort-desc", !asc);
+						table.querySelector(`th:nth-child(${column + 1})`).appendChild(sortIcon);
+					}
+
+					// Adicionar evento de clique aos cabeçalhos das colunas
+					document.querySelectorAll(".sortable").forEach(headerCell => {
+						headerCell.addEventListener("click", () => {
+							const tableElement = headerCell.closest("table");
+							const headerIndex = Array.prototype.indexOf.call(headerCell.parentElement.children, headerCell);
+							const currentIsAscending = headerCell.classList.contains("th-sort-asc");
+
+							sortTable(tableElement, headerIndex, !currentIsAscending);
+						});
+					});
+				</script>	
+				<style>
+					.sortable{
+						cursor: pointer;	
+						position: relative;					
+					}
+
+					.sort-icon {
+       					margin-left: 8px;
+				    }
+				</style>
 {% endblock %}
