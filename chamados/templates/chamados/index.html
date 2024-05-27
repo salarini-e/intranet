@@ -120,7 +120,7 @@
 										<tbody>
 											{% for chamado in chamados.designados %}
 											<tr>
-												<td class="cell">
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
 													{% if not chamado.dt_inicio_execucao %}
 													<a href="{% url 'chamados:inicializar' chamado.hash %}" class="btn btn-danger w-100" style="color: white;">														
 														<i class="fa-solid fa-stopwatch me-2"></i>Iniciar												
@@ -143,14 +143,14 @@
 													Duração: {{chamado.get_duracao_execucao}}
 													{% endif %}
 												</td>
-												<td class="cell">{{chamado.n_protocolo}}</td>												
-												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
-												<td class="cell">{{chamado.setor.apelido}}</td>
-												<td class="cell">{{chamado.requisitante.nome}}</td>
-												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
-												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
-												<td class="cell">{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
-												<td class="cell">
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.n_protocolo}}</td>												
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.secretaria.apelido}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.apelido}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.requisitante.nome}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
 													{% if chamado.prioridade == '' %}
 													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
 													{% elif chamado.prioridade == '0' %}
@@ -161,7 +161,7 @@
 													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
 													{% endif %}
 												</td>
-												<td class="cell">
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
 													{% if chamado.status == '0' %}
 													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '1' %}
@@ -174,7 +174,7 @@
 													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
 													{% endif %}
 												</td>
-												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
 											</tr>	
 											{% endfor %}										
 		
@@ -222,15 +222,15 @@
 										<tbody>
 											{% for chamado in chamados.todos %}
 											<tr>
-												<td class="cell">{{chamado.n_protocolo}}</td>												
-												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
-												<td class="cell">{{chamado.setor.apelido}}</td>
-												<td class="cell">{{chamado.requisitante.nome}}</td>
-												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
-												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
-												<td class="cell">{% if chamado.profissional_designado %}{{chamado.profissional_designado.nome_servidor}}{%else%}n/h{% endif %}</td>
-												<td class="cell">{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
-												<td class="cell">
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.n_protocolo}}</td>												
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.secretaria.apelido}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.apelido}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.requisitante.nome}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{% if chamado.profissional_designado %}{{chamado.profissional_designado.nome_servidor}}{%else%}n/h{% endif %}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
 													{% if chamado.prioridade == '' %}
 													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
 													{% elif chamado.prioridade == '0' %}
@@ -241,7 +241,7 @@
 													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
 													{% endif %}
 												</td>
-												<td class="cell">
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
 													{% if chamado.status == '0' %}
 													<span class="badge" style="background-color: rgb(25, 165, 37);;">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '1' %}
@@ -254,7 +254,7 @@
 													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
 													{% endif %}
 												</td>
-												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
 											</tr>	
 											{% endfor %}										
 		
@@ -301,14 +301,14 @@
 										<tbody>
 											{% for chamado in chamados.abertos %}
 											<tr>
-												<td class="cell">{{chamado.n_protocolo}}</td>												
-												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
-												<td class="cell">{{chamado.setor.apelido}}</td>
-												<td class="cell">{{chamado.requisitante.nome}}</td>
-												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
-												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
-												<td class="cell">{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
-												<td class="cell">
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.n_protocolo}}</td>												
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.secretaria.apelido}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.apelido}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.requisitante.nome}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
 													{% if chamado.prioridade == '' %}
 													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
 													{% elif chamado.prioridade == '0' %}
@@ -319,7 +319,7 @@
 													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
 													{% endif %}
 												</td>
-												<td class="cell">
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
 													{% if chamado.status == '0' %}
 													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '1' %}
@@ -332,7 +332,7 @@
 													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
 													{% endif %}
 												</td>
-												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
 											</tr>	
 											{% endfor %}										
 		
@@ -379,14 +379,14 @@
 										<tbody>
 											{% for chamado in chamados.em_atendimento %}
 											<tr>
-												<td class="cell">{{chamado.n_protocolo}}</td>												
-												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
-												<td class="cell">{{chamado.setor.apelido}}</td>
-												<td class="cell">{{chamado.requisitante.nome}}</td>
-												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
-												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
-												<td class="cell">{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
-												<td class="cell">
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.n_protocolo}}</td>												
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.secretaria.apelido}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.apelido}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.requisitante.nome}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
 													{% if chamado.prioridade == '' %}
 													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
 													{% elif chamado.prioridade == '0' %}
@@ -410,7 +410,7 @@
 													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
 													{% endif %}
 												</td>
-												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
 											</tr>	
 											{% endfor %}										
 		
@@ -457,14 +457,14 @@
 										<tbody>
 											{% for chamado in chamados.pendentes %}
 											<tr>
-												<td class="cell">{{chamado.n_protocolo}}</td>												
-												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
-												<td class="cell">{{chamado.setor.apelido}}</td>
-												<td class="cell">{{chamado.requisitante.nome}}</td>
-												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
-												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
-												<td class="cell">{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
-												<td class="cell">
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.n_protocolo}}</td>												
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.secretaria.apelido}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.apelido}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.requisitante.nome}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
 													{% if chamado.prioridade == '' %}
 													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
 													{% elif chamado.prioridade == '0' %}
@@ -475,7 +475,7 @@
 													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
 													{% endif %}
 												</td>
-												<td class="cell">
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
 													{% if chamado.status == '0' %}
 													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '1' %}
@@ -488,7 +488,7 @@
 													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
 													{% endif %}
 												</td>
-												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
 											</tr>	
 											{% endfor %}										
 		
@@ -535,14 +535,14 @@
 										<tbody>
 											{% for chamado in chamados.fechados %}
 											<tr>
-												<td class="cell">{{chamado.n_protocolo}}</td>												
-												<td class="cell">{{chamado.setor.secretaria.apelido}}</td>
-												<td class="cell">{{chamado.setor.apelido}}</td>
-												<td class="cell">{{chamado.requisitante.nome}}</td>
-												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
-												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
-												<td class="cell">{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
-												<td class="cell">
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.n_protocolo}}</td>												
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.secretaria.apelido}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.apelido}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.requisitante.nome}}</td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
 													{% if chamado.prioridade == '' %}
 													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
 													{% elif chamado.prioridade == '0' %}
@@ -553,7 +553,7 @@
 													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
 													{% endif %}
 												</td>
-												<td class="cell">
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
 													{% if chamado.status == '0' %}
 													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '1' %}
@@ -566,7 +566,7 @@
 													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
 													{% endif %}
 												</td>
-												<td class="cell"><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
+												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
 											</tr>	
 											{% endfor %}										
 		
