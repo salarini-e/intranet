@@ -60,6 +60,24 @@
 						</div>
 					</div>
 				</div>
+				<div id="novo-chamado">
+					<div class="app-card app-card-orders-table shadow-sm mb-3">
+						<div class="app-card-body py-4 px-5">
+							<div class="d-flex">
+								<h4>Para quem é o chamado?</h4>								
+							</div>
+							<div>																	
+								<button onclick="paraQuem('eu')" class="btn app-btn-dark mt-3">
+									<i class="fa-solid fa-child-reaching me-2"></i>Eu mesmo.
+								</button>
+								<button  onclick="paraQuem('outro')" class="btn app-btn-dark mt-3">
+									<i class="fa-solid fa-people-arrows me-2"></i>Outra pessoa.
+								</button>
+							</div>
+							
+						</div>
+					</div>
+				</div>
 				<div id="divnovosetor" style="display: none;">
 					<div class="app-card app-card-orders-table shadow-sm mb-3">
 						<div class="app-card-body py-4 px-5">
@@ -97,7 +115,7 @@
 					</div>
 					
 				</div>
-				<div class="app-card app-card-orders-table shadow-sm mb-5">
+				<div id="div-form-chamado" class="app-card app-card-orders-table shadow-sm mb-5" style="display: none;">
 				    <div class="app-card-body py-4 px-5">
 						<h4>NOVO CHAMADO</h4>
 						<form method="POST" enctype="multipart/form-data">
@@ -117,6 +135,18 @@
 				
 				
 				<script>
+					function paraQuem(valor){
+						if (valor == 'outro'){
+							document.querySelector('#id_secretaria').value = '';
+							document.querySelector('#id_setor').value = '';
+							document.querySelector('#id_telefone').value = '';
+							document.querySelector('#id_requisitante').value = '';
+							document.querySelector('#select2-id_requisitante-container').title = '';
+							document.querySelector('#select2-id_requisitante-container').innerText = '';
+						}
+						document.getElementById('novo-chamado').style.display = 'none';
+						document.getElementById('div-form-chamado').style.display = 'block';
+					}
 					function novoUsuario(){						
 						var novousuario = document.getElementById('divnovousuario');
 						if(novousuario.style.display == 'none'){

@@ -55,7 +55,7 @@ def index(request):
         'dados_abertos': dados_abertos,
         'dados_fechados': dados_fechados,
         'total_chamados': total_chamados,
-        'chamados_abertos_30dias': chamados_abertos_30dias,
+        'chamados_abertos_30dias': chamados_abertos_30dias-chamados_fechados_30dias,
         'chamados_fechados_30dias': chamados_fechados_30dias,
         'media_diaria': "{:.1f}".format(media_diaria)
     }

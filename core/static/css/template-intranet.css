@@ -13644,7 +13644,8 @@ button.close:focus {
 }
 
 .app-header-inner {
-    position: relative
+    position: relative;
+    transition: left 0.4s ease-in-out;
 }
 
 .app-search-form {
@@ -13892,7 +13893,8 @@ button.close:focus {
     left: 0;
     top: 0;
     font-size: .875rem;
-    border-right: 1px solid #e7e9ed
+    border-right: 1px solid #e7e9ed;
+    transition: left 0.4s ease-in-out;
 }
 
 .app-sidepanel .panel-drop {
@@ -14136,7 +14138,7 @@ button.close:focus {
 
 @media(min-width: 1200px) {
     .app-wrapper {
-        margin-left: 250px
+        margin-left: 250px;        
     }
 }
 

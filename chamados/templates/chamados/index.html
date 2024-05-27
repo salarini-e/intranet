@@ -110,7 +110,7 @@
 												<th class="cell">Setor</th>
 												<th class="cell">Requisitante</th>
 												<th class="cell">Dt. solicitação</th>
-												<th class="cell">Dt. atualização</th>
+												<th class="cell">Dt. atualização</th>												
 												<th class="cell">Msg's</th>
 												<th class="cell">Prioridade</th>
 												<th class="cell">Status</th>
@@ -163,13 +163,13 @@
 												</td>
 												<td class="cell">
 													{% if chamado.status == '0' %}
-													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
+													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '1' %}
 													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '2' %}
 													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '3' %}
-													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
+													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '4' %}
 													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
 													{% endif %}
@@ -212,6 +212,7 @@
 												<th class="cell">Requisitante</th>
 												<th class="cell">Dt. solicitação</th>
 												<th class="cell">Dt. atualização</th>
+												<th class="cell">Designados</th>
 												<th class="cell">Msg's</th>
 												<th class="cell">Prioridade</th>
 												<th class="cell">Status</th>
@@ -227,6 +228,7 @@
 												<td class="cell">{{chamado.requisitante.nome}}</td>
 												<td class="cell"><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
 												<td class="cell"><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
+												<td class="cell">{% if chamado.profissional_designado %}{{chamado.profissional_designado.nome_servidor}}{%else%}n/h{% endif %}</td>
 												<td class="cell">{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
 												<td class="cell">
 													{% if chamado.prioridade == '' %}
@@ -241,13 +243,13 @@
 												</td>
 												<td class="cell">
 													{% if chamado.status == '0' %}
-													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
+													<span class="badge" style="background-color: rgb(25, 165, 37);;">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '1' %}
 													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '2' %}
 													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '3' %}
-													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
+													<span class="badge" style="background-color: rgb(88, 88, 88)">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '4' %}
 													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
 													{% endif %}
@@ -319,13 +321,13 @@
 												</td>
 												<td class="cell">
 													{% if chamado.status == '0' %}
-													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
+													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '1' %}
 													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '2' %}
 													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '3' %}
-													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
+													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '4' %}
 													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
 													{% endif %}
@@ -397,13 +399,13 @@
 												</td>
 												<td class="cell">
 													{% if chamado.status == '0' %}
-													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
+													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '1' %}
 													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '2' %}
 													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '3' %}
-													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
+													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '4' %}
 													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
 													{% endif %}
@@ -475,13 +477,13 @@
 												</td>
 												<td class="cell">
 													{% if chamado.status == '0' %}
-													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
+													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '1' %}
 													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '2' %}
 													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '3' %}
-													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
+													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '4' %}
 													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
 													{% endif %}
@@ -553,13 +555,13 @@
 												</td>
 												<td class="cell">
 													{% if chamado.status == '0' %}
-													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
+													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '1' %}
 													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '2' %}
 													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '3' %}
-													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
+													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
 													{% elif chamado.status == '4' %}
 													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
 													{% endif %}

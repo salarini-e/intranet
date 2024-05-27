@@ -22,3 +22,8 @@ def get_tema(user):
         return 'dark'
     else:
         return 'light'
+    
+@register.filter
+def get_user_name(user):    
+    servidor = Servidor.objects.get(user=user)    
+    return servidor.nome
