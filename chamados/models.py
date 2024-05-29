@@ -41,6 +41,9 @@ class Atendente(models.Model):
         if self.servidor:
             self.nome_servidor=self.servidor.nome        
     
+    def countChamadosAtribuidos(self):        
+        return Chamado.objects.filter(status='4', atendente=self).count()
+    
     def save(self, *args, **kwargs):    
         self.setName()
         super().save(*args, **kwargs)

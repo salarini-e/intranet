@@ -154,6 +154,7 @@
 							    <div class="mb-2"><strong>Descrição:</strong> <br>{{chamado.descricao}}</div>							    
 								<div class="mb-2"><strong>Secretaria:</strong> {{chamado.setor.secretaria.nome}}</div>
 								<div class="mb-2"><strong>Setor:</strong> {{chamado.setor.nome}}</div>
+								<div class="mb-2"><strong>Endereço:</strong> {{chamado.setor.endereco}} - {{chamado.setor.bairro}}, {{chamado.setor.cep}}</div>
 								<div class="mb-2"><strong>Período preferêncial:</strong> 
 									{% for periodo in chamado.periodo_preferencial.all %}
 										{{ periodo }}
@@ -272,7 +273,7 @@
 											<select class="form-select" name="atendente" id="id_atendente" onchange="attChamado('atendente', this.value)">
 												<option value="">Selecione um atendente</option>
 												{% for atendente in atendentes %}
-												<option value="{{atendente.id}}">{{atendente.servidor.nome}}</option>		
+												<option value="{{atendente.id}}">{{atendente.servidor.nome}} ({{atendente.countChamadosAtribuidos}})</option>		
 												{% endfor %}										
 											</select>
 										</div>											
