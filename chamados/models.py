@@ -42,7 +42,7 @@ class Atendente(models.Model):
             self.nome_servidor=self.servidor.nome        
     
     def countChamadosAtribuidos(self):        
-        return Chamado.objects.filter(status='0', atendente=self).count()
+        return Chamado.objects.filter(status='0', profissional_designado=self).count()
     
     def save(self, *args, **kwargs):    
         self.setName()

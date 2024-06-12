@@ -8,37 +8,44 @@ from django.contrib import messages as message
 from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from .functions import enviar_email_atendente, Email_Chamado
-from django.contrib.auth.models import User
-# Create your views here.
 from django.urls import reverse
+from .functions import obter_filtros, verificar_filtrado, obter_chamados, obter_atendente, obter_opcoes_filtros, paginar_chamados, verificar_chamados_atrasados
 
 @login_required
 def index(request):
-    servidor = Servidor.objects.get(user=request.user)
-    atendente = Atendente.objects.filter(servidor=servidor)
-    if atendente.exists():
-        chamados = Chamado.objects.all().order_by('-dt_inclusao')
-        atendente = atendente.first()
-        designados = chamados.filter(profissional_designado=atendente)
-    else:
-        chamados = Chamado.objects.filter(requisitante=servidor).order_by('-dt_inclusao')
-        atendente = None
-        designados = []
-    
-    chamados = {
-        'todos': chamados,
-        'abertos':chamados.filter(status='0'),
-        'em_atendimento':chamados.filter(status='1'),
-        'pendentes':chamados.filter(status='2'),
-        'fechados':chamados.filter(status='3'),        
-        'designados': designados
+    filtros = obter_filtros(request)
+    filtrado = verificar_filtrado(request, filtros)
+    chamados = obter_chamados(request, filtros)
+    atendente = obter_atendente(request)
+    paginacao = paginar_chamados(request, chamados)
+    chamados_atrasados_data_agendada, chamados_atrasados_trinta_dias = verificar_chamados_atrasados()
+
+    kpi = {
+        'total': chamados.count(),
+        'abertos': chamados.filter(status='1').count(),
+        'pendentes': chamados.filter(status='2').count(),
+        'fechados_finalizados': chamados.filter(status__in=['3', '4']).count()
     }
-    context={
-        'tipos': TipoChamado.objects.all(),
-        'chamados': chamados,
-        'atendente': atendente
+    
+    context = {
+        'filtrado': filtrado,
+        'filtros': obter_opcoes_filtros(),
+        'chamados': paginacao,
+        'atendente': atendente,
+        'chamados_atrasados': {
+                                'exists': any([chamados_atrasados_data_agendada, chamados_atrasados_data_agendada]),
+                                'trintadias': chamados_atrasados_trinta_dias, 
+                                'agendado': chamados_atrasados_data_agendada
+                                },
+        'kpi':  kpi
     }
     return render(request, 'chamados/index.html', context)
+
+def zerar_filtros(request):
+    if 'filtros' in request.session:
+        del request.session['filtros']
+    return redirect('chamados:index')  # Redireciona de volta para a página inicial onde os filtros são aplicados
+
 
 @login_required
 def criarChamado(request, sigla):
@@ -209,9 +216,9 @@ def attChamado(request, hash):
 
 def iniciar_atendimento(request, hash):    
     chamado = Chamado.objects.get(hash=hash)
+    pagina_anterior = request.META.get('HTTP_REFERER', '/')
     if not chamado.dt_agendamento:
-        message.error(request, 'Atendimento não pode ser iniciado sem agendamento!')
-        return redirect('chamados:index')
+        chamado.dt_agendamento =  timezone.now()     
     chamado.dt_inicio_execucao = timezone.now()
     chamado.status = '1'
     chamado.save()
@@ -219,8 +226,8 @@ def iniciar_atendimento(request, hash):
     mensagem, status = Email_Chamado(chamado).notificar_solicitante('Seu chamado está em atendimento!')
     if status == 400:
         message.error(request, mensagem)
-        
-    return redirect('chamados:index')
+            
+    return redirect(pagina_anterior)
 
 def retomar_atendimento(request, hash):
     chamado = Chamado.objects.get(hash=hash)

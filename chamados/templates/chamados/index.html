@@ -32,9 +32,13 @@
 					                        <input type="text" id="search-orders" name="searchorders" class="form-control search-orders" placeholder="Procurar...">
 					                    </div> -->
 										<div class="col-auto">
-					                        <button class="btn app-btn-secondary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+					                        <button class="btn app-btn-secondary" {% if filtrado %}style="border-color: #15a362; color: #15a362;"{% endif %} data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                                                 <i class="fa-solid fa-filter"></i>
                                             </button>
+											<!-- <button class="btn app-btn-secondary" data-bs-toggle="collapse" href="#collapseKPI" role="button" aria-expanded="true" aria-controls="collapseKPI">
+                                                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                                            </button> -->
+											
 					                    </div>
 					                    <div class="col-auto">
 					                        <button id="openModal" class="btn app-btn-primary"><i class="fa-solid fa-plus me-2"></i>Novo chamado</button>
@@ -48,12 +52,131 @@
 				    </div>
 			    </div>
 				<div class="collapse mb-4 border-0" id="collapseExample">
-					<div class="card card-body d-flex">
-						<div>
-							<i class="fa-solid fa-filter"></i> Filtros
-						</div>
+					<div class="card card-body d-flex flex-column">					
+						<form method="POST" class="row">
+							<div class="col">
+									{% csrf_token %}		
+									<div class="row">
+										<div class="col pe-0 mb-1 d-flex">
+											<strong>Filtros</strong>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col d-flex">
+											<input class="form-control" name="protocolo" type="text" placeholder="Nº protocolo" value="{{ request.session.filtros.protocolo }}"  aria-label="default input example">															
+											<select id="secretariaSelect" name="secretaria" class="form-select mx-1" aria-label="Default select example">
+												<option value="">--- Secretaria ---</option>
+												{% for secretaria in filtros.secretarias %}
+												<option value="{{secretaria.id}}" {% if secretaria.id|stringformat:"s" == request.session.filtros.secretaria %}selected{% endif %}>{{secretaria.nome}}</option>			
+												{% endfor %}							
+											</select>
+											<select id="setorSelect" name="setor" class="form-select mx-1" aria-label="Default select example">
+												<option  value="">--- Setor ---</option>
+												{% for setor in filtros.setores %}
+												<option data-secretaria="{{setor.secretaria.id}}" value="{{setor.id}}" {% if setor.id|stringformat:"s" == request.session.filtros.setor %}selected{% endif %}>{{setor.nome}}</option>			
+												{% endfor %}
+											</select>
+											<select class="form-select" name="requisitante" aria-label="Default select example">
+												<option  value="">--- Requisitante ---</option>
+												{% for requisitante in filtros.requisitantes %}
+												<option value="{{requisitante.id}}" {% if requisitante.id|stringformat:"s" == request.session.filtros.requisitante %}selected{% endif %}>{{requisitante.nome}}</option>			
+												{% endfor %}	
+											</select>																			
+										</div>
+									</div>
+									<div class="row mt-1">
+										<div class="col d-flex">
+											<input class="form-control" name="dt_solicitacao" type="text" placeholder="Dt. solicitação" aria-label="default input example">
+											<select class="form-select mx-1" name="designado" aria-label="Default select example">
+												<option  value="">--- Designado ---</option>
+												{% for atendente in filtros.atendentes %}
+												<option value="{{atendente.id}}" {% if atendente.id|stringformat:"s" == request.session.filtros.designado %}selected{% endif %}>{{atendente.nome_servidor}}</option>			
+												{% endfor %}
+												<option  value="n/h">n/h</option>
+											</select>
+											<select class="form-select mx-1" name="prioridade" aria-label="Default select example">
+												<option  value="n">--- Prioridade ---</option>
+												{% for prioridade in filtros.prioridades %}
+												<option value="{{prioridade.0}}" {% if prioridade.0|stringformat:"s" == request.session.filtros.prioridade %}selected{% endif %}>{{prioridade.1}}</option>			
+												{% endfor %}									
+											</select>
+											<select class="form-select" name="status" aria-label="Default select example">
+												<option  value="">--- Status ---</option>
+												{% for status in filtros.status %}
+												<option value="{{status.0}}" {% if status.0|stringformat:"s" == request.session.filtros.status %}selected{% endif %}>{{status.1}}</option>			
+												{% endfor %}									
+											</select>											
+										</div>
+									</div>
+							</div>
+							<div class="row">
+								<div class="col pe-0 mt-2 d-flex">									
+									<button class="btn btn-secondary py-1 ms-auto">
+										<i class="fa-solid fa-filter me-2"></i>Filtrar
+									</button>
+									{% if filtrado %}
+									<a href="{% url 'chamados:zerar_filtros' %}" class="btn btn-light py-1 ms-2">
+										<i class="fa-solid fa-filter-circle-xmark me-2"></i>Limpar filtros
+									</a>
+									{% endif %}
+								</div>
+							</div>
+						</form>
 					</div>
-				  </div>
+				  </div>	
+				  <div class="mb-4" id="collapseKPI">
+					<div class="row">							
+						<div class="col col-lg">
+							<div class="app-card app-card-stat shadow-sm h-100">
+								<div class="app-card-body p-3 p-lg-4">
+									<h4 class="stats-type mb-1">Total <i class="fa-regular fa-comments"></i></h4>
+									<div class="stats-figure">{{ kpi.total }}</div>
+									<div class="stats-meta text-success">
+																				
+									</div>
+								</div>
+								<a class="app-card-link-mask" href="#"></a>
+							</div>
+						</div>	
+						<div class="col col-lg">
+							<div class="app-card app-card-stat shadow-sm h-100">
+								<div class="app-card-body p-3 p-lg-4">
+									<h4 class="stats-type mb-1">Abertos <i class="fa-regular fa-comment "></i></h4>
+									<div class="stats-figure">{{ kpi.abertos }}</div>
+									<div class="stats-meta text-success">
+																				
+									</div>
+								</div>
+								<a class="app-card-link-mask" href="#"></a>
+							</div>
+						</div>	
+						<div class="col col-lg">
+							<div class="app-card app-card-stat shadow-sm h-100">
+								<div class="app-card-body p-3 p-lg-4">
+									<h4 class="stats-type mb-1">Pendentes <i class="fa-regular fa-comment-dots "></i></h4>
+									<div class="stats-figure">{{ kpi.pendentes }}</div>
+									<div class="stats-meta text-success">
+																				
+									</div>
+								</div>
+								<a class="app-card-link-mask" href="#"></a>
+							</div>
+						</div>	
+						<div class="col col-lg">
+							<div class="app-card app-card-stat shadow-sm h-100">
+								<div class="app-card-body p-3 p-lg-4">
+									<h4 class="stats-type mb-1">Fechados/Finalizados <i class="fa-solid fa-comment-slash "></i></h4>
+									<div class="stats-figure">{{ kpi.fechados_finalizados }}</div>
+									<div class="stats-meta text-success">
+																				
+									</div>
+								</div>
+								<a class="app-card-link-mask" href="#"></a>
+							</div>
+						</div>
+											
+					</div>
+				  </div>			 
 			    {% if messages %}
 				{% for message in messages %}
 				<div class="alert alert-dismissible shadow-sm {{message.tags}} border-left-decoration" role="alert">
@@ -71,7 +194,7 @@
 				</div>
 				{% endfor %}
 				{% endif %}
-			    <nav id="orders-table-tab" class="orders-table-tab app-nav-tabs nav shadow-sm flex-column flex-sm-row mb-4">
+			    <!-- <nav id="orders-table-tab" class="orders-table-tab app-nav-tabs nav shadow-sm flex-column flex-sm-row mb-4">
 					{% if atendente %}
 					<a class="flex-sm-fill text-sm-center nav-link active" id="orders-designados-tab" data-bs-toggle="tab" href="#designados" role="tab" aria-controls="orders-designados" aria-selected="true">Designados</a>
 					{% endif %}
@@ -80,7 +203,7 @@
 				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-pending-tab" data-bs-toggle="tab" href="#em-atendimento" role="tab" aria-controls="orders-pending" aria-selected="false">Em atendimento</a>
 				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#pendentes" role="tab" aria-controls="orders-cancelled" aria-selected="false">Pendente</a>
 					<a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#fechados" role="tab" aria-controls="orders-cancelled" aria-selected="false">Fechado</a>
-				</nav>
+				</nav> -->
 				
 				 <div id="message" class="app-card alert alert-dismissible shadow-sm mb-4 bg-success border-left-decoration" role="alert">
 				    <div class="inner">
@@ -96,110 +219,29 @@
 					    
 				    </div>
 			    </div>
-				<div class="tab-content" id="orders-table-tab-content">
-					<div class="tab-pane fade {%if atendente %}show active{% endif %}" id="designados" role="tabpanel" aria-labelledby="orders-all-tab">
-					    <div class="app-card app-card-orders-table shadow-sm mb-5">
-						    <div class="app-card-body">
-							    <div class="table-responsive">
-							        <table class="table app-table-hover mb-0 text-left">
-										<thead>
-											<tr>
-												<th class="cell"></th>
-												<th class="cell">Protocolo</th>												
-												<th class="cell">Secretaria</th>
-												<th class="cell">Setor</th>
-												<th class="cell">Requisitante</th>
-												<th class="cell">Dt. solicitação</th>
-												<th class="cell">Dt. atualização</th>												
-												<th class="cell">Msg's</th>
-												<th class="cell">Prioridade</th>
-												<th class="cell">Status</th>
-												<th class="cell"></th>
-											</tr>
-										</thead>
-										<tbody>
-											{% for chamado in chamados.designados %}
-											<tr>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
-													{% if not chamado.dt_inicio_execucao %}
-													<a href="{% url 'chamados:inicializar' chamado.hash %}" class="btn btn-danger w-100" style="color: white;">														
-														<i class="fa-solid fa-stopwatch me-2"></i>Iniciar												
-													</a>
-													{% elif not chamado.dt_execucao %}
-													{% if chamado.check_pause %}
-													<a href="{% url 'chamados:retomar' chamado.hash %}" class="btn app-btn-purple w-100" style="color: white;">														
-														<i class="fa-solid fa-play me-2"></i>Retomar 
-													</a>
-													{% else %}
-													<a href="{% url 'chamados:pausar' chamado.hash %}" class="btn app-btn-dark" style="color: white;">														
-														<i class="fa-solid fa-pause"></i>
-													</a>
-													<a href="{% url 'chamados:finalizar' chamado.hash %}" class="btn app-btn-primary" style="color: white;">														
-														<i class="fa-solid fa-check"></i>
-													</a>
-													{% endif %}
-													
-													{% else %}
-													Duração: {{chamado.get_duracao_execucao}}
-													{% endif %}
-												</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.n_protocolo}}</td>												
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.secretaria.apelido}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.apelido}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.requisitante.nome}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
-													{% if chamado.prioridade == '' %}
-													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '0' %}
-													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '1' %}
-													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '2' %}
-													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
-													{% endif %}
-												</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
-													{% if chamado.status == '0' %}
-													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '1' %}
-													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '2' %}
-													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '3' %}
-													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '4' %}
-													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
-													{% endif %}
-												</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
-											</tr>	
-											{% endfor %}										
-		
-										</tbody>
-									</table>
-						        </div><!--//table-responsive-->
-						       
-						    </div><!--//app-card-body-->		
-						</div><!--//app-card-->
-							<!-- <nav class="app-pagination">
-							<ul class="pagination justify-content-center">
-								<li class="page-item disabled">
-									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
-							    </li>
-								<li class="page-item active"><a class="page-link" href="#">1</a></li>
-								<li class="page-item"><a class="page-link" href="#">2</a></li>
-								<li class="page-item"><a class="page-link" href="#">3</a></li>
-								<li class="page-item">
-								    <a class="page-link" href="#">Próxima</a>
-								</li>
-							</ul>
-						</nav> -->
-						
-			        </div><!--//tab-pane-->
-			        <div class="tab-pane fade {%if not atendente %}show active{% endif %}" id="todos" role="tabpanel" aria-labelledby="orders-all-tab">
+				{% if chamados_atrasados.exists %}
+				<div class="row px-2 mb-3">
+					<div class="col" style="border: 1px solid rgb(223, 68, 68); background-color: white; border-radius: 5px; color: rgb(214, 11, 11);">
+						<p>Há chamados atrasados!</p>
+						<div class="row">
+							<div class="col pb-3">
+								{% if chamados_atrasados.trintadias %}
+								<button class="btn btn-danger">
+									<i class="fa-regular fa-calendar-days me-2"></i>Chamados com inclusão há 30 dias
+								</button>
+								{% endif %}
+								{% if chamados_atrasados.agendado %}
+								<button class="btn btn-danger">
+									<i class="fa-solid fa-clock me-2"></i>Chamados com agendamento vencido
+								</button>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endif %}
+				<div class="tab-content" id="orders-table-tab-content">					
+			        <div class="tab-pane fade show active id="todos" role="tabpanel" aria-labelledby="orders-all-tab">
 					    <div class="app-card app-card-orders-table shadow-sm mb-5">
 						    <div class="app-card-body">
 							    <div class="table-responsive">
@@ -220,7 +262,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											{% for chamado in chamados.todos %}
+											{% for chamado in chamados %}
 											<tr>
 												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}> <a href="{% url 'chamados:detalhes' chamado.hash %}">{{chamado.n_protocolo}}</a></td>												
 												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.secretaria.apelido}}</td>
@@ -264,333 +306,46 @@
 						       
 						    </div><!--//app-card-body-->		
 						</div><!--//app-card-->
-							<!-- <nav class="app-pagination">
+						<!-- Paginação -->
+						<nav class="app-pagination">
 							<ul class="pagination justify-content-center">
+								{% if chamados.has_previous %}
+								<li class="page-item">
+									<a class="page-link" href="?page={{ chamados.previous_page_number }}">Anterior</a>
+								</li>
+								{% else %}
 								<li class="page-item disabled">
 									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
-							    </li>
-								<li class="page-item active"><a class="page-link" href="#">1</a></li>
-								<li class="page-item"><a class="page-link" href="#">2</a></li>
-								<li class="page-item"><a class="page-link" href="#">3</a></li>
-								<li class="page-item">
-								    <a class="page-link" href="#">Próxima</a>
 								</li>
-							</ul>
-						</nav> -->
-						
-			        </div><!--//tab-pane-->
-			        <div class="tab-pane fade" id="abertos" role="tabpanel" aria-labelledby="orders-all-tab">
-					    <div class="app-card app-card-orders-table shadow-sm mb-5">
-						    <div class="app-card-body">
-							    <div class="table-responsive">
-							        <table class="table app-table-hover mb-0 text-left">
-										<thead>
-											<tr>
-												<th class="cell">Protocolo</th>												
-												<th class="cell">Secretaria</th>
-												<th class="cell">Setor</th>
-												<th class="cell">Requisitante</th>
-												<th class="cell">Dt. solicitação</th>
-												<th class="cell">Dt. atualização</th>
-												<th class="cell">Msg's</th>
-												<th class="cell">Prioridade</th>
-												<th class="cell">Status</th>
-												<th class="cell"></th>
-											</tr>
-										</thead>
-										<tbody>
-											{% for chamado in chamados.abertos %}
-											<tr>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.n_protocolo}}</td>												
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.secretaria.apelido}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.apelido}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.requisitante.nome}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
-													{% if chamado.prioridade == '' %}
-													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '0' %}
-													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '1' %}
-													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '2' %}
-													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
-													{% endif %}
-												</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
-													{% if chamado.status == '0' %}
-													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '1' %}
-													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '2' %}
-													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '3' %}
-													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '4' %}
-													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
-													{% endif %}
-												</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
-											</tr>	
-											{% endfor %}										
-		
-										</tbody>
-									</table>
-						        </div><!--//table-responsive-->
-						       
-						    </div><!--//app-card-body-->		
-						</div><!--//app-card-->
-							<!-- <nav class="app-pagination">
-							<ul class="pagination justify-content-center">
+								{% endif %}
+
+								{% for num in chamados.paginator.page_range %}
+								{% if chamados.number == num %}
+								<li class="page-item active">
+									<a class="page-link" href="#">{{ num }}</a>
+								</li>
+								{% elif num > chamados.number|add:'-5' and num < chamados.number|add:'5' %}
+								<li class="page-item">
+									<a class="page-link" href="?page={{ num }}">{{ num }}</a>
+								</li>
+								{% endif %}
+								{% endfor %}
+
+								{% if chamados.has_next %}
+								<li class="page-item">
+									<a class="page-link" href="?page={{ chamados.next_page_number }}">Próxima</a>
+								</li>
+								{% else %}
 								<li class="page-item disabled">
-									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
-							    </li>
-								<li class="page-item active"><a class="page-link" href="#">1</a></li>
-								<li class="page-item"><a class="page-link" href="#">2</a></li>
-								<li class="page-item"><a class="page-link" href="#">3</a></li>
-								<li class="page-item">
-								    <a class="page-link" href="#">Próxima</a>
+									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Próxima</a>
 								</li>
+								{% endif %}
 							</ul>
-						</nav> -->
+						</nav>
+
 						
 			        </div><!--//tab-pane-->
-			        <div class="tab-pane fade" id="em-atendimento" role="tabpanel" aria-labelledby="orders-all-tab">
-					    <div class="app-card app-card-orders-table shadow-sm mb-5">
-						    <div class="app-card-body">
-							    <div class="table-responsive">
-							        <table class="table app-table-hover mb-0 text-left">
-										<thead>
-											<tr>
-												<th class="cell">Protocolo</th>												
-												<th class="cell">Secretaria</th>
-												<th class="cell">Setor</th>
-												<th class="cell">Requisitante</th>
-												<th class="cell">Dt. solicitação</th>
-												<th class="cell">Dt. atualização</th>
-												<th class="cell">Msg's</th>
-												<th class="cell">Prioridade</th>
-												<th class="cell">Status</th>
-												<th class="cell"></th>
-											</tr>
-										</thead>
-										<tbody>
-											{% for chamado in chamados.em_atendimento %}
-											<tr>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.n_protocolo}}</td>												
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.secretaria.apelido}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.apelido}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.requisitante.nome}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
-													{% if chamado.prioridade == '' %}
-													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '0' %}
-													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '1' %}
-													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '2' %}
-													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
-													{% endif %}
-												</td>
-												<td class="cell">
-													{% if chamado.status == '0' %}
-													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '1' %}
-													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '2' %}
-													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '3' %}
-													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '4' %}
-													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
-													{% endif %}
-												</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
-											</tr>	
-											{% endfor %}										
-		
-										</tbody>
-									</table>
-						        </div><!--//table-responsive-->
-						       
-						    </div><!--//app-card-body-->		
-						</div><!--//app-card-->
-							<!-- <nav class="app-pagination">
-							<ul class="pagination justify-content-center">
-								<li class="page-item disabled">
-									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
-							    </li>
-								<li class="page-item active"><a class="page-link" href="#">1</a></li>
-								<li class="page-item"><a class="page-link" href="#">2</a></li>
-								<li class="page-item"><a class="page-link" href="#">3</a></li>
-								<li class="page-item">
-								    <a class="page-link" href="#">Próxima</a>
-								</li>
-							</ul>
-						</nav> -->
-						
-			        </div><!--//tab-pane-->
-					<div class="tab-pane fade" id="pendentes" role="tabpanel" aria-labelledby="orders-all-tab">
-					    <div class="app-card app-card-orders-table shadow-sm mb-5">
-						    <div class="app-card-body">
-							    <div class="table-responsive">
-							        <table class="table app-table-hover mb-0 text-left">
-										<thead>
-											<tr>
-												<th class="cell">Protocolo</th>												
-												<th class="cell">Secretaria</th>
-												<th class="cell">Setor</th>
-												<th class="cell">Requisitante</th>
-												<th class="cell">Dt. solicitação</th>
-												<th class="cell">Dt. atualização</th>
-												<th class="cell">Msg's</th>
-												<th class="cell">Prioridade</th>
-												<th class="cell">Status</th>
-												<th class="cell"></th>
-											</tr>
-										</thead>
-										<tbody>
-											{% for chamado in chamados.pendentes %}
-											<tr>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.n_protocolo}}</td>												
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.secretaria.apelido}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.apelido}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.requisitante.nome}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
-													{% if chamado.prioridade == '' %}
-													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '0' %}
-													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '1' %}
-													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '2' %}
-													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
-													{% endif %}
-												</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
-													{% if chamado.status == '0' %}
-													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '1' %}
-													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '2' %}
-													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '3' %}
-													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '4' %}
-													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
-													{% endif %}
-												</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
-											</tr>	
-											{% endfor %}										
-		
-										</tbody>
-									</table>
-						        </div><!--//table-responsive-->
-						       
-						    </div><!--//app-card-body-->		
-						</div><!--//app-card-->
-							<!-- <nav class="app-pagination">
-							<ul class="pagination justify-content-center">
-								<li class="page-item disabled">
-									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
-							    </li>
-								<li class="page-item active"><a class="page-link" href="#">1</a></li>
-								<li class="page-item"><a class="page-link" href="#">2</a></li>
-								<li class="page-item"><a class="page-link" href="#">3</a></li>
-								<li class="page-item">
-								    <a class="page-link" href="#">Próxima</a>
-								</li>
-							</ul>
-						</nav> -->
-						
-			        </div><!--//tab-pane-->
-					<div class="tab-pane fade" id="fechados" role="tabpanel" aria-labelledby="orders-all-tab">
-					    <div class="app-card app-card-orders-table shadow-sm mb-5">
-						    <div class="app-card-body">
-							    <div class="table-responsive">
-							        <table class="table app-table-hover mb-0 text-left">
-										<thead>
-											<tr>
-												<th class="cell">Protocolo</th>												
-												<th class="cell">Secretaria</th>
-												<th class="cell">Setor</th>
-												<th class="cell">Requisitante</th>
-												<th class="cell">Dt. solicitação</th>
-												<th class="cell">Dt. atualização</th>
-												<th class="cell">Msg's</th>
-												<th class="cell">Prioridade</th>
-												<th class="cell">Status</th>
-												<th class="cell"></th>
-											</tr>
-										</thead>
-										<tbody>
-											{% for chamado in chamados.fechados %}
-											<tr>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.n_protocolo}}</td>												
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.secretaria.apelido}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.setor.apelido}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.requisitante.nome}}</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_inclusao|date:"d M y"}}</span><span class="note">{{chamado.dt_inclusao|date:"H:i"}}</span></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><span>{{chamado.dt_atualizacao|date:"d M y"}}</span><span class="note">{{chamado.dt_atualizacao|date:"H:i"}}</span></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>{{chamado.get_total_msg}} <i class="fa-regular fa-envelope"></i></td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
-													{% if chamado.prioridade == '' %}
-													<span class="badge" style="background-color: rgb(53, 89, 155);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '0' %}
-													<span class="badge" style="background-color: rgb(50, 116, 47);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '1' %}
-													<span class="badge" style="background-color: rgb(155, 163, 36);">{{chamado.get_prioridade_display}}</span>
-													{% elif chamado.prioridade == '2' %}
-													<span class="badge" style="background-color: rgb(119, 33, 33);">{{chamado.get_prioridade_display}}</span>
-													{% endif %}
-												</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}>
-													{% if chamado.status == '0' %}
-													<span class="badge" style="background-color: rgb(25, 165, 37);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '1' %}
-													<span class="badge" style="background-color: rgb(177, 105, 12);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '2' %}
-													<span class="badge" style="background-color: rgb(131, 53, 155);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '3' %}
-													<span class="badge" style="background-color: rgb(88, 88, 88);">{{chamado.get_status_display}}</span>
-													{% elif chamado.status == '4' %}
-													<span class="badge" style="background-color: rgb(0, 0, 0);">{{chamado.get_status_display}}</span>
-													{% endif %}
-												</td>
-												<td class="cell" {% if chamado.status == '4' or chamado.status == '3' %}style="background-color: rgb(202, 202, 202);"{% endif %}><a class="btn-sm app-btn-secondary" href="{% url 'chamados:detalhes' chamado.hash %}">Visualizar</a></td>
-											</tr>	
-											{% endfor %}										
-		
-										</tbody>
-									</table>
-						        </div><!--//table-responsive-->
-						       
-						    </div><!--//app-card-body-->		
-						</div><!--//app-card-->
-						<!-- <nav class="app-pagination">
-							<ul class="pagination justify-content-center">
-								<li class="page-item disabled">
-									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
-							    </li>
-								<li class="page-item active"><a class="page-link" href="#">1</a></li>
-								<li class="page-item"><a class="page-link" href="#">2</a></li>
-								<li class="page-item"><a class="page-link" href="#">3</a></li>
-								<li class="page-item">
-								    <a class="page-link" href="#">Próxima</a>
-								</li>
-							</ul>
-						</nav> -->
-						
-			        </div><!--//tab-pane-->
+				</div>
 				<div id="myModal" class="modal">
 				<div class="modal-dialog">
 					<div class="modal-content">
@@ -661,6 +416,30 @@
 							const currentIsAscending = headerCell.classList.contains("th-sort-asc");
 
 							sortTable(tableElement, headerIndex, !currentIsAscending);
+						});
+					});
+
+					document.addEventListener('DOMContentLoaded', function() {
+						const secretariaSelect = document.getElementById('secretariaSelect');
+						const setorSelect = document.getElementById('setorSelect');
+
+						// Armazene todas as opções de setor inicialmente
+						const allSetorOptions = Array.from(setorSelect.querySelectorAll('option'));
+
+						secretariaSelect.addEventListener('change', function() {
+							const selectedSecretaria = this.value;
+
+							// Limpar opções atuais do setor
+							setorSelect.innerHTML = '<option selected>--- Setor ---</option>';
+
+							// Adicionar opções de setores correspondentes
+							allSetorOptions.forEach(function(option) {
+								if (option.getAttribute('data-secretaria') === selectedSecretaria) {
+									setorSelect.appendChild(option);
+								} else if (option.getAttribute('data-secretaria') === null) {
+									setorSelect.appendChild(option); // Preserve the default option
+								}
+							});
 						});
 					});
 				</script>	

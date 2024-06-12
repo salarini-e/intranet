@@ -103,3 +103,105 @@ def enviar_email_atendente(servidor, chamado):
         print(e)
         return 'Falha ao enviar email.', 400
     return 'Email enviado com sucesso.', 200
+
+from django.core.paginator import Paginator
+from .models import Servidor, Atendente, Chamado, Secretaria, Setor
+
+def obter_filtros(request):
+    if request.method == 'POST':
+        filtros = {
+            'protocolo': request.POST.get('protocolo', ''),
+            'secretaria': request.POST.get('secretaria', ''),
+            'setor': request.POST.get('setor', ''),
+            'requisitante': request.POST.get('requisitante', ''),
+            'dt_solicitacao': request.POST.get('dt_solicitacao', ''),
+            'designado': request.POST.get('designado', ''),
+            'prioridade': request.POST.get('prioridade', ''),
+            'status': request.POST.get('status', '')
+        }
+        request.session['filtros'] = filtros
+    else:
+        filtros = request.session.get('filtros', {})
+    return filtros
+
+def verificar_filtrado(request, filtros):
+    return any(value for value in filtros.values())
+
+def obter_chamados(request, filtros):
+    servidor = Servidor.objects.get(user=request.user)
+    atendente = Atendente.objects.filter(servidor=servidor).first()
+    if atendente:
+        chamados = Chamado.objects.exclude(status__in=['3', '4']).order_by('-dt_inclusao')        
+        if filtros:
+            chamados = Chamado.objects.filter().order_by('-dt_inclusao')
+            chamados = aplicar_filtros(chamados, filtros)
+    
+    else:
+        chamados = Chamado.objects.exclude(status__in=['3', '4']).filter(requisitante=servidor).order_by('-dt_inclusao')        
+        if filtros:
+            chamados = Chamado.objects.filter(requisitante=servidor).order_by('-dt_inclusao')
+            chamados = aplicar_filtros(chamados, filtros)
+    
+
+    
+    return chamados
+
+def aplicar_filtros(chamados, filtros):
+    if filtros['protocolo']:
+        chamados = chamados.filter(protocolo__icontains=filtros['protocolo'])
+    if filtros['secretaria']:
+        chamados = chamados.filter(setor__secretaria_id=filtros['secretaria'])
+    if filtros['setor']:
+        chamados = chamados.filter(setor_id=filtros['setor'])
+    if filtros['requisitante']:
+        chamados = chamados.filter(requisitante_id=filtros['requisitante'])
+    if filtros['dt_solicitacao']:
+        chamados = chamados.filter(dt_solicitacao=filtros['dt_solicitacao'])
+    if filtros['designado']:
+        if filtros['designado']!='n/h':
+            chamados = chamados.filter(profissional_designado_id=filtros['designado'])
+        else:
+            chamados = chamados.filter(profissional_designado__isnull=True)
+    if filtros['prioridade'] and filtros['prioridade']!='n':
+        chamados = chamados.filter(prioridade=filtros['prioridade'])
+    if filtros['status']:
+        chamados = chamados.filter(status=filtros['status'])
+    
+    return chamados
+
+def obter_atendente(request):
+    servidor = Servidor.objects.get(user=request.user)
+    return Atendente.objects.filter(servidor=servidor).first()
+
+def obter_opcoes_filtros():
+    return {
+        'secretarias': Secretaria.objects.all(),
+        'setores': Setor.objects.all(),
+        'requisitantes': Servidor.objects.all(),
+        'atendentes': Atendente.objects.all(),
+        'prioridades': Chamado.PRIORIDADE_CHOICES,
+        'status': Chamado.STATUS_CHOICES
+    }
+
+def paginar_chamados(request, chamados):
+    paginator = Paginator(chamados, 50)  # Mostra 10 chamados por página
+    page_number = request.GET.get('page')
+    return paginator.get_page(page_number)
+
+from datetime import datetime, timedelta
+
+def verificar_chamados_atrasados():
+    # Obtém a data atual
+    data_atual = datetime.now().date()
+    
+    # Calcula a data 30 dias atrás
+    trinta_dias_atras = data_atual - timedelta(days=30)
+    
+    # Verifica os chamados abertos que já passaram da data agendada
+    chamados_atrasados_data_agendada = Chamado.objects.filter(dt_agendamento__lt=data_atual, status='Aberto')
+    
+    # Verifica os chamados abertos há mais de 30 dias
+    chamados_atrasados_trinta_dias = Chamado.objects.filter(dt_inclusao__lt=trinta_dias_atras, status='Aberto')
+    
+    # Retorna True se houver algum chamado atrasado, caso contrário, False
+    return chamados_atrasados_data_agendada.exists(), chamados_atrasados_trinta_dias.exists()
