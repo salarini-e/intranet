@@ -32,3 +32,14 @@ class FormCadastroWebex(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'ramal': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
         }
+
+class FormSugestaoSemanaNacionalCET2024(forms.ModelForm):
+    class Meta:
+        model = FormSugestaoSemanaNacionalCET2024
+        fields = ['nome', 'telefone', 'email', 'sugestao']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'sugestao': forms.Textarea(attrs={'class': 'form-control', 'placeholder': '', 'rows': 4}),
+        }

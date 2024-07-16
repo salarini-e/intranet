@@ -24,3 +24,15 @@ class CadastroWebex(models.Model):
 
     def __str__(self):
         return f'{self.nome} - {self.secretaria}'
+    
+
+        
+class FormSugestaoSemanaNacionalCET2024(models.Model):
+    nome = models.CharField(max_length=150, verbose_name='Seu nome completo', blank=False)
+    sugestao = models.TextField(verbose_name='Deixe sua sugestão e possíveis contatos para a SNCT 2024', blank=False)
+    telefone = models.CharField(max_length=15, verbose_name='Seu whatsapp', blank=False)    
+    email = models.EmailField(verbose_name='Seu email')    
+    dt_inclusao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.nome} - {self.dt_inclusao}'

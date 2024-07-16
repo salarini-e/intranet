@@ -44,3 +44,23 @@ def Webex(request):
         }
     return render(request, 'formfacil/formfacil_form.html', context)
 
+def Snct2024(request):
+    if request.method == 'POST':
+        form = FormSugestaoSemanaNacionalCET2024(request.POST)
+        if form.is_valid():
+            form.save()
+            context = {
+                'titulo': 'Formulário para sugestões de atividades para a Semana Nacional de Ciência e Tecnologia 2024',    
+                'subtitulo': 'Secretaria Municipal de Ciência, Tecnologia, Inovação e Educação Profissionalizante Superior',
+                'mensagem': "<span class='text-success'><i class='fa-solid fa-circle-check me-2'></i>Formulário enviado com sucesso!</span>"
+            }
+            return render(request, 'formfacil/formfacil_success.html', context)
+    else:
+        form = FormSugestaoSemanaNacionalCET2024()
+    context = {
+            'form': form,
+            'titulo': 'Formulário para sugestões de atividades para a Semana Nacional de Ciência e Tecnologia 2024',    
+                'subtitulo': 'Secretaria Municipal de Ciência, Tecnologia, Inovação e Educação Profissionalizante Superior',
+                'mensagem': "Convidamos você a contribuir com sugestões de atividades para a Semana Nacional de Ciência e Tecnologia 2024. Sua participação é essencial para o sucesso do evento, cujo tema este ano é 'Biomas do Brasil: diversidade, saberes e tecnologia social. Agradecemos sua colaboração."
+        }
+    return render(request, 'formfacil/formfacil_form.html', context)
