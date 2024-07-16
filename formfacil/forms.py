@@ -33,10 +33,11 @@ class FormCadastroWebex(forms.ModelForm):
             'ramal': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
         }
 
-class FormSugestaoSemanaNacionalCET2024(forms.ModelForm):
+class FormSugestaoSemanaNacionalCET2024Form(forms.ModelForm):
     class Meta:
         model = FormSugestaoSemanaNacionalCET2024
-        fields = ['nome', 'telefone', 'email', 'sugestao']
+        # fields = ['nome', 'telefone', 'email', 'sugestao']
+        exclude = ['dt_inclusao']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),

@@ -27,7 +27,7 @@ def IndicacaoComitePSP(request):
     return render(request, 'formfacil/formfacil_form.html', context)
 
 
-def Webex(request):
+def webex(request):
     if request.method == 'POST':
         form = FormCadastroWebex(request.POST)
         if form.is_valid():
@@ -48,9 +48,9 @@ def Webex(request):
         }
     return render(request, 'formfacil/formfacil_form.html', context)
 
-def Snct2024(request):
+def snct2024(request):
     if request.method == 'POST':
-        form = FormSugestaoSemanaNacionalCET2024(request.POST)
+        form = FormSugestaoSemanaNacionalCET2024Form(request.POST)
         if form.is_valid():
             form.save()
             context = {
@@ -60,7 +60,8 @@ def Snct2024(request):
             }
             return render(request, 'formfacil/formfacil_success.html', context)
     else:
-        form = FormSugestaoSemanaNacionalCET2024()
+        form = FormSugestaoSemanaNacionalCET2024Form()
+        
     context = {
             'form': form,
             'titulo': 'Formulário para sugestões de atividades para a Semana Nacional de Ciência e Tecnologia 2024',    
