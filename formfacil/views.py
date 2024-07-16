@@ -4,6 +4,7 @@ import pandas as pd
 from django.http import HttpResponse
 from .models import FormSugestaoSemanaNacionalCET2024
 from django.contrib.auth.decorators import login_required
+import pytz
 
 def IndicacaoComitePSP(request):
     if request.method == 'POST':
@@ -82,7 +83,7 @@ def snct2024_export(request):
             'Sugestão': suggestion.sugestao,
             'Telefone': suggestion.telefone,
             'Email': suggestion.email,
-            'Data de Inclusão': suggestion.dt_inclusao,
+             'Data de Inclusão': suggestion.dt_inclusao.astimezone(pytz.utc).replace(tzinfo=None), 
         })
 
     df = pd.DataFrame(data)
