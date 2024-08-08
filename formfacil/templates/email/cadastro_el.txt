@@ -6,9 +6,14 @@
         Nome Completo: {{ model.nome }}
         CPF: {{ model.cpf }}
         Matrícula: {{ model.matricula }}
+        Telefone: {{ model.telefone }}
+        Email: {{ model.email }}
         Sistema: {{ model.get_sistemas_display }}
         Data de Inclusão: {{ model.dt_inclusao|date:"d/m/Y H:i:s" }}
-
+        Sistemas:
+        {% for sistema in modal.sistemas.all %}
+        • {{sistema}}
+        {% endif %}
     Arquivo Anexo:</p>
     Você pode baixar o memorando em PDF através do seguinte link:</p>
     {{ protocol }}://{{ domain }}{{ model.pdf_memorando.url }} - Baixar PDF
@@ -16,4 +21,3 @@
 
     Atenciosamente,
     Equipe de TI
-

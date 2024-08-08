@@ -10,6 +10,13 @@ from datetime import datetime
 import pandas as pd
 
 from .functions.validation import validate_cpf
+import requests
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 @login_required
 def index(request):
@@ -171,6 +178,45 @@ def get_servidores_from_site(request):
 
     return HttpResponse("Dados importados com sucesso!")
 
+def busca_servidor(matricula):
+    url = f'https://novafriburgo-rj.portaltp.com.br/consultas/detalhes/servidor.aspx?id=1|7B86F9F1A3EA47148B5ED3C60BFA6E18|2024|06|{matricula}|01'
+    print(url)
+    # Configure Chrome options
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Run Chrome in headless mode
+
+    # Create a new Chrome driver
+    driver = webdriver.Chrome(options=chrome_options)
+
+    try:
+        # Open the URL
+        driver.get(url)
+        # Wait for the input element to be loaded
+        input_nome = driver.find_element(By.ID, "ctl00_containerCorpo_edtServNome_I")
+        input_cpf = driver.find_element(By.ID, "ctl00_containerCorpo_edtServDoc_I")
+        input_secretaria = driver.find_element(By.ID, "ctl00_containerCorpo_edtServSecretaria_I")        
+        # Get the value from the input element
+        nome = input_nome.get_attribute("value")
+        cpf = input_cpf.get_attribute("value")
+        secretaria = input_secretaria.get_attribute("value")
+        meta_servidor = Meta_Servidores.objects.create(
+            nome=nome,
+            cpf=cpf,
+            secretaria=secretaria
+        )
+
+        return meta_servidor
+
+    except:
+        try:
+            meta_servidor = Meta_Servidores.objects.get(matricula=matricula)
+            return meta_servidor
+        except:
+            return None
+
+    finally:
+        # Quit the driver
+        driver.quit()
 def api_get_servidor(request):
     dict_mapeamento = {
     'SEC MUNIC FINANCAS,PLANEJAMENTO,DESENV ECON GESTAO': 'Secretaria Municipal de Finanças, Planejamento, Desenvolvimento Econômico e Gestão',
@@ -204,15 +250,28 @@ def api_get_servidor(request):
 }
     matricula = request.GET.get('matricula', None)
     # Remove leading zeros from matricula if present
+    # if matricula is not None:
+    #     matricula = matricula.lstrip('0')
     if matricula is not None:
-        matricula = matricula.lstrip('0')
-    if matricula is not None:
+        meta_servidor = busca_servidor(matricula)
         try:
-            servidor = Meta_Servidores.objects.get(matricula=matricula)
+            servidor = meta_servidor
             print(servidor.secretaria)
             print(dict_mapeamento[servidor.secretaria])
             try:
                 secretaria = Secretaria.objects.get(nome=dict_mapeamento[servidor.secretaria])
+            except:
+                secretaria = Secretaria.objects.create(nome=dict_mapeamento[servidor.secretaria], apelido=dict_mapeamento[servidor.secretaria], sigla='n/d',
+                                                        user_inclusao=request.user,)
+                setor = Setor.objects.create(nome='Não definido', 
+                                             apelido='n/d', 
+                                             sigla='n/d', 
+                                             cep='n/d', 
+                                             bairro='n/d', 
+                                             endereco='n/d', 
+                                             secretaria=secretaria, 
+                                             user_inclusao=request.user)
+            try:
                 setores = Setor.objects.filter(secretaria=secretaria)
                 print(secretaria)
                 print(setores)
