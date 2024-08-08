@@ -48,10 +48,12 @@ class FormSugestaoSemanaNacionalCET2024Form(forms.ModelForm):
 class CadastroELForm(forms.ModelForm):
     class Meta:
         model = CadastroEL
-        fields = ['cpf', 'nome', 'matricula', 'pdf_memorando', 'sistemas', 'observacao']
+        fields = ['cpf', 'nome', 'telefone', 'email', 'matricula', 'pdf_memorando', 'sistemas', 'observacao']
         widgets = {
             'cpf': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'matricula': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'pdf_memorando': forms.FileInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'sistemas': forms.CheckboxSelectMultiple(),

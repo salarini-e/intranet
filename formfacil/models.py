@@ -49,6 +49,8 @@ class CadastroEL(models.Model):
     cpf = models.CharField(max_length=14, verbose_name='CPF')
     nome = models.CharField(max_length=150, verbose_name='Nome completo')
     matricula = models.CharField(max_length=10, verbose_name='Matrícula')
+    telefone = models.CharField(max_length=15, verbose_name='Telefone', default='', null=True)
+    email = models.EmailField(verbose_name='Email', default='', null=True)
     pdf_memorando = models.FileField(upload_to='uploads/', verbose_name='PDF do memorando')
     sistemas = models.ManyToManyField(Sistemas_EL, verbose_name='Quais sistemas você precisa de acesso?')
     observacao = models.TextField('Deseja fazer alguma observação?', blank=True)
