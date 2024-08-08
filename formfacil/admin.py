@@ -4,3 +4,5 @@ from .models import *
 admin.site.register(FormIndicacaoComitePSP)
 admin.site.register(CadastroWebex)
 admin.site.register(FormSugestaoSemanaNacionalCET2024)
+admin.site.register(Sistemas_EL)
+admin.site.register(CadastroEL)

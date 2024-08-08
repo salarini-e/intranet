@@ -94,3 +94,26 @@ def snct2024_export(request):
     df.to_excel(response, index=False, engine='openpyxl')
 
     return response
+
+def cadastro_el_view(request):
+    if request.method == 'POST':
+        form = CadastroELForm(request.POST)
+        if form.is_valid():
+            form.save()
+            context = {
+                'titulo': 'Formulário para Cadastro da EL',    
+                'subtitulo': 'Subsecretaria de TI',
+                'mensagem': "<span class='text-success'><i class='fa-solid fa-circle-check me-2'></i>Formulário enviado com sucesso!</span>"
+            }
+            return render(request, 'formfacil/formfacil_success.html', context)
+    else:
+        form = CadastroELForm()
+        
+    context = {
+            'form': form,
+            'titulo': 'Formulário para Cadastro da EL',    
+                'subtitulo': 'Subsecretaria de TI',
+                'mensagem': "Preencha corretamente os campos abaixo para efetuar o cadastro nos sistemas da EL."
+        }
+    return render(request, 'formfacil/formfacil_form.html', context)
+

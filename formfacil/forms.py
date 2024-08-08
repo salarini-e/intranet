@@ -44,3 +44,16 @@ class FormSugestaoSemanaNacionalCET2024Form(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'sugestao': forms.Textarea(attrs={'class': 'form-control', 'placeholder': '', 'rows': 4}),
         }
+
+class CadastroELForm(forms.ModelForm):
+    class Meta:
+        model = CadastroEL
+        fields = ['cpf', 'nome', 'matricula', 'pdf_memorando', 'sistemas', 'observacao']
+        widgets = {
+            'cpf': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'matricula': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'pdf_memorando': forms.FileInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'sistemas': forms.CheckboxSelectMultiple(),
+            'observacao': forms.Textarea(attrs={'class': 'form-control mb-3', 'placeholder': '', 'rows': 4}),
+        }

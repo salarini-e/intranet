@@ -1,4 +1,5 @@
 from django.db import models
+from .email import Email
 
 # Create your models here.
 class FormIndicacaoComitePSP(models.Model):
@@ -36,3 +37,30 @@ class FormSugestaoSemanaNacionalCET2024(models.Model):
 
     def __str__(self):
         return f'{self.nome} - {self.dt_inclusao}'
+    
+class Sistemas_EL(models.Model):
+    nome = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.nome
+    
+class CadastroEL(models.Model):
+    
+    cpf = models.CharField(max_length=14, verbose_name='CPF')
+    nome = models.CharField(max_length=150, verbose_name='Nome completo')
+    matricula = models.CharField(max_length=10, verbose_name='Matrícula')
+    pdf_memorando = models.FileField(upload_to='uploads/', verbose_name='PDF do memorando')
+    sistemas = models.ManyToManyField(Sistemas_EL, verbose_name='Quais sistemas você precisa de acesso?')
+    observacao = models.TextField('Deseja fazer alguma observação?', blank=True)
+    dt_inclusao = models.DateTimeField(auto_now_add=True)
+
+    def send_email(self):
+        Email(self).cadastro_el('Novo cadastro efetuado no FormFácil - Cadastro EL', 'analise.ti.pmnf@gmail.com')
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        try:
+            self.send_email()
+        except Exception as e:
+            print(e)
+            
