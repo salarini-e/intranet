@@ -55,7 +55,7 @@ class CadastroEL(models.Model):
     dt_inclusao = models.DateTimeField(auto_now_add=True)
 
     def send_email(self):
-        Email(self).cadastro_el('Novo cadastro efetuado no FormFácil - Cadastro EL', 'analise.ti.pmnf@gmail.com')
+        Email(self).cadastro_el('Novo cadastro efetuado no FormFácil - Cadastro EL', 'eduardo.pmnf@gmail.com')
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

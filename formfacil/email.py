@@ -13,7 +13,6 @@ class Email:
             'domain': 'intranet.novafriburgo.rj.gov.br',
             'model': self.model,
             'site_name': 'Intranet',                            
-            'url': redirect('chamados:detalhes', hash=self.chamado.hash).url,
             'protocol': 'https',
         }
         email = render_to_string(email_template_name, c)

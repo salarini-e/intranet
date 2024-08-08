@@ -1,20 +1,19 @@
-Olá,
+    Olá,
 
-Um novo cadastro foi efetuado no Cadastro EL - FormFácil. 
+    Um novo cadastro foi efetuado no Cadastro EL - FormFácil.
 
-**Detalhes do Cadastro:**
+    Detalhes do Cadastro:
+        Nome Completo: {{ model.nome }}
+        CPF: {{ model.cpf }}
+        Matrícula: {{ model.matricula }}
+        Sistema: {{ model.get_sistemas_display }}
+        Data de Inclusão: {{ model.dt_inclusao|date:"d/m/Y H:i:s" }}
 
-- **Nome Completo:** {{ model.nome }}
-- **CPF:** {{ model.cpf }}
-- **Matrícula:** {{ model.matricula }}
-- **Sistema:** {{ model.get_sistemas_display }}
-- **Data de Inclusão:** {{ model.dt_inclusao|date:"d/m/Y H:i:s" }}
+    Arquivo Anexo:</p>
+    Você pode baixar o memorando em PDF através do seguinte link:</p>
+    {{ protocol }}://{{ domain }}{{ model.pdf_memorando.url }} - Baixar PDF
+    
 
-**Arquivo Anexo:**
-Você pode baixar o memorando em PDF através do seguinte link:
-[Baixar PDF]({{ protocol }}://{{ domain }}{{ model.pdf_memorando.url }})
+    Atenciosamente,
+    Equipe de TI
 
-Para mais informações, acesse o sistema: [Intranet]({{ protocol }}://{{ domain }})
-
-Atenciosamente,
-Equipe de TI
