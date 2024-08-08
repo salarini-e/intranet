@@ -97,7 +97,7 @@ def snct2024_export(request):
 
 def cadastro_el_view(request):
     if request.method == 'POST':
-        form = CadastroELForm(request.POST)
+        form = CadastroELForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             context = {

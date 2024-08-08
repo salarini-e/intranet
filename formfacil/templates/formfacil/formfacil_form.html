@@ -86,7 +86,7 @@
 				<div class="app-card app-card-notification shadow-sm mb-4">				    
 				    <div class="app-card-body p-4">
 					    <div class="notification-content">
-                            <form method="POST" class="settings-form">
+                            <form method="POST" class="settings-form" enctype="multipart/form-data">
 								{% csrf_token %}
 								{{form}}
                                 <button type="submit" class="btn app-btn-primary" >Enviar</button>
