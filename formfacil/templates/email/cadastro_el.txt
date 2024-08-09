@@ -13,7 +13,7 @@
         Sistemas:
         {% for sistema in modal.sistemas.all %}
         • {{sistema}}
-        {% endif %}
+        {% endfor %}
     Arquivo Anexo:</p>
     Você pode baixar o memorando em PDF através do seguinte link:</p>
     {{ protocol }}://{{ domain }}{{ model.pdf_memorando.url }} - Baixar PDF
