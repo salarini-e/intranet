@@ -201,6 +201,7 @@ def busca_servidor(matricula):
         secretaria = input_secretaria.get_attribute("value")
         meta_servidor = Meta_Servidores.objects.create(
             nome=nome,
+            matricula=matricula,
             cpf=cpf,
             secretaria=secretaria
         )

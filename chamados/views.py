@@ -28,6 +28,7 @@ def index(request):
     }
     
     context = {
+        'tipos': TipoChamado.objects.all(),
         'filtrado': filtrado,
         'filtros': obter_opcoes_filtros(),
         'chamados': paginacao,
