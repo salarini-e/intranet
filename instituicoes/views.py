@@ -262,7 +262,7 @@ def api_get_servidor(request):
             try:
                 secretaria = Secretaria.objects.get(nome=dict_mapeamento[servidor.secretaria])
             except:
-                secretaria = Secretaria.objects.create(nome=dict_mapeamento[servidor.secretaria], apelido=dict_mapeamento[servidor.secretaria], sigla='n/d',
+                secretaria = Secretaria.objects.create(nome=dict_mapeamento[servidor.secretaria], apelido='n/h', sigla='n/d',
                                                         user_inclusao=request.user,)
                 setor = Setor.objects.create(nome='Não definido', 
                                              apelido='n/d', 
