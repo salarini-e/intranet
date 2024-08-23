@@ -261,17 +261,21 @@ def api_get_servidor(request):
             print(dict_mapeamento[servidor.secretaria])
             try:
                 secretaria = Secretaria.objects.get(nome=dict_mapeamento[servidor.secretaria])
-            except:
-                secretaria = Secretaria.objects.create(nome=dict_mapeamento[servidor.secretaria], apelido='n/h', sigla='n/d',
-                                                        user_inclusao=request.user,)
-                setor = Setor.objects.create(nome='Não definido', 
-                                             apelido='n/d', 
-                                             sigla='n/d', 
-                                             cep='n/d', 
-                                             bairro='n/d', 
-                                             endereco='n/d', 
-                                             secretaria=secretaria, 
-                                             user_inclusao=request.user)
+            except Exception as E:
+                print('erro ao pegar secretaria', E)
+                try:
+                    secretaria = Secretaria.objects.create(nome=dict_mapeamento[servidor.secretaria], apelido='n/h', sigla='n/d',
+                                                            user_inclusao=User.objects.get(username='sistema'),)
+                    setor = Setor.objects.create(nome='Não definido', 
+                                                apelido='n/d', 
+                                                sigla='n/d',    
+                                                cep='n/d', 
+                                                bairro='n/d', 
+                                                endereco='n/d', 
+                                                secretaria=secretaria, 
+                                                user_inclusao=User.objects.get(username='sistema'))
+                except Exception as E:
+                    print('Erro a criar secretaria', E)
             try:
                 setores = Setor.objects.filter(secretaria=secretaria)
                 print(secretaria)

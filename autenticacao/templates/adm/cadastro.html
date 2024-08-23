@@ -47,8 +47,11 @@
                 <div class="mb-3">
                     <label for="matricula" class="form-label">Sua matrícula</label>
                     <div class="d-flex">
-                        <input type="text" class="form-control" id="matricula" name="matricula" required>
-                        <button id="validar" type="button" class="btn btn-success ms-2" onclick="callMetaServidor()">Validar</button>
+                        <input type="text" class="form-control" id="matricula" name="matricula" onkeydown="console.log('ops')" required>
+                        <button id="validar" type="button" class="btn btn-success ms-2" onclick="callMetaServidor()">
+                            <span class='btn_text' id='btn_text'>Validar</span>
+                            <img id='loading_validar' src="{% static 'images/loading.png'%}" class='btn_loading_image'></img>
+                        </button>
                     </div>
                     <div class="row">
                         <small id="error" class="text-danger">
@@ -172,7 +175,18 @@
 						console.log(response)
                         if (response == 404){                            
                             document.getElementById('error').innerHTML = 'Servidor não encontrado';
-                        }else{
+                            btnValidar = document.getElementById('validar');  
+                            btnValidar.classList.remove('btn-secondary');
+                            btnValidar.classList.add('btn-success')
+                            btnValidar.classList.remove('btnValidar');
+                        }else if(response == 500){
+                            document.getElementById('error').innerText = 'Servidor não encontrado';
+                            btnValidar = document.getElementById('validar');  
+                            btnValidar.classList.remove('btn-secondary');
+                            btnValidar.classList.add('btn-success')
+                            btnValidar.classList.remove('btnValidar');
+                        }
+                        else{
                             document.getElementById('error').innerHTML = '';
                             // Create input for name
                             var nameInput = document.createElement("input");
@@ -381,6 +395,10 @@
 								mascara(telefoneInput, itel);								
 							});
                         }
+                        textValidar = document.getElementById('btn_text');  
+                        imageValidar = document.getElementById('loading_validar');  
+                        textValidar.classList.remove('text_loading');
+                        imageValidar.classList.remove('loading_image');
                         
                     }
 					function callMetaServidor(){
@@ -392,10 +410,17 @@
                         var matricula = document.getElementById('matricula').value; 
                         var url = "{% url 'ins:getServidor' %}" + "?matricula=" + matricula; 
 
-						getRequest(url, montarSelect);                        
-                        document.getElementById('validar').classList.remove('btn-success');
-                        document.getElementById('validar').classList.add('btn-secondary');
+						getRequest(url, montarSelect);       
+                        btnValidar = document.getElementById('validar');  
+                        imageValidar = document.getElementById('loading_validar');   
+                        textValidar = document.getElementById('btn_text');      
+                        btnValidar.classList.remove('btn-success');
+                        btnValidar.classList.add('btn-secondary');
+                        btnValidar.classList.add('btnValidar');
+                        textValidar.classList.add('text_loading');
+                        imageValidar.classList.add('loading_image');
                         document.getElementById('cadastrar').disabled = false;
+                        alert('Aguarde enquanto sua matrícula é validada!')
 
 					}
 			

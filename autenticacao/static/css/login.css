@@ -50,6 +50,34 @@ a{
 .btn{
     border-radius: 0;
 }
+
+.btn.btnValidar{
+    background-color: rgb(168, 168, 168);
+}
+
+.btn_text.text_loading{
+    display: none;
+}
+
+.btn_loading_image{
+    display: none;
+}
+
+.btn_loading_image.loading_image{
+    display: block;
+    width: 20px;
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
 input{
     border-radius: 0;
 }

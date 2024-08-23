@@ -361,7 +361,6 @@ def checkCPF(request):
 
 def cadastrar_servidor(request):
     if request.method == 'POST':
-        
         cpf_oculto = request.POST.get('cpf_oculto')
         cpf_oculto = cpf_oculto.replace('*', '')
         cpf = request.POST.get('cpf')

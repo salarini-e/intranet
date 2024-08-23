@@ -50,6 +50,20 @@ a{
 .btn{
     border-radius: 0;
 }
+.btn.removeText{
+    display: none;
+}
+
+.btn_loading_image{
+    display: none;
+}
+
+.btn_loading_image.loading_image{
+    display: block;
+    width: 20px;
+    animation: spin 1s infinite linear;
+}
+
 input{
     border-radius: 0;
 }
