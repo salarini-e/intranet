@@ -16,6 +16,7 @@
     <!-- CUSTOM CSS -->
     <link rel="stylesheet" href="{% static '/css/template.css' %}">
     <link rel="stylesheet" href="{% static '/css/login.css' %}">    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body class="container-fluid">
 <div class="row">
@@ -60,12 +61,12 @@
                 </div>
                 <div class="mb-3">
                   <label for="exampleInputPassword1" class="form-label">Password:</label>
-                  <input name="password" type="password" class="form-control" id="exampleInputPassword1">
+                  <input name="password" type="password" class="form-control passwordInput" id="exampleInputPassword1">
                 </div>
                 <!-- <div class="mb-3 form-check">
                   <input type="checkbox" class="form-check-input" id="exampleCheck1">
                   <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                </div> -->
+                </div> --> 
                 <button type="submit" class="btn btn-primary w-100 mb-3">Entrar</button>
                 
                 <a href="{% url 'autenticacao:cadastrar_usuario' %}">
@@ -81,3 +82,17 @@
         </div>
     </div>
 </div>
+
+<script>
+    const passwordInput = document.getElementById('exampleInputPassword1');
+
+    passwordInput.insertAdjacentHTML('afterend', '<i class="far fa-eye toggle-password" id="togglePassword"></i>');
+
+    const togglePassword = document.getElementById('togglePassword');
+
+    togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('fa-eye-slash');
+    });
+</script>

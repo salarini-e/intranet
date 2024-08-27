@@ -76,8 +76,31 @@ a{
     to {
       transform: rotate(360deg);
     }
-  }
+}
 
 input{
     border-radius: 0;
 }
+
+
+.form-control.passwordInput{
+    padding: .375rem 1.9rem .375rem .75rem;
+}
+
+/* TOGGLE VIEW PASSWORD */
+.mb-3 {
+    position: relative;
+}
+.toggle-password {
+    position: absolute;
+    top: 73%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 1;
+    pointer-events: auto;
+    color: #777; /* Cor mais suave para o ícone */
+}
+
+
+
