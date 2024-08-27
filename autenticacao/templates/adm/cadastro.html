@@ -179,7 +179,8 @@
                             btnValidar.classList.remove('btn-secondary');
                             btnValidar.classList.add('btn-success')
                             btnValidar.classList.remove('btnValidar');
-                        }else if(response == 500){
+                        }
+                        else if(response == 500){
                             document.getElementById('error').innerText = 'Servidor não encontrado';
                             btnValidar = document.getElementById('validar');  
                             btnValidar.classList.remove('btn-secondary');
@@ -401,28 +402,34 @@
                         imageValidar.classList.remove('loading_image');
                         
                     }
-					function callMetaServidor(){
-                        podeCadastrar = true;
-                        if (buttonCadastrar.classList.contains('disabled')) {
-                            buttonCadastrar.classList.remove('disabled');
+                        function callMetaServidor(){
+                            document.getElementById('error').innerHTML = '';
+                            podeCadastrar = true;
+                            if (buttonCadastrar.classList.contains('disabled')) {
+                                buttonCadastrar.classList.remove('disabled');
+                            }
+                            // document.getElementById('response-message').display = 'none';
+                            var matricula = document.getElementById('matricula').value; 
+                            var url = "{% url 'ins:getServidor' %}" + "?matricula=" + matricula; 
+                            
+                            inputMatricula = document.getElementById('matricula');
+                            if(inputMatricula.value == "000000"){
+                                document.getElementById('error').innerText = 'Preencha a matrícula';
+                            }
+                            else{
+                                getRequest(url, montarSelect);       
+                                btnValidar = document.getElementById('validar');  
+                                imageValidar = document.getElementById('loading_validar');   
+                                textValidar = document.getElementById('btn_text');      
+                                btnValidar.classList.remove('btn-success');
+                                btnValidar.classList.add('btn-secondary');
+                                btnValidar.classList.add('btnValidar');
+                                textValidar.classList.add('text_loading');
+                                imageValidar.classList.add('loading_image');
+                                document.getElementById('cadastrar').disabled = false;
+                                alert('Aguarde enquanto sua matrícula é validada!')
+                            }
                         }
-						// document.getElementById('response-message').display = 'none';
-                        var matricula = document.getElementById('matricula').value; 
-                        var url = "{% url 'ins:getServidor' %}" + "?matricula=" + matricula; 
-
-						getRequest(url, montarSelect);       
-                        btnValidar = document.getElementById('validar');  
-                        imageValidar = document.getElementById('loading_validar');   
-                        textValidar = document.getElementById('btn_text');      
-                        btnValidar.classList.remove('btn-success');
-                        btnValidar.classList.add('btn-secondary');
-                        btnValidar.classList.add('btnValidar');
-                        textValidar.classList.add('text_loading');
-                        imageValidar.classList.add('loading_image');
-                        document.getElementById('cadastrar').disabled = false;
-                        alert('Aguarde enquanto sua matrícula é validada!')
-
-					}
 			
 					
 

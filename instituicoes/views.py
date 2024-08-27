@@ -199,12 +199,15 @@ def busca_servidor(matricula):
         nome = input_nome.get_attribute("value")
         cpf = input_cpf.get_attribute("value")
         secretaria = input_secretaria.get_attribute("value")
-        meta_servidor = Meta_Servidores.objects.create(
-            nome=nome,
-            matricula=matricula,
-            cpf=cpf,
-            secretaria=secretaria
-        )
+        if(nome != ""):
+            meta_servidor = Meta_Servidores.objects.create(
+                nome=nome,
+                matricula=matricula,
+                cpf=cpf,
+                secretaria=secretaria
+            )
+        else:
+            print("Não foi encontrado nenhum servidor com essa matrícula")
 
         return meta_servidor
 
@@ -250,10 +253,11 @@ def api_get_servidor(request):
     'QUADRO SUPLEMENTAR-LEI COMPLEM.30/2007': 'QUADRO SUPLEMENTAR-LEI COMPLEM.30/2007'
 }
     matricula = request.GET.get('matricula', None)
+    
     # Remove leading zeros from matricula if present
     # if matricula is not None:
     #     matricula = matricula.lstrip('0')
-    if matricula is not None:
+    if matricula is not None and matricula!="000000":
         meta_servidor = busca_servidor(matricula)
         try:
             servidor = meta_servidor
@@ -288,7 +292,9 @@ def api_get_servidor(request):
             # setores = Setor.objects.filter(secretaria=secretaria)
             # return JsonResponse({'nome': servidor.nome, 'cpf': servidor.cpf, 'secretaria': {'id': secretaria.id, 'nome': secretaria.nome, 'setores': [{'id': setor.id, 'nome': setor.nome} for setor in setores]}})
         except Meta_Servidores.DoesNotExist:
-            return JsonResponse({'error': 'Servidor not found'}, status=404)
+            return JsonResponse({'error': 'Servidor not found'}, status=404)    
+    # elif matricula == "000000":
+    #     return JsonResponse({'error': 'No matricula provided'}, status=400)
     else:
         return JsonResponse({'error': 'No matricula provided'}, status=400)
     
