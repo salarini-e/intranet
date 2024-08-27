@@ -65,4 +65,33 @@ class CadastroEL(models.Model):
             self.send_email()
         except Exception as e:
             print(e)
+
+# #############################################################################
+class Opcao_Turmas(models.Model):
+    dia_da_semana = models.CharField(max_length=50, verbose_name='Dia da semana')
+    dia_do_mes = models.CharField(max_length=2, verbose_name='Dia do mês')
+    hora_inicio = models.TimeField()
+    hora_termino = models.TimeField()
+    ativo = models.BooleanField(default=True, verbose_name='Opcao de turma ainda aberta?')
+
+    def __str__(self):
+        return f'{self.dia_da_semana}, dia {self.dia_do_mes} - das {self.hora_inicio.strftime("%H:%M")} às {self.hora_termino.strftime("%H:%M")}'
+
+class Cadastro_Aulas_Processo_Digital(models.Model):
+    nome = models.CharField(max_length=150, verbose_name='Nome Completo')
+    matricula = models.CharField(max_length=6, verbose_name='Matrícula')
+    secretaria = models.CharField(max_length=250)
+    setor = models.CharField(max_length=250)
+    telefone = models.CharField(max_length=15, verbose_name='Seu telefone', blank=False) 
+    turma_escolhida =  models.ForeignKey(Opcao_Turmas, on_delete=models.SET_NULL, verbose_name='Selecione uma turma', null=True)
+    dt_registro = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.matricula} - {self.nome}'
+
+    
+
+
+
+
             

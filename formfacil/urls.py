@@ -7,4 +7,5 @@ urlpatterns = [
     path('cadastro-el/', views.cadastro_el_view, name='cadastro_el'),
     path('snct2024/', views.snct2024, name='snct2024'),
     path('snct2024/export', views.snct2024_export, name='snct2024_export'),
+    path('cadastro-processo-digital', views.cadastroAulasProcessoDigial, name='cadastro-processo-digital'),
 ]

@@ -59,3 +59,17 @@ class CadastroELForm(forms.ModelForm):
             'sistemas': forms.CheckboxSelectMultiple(),
             'observacao': forms.Textarea(attrs={'class': 'form-control mb-3', 'placeholder': '', 'rows': 4}),
         }
+
+# # #############################################################################
+class FormCadastroAulasProcessoDigital(forms.ModelForm):
+    class Meta:
+        model = Cadastro_Aulas_Processo_Digital
+        fields = ['nome', 'matricula', 'secretaria', 'setor', 'telefone', 'turma_escolhida']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'matricula': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'secretaria': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'setor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'turma_escolhida' : forms.Select(attrs={'class': 'form-select mb-3'})
+        }
