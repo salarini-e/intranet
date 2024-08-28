@@ -1,5 +1,7 @@
 from django.db import models
 from .email import Email
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 # Create your models here.
 class FormIndicacaoComitePSP(models.Model):
@@ -87,11 +89,4 @@ class Cadastro_Aulas_Processo_Digital(models.Model):
     dt_registro = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.matricula} - {self.nome}'
-
-    
-
-
-
-
-            
+        return f'{self.matricula} - {self.nome}'      

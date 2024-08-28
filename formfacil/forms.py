@@ -62,6 +62,11 @@ class CadastroELForm(forms.ModelForm):
 
 # # #############################################################################
 class FormCadastroAulasProcessoDigital(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filtra apenas as turmas que estão ativas
+        self.fields['turma_escolhida'].queryset = Opcao_Turmas.objects.filter(ativo=True)
+    
     class Meta:
         model = Cadastro_Aulas_Processo_Digital
         fields = ['nome', 'matricula', 'secretaria', 'setor', 'telefone', 'turma_escolhida']
@@ -71,5 +76,5 @@ class FormCadastroAulasProcessoDigital(forms.ModelForm):
             'secretaria': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'setor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
-            'turma_escolhida' : forms.Select(attrs={'class': 'form-select mb-3'})
+            'turma_escolhida': forms.Select(attrs={'class': 'form-select mb-3'})
         }

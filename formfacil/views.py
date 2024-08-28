@@ -126,7 +126,7 @@ def cadastroAulasProcessoDigial(request):
             form.save()
             context = {
                 'titulo': 'Treinamento para Utilização do Processo Digital',    
-                'subtitulo': 'Secretaria Municipal de Ciência, Tecnologia, Inovação e Educação Profissionalizante Superior',
+                'subtitulo': 'Subsecretaria de Tecnologia da Informação e Comunicação',
                 'mensagem': "<span class='text-success'><i class='fa-solid fa-circle-check me-2'></i>Formulário enviado com sucesso!</span>"
             }
             return render(request, 'formfacil/formfacil_success.html', context)
@@ -136,7 +136,7 @@ def cadastroAulasProcessoDigial(request):
     context = {
             'form': form,
             'titulo': 'Treinamento para Utilização do Processo Digital',    
-            'subtitulo': 'Secretaria Municipal de Ciência, Tecnologia, Inovação e Educação Profissionalizante Superior',
+            'subtitulo': 'Subsecretaria de Tecnologia da Informação e Comunicação',
             'mensagem': (
                 "No período de 02 a 06 de setembro, estaremos realizando o treinamento para Utilização do Processo Digital, "
                 "que será implantado no dia 09 de setembro em toda a prefeitura. Para se inscrever, clique no melhor dia e "
