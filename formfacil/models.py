@@ -79,6 +79,9 @@ class Opcao_Turmas(models.Model):
     def __str__(self):
         return f'{self.dia_da_semana}, dia {self.dia_do_mes} - das {self.hora_inicio.strftime("%H:%M")} às {self.hora_termino.strftime("%H:%M")}'
 
+    def get_cadastros_por_turma(self):
+        return Cadastro_Aulas_Processo_Digital.objects.filter(turma_escolhida=self)
+
 class Cadastro_Aulas_Processo_Digital(models.Model):
     nome = models.CharField(max_length=150, verbose_name='Nome Completo')
     matricula = models.CharField(max_length=6, verbose_name='Matrícula')

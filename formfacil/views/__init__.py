@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from .forms import *
+from ..forms import *
 import pandas as pd
 from django.http import HttpResponse
-from .models import FormSugestaoSemanaNacionalCET2024
+from ..models import FormSugestaoSemanaNacionalCET2024
 from django.contrib.auth.decorators import login_required
 import pytz
 
@@ -118,30 +118,12 @@ def cadastro_el_view(request):
     return render(request, 'formfacil/formfacil_form.html', context)
 
 
-# #############################################################################
-def cadastroAulasProcessoDigial(request):
-    if request.method == 'POST':
-        form = FormCadastroAulasProcessoDigital(request.POST)
-        if form.is_valid():
-            form.save()
-            context = {
-                'titulo': 'Treinamento para Utilização do Processo Digital',    
-                'subtitulo': 'Subsecretaria de Tecnologia da Informação e Comunicação',
-                'mensagem': "<span class='text-success'><i class='fa-solid fa-circle-check me-2'></i>Formulário enviado com sucesso!</span>"
-            }
-            return render(request, 'formfacil/formfacil_success.html', context)
-    else:
-        form = FormCadastroAulasProcessoDigital()
-        
+from .aulas_processo_digital import *
+
+def index(request):
     context = {
-            'form': form,
-            'titulo': 'Treinamento para Utilização do Processo Digital',    
-            'subtitulo': 'Subsecretaria de Tecnologia da Informação e Comunicação',
-            'mensagem': (
-                "No período de 02 a 06 de setembro, estaremos realizando o treinamento para Utilização do Processo Digital, "
-                "que será implantado no dia 09 de setembro em toda a prefeitura. Para se inscrever, clique no melhor dia e "
-                "horário para participar, preencha os dados solicitados e garanta a sua participação.<br><br>"
-                "Local: Av. Alberto Braune, 223 - 2o. andar - Centro. (Auditório da Secretaria de Ciência e Tecnologia)"
-            )
+        'registros':{
+            'aulas_processo_digital': Cadastro_Aulas_Processo_Digital.objects.all().count(),
         }
-    return render(request, 'formfacil/formfacil_form.html', context)
+    }
+    return render(request, 'formfacil/index.html', context)
