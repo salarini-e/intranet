@@ -16,7 +16,7 @@ class CadastroAulasProcessoDigitalAdmin(admin.ModelAdmin):
     search_fields = ('nome', 'matricula', 'telefone', 'secretaria', 'setor')
     
     # Filtros laterais para facilitar a busca
-    list_filter = ('turma_escolhida')
+    list_filter = ('turma_escolhida',)
     
     # Ordem padrão dos registros
     ordering = ('-dt_registro', 'nome')  # Exibe os registros mais recentes primeiro

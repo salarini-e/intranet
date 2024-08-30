@@ -81,6 +81,8 @@ class Opcao_Turmas(models.Model):
 
     def get_cadastros_por_turma(self):
         return Cadastro_Aulas_Processo_Digital.objects.filter(turma_escolhida=self)
+    def get_total(self):
+        return Cadastro_Aulas_Processo_Digital.objects.filter(turma_escolhida=self).count()
 
 class Cadastro_Aulas_Processo_Digital(models.Model):
     nome = models.CharField(max_length=150, verbose_name='Nome Completo')

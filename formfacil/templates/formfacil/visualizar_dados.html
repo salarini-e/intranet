@@ -34,7 +34,7 @@
 				<div class="row g-4 mb-4 px-3">
                     <div class="col app-card app-card-stats-table h-100 shadow-sm p-4">                                                
                         <div class="w-100 d-flex flex-wrap">
-							<h3>{{item}}</h3>
+							<h3>{{item}} <span class="text-secondary">(Total: {{item.get_total}})</span></h3>
 							<button class="ms-auto my-auto btn app-btn-secondary" onclick="toogleTable(this, 'table-{{item.id}}')" style="border:none; ">
 								<i class="fa-regular fa-eye me-2"></i>
 								Visualizar registros
