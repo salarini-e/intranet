@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from ..forms import *
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 
 import openpyxl
 from openpyxl.utils import get_column_letter
@@ -89,3 +90,19 @@ def exportar_aulas_processo_digital_to_excel(request):
     response['Content-Disposition'] = 'attachment; filename=AulasProcessoDigital.xlsx'
     response.write(output.getvalue())
     return response
+
+def logCadastrosRepetidos(request):
+# Obtém as matrículas que têm registros repetidos
+    matriculas_repetidas = (
+        Cadastro_Aulas_Processo_Digital.objects
+        .values('matricula')  # Agrupa por matrícula
+        .annotate(total=Count('matricula'))  # Conta quantas vezes cada matrícula aparece
+        .filter(total__gt=1)  # Filtra apenas as matrículas que aparecem mais de uma vez
+        .values_list('matricula', flat=True)  # Obtém uma lista de matrículas
+    )
+
+    # Obtém todos os registros para as matrículas repetidas
+    cadastros_repetidos = Cadastro_Aulas_Processo_Digital.objects.filter(matricula__in=matriculas_repetidas)
+    print("Cadastros", cadastros_repetidos)
+    # Renderiza o template com os cadastros repetidos
+    return render(request, 'formfacil/cadastrosrepetidos.html', {'cadastros': cadastros_repetidos, 'total': cadastros_repetidos.count()})

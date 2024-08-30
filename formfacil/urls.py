@@ -14,5 +14,6 @@ urlpatterns = [
     #### URLS PARA VISUALIZAÇÃO DE DADOS ####
     path('visualizar/cadastro-processo-digital/', views.visualizarDados_Aulas_Processo_Digital, name='visualizar_aulas_processo_digital'),
     path('exportar/cadastro-processo-digital/', views.exportar_aulas_processo_digital_to_excel, name='exportar_aulas_processo_digital'),
+    path('cadastros-repetidos/', views.logCadastrosRepetidos, name='cadastros_repetidos'),
        
 ]
