@@ -33,8 +33,14 @@
 				{% for item in cadastros %}
 				<div class="row g-4 mb-4 px-3">
                     <div class="col app-card app-card-stats-table h-100 shadow-sm p-4">                                                
-                        <h3>{{item}}</h3>
-						<table class="table table-borderless mb-0">
+                        <div class="w-100 d-flex flex-wrap">
+							<h3>{{item}}</h3>
+							<button class="ms-auto my-auto btn app-btn-secondary" onclick="toogleTable(this, 'table-{{item.id}}')" style="border:none; ">
+								<i class="fa-regular fa-eye me-2"></i>
+								Visualizar registros
+							</button>
+						</div>
+						<table id="table-{{item.id}}" class="table table-borderless mb-0" >
 							<thead>
 								<th>Nome</th>
 								<th>Matricula</th>
@@ -314,7 +320,47 @@
 			    </div> -->
 			  
 <!-- <script src="/static/plugins/chart.js/chart.min.js"></script>  -->
+
+<style>
+.table {
+    display: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+    opacity: 0;
+}
+
+.table.show {
+    display: table; /* Ou display: block, dependendo do contexto do HTML */
+    max-height: 500px; /* Defina um valor suficientemente alto para abranger o conteúdo da tabela */
+    opacity: 1;
+}
+
+</style>
+
 <script>
+function hiddeTables() {
+    const tables = document.getElementsByClassName('table');
+    for (let i = 0; i < tables.length; i++) {
+        tables[i].classList.remove('show');
+        tables[i].style.display = 'none'; // Esconde completamente
+    }
+}
+
+function toogleTable(e, id) {
+    console.log(e.innerHTML);
+    const table = document.getElementById(id);
+
+    if (table.classList.contains('show')) {
+        hiddeTables();
+        e.innerHTML = '<i class="fa-regular fa-eye me-2"></i> Visualizar registros';
+    } else {
+        hiddeTables();
+        table.style.display = 'table'; // Mostra a tabela
+        setTimeout(() => table.classList.add('show'), 100); // Garante a transição suave
+        e.innerHTML = '<i class="fa-regular fa-eye-slash me-2"></i> Ocultar registros';
+    }
+}
 
 
 </script>

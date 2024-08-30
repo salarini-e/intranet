@@ -113,7 +113,10 @@ def login_view(request):
         except:            
             user = None
         if user == None:
-            user = authenticate(request, username=username, password=password)
+            if len(username)==5:
+                user = authenticate(request, username='0'+username, password=password)
+            else:
+                user = authenticate(request, username=username, password=password)
         if user == None:           
             try:                                    
                 pessoa=Pessoa.objects.get(cpf=username)                                
