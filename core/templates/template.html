@@ -214,14 +214,45 @@
 		                         <span class="nav-link-text">Telefonia</span>
 					        </a>
 					    </li>
-					    <li class="nav-item">					        
-					        <a class="nav-link {% block chamados %}{% endblock %}" href="{% url 'chamados:index' %}">
-						        <span class="nav-icon">
-                                    <i class="fa-regular fa-rectangle-list"></i>
-						         </span>
-		                         <span class="nav-link-text">Chamados TI</span>
-					        </a>
-					    </li>
+						
+					    <li class="nav-item has-submenu">
+							<a class="nav-link submenu-toggle {% block chamados %}{% endblock %}" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-chamados" aria-expanded="false" aria-controls="submenu-chamados">
+								<span class="nav-icon">
+									<i class="fa-regular fa-rectangle-list"></i>
+								</span>
+								<span class="nav-link-text">Chamados TI</span>
+								<span class="submenu-arrow">
+									<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+										<path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+									</svg>
+								</span>
+							</a>
+							<div id="submenu-chamados" class="collapse {% block showchamados %}{% endblock %} submenu submenu-chamados" data-bs-parent="#menu-accordion">
+								<ul class="submenu-list list-unstyled">
+									<!-- Redirecionando todos para a tela 'index' por enquanto -->
+									<li class="submenu-item"><a class="submenu-link" href="{% url 'chamados:index' %}">Painel de controle</a></li>
+									<li class="submenu-item"><a class="submenu-link" href="{% url 'chamados:index' %}">Tickets</a></li>
+									<li class="submenu-item has-submenu">
+										<a class="submenu-link submenu-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-info" aria-expanded="false" aria-controls="submenu-info">
+											Informações adicionais
+											<span class="submenu-arrow">
+												<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="position: relative; top:-0.2rem">
+													<path fill-rule="evenodd" d="M6.646 3.646a.5.5 0 0 1 .708 0L11.5 8.793l-4.146 4.147a.5.5 0 0 1-.708-.708L10.293 9H2.5a.5.5 0 0 1 0-1h7.793L6.646 4.354a.5.5 0 0 1 0-.708z"/>
+												</svg>
+											</span>
+										</a>
+										<div id="submenu-info" class="collapse submenu submenu-info">
+											<ul class="submenu-list list-unstyled">
+												<li class="submenu-item"><a class="submenu-link" style="margin-left: 2.75rem;" href="{% url 'chamados:index' %}">Contatos</a></li>
+												<li class="submenu-item"><a class="submenu-link" style="margin-left: 2.75rem;" href="{% url 'chamados:index' %}">Empresas</a></li>
+											</ul>
+										</div>
+									</li>
+									<li class="submenu-item"><a class="submenu-link" href="{% url 'chamados:index' %}">Soluções</a></li>
+									<li class="submenu-item"><a class="submenu-link" href="{% url 'chamados:index' %}">Análises</a></li>
+								</ul>
+							</div>
+						</li>
                         <li class="nav-item has-submenu">
 					        <a class="nav-link submenu-toggle disabled" href="#" onclick="alert('Ainda estamos construindo essa área!')" data-bs-toggle="collapse" data-bs-target="#submenu-arquivos" aria-expanded="false" aria-controls="submenu-1">
 						        <span class="nav-icon">
