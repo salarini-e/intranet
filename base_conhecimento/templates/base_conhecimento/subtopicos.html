@@ -78,24 +78,14 @@
 											<tr>
 												<th class="cel">Código</th>
 												<th class="cel">Tema</th>
-												<th class="cel">Tipo</th>
 												<th class="cell"></th>
 											</tr>
 										</thead>
 										<tbody>
 											{% for subtopico in subtopicos %}
 											<tr data-key="{{topico.palavras_chave}}">
-												<td class="cell">{{subtopico.get_codigo}}</td>
-												<td class="cell">{{subtopico.tema}}</td>
-												<td class="cell">
-                                                    {% if subtopico.tipo == 'ytb' %}
-                                                        Vídeo
-                                                    {% elif subtopico.tipo == 'pdf' %}
-                                                        PDF
-                                                    {% else %}
-                                                        Tipo Desconhecido
-                                                    {% endif %}
-                                                </td>
+												<td class="cell" >{{subtopico.get_codigo}}</td>
+												<td class="cell" style="color: rgb(43, 43, 43);">{{subtopico.tema}}</td>
 												<td class="cell d-flex">
                                                     <a href="{% url 'base_conhecimento:display_video' topico.id subtopico.id %}" class="ms-auto me-1 my-auto btn app-btn-secondary">
                                                         <i class="fa-regular fa-eye"></i> Visualizar
