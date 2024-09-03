@@ -37,30 +37,16 @@ def displayVideo(request, topico_id, subtopico_id):
     # Filtrar o vídeo associado ao subtopico
     video = Arquivo_GoogleDrive.objects.filter(subtopico=subtopico).first()
 
+    iframe_html = video.iframe
+    download_url = extract_video_url_from_iframe(iframe_html)
+
     context = {
         'topico': topico,
         'subtopico': subtopico,
         'video': video,
+        'download_url': download_url
     }
     return render(request, 'base_conhecimento/display_video.html', context)
-
-@login_required
-def download_video(request, topico_id, subtopico_id):
-    # Obter o tópico e o subtopico selecionados ou retornar um erro 404 se não existirem
-    topico = get_object_or_404(Topico, id=topico_id, ativo=True)
-    subtopico = get_object_or_404(Subtopico, id=subtopico_id, topico=topico)
-    
-    # Filtrar o vídeo associado ao subtopico
-    video = get_object_or_404(Arquivo_GoogleDrive, subtopico=subtopico)
-    
-    # Extrair a URL do iframe HTML
-    iframe_html = video.iframe
-    download_url = extract_video_url_from_iframe(iframe_html)
-    
-    if not download_url:
-        return HttpResponse("Não foi possível encontrar a URL do vídeo.", status=404)
-
-    return redirect(download_url)
 
 
 def extract_video_url_from_iframe(iframe_html):
