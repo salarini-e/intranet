@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Topico, Subtopico, Arquivo_GoogleDrive
 from django.contrib.auth.decorators import login_required
 import requests
@@ -60,17 +60,7 @@ def download_video(request, topico_id, subtopico_id):
     if not download_url:
         return HttpResponse("Não foi possível encontrar a URL do vídeo.", status=404)
 
-    # Baixar o vídeo em streaming
-    response = requests.get(download_url, stream=True)
-    response.raise_for_status()  # Verifica se ocorreu um erro
-    
-     # Criar o nome do arquivo para o download
-    file_name = f"{topico.nome}-{subtopico.tema}.mp4"
-    # Criar uma resposta HTTP com o conteúdo do vídeo
-    http_response = StreamingHttpResponse(response.iter_content(chunk_size=8192), content_type='application/octet-stream')
-    http_response['Content-Disposition'] = f'attachment; filename="{file_name}"'
-    
-    return http_response
+    return redirect(download_url)
 
 
 def extract_video_url_from_iframe(iframe_html):
