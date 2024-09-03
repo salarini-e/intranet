@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'formfacil',
     'softwares',
     'chamados',
+    'base_conhecimento',
 ]
 
 MIDDLEWARE = [

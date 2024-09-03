@@ -11,6 +11,7 @@ urlpatterns = [
     path('telefonia/', include('telefonia.urls')),
     path('softwares/', include('softwares.urls')),
     path('formfacil/', include('formfacil.urls')),
+    path('base-conhecimento/', include('base_conhecimento.urls')),
     path('chamados/', include('chamados.urls')),
     path("select2/", include("django_select2.urls")),
 ]
