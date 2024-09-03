@@ -64,7 +64,7 @@ var lineChartConfig = {
 		},
 		
 		title: {
-			display: true,
+			display: false,
 			text: 'Chart.js Line Chart Example',
 			
 		}, 
@@ -164,7 +164,7 @@ var barChartConfig = {
 			align: 'end',
 		},
 		title: {
-			display: true,
+			display: false,
 			text: 'Chart.js Bar Chart Example'
 		},
 		tooltips: {

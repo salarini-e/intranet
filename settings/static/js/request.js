@@ -26,6 +26,9 @@ function getRequest(url, callback) {
         else if (xhr.readyState === 4 && xhr.status === 404) {
             callback(404);
         }
+        else if (xhr.readyState === 4 && xhr.status === 500) {
+          callback(500);
+      }
     };
 
     xhr.open("GET", url, true); 
