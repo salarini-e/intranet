@@ -134,8 +134,11 @@ def login_view(request):
                 print(E)
                 return redirect('/')
         else:
+            if User.objects.filter(username=username).exists():
+                msg = 'Login ou senha invalidos'
+            else:
+                msg = 'Usuário não cadastrado. Por favor, cadastre-se.'
             
-            msg = 'Usuário não cadastrado. Por favor, cadastre-se.'
             context = {
                 'error': True,
                 'msg': msg
