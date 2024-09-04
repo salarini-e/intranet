@@ -25,7 +25,8 @@ class Topico(models.Model):
 class Subtopico(models.Model):
     TIPO_CHOICES = (
         ('ytb','youtube'),
-        ('pdf', 'pdf')
+        ('pdf', 'pdf'),
+        ('txt', 'texto'),
     )
     topico = models.ForeignKey(Topico, on_delete=models.DO_NOTHING, verbose_name='Tópico associado')
     tema = models.CharField(max_length=164, verbose_name='Tema')
@@ -45,5 +46,13 @@ class Subtopico(models.Model):
 class Arquivo_GoogleDrive(models.Model):
     subtopico = models.ForeignKey(Subtopico, on_delete=models.DO_NOTHING, verbose_name='Subtópico Associado')
     iframe = models.TextField(verbose_name='HTML do iframe')
+
+class Arquivo_Texto(models.Model):
+    subtopico = models.ForeignKey(Subtopico, on_delete=models.DO_NOTHING, verbose_name='Subtópico Associado')
+    texto = models.TextField(verbose_name='Texto')
+
+    def __str__(self):
+        return self.texto  
+
 
 

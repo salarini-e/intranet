@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Topico, Subtopico, Arquivo_GoogleDrive
+from .models import Topico, Subtopico, Arquivo_GoogleDrive, Arquivo_Texto
 from django.contrib.auth.decorators import login_required
 import requests
 from django.http import StreamingHttpResponse, HttpResponse
@@ -29,25 +29,40 @@ def subtopicos(request, topico_id):
     return render(request, 'base_conhecimento/subtopicos.html', context)
 
 @login_required
-def displayVideo(request, topico_id, subtopico_id):
+def display(request, topico_id, subtopico_id):
     # Obter o tópico e o subtopico selecionados ou retornar um erro 404 se não existirem
     topico = get_object_or_404(Topico, id=topico_id, ativo=True)
     subtopico = get_object_or_404(Subtopico, id=subtopico_id, topico=topico)
     
-    # Filtrar o vídeo associado ao subtopico
-    video = Arquivo_GoogleDrive.objects.filter(subtopico=subtopico).first()
+    tipo_subtopico = subtopico.tipo
 
-    iframe_html = video.iframe
-    download_url = extract_video_url_from_iframe(iframe_html)
+    if(tipo_subtopico == 'ytb'):
+        # Filtrar o vídeo associado ao subtopico
+        video = Arquivo_GoogleDrive.objects.filter(subtopico=subtopico).first()
 
-    context = {
-        'topico': topico,
-        'subtopico': subtopico,
-        'video': video,
-        'download_url': download_url
-    }
-    return render(request, 'base_conhecimento/display_video.html', context)
+        iframe_html = video.iframe
+        download_url = extract_video_url_from_iframe(iframe_html)
 
+        context = {
+            'topico': topico,
+            'subtopico': subtopico,
+            'video': video,
+            'download_url': download_url
+        }
+        return render(request, 'base_conhecimento/display_video.html', context)
+    elif(tipo_subtopico== 'txt'):
+        texto = Arquivo_Texto.objects.filter(subtopico=subtopico).first()
+        
+        if texto:
+            # Substituir múltiplos espaços por uma quebra de linha
+            texto_formatado = re.sub(r'\s{2,}', '<br><br>', texto.texto)
+            print("texto", texto_formatado)
+            context = {
+            'topico': topico,
+            'subtopico': subtopico,
+            'texto': texto_formatado,
+        }
+        return render(request, 'base_conhecimento/display_texto.html', context)
 
 def extract_video_url_from_iframe(iframe_html):
     """
@@ -69,3 +84,5 @@ def convert_to_download_url(preview_url):
     if file_id:
         return f'https://drive.google.com/uc?export=download&id={file_id.group(1)}'
     return None
+
+    
