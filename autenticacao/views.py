@@ -110,21 +110,27 @@ def login_view(request):
         try:
             pessoa=Pessoa.objects.get(cpf=username)    
             user = authenticate(request, username=pessoa.email, password=password)
+            
         except:            
             user = None
         if user == None:
             if len(username)==5:
                 user = authenticate(request, username='0'+username, password=password)
+                
             else:
                 user = authenticate(request, username=username, password=password)
+                
         if user == None:           
             try:                                    
                 pessoa=Pessoa.objects.get(cpf=username)                                
                 user = authenticate(request, username=pessoa.cpf, password=password)
+                
+
             except:
                 user = None
             if user == None:                
                 user = authenticate(request, username=username, password=password)
+                
 
         if user is not None:
             login(request, user)
@@ -137,6 +143,7 @@ def login_view(request):
             context = {
                 'error': True,
             }
+        print("User", username)
     return render(request, 'adm/login.html', context)
 
 def passwd_reset(request):
