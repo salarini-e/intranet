@@ -1,0 +1,16 @@
+{% autoescape off %}
+Olá,
+
+Seu cadastro foi realizado com sucesso!
+
+Usuário: {{servidor.user.username}}
+Senha: {{servidor.cpf}}
+
+https://intranet.novafriburgo.rj.gov.br
+
+Se você precisar redefinir sua senha, visite https://intranet.novafribirgo.rj.gov.br/conta/ e clique em alterar na área relacionada a segurança.
+
+Grato,
+Subsecretaria de Tecnologia da Informação e Comunicação.
+
+{% endautoescape %}

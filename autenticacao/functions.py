@@ -2,7 +2,7 @@ from django.forms import ValidationError
 from functools import wraps
 from django.conf import settings
 from django.shortcuts import redirect
-
+from instituicoes.models import Servidor
 from autenticacao.models import Pessoa
 
 def validate_cpf(cpf):
@@ -37,3 +37,20 @@ def validate_cpf(cpf):
     if check_digit != int(cpf[10]):
         raise ValidationError(('CPF inválido'), code='invalid2')
     return cpf
+
+def enviar_email_apos_cadastrar(user):
+    """
+    Function that sends an email to the user after registering.
+    """
+    from django.core.mail import send_mail
+    from django.template.loader import render_to_string
+    from django.utils.html import strip_tags
+
+    servidor = Servidor.objects.get(user=user)
+    mail_subject = 'Credenciais de acesso Intranet'
+    message = render_to_string('adm/email_register.txt', {
+        'servidor': servidor,
+    })
+    plain_message = strip_tags(message)
+    to_email = servidor.email
+    send_mail(mail_subject, plain_message, settings.EMAIL_HOST_USER, [to_email], html_message=message)

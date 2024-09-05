@@ -265,6 +265,7 @@ class PasswordResetCompleteView(PasswordContextMixin, TemplateView):
         return context
 
 from instituicoes.forms import ServidorForm2
+from .functions import enviar_email_apos_cadastrar
 def cadastro_user(request):
     
     if request.user.is_authenticated:
@@ -298,8 +299,8 @@ def cadastro_user(request):
                 servidor.user = form.create_user()
                 servidor.user_inclusao = None
                 servidor.save()
-                messages.success(request, f'Servidor {servidor.nome} cadastrada com sucesso!')
-        
+                messages.success(request, f'Servidor cadastrada com sucesso! Um email foi enviado com as informações do seu login.')
+                enviar_email_apos_cadastrar(servidor.user)
                 return redirect('/')            
             else:
                 print(form.errors)
