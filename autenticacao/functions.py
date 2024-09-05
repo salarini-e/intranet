@@ -44,13 +44,11 @@ def enviar_email_apos_cadastrar(user):
     """
     from django.core.mail import send_mail
     from django.template.loader import render_to_string
-    from django.utils.html import strip_tags
 
     servidor = Servidor.objects.get(user=user)
     mail_subject = 'Credenciais de acesso Intranet'
     message = render_to_string('adm/email_register.txt', {
         'servidor': servidor,
     })
-    plain_message = strip_tags(message)
     to_email = servidor.email
-    send_mail(mail_subject, plain_message, settings.EMAIL_HOST_USER, [to_email], html_message=message)
+    send_mail(mail_subject, message, settings.EMAIL_HOST_USER, [to_email])
