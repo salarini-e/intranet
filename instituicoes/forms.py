@@ -128,9 +128,11 @@ class ServidorForm2(forms.ModelForm):
         return user
     def get_setor(self, request):
         
-        if request.POST['setor'] == '0':
-            try:
-                setor=Setor(nome=self.cleaned_data['outro'],
+        try:
+                setor = Setor.objects.get(nome='Não definido', secretaria = Secretaria.objects.get(id=request.POST['secretaria']))
+        except:
+                try:
+                    setor=Setor(nome='Não definido',
                                  apelido='Sem setor', 
                                  sigla='SS', 
                                  cep='00000-000', 
@@ -138,12 +140,13 @@ class ServidorForm2(forms.ModelForm):
                                  endereco='Sem endereço', 
                                  secretaria=Secretaria.objects.get(id=request.POST['secretaria']), 
                             )
-                setor.save()
-            except:
-                raise ValidationError(('Erro ao criar setor'), code='invalid2')
-            return setor
-        setor = Setor.objects.get(id=request.POST['setor'])
+                    setor.save()
+                except:
+                    setor = None
+                    raise ValidationError(('Erro ao criar setor'), code='invalid2')
         return setor
+        # setor = Setor.objects.get(id=request.POST['setor'])
+        # return setor
         
     def clean_cpf(self):
         cpf = self.validate_cpf(self.cleaned_data["cpf"])
