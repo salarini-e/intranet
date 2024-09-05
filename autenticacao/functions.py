@@ -51,4 +51,4 @@ def enviar_email_apos_cadastrar(user):
         'servidor': servidor,
     })
     to_email = servidor.email
-    send_mail(mail_subject, message, settings.EMAIL_HOST_USER, [to_email], html_message=message)
+    send_mail(mail_subject, message, settings.EMAIL_HOST_USER, [to_email])

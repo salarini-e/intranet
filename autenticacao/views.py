@@ -299,7 +299,7 @@ def cadastro_user(request):
                 servidor.user = form.create_user()
                 servidor.user_inclusao = None
                 servidor.save()
-                messages.success(request, f'Servidor cadastrada com sucesso! Um email foi enviado com as informações do seu login.')
+                messages.success(request, f'Servidor cadastrado(a) com sucesso! Um email foi enviado com as informações do seu login.')
                 enviar_email_apos_cadastrar(servidor.user)
                 return redirect('/')            
             else:
