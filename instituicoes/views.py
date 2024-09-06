@@ -250,7 +250,8 @@ def api_get_servidor(request):
     'SECRETARIA MUNICIPAL DE POLITICAS SOBRE DROGAS': 'Secretaria Municipal de Políticas Sobre Drogas',
     'CRAS': 'CRAS',
     'CREAS': 'CREAS',
-    'QUADRO SUPLEMENTAR-LEI COMPLEM.30/2007': 'QUADRO SUPLEMENTAR-LEI COMPLEM.30/2007'
+    'QUADRO SUPLEMENTAR-LEI COMPLEM.30/2007': 'QUADRO SUPLEMENTAR-LEI COMPLEM.30/2007',
+    'SECRETARIA DE GABINETE DO PREFEITO':'SECRETARIA DE GABINETE DO PREFEITO'
 }
     matricula = request.GET.get('matricula', None)
     
@@ -258,7 +259,15 @@ def api_get_servidor(request):
     # if matricula is not None:
     #     matricula = matricula.lstrip('0')
     if matricula is not None and matricula!="000000":
-        meta_servidor = busca_servidor(matricula)
+        meta_servidor = Meta_Servidores.objects.filter(matricula=matricula)
+        print(meta_servidor)
+        if meta_servidor.exists():
+            print("AAAAA")
+            meta_servidor = meta_servidor.first()
+        else:
+            print("BBBBB")
+
+            meta_servidor = busca_servidor(matricula)
         try:
             servidor = meta_servidor
             print(servidor.secretaria)

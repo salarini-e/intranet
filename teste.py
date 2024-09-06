@@ -1,66 +1,68 @@
-import time
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-import pandas as pd
+import csv
+import pymysql
+from settings.envvars import load_envars
+from pathlib import Path
+from datetime import datetime
+
+# Carregar variáveis de ambiente
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_vars = load_envars(BASE_DIR)
+
+db_name = env_vars['db_name']
+db_user = env_vars['db_user']
+db_host = env_vars['db_host']
+db_port = int(env_vars['db_port'])  # Conversão para int caso a porta esteja como string
+db_passwd = env_vars['db_pw']
+
+# Conectar ao banco de dados
+connection = pymysql.connect(
+    host=db_host,
+    user=db_user,
+    password=db_passwd,
+    database=db_name,
+    port=db_port
+)
+
+cursor = connection.cursor()
+
+# Caminho para o arquivo CSV
+csv_file_path = str(BASE_DIR)+'\\intranet\\grdData.csv'
 
 
-import openpyxl
-excel_file_path = "dados.xlsx"
+# Função para verificar se o funcionário deve ser incluído
+def deve_incluir(situacao_funcional):
+    situacao_funcional = situacao_funcional.lower()  # Converter para minúsculas para comparação
+    return 'demitido' not in situacao_funcional and 'aposentado' not in situacao_funcional
 
+# Abrir e ler o arquivo CSV
+with open(csv_file_path, newline='', encoding='ANSI') as csvfile:
+    reader = csv.DictReader(csvfile, delimiter=';')
+    for row in reader:
+        situacao_funcional = row['Situação Funcional']
+        
+        # Verificar se a situação permite a inclusão do funcionário
+        if not deve_incluir(situacao_funcional):
+            continue
 
-options = webdriver.ChromeOptions()    
+        nome = row['Nome']
+        matricula = row['Matrícula']
+        secretaria = row['Lotação']
+        cpf = row['CPF']
+        data_inclusao = datetime.now().strftime('%Y-%m-%d')  # Data atual formatada para o MySQL
 
-# Inicialização do driver do Chrome
-driver = webdriver.Chrome(options=options)
+        # Query para inserir o funcionário no banco de dados
+        insert_query = """
+            INSERT INTO instituicoes_meta_servidores (nome, matricula, secretaria, cpf, dt_inclusao)
+            VALUES (%s, %s, %s, %s, %s)
+        """
 
-url = "https://novafriburgo-rj.portaltp.com.br/consultas/pessoal/servidores.aspx"
-driver.get(url)
+        try:
+            cursor.execute(insert_query, (nome, matricula, secretaria, cpf, data_inclusao))
+            connection.commit()
+            print(f"Funcionário {nome} inserido com sucesso.")
+        except pymysql.MySQLError as e:
+            print(f"Erro ao inserir {nome}: {e}")
 
-# Aguarda até que a tabela de dados seja carregada
-WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'table')))
-
-data = []
-
-while True:
-    # Encontre a tabela no HTML
-    table = driver.find_element(By.TAG_NAME, 'table')
-    rows = table.find_elements(By.TAG_NAME, 'tr')
-
-    for row in rows:
-        cols = row.find_elements(By.TAG_NAME, 'td')
-        if len(cols) >= 3:
-            col_2 = cols[1].text.strip()
-            col_3 = cols[2].text.strip()
-            data.append([col_2, col_3])
-
-    try:
-
-        # Encontre o botão "Próximo" e clique nele
-        next_button = driver.find_element(By.XPATH, '//a[@data-args="PBN"]')
-        next_button.click()
-        # WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//a[@data-args="PBN"]')))
-        time.sleep(4)  # Aguarde um pouco para que a próxima página seja carregada
-    except:
-        # Se não houver mais botão "Próximo", saia do loop
-        break
-
-# Fechar o navegador após a coleta de dados
-driver.quit()
-
-# Criar um DataFrame pandas com os dados coletados
-df = pd.DataFrame(data, columns=["Coluna 2", "Coluna 3"])
-
-df.to_excel(excel_file_path, index=False)
-
-workbook = openpyxl.load_workbook(excel_file_path)
-worksheet = workbook.active
-
-# Definir largura automática das colunas
-for column_cells in worksheet.columns:
-    length = max(len(str(cell.value)) for cell in column_cells)
-    worksheet.column_dimensions[column_cells[0].column_letter].width = length + 2
-
-# Salvar as alterações no arquivo Excel
-workbook.save(excel_file_path)
+# Fechar a conexão com o banco de dados
+cursor.close()
+connection.close()
