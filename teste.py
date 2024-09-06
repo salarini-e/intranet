@@ -1,12 +1,29 @@
 import csv
 import pymysql
-from settings.envvars import load_envars
 from pathlib import Path
 from datetime import datetime
 
-# Carregar variáveis de ambiente
+
+import yaml
+
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+
 BASE_DIR = Path(__file__).resolve().parent.parent
-env_vars = load_envars(str(BASE_DIR)+'/site')
+
+def load_envars(BASE_DIR):
+    try:
+        yaml_file=open("./.envvars.yaml", "r")        
+    except:
+        yaml_file=open(str(BASE_DIR.parent) + "/site/.envvars.yaml", "r")
+        
+    return yaml.load(yaml_file, Loader=Loader)
+
+# Carregar variáveis de ambiente
+env_vars = load_envars(BASE_DIR)
+
 
 db_name = env_vars['db_name']
 db_user = env_vars['db_user']
