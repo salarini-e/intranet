@@ -2,6 +2,7 @@ from django.db import models
 from .email import Email
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from datetime import datetime
 
 # Create your models here.
 class FormIndicacaoComitePSP(models.Model):
@@ -81,8 +82,25 @@ class Opcao_Turmas(models.Model):
 
     def get_cadastros_por_turma(self):
         return Cadastro_Aulas_Processo_Digital.objects.filter(turma_escolhida=self)
+    
     def get_total(self):
         return Cadastro_Aulas_Processo_Digital.objects.filter(turma_escolhida=self).count()
+
+    def save(self, *args, **kwargs):
+        hoje = datetime.now()
+        dia_do_mes = int(self.dia_do_mes)
+        
+        # Imprime o dia atual e o dia do mês da turma no terminal
+        print(f"Data atual: {hoje.strftime('%Y-%m-%d')}, Dia do mês da turma: {dia_do_mes}")
+        
+        # Verifica se o mês atual é maior que o mês da turma ou se é o mesmo mês mas o dia atual já passou
+        if (hoje.month > hoje.month or
+            (hoje.month == hoje.month and hoje.day > dia_do_mes)):
+            self.ativo = False
+        else:
+            self.ativo = True  # Caso contrário, a turma é ativa
+        
+        super().save(*args, **kwargs)
 
 class Cadastro_Aulas_Processo_Digital(models.Model):
     nome = models.CharField(max_length=150, verbose_name='Nome Completo')

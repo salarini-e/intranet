@@ -1,5 +1,6 @@
 {% load static %}
 {% load custom %}
+{% load custom_filters %}	
 <!DOCTYPE html>
 <html lang="pt-br" data-bs-theme="{{ request.user|get_tema }}"> 
 <head>
@@ -197,7 +198,7 @@
 		        </div>
 
 				<div class="welcome-servidor-mobile">
-					<span class="welcome-servidor-mobile-text">Olá, {{request.user|get_user_name}}</span>
+					<span class="welcome-servidor-mobile-text">Olá, {{ request.user|get_user_name|first_name }}</span>
 				</div>
 		        
 			    <nav id="app-nav-main" class="app-nav app-nav-main flex-grow-1">
