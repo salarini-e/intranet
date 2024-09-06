@@ -6,7 +6,7 @@ from datetime import datetime
 
 # Carregar variáveis de ambiente
 BASE_DIR = Path(__file__).resolve().parent.parent
-env_vars = load_envars(BASE_DIR)
+env_vars = load_envars(str(BASE_DIR)+'/site')
 
 db_name = env_vars['db_name']
 db_user = env_vars['db_user']
@@ -26,7 +26,7 @@ connection = pymysql.connect(
 cursor = connection.cursor()
 
 # Caminho para o arquivo CSV
-csv_file_path = str(BASE_DIR)+'\\intranet\\grdData.csv'
+csv_file_path = str(BASE_DIR)+'/intranet/grdData.csv'
 
 
 # Função para verificar se o funcionário deve ser incluído
