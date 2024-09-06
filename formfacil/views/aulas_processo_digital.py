@@ -35,6 +35,7 @@ def cadastroAulasProcessoDigial(request):
             'mensagem': (
                 "No período de 09 a 13 de setembro, estaremos realizando o treinamento para Utilização do Processo Digital, que será implantado no dia 08 de outubro em toda a prefeitura. Para se inscrever, clique no melhor dia e horário para participar, preencha os dados solicitados e garanta a sua participação.<br><br>"
                 "Local: Av. Alberto Braune, 223 - 2o. andar - Centro. (Auditório da Secretaria de Ciência e Tecnologia)"
+
             )
         }
     return render(request, 'formfacil/formfacil_form.html', context)

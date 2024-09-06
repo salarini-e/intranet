@@ -711,7 +711,6 @@ progress {
     margin-left: auto
 }
 
-
 /* RESPONSIVIDADE MENU LATERAL E HEADER MOBILE */
 .welcome-servidor-mobile{
     display: none;
@@ -733,8 +732,8 @@ progress {
     .ver-menu-lateral-web{
         display: none;
     }
-    .nome-servidor-web{
-        display: none;
+    .nome-servidor-web {
+        display: none !important;
     }
 }
 
