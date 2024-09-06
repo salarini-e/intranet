@@ -7,36 +7,40 @@
                 </div>
 			    
 			  
-                <div class="row g-4 mb-4">
-                    <div class="col app-card app-card-stats-table h-100 shadow-sm p-4">                        
-                        <table class="table table-borderless mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="meta">Formulário</th>
-                                    <th class="meta">Solicitante</th>
-                                    <th class="meta">Status</th>
-                                    <th class="meta">Qnt. registros</th>
-                                    <th class="meta text-center">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Treinamento para Utilização do Processo Digital</td>
-                                    <td>Roberto Calvano do Amaral</td>
-                                    <td>
-                                        <span class="badge bg-success">Ativo</span>
-                                        <!-- <span class="badge bg-danger">Inativos</span> -->
-                                    </td>
-                                    <td>{{registros.aulas_processo_digital}}</td>
-
-                                    <td class="text-center">
-                                        <a href="{% url 'formfacil:visualizar_aulas_processo_digital' %}" class="btn app-btn-secondary"><i class="fa-solid fa-eye"></i> Visualizar</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div> 
+                <div class="row g-4 mb-4" style="padding: 0 5px;">
+					<div class="col app-card app-card-stats-table h-100 shadow-sm " style="padding: 0.5rem !important;">                        
+						<table class="table table-borderless mb-0">
+							<thead>
+								<tr>
+									<th class="meta">Formulário</th>
+									<th class="meta">Solicitante</th>
+									<th class="meta">Status</th>
+									<th class="meta">Qnt. registros</th>
+									<th class="meta text-center d-none d-md-table-cell">Ações</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Treinamento para Utilização do Processo Digital</td>
+									<td>Roberto Calvano do Amaral</td>
+									<td>
+										<span class="badge bg-success">Ativo</span>
+										<!-- <span class="badge bg-danger">Inativos</span> -->
+									</td>
+									<td>{{registros.aulas_processo_digital}}</td>
+									<td class="text-center d-none d-md-table-cell">
+										<a href="{% url 'formfacil:visualizar_aulas_processo_digital' %}" class="btn app-btn-secondary"><i class="fa-solid fa-eye"></i> Visualizar</a>
+									</td>
+								</tr>
+								<tr class="d-md-none">
+									<td colspan="5" class="text-center">
+										<a href="{% url 'formfacil:visualizar_aulas_processo_digital' %}" class="btn app-btn-secondary"><i class="fa-solid fa-eye"></i> Visualizar</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
 			
 			    <!-- <div class="row g-4 mb-4">
 				    <div class="col-12 col-lg-6">
