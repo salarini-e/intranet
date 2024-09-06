@@ -44,15 +44,15 @@
 		        <div class="app-header-content"> 
 		            <div class="row justify-content-between align-items-center">
 			        
-				    <div class="col-auto">
+				    <div class="col-auto ver-menu-lateral-mobile">
 					    <a id="sidepanel-toggler" class="sidepanel-toggler d-inline-block d-xl-none" href="#">						
 						    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" role="img"><title>Menu</title><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg>
 					    </a>
-				    </div>
+				    </div>	
 		            <!-- <div class="search-mobile-trigger d-sm-none col">
 			            <i class="search-mobile-trigger-icon fa-solid fa-magnifying-glass"></i>
 			        </div> -->
-		            <div class="app-search-box col">
+		            <div class="app-search-box col ver-menu-lateral-web">
 						<button class="my-auto btn p-4 py-2" id="mButton"  onclick="hiddenMenu()">
 							<i class="fa-solid fa-angle-left"></i>							
 						</button>
@@ -60,7 +60,7 @@
 		            </div>
 		            
 		            <div class="app-utilities col-auto">
-						<h5 class="app-utility-item text-end text-secondary">{{request.user|get_user_name}}</h5>
+						<h5 class="app-utility-item text-end text-secondary nome-servidor-web">{{request.user|get_user_name}}</h5>
 			            <div class="app-utility-item app-notifications-dropdown dropdown">    
 				            <a class="dropdown-toggle no-toggle-arrow" id="notifications-dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false" title="Notifications">
 					            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bell icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -195,6 +195,10 @@
 		            <a class="app-logo" href="/ "><img class="logo-icon me-2" src="/static/brasao.ico" alt="logo"><span class="logo-text">INTRANET</span></a>
 	
 		        </div>
+
+				<div class="welcome-servidor-mobile">
+					<span class="welcome-servidor-mobile-text">Olá, {{request.user|get_user_name}}</span>
+				</div>
 		        
 			    <nav id="app-nav-main" class="app-nav app-nav-main flex-grow-1">
 				    <!-- <ul class="app-menu list-unstyled accordion" id="menu-accordion">

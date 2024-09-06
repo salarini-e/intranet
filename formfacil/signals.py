@@ -10,6 +10,6 @@ def check_turma_capacity(sender, instance, **kwargs):
         # Conta o número de inscrições na turma
         inscricoes = Cadastro_Aulas_Processo_Digital.objects.filter(turma_escolhida=turma).count()
         # Se atingiu o limite de 25, desativa a turma
-        if inscricoes >= 25:
+        if inscricoes >= 30:
             turma.ativo = False
             turma.save()
