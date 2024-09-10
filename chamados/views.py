@@ -352,3 +352,9 @@ def agendar_atendimento(request, hash):
                }
     return render(request, 'chamados/generic_form.html', context)
 
+def tickets(request):
+    chamados = Chamado.objects.all()
+    context = {
+        'chamados': chamados
+    }
+    return render(request, 'chamados/tickets.html', context)

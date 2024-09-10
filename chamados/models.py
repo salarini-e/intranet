@@ -153,6 +153,25 @@ class Chamado(models.Model):
             return True
         print(3)
         return False
+
+    def get_prioridade_class(self):
+        prioridade_classes = {
+            '': 'prioridade-nao-definida', 
+            '0': 'prioridade-baixa',
+            '1': 'prioridade-media',
+            '2': 'prioridade-alta',
+        }
+        return prioridade_classes[self.prioridade]
+    
+    def get_status_class(self):
+        status_classes = {
+            '0': 'status-aberto',
+            '1': 'status-atendimento',
+            '2': 'status-pendente',
+            '3': 'status-fechado',
+            '4': 'status-finalizado',
+        }
+        return status_classes[self.status]
     
 class Pausas_Execucao_do_Chamado(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')

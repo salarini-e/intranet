@@ -1,0 +1,59 @@
+{% extends 'template.html' %}
+{% load static %}
+{% block chamados %}active{% endblock %}
+{% block title %}Tickets Chamados{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static '/css/tickets.css' %}">
+{% endblock %}
+{% block main %}  
+    <h1>Bem vindo aos tickets</h1>
+    {% for chamado in chamados %}
+    <div class="row ticket-chamado-background">
+        <div class="row">
+            <div class="col-1 m-auto" style="width: 20px;"><input type="checkbox" class="my-auto checkbox-tickets"></div>
+            <div class="col">
+                <div class="row">
+                    <div class="col-lg-9 col-sm-12 chamados-tickets-infos-chamado">
+                        <div class="chamados-tickets-infos-chamado-text">
+                            <span class="chamados-tickets-infos-chamado-text-assunto">{{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}</span> <br>
+                            <i class="fa-solid fa-globe mt-2"></i> <span class="chamados-tickets-infos-chamado-text-requisitante">{{chamado.requisitante}} <i class="fa-solid fa-circle" style="width: 5px;"></i> Fechado há 1 dia <i class="fa-solid fa-circle" style="width: 5px;"></i> Resolvido no prazo</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-12 chamados-tickets-infos">
+                        <div class="dropdown">
+                        <span class="prioridade">
+                            <span class="prioridade-indicador {{ chamado.get_prioridade_class }}"></span>
+                                <a class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: black;">
+                                    {{ chamado.get_prioridade_display }}
+                                </a>
+                                <ul class="dropdown-menu">
+                                    {% for prioridade in chamado.PRIORIDADE_CHOICES %}
+                                        <li><a class="dropdown-item" href="#" onclick="alert('{{prioridade.0}}')">{{prioridade.1}}</a></li>
+                                        {% endfor %}
+                                </ul>
+                              </div> 
+                        </span>
+                        <span>{{ chamado.setor.secretaria.apelido }}/{{ chamado.atendente }}</span>
+                        <span class="prioridade">
+                            <span class="prioridade-indicador {{ chamado.get_status_class }}"></span>
+                            {{ chamado.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+    {% endfor %}
+
+    <script>
+        
+        // Chama a função após o carregamento da página
+        window.addEventListener('load', setContentPosition);
+
+        // Chama a função também em caso de redimensionamento da janela
+        window.addEventListener('resize', setContentPosition);
+    </script>
+
+{% endblock %}
