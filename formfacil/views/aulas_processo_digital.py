@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from ..forms import *
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Q
+from django.utils import timezone
 
 import openpyxl
 from openpyxl.utils import get_column_letter
@@ -91,17 +92,36 @@ def exportar_aulas_processo_digital_to_excel(request):
     return response
 
 def logCadastrosRepetidos(request):
-# Obtém as matrículas que têm registros repetidos
+    # Data específica para filtrar os registros
+    data_especifica = timezone.datetime(2024, 9, 9)
+    
+    # Obtém as matrículas que têm registros repetidos a partir da data especificada
     matriculas_repetidas = (
         Cadastro_Aulas_Processo_Digital.objects
+        .filter(dt_registro__gte=data_especifica)  # Filtra registros a partir da data especificada
+        .filter(~Q(matricula=''))  # Filtra apenas os que têm matrícula
         .values('matricula')  # Agrupa por matrícula
         .annotate(total=Count('matricula'))  # Conta quantas vezes cada matrícula aparece
         .filter(total__gt=1)  # Filtra apenas as matrículas que aparecem mais de uma vez
         .values_list('matricula', flat=True)  # Obtém uma lista de matrículas
     )
 
-    # Obtém todos os registros para as matrículas repetidas
-    cadastros_repetidos = Cadastro_Aulas_Processo_Digital.objects.filter(matricula__in=matriculas_repetidas)
-    print("Cadastros", cadastros_repetidos)
+    # Obtém os nomes que têm registros repetidos a partir da data especificada (quando não têm matrícula)
+    nomes_repetidos = (
+        Cadastro_Aulas_Processo_Digital.objects
+        .filter(dt_registro__gte=data_especifica)  # Filtra registros a partir da data especificada
+        .filter(Q(matricula=''))  # Filtra apenas os que não têm matrícula
+        .values('nome')  # Agrupa por nome
+        .annotate(total=Count('nome'))  # Conta quantas vezes cada nome aparece
+        .filter(total__gt=1)  # Filtra apenas os nomes que aparecem mais de uma vez
+        .values_list('nome', flat=True)  # Obtém uma lista de nomes
+    )
+
+    # Obtém todos os registros para as matrículas repetidas ou nomes repetidos a partir da data especificada
+    cadastros_repetidos = Cadastro_Aulas_Processo_Digital.objects.filter(
+        Q(matricula__in=matriculas_repetidas) | Q(nome__in=nomes_repetidos),
+        dt_registro__gte=data_especifica  # Filtra registros a partir da data especificada
+    )
+
     # Renderiza o template com os cadastros repetidos
     return render(request, 'formfacil/cadastrosrepetidos.html', {'cadastros': cadastros_repetidos, 'total': cadastros_repetidos.count()})

@@ -104,7 +104,7 @@ class Opcao_Turmas(models.Model):
 
 class Cadastro_Aulas_Processo_Digital(models.Model):
     nome = models.CharField(max_length=150, verbose_name='Nome Completo')
-    matricula = models.CharField(max_length=6, verbose_name='Matrícula')
+    matricula = models.CharField(max_length=6, verbose_name='Matrícula', blank=True)
     secretaria = models.CharField(max_length=250)
     setor = models.CharField(max_length=250)
     telefone = models.CharField(max_length=15, verbose_name='Seu telefone', blank=False) 
