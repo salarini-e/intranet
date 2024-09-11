@@ -3,6 +3,8 @@ from ..forms import *
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.utils import timezone
+from django.db.models import IntegerField
+from django.db.models.functions import Cast
 
 import openpyxl
 from openpyxl.utils import get_column_letter
@@ -42,15 +44,22 @@ def cadastroAulasProcessoDigial(request):
     return render(request, 'formfacil/formfacil_form.html', context)
 
 def visualizarDados_Aulas_Processo_Digital(request):
-    cadastros = Opcao_Turmas.objects.all()
+    hoje = timezone.now().date()
+    # print(f"Data atual: {hoje.strftime('%d')}")
+    hoje_int = int(hoje.strftime('%d'))
+
+    cadastros = Opcao_Turmas.objects.annotate(
+        valor_inteiro=Cast('dia_do_mes', IntegerField())
+    ).filter(valor_inteiro__gte=hoje_int-1)
+
+    # Preparar o contexto com os registros filtrados
     context = {
         'cadastros': cadastros,
     }
+    
     return render(request, 'formfacil/visualizar_dados.html', context)
 
 def exportar_aulas_processo_digital_to_excel(request):
-
-
     # Create a new workbook and select the active worksheet
     wb = Workbook()
     ws = wb.active
