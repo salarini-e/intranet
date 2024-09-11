@@ -172,6 +172,7 @@ class Chamado(models.Model):
             '4': 'status-finalizado',
         }
         return status_classes[self.status]
+        
     
 class Pausas_Execucao_do_Chamado(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')

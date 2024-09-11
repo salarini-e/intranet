@@ -6,54 +6,212 @@
 <link rel="stylesheet" href="{% static '/css/tickets.css' %}">
 {% endblock %}
 {% block main %}  
-    <h1>Bem vindo aos tickets</h1>
-    {% for chamado in chamados %}
-    <div class="row ticket-chamado-background">
+    <div class="row g-3 mb-4 align-items-center justify-content-between">
+        <div class="col-auto">
+            <h1 class="app-page-title mb-0">Bem vindo aos tickets</h1>
+        </div>
+        <div class="col-auto">
+            <div class="col-auto">
+                <button class="btn app-btn-secondary" {% if filtrado %}style="border-color: #15a362; color: #15a362;"{% endif %} data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
+                    <i class="fa-solid fa-filter"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- CARDS -->
+    <div class="container">
         <div class="row">
-            <div class="col-1 m-auto" style="width: 20px;"><input type="checkbox" class="my-auto checkbox-tickets"></div>
-            <div class="col">
-                <div class="row">
-                    <div class="col-lg-9 col-sm-12 chamados-tickets-infos-chamado">
-                        <div class="chamados-tickets-infos-chamado-text">
-                            <span class="chamados-tickets-infos-chamado-text-assunto">{{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}</span> <br>
-                            <i class="fa-solid fa-globe mt-2"></i> <span class="chamados-tickets-infos-chamado-text-requisitante">{{chamado.requisitante}} <i class="fa-solid fa-circle" style="width: 5px;"></i> Fechado há 1 dia <i class="fa-solid fa-circle" style="width: 5px;"></i> Resolvido no prazo</span>
+            <!-- Coluna de 9 colunas -->
+            <div class="col-lg-12">
+                {% for chamado in chamados %}
+                    <div class="row ticket-chamado-background{% if chamado.status == '4' %} card-status-finalizado{% endif %}">
+                        <div class="row">
+                            <div class="col-1 m-auto checkbox-container">
+                                <input type="checkbox" class="checkbox-tickets" onchange="toggleStatusCheckBox(this)">
+                            </div>
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-lg-9 col-sm-12 chamados-tickets-infos-chamado">
+                                        <div class="chamados-tickets-infos-chamado-text">
+                                            <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket"> Novo</span>
+                                            <span class="chamados-tickets-infos-chamado-text-assunto">{{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}</span>
+                                            <div class="solution-infos-wrapper">
+                                                <i class="fa-solid fa-globe" style="width: 10px;"></i>
+                                                <span class="chamados-tickets-infos-chamado-text-requisitante">{{ chamado.requisitante }}
+                                                    <i class="fa-solid fa-circle" style="width: 5px;"></i> Finalizado há 1 dia
+                                                    <i class="fa-solid fa-circle" style="width: 5px;"></i> Resolvido no prazo</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-12 chamados-tickets-infos">
+                                        <!-- Dropdown para Prioridade -->
+                                        <span class="prioridade text-line">
+                                            <span class="prioridade-indicador {{ chamado.get_prioridade_class }}"></span>
+                                            <div class="dropdown">
+                                                <a class="dropdown-toggle" 
+                                                   type="button" 
+                                                   data-bs-toggle="dropdown" 
+                                                   aria-expanded="false" 
+                                                   style="text-decoration: none; color: black;"
+                                                   data-bs-toggle="tooltip" 
+                                                   data-bs-placement="left" 
+                                                   title="Prioridade">
+                                                    {{ chamado.get_prioridade_display }}
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    {% for prioridade in chamado.PRIORIDADE_CHOICES %}
+                                                        <li><a class="dropdown-item" href="#" onclick="alert('{{prioridade.0}}')">{{prioridade.1}}</a></li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </span>
+    
+                                        <!-- Dropdown para Secretaria (apenas exibição) -->
+                                        <span class="prioridade">
+                                            <div class="dropdown d-inline">
+                                                <a class="dropdown-toggle" 
+                                                   type="button" 
+                                                   data-bs-toggle="dropdown" 
+                                                   aria-expanded="false" 
+                                                   style="text-decoration: none; color: black;"
+                                                   data-bs-toggle="tooltip" 
+                                                   data-bs-placement="left" 
+                                                   title="Secretaria">
+                                                   {{ chamado.setor.secretaria.apelido }}
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    {% for secretaria in secretarias %}
+                                                        <li>
+                                                            <a class="dropdown-item" href="#" onclick="alert('{{ secretaria.id }}')">{{ secretaria.apelido }}</a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+    
+                                            <!-- Dropdown para Atendente -->
+                                            <div class="dropdown d-inline">
+                                                <a class="dropdown-toggle" 
+                                                   type="button" 
+                                                   data-bs-toggle="dropdown" 
+                                                   aria-expanded="false" 
+                                                   style="text-decoration: none; color: black;"
+                                                   data-bs-toggle="tooltip" 
+                                                   data-bs-placement="left" 
+                                                   title="Atendente">
+                                                    / {{ chamado.atendente }}
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    {% for atendente in atendentes %}
+                                                        <li>
+                                                            <a class="dropdown-item" href="#" onclick="alert('{{ atendente.id }}')">{{ atendente.nome_servidor }}</a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </span>
+    
+                                        <!-- Dropdown para Status -->
+                                        <span class="prioridade">
+                                            <span class="prioridade-indicador {{ chamado.get_status_class }}"></span>
+                                            <div class="dropdown">
+                                                <a class="dropdown-toggle" 
+                                                   type="button" 
+                                                   data-bs-toggle="dropdown" 
+                                                   aria-expanded="false" 
+                                                   style="text-decoration: none; color: black;"
+                                                   data-bs-toggle="tooltip" 
+                                                   data-bs-placement="left" 
+                                                   title="Status">
+                                                    {{ chamado.get_status_display }}
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    {% for status in chamado.STATUS_CHOICES %}
+                                                        <li><a class="dropdown-item" href="#" onclick="alert('{{status.0}}')">{{status.1}}</a></li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-sm-12 chamados-tickets-infos">
-                        <div class="dropdown">
-                        <span class="prioridade">
-                            <span class="prioridade-indicador {{ chamado.get_prioridade_class }}"></span>
-                                <a class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: black;">
-                                    {{ chamado.get_prioridade_display }}
-                                </a>
-                                <ul class="dropdown-menu">
-                                    {% for prioridade in chamado.PRIORIDADE_CHOICES %}
-                                        <li><a class="dropdown-item" href="#" onclick="alert('{{prioridade.0}}')">{{prioridade.1}}</a></li>
+                {% endfor %}
+            </div>
+
+            <div style="margin-top: 53px; z-index: 10;" class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Filtros</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <form method="POST" class="row">
+                    <div class="col">
+                        {% csrf_token %}		
+                        <div class="container mt-3">
+                            <span>Status incluem</span>
+                                <div class="multi-select-input" id="multiSelectInput">
+                                    <select id="secretariaSelect" class="form-select" aria-label="Select Secretaria">
+                                        <option value=""></option>
+                                        {% for status in chamados.0.STATUS_CHOICES %}
+                                            <option value="{{status.0}}">{{status.1}}</option>
                                         {% endfor %}
-                                </ul>
-                              </div> 
-                        </span>
-                        <span>{{ chamado.setor.secretaria.apelido }}/{{ chamado.atendente }}</span>
-                        <span class="prioridade">
-                            <span class="prioridade-indicador {{ chamado.get_status_class }}"></span>
-                            {{ chamado.get_status_display }}
-                        </span>
+                                                   
+                                    </select>
+                                </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            
         </div>
-        
-        
     </div>
-    {% endfor %}
 
     <script>
+        function toggleStatusCheckBox(checkbox) {
+        // Encontre o elemento pai mais próximo com a classe 'row.ticket-chamado-background'
+        var card = checkbox.closest('.row.ticket-chamado-background');
         
-        // Chama a função após o carregamento da página
-        window.addEventListener('load', setContentPosition);
+        if (checkbox.checked) {
+            card.classList.add('checked');
+        } else {
+            card.classList.remove('checked');
+        }
+    }
 
-        // Chama a função também em caso de redimensionamento da janela
-        window.addEventListener('resize', setContentPosition);
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+
+    const select = document.getElementById('secretariaSelect');
+    const multiSelectInput = document.getElementById('multiSelectInput');
+
+    select.addEventListener('change', function() {
+        const selectedValue = select.value;
+        const selectedText = select.options[select.selectedIndex].text;
+
+        if (!selectedValue) return; // Ignore if no value is selected
+
+        // Check if the option is already added
+        if (!document.querySelector(`[data-value="${selectedValue}"]`)) {
+            const selectedOptionElement = document.createElement('div');
+            selectedOptionElement.className = 'selected-option';
+            selectedOptionElement.setAttribute('data-value', selectedValue);
+            selectedOptionElement.innerHTML = `${selectedText} <button onclick="removeOption('${selectedValue}')">&times;</button>`;
+
+            multiSelectInput.insertBefore(selectedOptionElement, select);
+        }
+
+        // Reset the select
+        select.value = '';
+    });
+
+    function removeOption(value) {
+        const optionToRemove = document.querySelector(`[data-value="${value}"]`);
+        if (optionToRemove) {
+            optionToRemove.remove();
+        }
+    }
     </script>
 
 {% endblock %}

@@ -13676,7 +13676,7 @@ button.close:focus {
 
 .app-header-inner {
     position: relative;
-    transition: left 0.4s ease-in-out;
+    transition: margin-left 0.4s ease-in-out;
 }
 
 .app-search-form {

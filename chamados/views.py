@@ -354,7 +354,11 @@ def agendar_atendimento(request, hash):
 
 def tickets(request):
     chamados = Chamado.objects.all()
+    secretarias = Secretaria.objects.all()
+    atendentes = Atendente.objects.all()
     context = {
-        'chamados': chamados
+        'chamados': chamados,
+        'secretarias': secretarias,
+        'atendentes': atendentes,
     }
     return render(request, 'chamados/tickets.html', context)
