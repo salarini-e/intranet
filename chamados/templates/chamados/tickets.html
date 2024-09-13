@@ -11,18 +11,19 @@
             <h1 class="app-page-title mb-0">Bem vindo aos tickets</h1>
         </div>
         <div class="col-auto">
-            <div class="col-auto">
-                <button class="btn app-btn-secondary" {% if filtrado %}style="border-color: #15a362; color: #15a362;"{% endif %} data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
-                    <i class="fa-solid fa-filter"></i>
-                </button>
-            </div>
+            <button class="my-auto btn p-4 py-2" id="mButtonFilters" 
+                    data-bs-toggle="offcanvas" 
+                    data-bs-target="#offcanvasScrolling" 
+                    onclick="hiddenMenuFilters()">
+                <i class="fa-solid fa-angle-left"></i>Filtros						
+            </button>
         </div>
     </div>
     <!-- CARDS -->
     <div class="container">
         <div class="row">
             <!-- Coluna de 9 colunas -->
-            <div class="col-lg-12">
+            <div class="col-lg-12" id="cards-wrapper">
                 {% for chamado in chamados %}
                     <div class="row ticket-chamado-background{% if chamado.status == '4' %} card-status-finalizado{% endif %}">
                         <div class="row">
@@ -31,7 +32,7 @@
                             </div>
                             <div class="col">
                                 <div class="row">
-                                    <div class="col-lg-9 col-sm-12 chamados-tickets-infos-chamado">
+                                    <div class="col-lg-8 col-sm-12 chamados-tickets-infos-chamado">
                                         <div class="chamados-tickets-infos-chamado-text">
                                             <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket"> Novo</span>
                                             <span class="chamados-tickets-infos-chamado-text-assunto">{{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}</span>
@@ -43,7 +44,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-sm-12 chamados-tickets-infos">
+                                    <div class="col-lg-4 col-sm-12 chamados-tickets-infos">
                                         <!-- Dropdown para Prioridade -->
                                         <span class="prioridade text-line">
                                             <span class="prioridade-indicador {{ chamado.get_prioridade_class }}"></span>
@@ -139,28 +140,33 @@
                 {% endfor %}
             </div>
 
-            <div style="margin-top: 53px; z-index: 10;" class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Filtros</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-                <form method="POST" class="row">
-                    <div class="col">
-                        {% csrf_token %}		
-                        <div class="container mt-3">
-                            <span>Status incluem</span>
+            <div style="margin-top: 53px; z-index: 10; width: 280px;" 
+                class="offcanvas offcanvas-end filters-wrapper" 
+                data-bs-scroll="true" data-bs-backdrop="false" 
+                tabindex="-1" id="offcanvasScrolling" 
+                aria-labelledby="offcanvasScrollingLabel">
+
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Filtros</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" onclick="hiddenMenuFilters()"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <form method="POST" class="row">
+                        <div class="col">
+                            {% csrf_token %}		
+                            <div class="container mt-3">
+                                <span>Status incluem</span>
                                 <div class="multi-select-input" id="multiSelectInput">
                                     <select id="secretariaSelect" class="form-select" aria-label="Select Secretaria">
                                         <option value=""></option>
                                         {% for status in chamados.0.STATUS_CHOICES %}
                                             <option value="{{status.0}}">{{status.1}}</option>
                                         {% endfor %}
-                                                   
                                     </select>
                                 </div>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
             
@@ -210,6 +216,30 @@
         const optionToRemove = document.querySelector(`[data-value="${value}"]`);
         if (optionToRemove) {
             optionToRemove.remove();
+        }
+    }
+
+    function hiddenMenuFilters() {
+        var button = document.getElementById('mButtonFilters');
+        var cardsWrapper = document.getElementById('cards-wrapper');
+        var filtersWrapper = document.getElementById('offcanvasScrolling');
+
+        if (button.style.marginRight === '250px') {
+            // Voltar o botão para a posição original
+            button.style.marginRight = '0px';
+            cardsWrapper.style.paddingRight = '0px';
+            button.innerHTML = '<i class="fa-solid fa-angle-left"></i>Filtros';
+
+            // Remove a classe 'active' para voltar a posição inicial
+            filtersWrapper.classList.remove('active');
+        } else {
+            // Mover o botão para a esquerda em 250px
+            button.style.marginRight = '250px';
+            cardsWrapper.style.paddingRight = '250px';
+            button.innerHTML = '<i class="fa-solid fa-angle-right"></i>Filtros';
+
+            // Adiciona a classe 'active' para mover a div para a esquerda
+            filtersWrapper.classList.add('active');
         }
     }
     </script>
