@@ -167,11 +167,12 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    border: 1px solid #ced4da;
+    border: 1px solid #000000;
     border-radius: 5px;
     padding: 5px;
     cursor: text;
     min-height: 38px;
+    background-color: #fff;
 }
 .selected-option {
     background-color: #e9ecef;
@@ -207,4 +208,23 @@
 
 .filters-wrapper.active {
     transform: translateX(0px);
+}
+
+@media(max-width:768px){
+    #offcanvasScrolling {
+        position: fixed; /* Permite que a sidebar flutue sobre o conteúdo */
+        top: 0;
+        right: 0;
+        height: 100%;
+        z-index: 1050; /* Garante que a sidebar fique sobre o conteúdo */
+        width: 280px; /* Largura da sidebar */
+        transition: transform 0.3s ease-in-out; /* Suaviza a transição ao abrir/fechar */
+        transform: translateX(100%); /* Inicialmente oculta a sidebar */
+    }
+    .app-page-title.tickets{
+        font-size: 1rem;
+    }
+    #offcanvasScrolling.active {
+        transform: translateX(0); /* Exibe a sidebar sobre o conteúdo */
+    }
 }

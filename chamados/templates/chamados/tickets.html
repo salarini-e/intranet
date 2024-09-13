@@ -8,14 +8,15 @@
 {% block main %}  
     <div class="row g-3 mb-4 align-items-center justify-content-between">
         <div class="col-auto">
-            <h1 class="app-page-title mb-0">Bem vindo aos tickets</h1>
+            <h1 class="app-page-title tickets mb-0">Bem vindo aos tickets</h1>
         </div>
         <div class="col-auto">
             <button class="my-auto btn p-4 py-2" id="mButtonFilters" 
                     data-bs-toggle="offcanvas" 
                     data-bs-target="#offcanvasScrolling" 
-                    onclick="hiddenMenuFilters()">
-                <i class="fa-solid fa-angle-left"></i>Filtros						
+                    onclick="hiddenMenuFilters()"
+                    style="margin-right: 250px;">
+                <i class="fa-solid fa-angle-right"></i>Filtros
             </button>
         </div>
     </div>
@@ -23,7 +24,7 @@
     <div class="container">
         <div class="row">
             <!-- Coluna de 9 colunas -->
-            <div class="col-lg-12" id="cards-wrapper">
+            <div class="col-lg-12" id="cards-wrapper" style="padding-right: 250px;">
                 {% for chamado in chamados %}
                     <div class="row ticket-chamado-background{% if chamado.status == '4' %} card-status-finalizado{% endif %}">
                         <div class="row">
@@ -140,35 +141,35 @@
                 {% endfor %}
             </div>
 
-            <div style="margin-top: 53px; z-index: 10; width: 280px;" 
-                class="offcanvas offcanvas-end filters-wrapper" 
+            <div style="margin-top: 53px; z-index: 10; width: 280px; background-color: #f5f5f5;" 
+                class="offcanvas offcanvas-end filters-wrapper active show" 
                 data-bs-scroll="true" data-bs-backdrop="false" 
                 tabindex="-1" id="offcanvasScrolling" 
                 aria-labelledby="offcanvasScrollingLabel">
 
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Filtros</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" onclick="hiddenMenuFilters()"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <form method="POST" class="row">
-                        <div class="col">
-                            {% csrf_token %}		
-                            <div class="container mt-3">
-                                <span>Status incluem</span>
-                                <div class="multi-select-input" id="multiSelectInput">
-                                    <select id="secretariaSelect" class="form-select" aria-label="Select Secretaria">
-                                        <option value=""></option>
-                                        {% for status in chamados.0.STATUS_CHOICES %}
-                                            <option value="{{status.0}}">{{status.1}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Filtros</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" onclick="hiddenMenuFilters()"></button>
+            </div>
+            <div class="offcanvas-body">
+                <form method="POST" class="row">
+                    <div class="col">
+                        {% csrf_token %}		
+                        <div class="container mt-3">
+                            <span>Status incluem</span>
+                            <div class="multi-select-input" id="multiSelectInput">
+                                <select id="secretariaSelect" class="form-select" aria-label="Select Secretaria">
+                                    <option value=""></option>
+                                    {% for status in chamados.0.STATUS_CHOICES %}
+                                        <option value="{{status.0}}">{{status.1}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
+        </div>
             
         </div>
     </div>
@@ -223,23 +224,32 @@
         var button = document.getElementById('mButtonFilters');
         var cardsWrapper = document.getElementById('cards-wrapper');
         var filtersWrapper = document.getElementById('offcanvasScrolling');
+        
+        if (window.matchMedia("(min-width: 768px)").matches) {
+            if (button.style.marginRight === '250px') {
+                // Voltar o botão para a posição original
+                button.style.marginRight = '0px';
+                cardsWrapper.style.paddingRight = '0px';
+                button.innerHTML = '<i class="fa-solid fa-angle-left"></i>Filtros';
 
-        if (button.style.marginRight === '250px') {
-            // Voltar o botão para a posição original
-            button.style.marginRight = '0px';
-            cardsWrapper.style.paddingRight = '0px';
-            button.innerHTML = '<i class="fa-solid fa-angle-left"></i>Filtros';
+                // Remove a classe 'active' para voltar a posição inicial
+                filtersWrapper.classList.remove('active');
+            } else {
+                // Mover o botão para a esquerda em 250px
+                button.style.marginRight = '250px';
+                cardsWrapper.style.paddingRight = '250px';
+                button.innerHTML = '<i class="fa-solid fa-angle-right"></i>Filtros';
 
-            // Remove a classe 'active' para voltar a posição inicial
-            filtersWrapper.classList.remove('active');
-        } else {
-            // Mover o botão para a esquerda em 250px
-            button.style.marginRight = '250px';
-            cardsWrapper.style.paddingRight = '250px';
-            button.innerHTML = '<i class="fa-solid fa-angle-right"></i>Filtros';
-
-            // Adiciona a classe 'active' para mover a div para a esquerda
-            filtersWrapper.classList.add('active');
+                // Adiciona a classe 'active' para mover a div para a esquerda
+                filtersWrapper.classList.add('active');
+            }
+        }
+        else{
+            if (filtersWrapper.classList.contains('active')) {
+                filtersWrapper.classList.remove('active');
+            } else {
+                filtersWrapper.classList.add('active');
+            }
         }
     }
     </script>
