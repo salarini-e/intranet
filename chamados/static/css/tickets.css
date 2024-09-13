@@ -201,14 +201,14 @@
 #cards-wrapper{
     transition: padding-right 1s ease-in-out;
 }
+
+
 .filters-wrapper {
     transition: transform 1s ease-in-out; 
     transform: translateX(-250px); 
 }
 
-.filters-wrapper.active {
-    transform: translateX(0px);
-}
+
 
 @media(max-width:768px){
     #offcanvasScrolling {
