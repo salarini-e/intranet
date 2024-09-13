@@ -356,9 +356,11 @@ def tickets(request):
     chamados = Chamado.objects.all()
     secretarias = Secretaria.objects.all()
     atendentes = Atendente.objects.all()
+    tipos_chamados = TipoChamado.objects.all()
     context = {
         'chamados': chamados,
         'secretarias': secretarias,
         'atendentes': atendentes,
+        'tipos_chamados': tipos_chamados,
     }
     return render(request, 'chamados/tickets.html', context)
