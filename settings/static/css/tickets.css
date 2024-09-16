@@ -1,0 +1,106 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.ticket-chamado-background{
+    display: flex;
+    align-items: center;
+    min-height: 92px;
+    border-radius: 2px;
+    background-color: #fff;
+    box-shadow: 0 1px 0 0 #cfd7df;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 5px;
+    padding: 5px 16px;
+    position: relative;
+}
+
+.chamados-tickets-infos-chamado{
+    display: flex;
+    justify-content: start;
+    align-items: left;
+}
+.checkbox-tickets{
+    position: absolute;
+    transform: translate(-50%,-50%);
+}
+.chamados-tickets-infos-chamado-text{
+    margin-left: 10px;
+}
+.chamados-tickets-infos-chamado-text-assunto{
+    font: var(--bs-font-sans-serif);
+    font-size: 12px;
+    color: black;
+}
+.chamados-tickets-infos-chamado-text-requisitante{
+    font: var(--bs-font-sans-serif);
+    font-size: 10px;
+}
+
+.chamados-tickets-infos{
+    display: flex;
+    flex-direction: column;
+    padding-left: 3%;
+    font-size: 11px;
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* text-align: center; */
+}
+
+.prioridade {
+    display: flex;
+    align-items: center;
+}
+
+.prioridade-indicador {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;  /* Ajuste o arredondamento se necessário */
+    margin-right: 8px;
+}
+
+.prioridade-nao-definida{
+    background-color: rgb(114, 7, 78);  /* Cor opcional para 'Não definida' */
+}
+
+.prioridade-baixa{
+    background-color: green;
+}
+
+.prioridade-media{
+    background-color: yellow;
+}
+
+.prioridade-alta{
+    background-color: red;
+}
+
+.prioridade-desconhecida{
+    background-color: lightgray;  /* Cor para desconhecido */
+}
+
+.status-aberto {
+    background-color: #6495ED; /* Cornflower Blue */
+}
+
+.status-atendimento {
+    background-color: #b3fce6; /* Medium Orchid */
+}
+
+.status-pendente {
+    background-color: #FF8C00; /* Dark Orange */
+}
+
+.status-fechado {
+    background-color: #464646; /* Dim Gray */
+}
+.status-finalizado{
+    background-color: black; 
+}
+
+.dropdown-menu.show{
+    margin-left: -20px !important;
+}
