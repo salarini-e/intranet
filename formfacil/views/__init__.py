@@ -119,6 +119,7 @@ def cadastro_el_view(request):
 
 
 from .aulas_processo_digital import *
+from .treinamento_tributario import * 
 
 def index(request):
     context = {

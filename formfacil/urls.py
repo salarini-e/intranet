@@ -10,9 +10,16 @@ urlpatterns = [
     path('snct2024/', views.snct2024, name='snct2024'),
     path('snct2024/export', views.snct2024_export, name='snct2024_export'),
     path('cadastro-processo-digital', views.cadastroAulasProcessoDigial, name='cadastro-processo-digital'),
+    path('cadastro-treinamento-tributario-emissores', views.cadastroTreinamentoTributarioEmissoresTaxas, name='cadastro-treinamento-tributario-emissores'),
+    path('cadastro-treinamento-tributario-contadores', views.cadastroTreinamentoTributarioContadores, name='cadastro-treinamento-tributario-contadores'),
+    path('cadastro-processo-digital', views.cadastroAulasProcessoDigial, name='cadastro-processo-digital'),
 
     #### URLS PARA VISUALIZAÇÃO DE DADOS ####
     path('visualizar/cadastro-processo-digital/', views.visualizarDados_Aulas_Processo_Digital, name='visualizar_aulas_processo_digital'),
+
+    path('visualizar/cadastros-treinamento-tributario-emissores/', views.visualizarDados_TT_Emissores, name='cadastros-treinamento-tributario-emissores'),
+    path('visualizar/cadastros-treinamento-tributario-contadores/', views.visualizarDados_TT_Contadores, name='cadastros-treinamento-tributario-contadores'),
+    
     path('exportar/cadastro-processo-digital/', views.exportar_aulas_processo_digital_to_excel, name='exportar_aulas_processo_digital'),
     path('cadastros-repetidos/', views.logCadastrosRepetidos, name='cadastros_repetidos'),
        

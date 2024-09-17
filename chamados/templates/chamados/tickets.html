@@ -1,9 +1,8 @@
-{% extends 'template.html' %}
-{% load static %}
+{% extends 'template_chamados.html' %}
 {% block chamados %}active{% endblock %}
 {% block title %}Tickets Chamados{% endblock %}
 {% block css %}
-<link rel="stylesheet" href="{% static '/css/tickets.css' %}">
+<link rel="stylesheet" href="/static/css/tickets.css">
 {% endblock %}
 {% block main %}  
     <div class="row g-3 mb-4 align-items-center justify-content-between">
@@ -35,7 +34,9 @@
                                 <div class="row">
                                     <div class="col-lg-8 col-sm-11 chamados-tickets-infos-chamado">
                                         <div class="chamados-tickets-infos-chamado-text">
+                                            {% if chamado.is_novo %}
                                             <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket"> Novo</span>
+                                            {% endif %}
                                             <span class="chamados-tickets-infos-chamado-text-assunto">{{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}</span>
                                             <div class="solution-infos-wrapper">
                                                 <i class="fa-solid fa-globe" style="width: 10px;"></i>
@@ -321,8 +322,8 @@
         }
     }
 
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    // const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    // const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
 
     // Função para adicionar a opção selecionada

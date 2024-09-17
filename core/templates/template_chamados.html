@@ -1,0 +1,296 @@
+{% load static %}
+{% load custom %}
+{% load custom_filters %}	
+<!DOCTYPE html>
+<html lang="pt-br" data-bs-theme="{{ request.user|get_tema }}"> 
+<head>
+    <title>{% block title %}Intranet PMNF - Bem-vindo{% endblock %}</title>
+    
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="description" content="Portal - Bootstrap 5 Admin Dashboard Template For Developers">
+    <meta name="author" content="Xiaoying Riley at 3rd Wave Media">    
+    <link rel="shortcut icon" href="/static/favicon.ico"> 
+    
+    <!-- FontAwesome JS-->
+    <!-- <script defer src="/static/plugins/fontawesome/js/all.min.js"></script> -->
+    <script src="{% static 'fontawesomefree/js/all.min.js' %}"></script>
+	<link rel="stylesheet" href="/static/css/chamados.css">
+    
+    <!-- App CSS -->  
+    <link id="theme-style" rel="stylesheet" href="/static/css/template-intranet.css">
+	<!-- Hotjar Tracking Code for Site 4976070 (nome ausente) -->
+	<script>
+		(function(h,o,t,j,a,r){
+			h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+			h._hjSettings={hjid:4976070,hjsv:6};
+			a=o.getElementsByTagName('head')[0];
+			r=o.createElement('script');r.async=1;
+			r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+			a.appendChild(r);
+		})(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+	</script>
+	{% block css %}{% endblock %}
+</head> 
+
+<body class="app">   
+	<div id="preloader" class="preloader">
+		<img class="logo-icon me-2" src="/static/brasao.ico" alt="logo"><span class="logo-text">INTRANET</span>
+		<div class="spinner"></div>
+	  </div>	
+    <header class="app-header fixed-top">	   	            
+        <div class="app-header-inner-wrapper-chamados">  
+	        <div class="container-fluid py-2">
+		        <div class="app-header-content"> 
+		            <div class="row justify-content-between align-items-center">
+			        
+				    <div class="col-auto ver-menu-lateral-mobile">
+					    <a id="sidepanel-toggler" class="sidepanel-toggler d-inline-block d-xl-none" href="#">						
+						    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" role="img"><title>Menu</title><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg>
+					    </a>
+				    </div>	
+		           
+		            <div class="app-search-box col ver-menu-lateral-web">
+						<button class="my-auto btn p-4 py-2" id="mButton"  onclick="hiddenMenu()">
+							<i class="fa-solid fa-angle-left"></i>							
+						</button>
+		                
+		            </div>
+		            
+		            <div class="app-utilities col-auto">
+						<h5 class="app-utility-item text-end text-secondary nome-servidor-web">{{request.user|get_user_name}}</h5>
+			            <div class="app-utility-item app-notifications-dropdown dropdown">    
+				            <a class="dropdown-toggle no-toggle-arrow" id="notifications-dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false" title="Notifications">
+					            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bell icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2z"/>
+                                <path fill-rule="evenodd" d="M8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
+                                </svg>
+					            <span class="icon-badge">1</span>
+					        </a>
+					        
+					        <div class="dropdown-menu p-0" aria-labelledby="notifications-dropdown-toggle">
+					            <div class="dropdown-menu-header p-3">
+						            <h5 class="dropdown-menu-title mb-0">Notificações</h5>
+						        </div>
+						        <div class="dropdown-menu-content">
+									<div class="item p-3">
+								        <div class="row gx-2 justify-content-between align-items-center">
+									        <div class="col-auto">
+										        <div class="app-icon-holder icon-holder-mono">
+											        <i class="fa-solid fa-hammer"></i>
+										        </div>
+									        </div>
+									        <div class="col">
+										        <div class="info"> 
+											        <div class="desc">Estamos construindo nosso sistema de notificação. Aguarde...</div>
+											        <div class="meta">:)</div>
+										        </div>
+									        </div>
+								        </div>
+								        <a class="link-mask" href="notifications.html"></a>
+							       </div>
+						        </div>
+						        
+						        <div class="dropdown-menu-footer p-2 text-center">
+							        <a href="#">Ver tudo</a>
+						        </div>
+															
+							</div>					        
+				        </div>
+			
+			            <div class="app-utility-item app-user-dropdown dropdown">
+				            <a class="dropdown-toggle" id="user-dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><img class="rounded-circle" src="{{request|get_avatar}}" alt="user profile"></a>
+				            <ul class="dropdown-menu" aria-labelledby="user-dropdown-toggle">
+								<li><a class="dropdown-item" href="{% url 'autenticacao:conta' %}">Conta</a></li>
+								<li><a class="dropdown-item" href="#">Configurações</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="/logout">Logout</a></li>
+							</ul>
+			            </div>
+		            </div>
+		        </div>
+	            </div>
+	        </div>
+        </div>
+        <div id="app-sidepanel" class="app-sidepanel" > 
+	        <div id="sidepanel-drop" class="sidepanel-drop"></div>
+	        <div class="d-flex flex-column sidepanel-wrapper">
+		        <a href="#" id="sidepanel-close" class="sidepanel-close d-xl-none">&times;</a>
+		        <div class="app-logo-chamados-wrapper d-flex">
+		            <a class="app-logo-chamados mx-auto" href="/ "><img class="app-logo-chamados-image" src="/static/brasao.ico" alt="logo"></a>
+		        </div>
+				
+			    <nav id="app-nav-main" class="app-nav app-nav-main flex-grow-1" style="padding: 0 10px; margin-top: 10px; position: relative !important; overflow-y: unset;">
+					<!-- PAINEL DE CONTROLE -->
+					<div class="sidebar-chamados-item" type="button" 
+						data-bs-toggle="dropdown" 
+						aria-expanded="false" 
+						style="text-decoration: none; color: black;"
+						data-bs-toggle="tooltip" 
+						data-bs-placement="right" 
+						title="Painel de Controle">
+						<a href="{% url 'chamados:index' %}" class="sidebar-chamados-item-link" >
+							<i class="fa-solid fa-gauge-high icon-sidebar-chamados"></i>
+						</a>
+					</div>
+					
+					<!-- TICKETS -->
+					<div class="sidebar-chamados-item" type="button" 
+						data-bs-toggle="dropdown" 
+						aria-expanded="false" 
+						style="text-decoration: none; color: black;"
+						data-bs-toggle="tooltip" 
+						data-bs-placement="right" 
+						title="Tickets">
+						<a href="{% url 'chamados:tickets' %}" class="sidebar-chamados-item-link"></a>
+						<i class="fa-solid fa-ticket icon-sidebar-chamados"></i>
+						</a>
+					</div>
+					{% if request.user.is_superuser %}
+					<!-- INFORMAÇÕES ADICIONAIS -->
+					<div class="sidebar-chamados-item informacoes-adicionais" 
+						type="button" 
+							data-bs-toggle="dropdown" 
+							aria-expanded="false" 
+							style="text-decoration: none; color: black;"
+							data-bs-toggle="tooltip" 
+							data-bs-placement="right" 
+							title="Informações adicionais">
+						<a href="{% url 'chamados:tickets' %}" class="sidebar-chamados-item-link">
+							<i class="fa-solid fa-circle-info icon-sidebar-chamados"></i>
+						</a>
+						<div class="submenu">
+							<div class="submenu-links">
+								<a href="" class="submenu-item-chamados first">Contatos</a>
+								<a href="" class="submenu-item-chamados"> Empresas</a>
+							</div>
+						</div>
+					</div class="sidebar-chamados-item">
+					<div type="button" 
+						data-bs-toggle="dropdown" 
+						aria-expanded="false" 
+						style="text-decoration: none; color: black;"
+						data-bs-toggle="tooltip" 
+						data-bs-placement="right" 
+						title="Soluções" >
+						<a href="{% url 'chamados:tickets' %}" class="sidebar-chamados-item-link">Soluções</a>
+					</div>
+					<div class="sidebar-chamados-item" type="button" 
+						data-bs-toggle="dropdown" 
+						aria-expanded="false" 
+						style="text-decoration: none; color: black;"
+						data-bs-toggle="tooltip" 
+						data-bs-placement="right" 
+						title="Análises">
+						<a href="{% url 'chamados:tickets' %}" class="sidebar-chamados-item-link" >
+						<i class="fa-solid fa-chart-line icon-sidebar-chamados"></i>
+						</a>
+					</div>
+					{% endif %}
+					<div class="sidebar-chamados-item" type="button" 
+						data-bs-toggle="dropdown" 
+						aria-expanded="false" 
+						style="text-decoration: none; color: black;"
+						data-bs-toggle="tooltip" 
+						data-bs-placement="right" 
+						title="Novo Ticket">
+						<button id="openModal" class="btn sidebar-chamados-item-link">
+						
+						<i class="fa-solid fa-plus icon-sidebar-chamados"></i>
+						</button>
+					</div>
+				</nav>
+
+		       
+	        </div>
+	    </div>
+    </header>
+    
+    <div class="app-wrapper-chamados">
+	    <div class="app-content pt-3 p-md-3 p-lg-4">
+		    <div class="container-xl">
+                {% block main %}
+                {% endblock %}
+            </div> 
+	    </div>
+	    
+		<div id="myModal" class="modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">NOVO CHAMADO</h5>
+					<button class="btn btn-primary btn-close" id="closeModal">
+						
+					</button>	
+				</div>
+				<div class="modal-body">
+					<div class="col-12 col-md-12">			
+								<p><i><strong>Escolha o tipo de chamado:</strong></i></p>				
+								{% for tipo in tipos %}							
+								<a class="btn btn-secondary w-100 mb-2" href="{% url 'chamados:criar' tipo.sigla %}">
+									{{tipo.nome}}
+								</a>
+								{% endfor %}
+					</div>
+				</div>
+				<div class="modal-footer">
+					
+				</div>
+				</div>
+			</div>
+			</div>
+
+
+	    <footer class="app-footer w-100">
+		    <div class="container text-center py-3">	         
+            <small class="copyright">© Subsecretaria de Tecnologia da Informação e Comunicação - 2024</small>			
+		    </div>
+	    </footer>
+	    
+    </div> 					
+
+ 
+    <!-- Javascript -->          
+    <script src="/static/plugins/popper.min.js"></script>
+    <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>  
+	<script src="/static/js/openModal.js"></script>	
+
+    <!-- Charts JS -->
+    <!-- <script src="/static/plugins/chart.js/chart.min.js"></script> 
+    <script src="/static/js/index-charts.js"></script>  -->
+    
+    <!-- Page Specific JS -->
+    <script src="/static/js/app.js"></script> 
+
+
+	<script>
+		const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+		const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+		function hiddenMenu(){
+			var sidepanel = document.getElementById('app-sidepanel');
+			if (sidepanel.style.left == '-250px') {
+				sidepanel.style.left = '0px';
+				document.querySelector('.app-wrapper-chamados').style.marginLeft = '10px';
+				document.querySelector('.app-header-inner-wrapper-chamados').style.marginLeft = '40px';
+				document.querySelector('#mButton').innerHTML = '<i class="fa-solid fa-angle-left"></i>';
+				
+			} else {
+				sidepanel.style.left = '-250px';
+				document.querySelector('.app-wrapper-chamados').style.marginLeft = '0px';
+				document.querySelector('.app-header-inner-wrapper-chamados').style.marginLeft = '0px';
+				document.querySelector('#mButton').innerHTML = '<i class="fa-solid fa-angle-right"></i>';
+			}						
+
+		};
+		window.onload = function() {
+			var preloader = document.getElementById('preloader');
+			preloader.style.display = 'none';
+		};
+	</script>
+</body>
+</html> 
+

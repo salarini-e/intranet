@@ -58,11 +58,12 @@ class CriarSetorForm(forms.ModelForm):
             'endereco': forms.TextInput(attrs={'class': 'form-control mb-3'}),            
             'user_inclusao': forms.HiddenInput(),
         }
+
+
 class CriarChamadoForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):                
         super(CriarChamadoForm, self).__init__(*args, **kwargs)
-
         if 'initial' in kwargs:
             if 'secretaria' in kwargs['initial']:
                 self.fields['secretaria'].initial = kwargs['initial']['secretaria']
@@ -72,22 +73,23 @@ class CriarChamadoForm(forms.ModelForm):
     # secretaria = SecretariaWidget(attrs={'class': 'form-control mb-3','onchange': 'getSetores(this.value)', 'required': 'required'})
     class Meta:
         model = Chamado
-        fields = ['secretaria', 'setor', 'telefone', 'requisitante', 'tipo', 'assunto'
-                  , 'descricao', 'periodo_preferencial', 'user_inclusao', 'anexo']
+        fields = ['requisitante', 'assunto', 'secretaria', 'setor', 'endereco','telefone', 'tipo'
+                  , 'descricao', 'user_inclusao', 'anexo']
         widgets = {                        
+            'requisitante': forms.Select(attrs={'class': 'form-select'}),
             # 'secretaria': SecretariaWidget(attrs={'class': 'form-control mb-3','onchange': 'getSetores(this.value)', 'required': 'required'}),
             'setor': forms.Select(attrs={'class': 'form-select'}),
             'secretaria': SecretariaWidget(attrs={'class': 'form-control mb-3','onchange': 'getSetores(this.value)', 'required': 'required'}),
             # 'setor': SetorWidget(attrs={'class': 'form-control mb-3'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control'}),
             # 'requisitante': forms.Select(attrs={'class': 'form-control'}),
-            'requisitante': RequisitanteWidget(attrs={'class': 'form-control'}),
             'tipo': forms.HiddenInput(),
             'assunto': forms.TextInput(attrs={'class': 'form-control'}),
+            'endereco': forms.TextInput(attrs={'class': 'form-control'}),
             'prioridade': forms.Select(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),            
             'descricao': forms.Textarea(attrs={'class': 'form-control'}),  
-            'periodo_preferencial': forms.CheckboxSelectMultiple(),
+            # 'periodo_preferencial': forms.CheckboxSelectMultiple(),
             'user_inclusao': forms.HiddenInput(),
             'anexo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }

@@ -23,3 +23,34 @@ class CadastroAulasProcessoDigitalAdmin(admin.ModelAdmin):
 
 # Registro do modelo no admin
 admin.site.register(Cadastro_Aulas_Processo_Digital, CadastroAulasProcessoDigitalAdmin)
+
+
+class CadastroAulasEmissoresAdmin(admin.ModelAdmin):
+    # Campos que serão exibidos na lista de registros
+    list_display = ('nome', 'matricula', 'secretaria', 'setor', 'telefone', 'dt_registro')
+    
+    # Campos pelos quais você pode buscar
+    search_fields = ('nome', 'matricula', 'telefone', 'secretaria', 'setor')
+    
+    # Filtros laterais para facilitar a busca
+    list_filter = ('secretaria', 'setor')
+    
+    # Ordem padrão dos registros
+    ordering = ('-dt_registro', 'nome')  # Exibe os registros mais recentes primeiro
+
+class CadastroAulasContadoresAdmin(admin.ModelAdmin):
+    # Campos que serão exibidos na lista de registros
+    list_display = ('nome', 'matricula', 'secretaria', 'setor', 'telefone', 'dt_registro')
+    
+    # Campos pelos quais você pode buscar
+    search_fields = ('nome', 'matricula', 'telefone', 'secretaria', 'setor')
+    
+    # Filtros laterais para facilitar a busca
+    list_filter = ('secretaria', 'setor')
+    
+    # Ordem padrão dos registros
+    ordering = ('-dt_registro', 'nome')  # Exibe os registros mais recentes primeiro
+
+# Registro dos modelos no admin
+admin.site.register(Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas, CadastroAulasEmissoresAdmin)
+admin.site.register(Cadastro_Aulas_Treinamento_Tributario_Contadores, CadastroAulasContadoresAdmin)

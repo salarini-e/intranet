@@ -113,3 +113,28 @@ class Cadastro_Aulas_Processo_Digital(models.Model):
 
     def __str__(self):
         return f'{self.matricula} - {self.nome}'      
+    
+
+class Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas(models.Model):
+    nome = models.CharField(max_length=150, verbose_name='Nome Completo')
+    matricula = models.CharField(max_length=6, verbose_name='Matrícula', blank=True)
+    secretaria = models.CharField(max_length=250)
+    setor = models.CharField(max_length=250)
+    telefone = models.CharField(max_length=15, verbose_name='Seu telefone', blank=False) 
+    dt_registro = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.matricula} - {self.nome}'  
+    
+class Cadastro_Aulas_Treinamento_Tributario_Contadores(models.Model):
+    nome = models.CharField(max_length=150, verbose_name='Nome Completo')
+    matricula = models.CharField(max_length=6, verbose_name='Matrícula', blank=True)
+    secretaria = models.CharField(max_length=250)
+    setor = models.CharField(max_length=250)
+    telefone = models.CharField(max_length=15, verbose_name='Seu telefone', blank=False) 
+    dt_registro = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.matricula} - {self.nome}'  
+
+

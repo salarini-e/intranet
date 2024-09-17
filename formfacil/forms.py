@@ -78,3 +78,28 @@ class FormCadastroAulasProcessoDigital(forms.ModelForm):
             'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'turma_escolhida': forms.Select(attrs={'class': 'form-select mb-3'})
         }
+
+
+class CadastroAulasEmissoresForm(forms.ModelForm):
+    class Meta:
+        model = Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas
+        fields = ['nome', 'matricula', 'secretaria', 'setor', 'telefone']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'matricula': forms.TextInput(attrs={'class': 'form-control'}),
+            'secretaria': forms.TextInput(attrs={'class': 'form-control'}),
+            'setor': forms.TextInput(attrs={'class': 'form-control'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class CadastroAulasContadoresForm(forms.ModelForm):
+    class Meta:
+        model = Cadastro_Aulas_Treinamento_Tributario_Contadores
+        fields = ['nome', 'matricula', 'secretaria', 'setor', 'telefone']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'matricula': forms.TextInput(attrs={'class': 'form-control'}),
+            'secretaria': forms.TextInput(attrs={'class': 'form-control'}),
+            'setor': forms.TextInput(attrs={'class': 'form-control'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control'}),
+        }

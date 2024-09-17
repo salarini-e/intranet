@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 import hashlib
 from django.utils import timezone
+from datetime import datetime, timedelta
 
 class TipoChamado(models.Model):
     nome = models.CharField(max_length=164, verbose_name='Nome')
@@ -81,7 +82,8 @@ class Chamado(models.Model):
 
     setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, verbose_name='Para qual setor é o chamado?', null=True)
     telefone=models.CharField(max_length=14, verbose_name='Qual telefone para contato?')
-    requisitante = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Para quem é o chamado?', null=True, related_name="requisitante_chamados")
+    requisitante = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Nome', null=True, related_name="requisitante_chamados")
+    endereco =models.CharField(max_length=250, verbose_name = 'Endereço', blank=True, null=True)
     tipo = models.ForeignKey(TipoChamado, on_delete=models.SET_NULL, verbose_name='Tipo chamado', null=True)
     assunto = models.CharField(max_length=64, verbose_name='Assunto do chamado')
     prioridade = models.CharField(max_length=1, choices=PRIORIDADE_CHOICES, default='')
@@ -173,7 +175,12 @@ class Chamado(models.Model):
         }
         return status_classes[self.status]
         
-    
+    def is_novo(self):
+        dt_atual = timezone.now()
+        hora = timedelta(hours=1)
+        valor = dt_atual - self.dt_inclusao <= hora
+        return valor
+
 class Pausas_Execucao_do_Chamado(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')
     dt_inicio = models.DateTimeField(verbose_name='Data de início da pausa')

@@ -1,0 +1,56 @@
+{% extends 'template.html' %}
+{% block visao %}active{% endblock %}
+{% block main %}   
+
+<div class="row">
+    <div class="col d-flex">
+        <h1 class="app-page-title">Form Fácil</h1>
+        <!-- <a href="{% url 'formfacil:cadastros_repetidos' %}" class="ms-auto me-1 my-auto btn app-btn-secondary">
+            <i class="fa-solid fa-users me-2"></i>Visualizar repetidos
+        </a> -->
+        <a href="{% url 'formfacil:index' %}" class="ms-auto me-1 my-auto btn app-btn-secondary">
+            <i class="fa-solid fa-rotate-left me-2"></i>Voltar
+        </a>
+    </div>
+</div>
+
+{% for item in cadastros_contadores %}
+<div class="row g-4 mb-4 px-3">
+    <div class="col app-card app-card-stats-table h-100 shadow-sm p-4">
+        <div class="w-100 d-flex flex-wrap">
+            <h3>Treinamento Tributário - CONTADORES <span class="text-secondary">(Total: {{ cadastros_contadores.count }})</span></h3>
+            <button class="ms-auto my-auto btn app-btn-secondary" onclick="toogleTable(this, 'table-{{ item.id }}')" style="border:none;">
+                <i class="fa-regular fa-eye me-2"></i>Visualizar registros
+            </button>
+        </div>
+        <table id="table-{{ item.id }}" class="table table-borderless mb-0">
+            <thead>
+                <th>Nome</th>
+                <th>Matricula</th>
+                <th>Secretaria</th>
+                <th>Setor</th>
+                <th>Telefone</th>
+                <th>Dt. Registro</th>
+            </thead>
+            <tbody>
+                {% for cadastro in cadastros_contadores %}
+                <tr>
+                    <td>{{ cadastro.nome }}</td>
+                    <td>{{ cadastro.matricula }}</td>
+                    <td>{{ cadastro.secretaria }}</td>
+                    <td>{{ cadastro.setor }}</td>
+                    <td>{{ cadastro.telefone }}</td>
+                    <td>{{ cadastro.dt_registro }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center p-5">Nenhum registro efetuado até o momento.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

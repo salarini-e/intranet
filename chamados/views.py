@@ -1,4 +1,7 @@
 from django.shortcuts import render, redirect
+from django.views.decorators.clickjacking import xframe_options_exempt
+from datetime import datetime, timedelta
+
 from .models import TipoChamado, Secretaria, Setor, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem, OSTelefonia, PeriodoPreferencial, Pausas_Execucao_do_Chamado
 from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm, ServidorForm,
                     MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm, CriarSetorForm, Form_Agendar_Atendimento,
@@ -50,6 +53,10 @@ def zerar_filtros(request):
 
 @login_required
 def criarChamado(request, sigla):
+    if request.user.is_superuser:
+        template_name =  'chamados/chamado-criar-ti.html'
+    else:
+        template_name =  'chamados/chamado-criar-servidor.html'
     forms ={
         'IMP': OSImpressoraForm,
         'INT': OSInternetForm,
@@ -59,6 +66,7 @@ def criarChamado(request, sigla):
     servidor = Servidor.objects.get(user=request.user)
     tipo = TipoChamado.objects.get(sigla=sigla)
     if request.POST:
+    
         form = CriarChamadoForm(request.POST, request.FILES)
         if sigla in forms:
             form_ext = forms[sigla](request.POST, request.FILES)
@@ -94,7 +102,7 @@ def criarChamado(request, sigla):
         'form_setor': CriarSetorForm(prefix='setor', initial={'user_inclusao': request.user.id}),
         'form_user': ServidorForm(prefix='servidor', initial={'user_inclusao': request.user.id})
     }
-    return render(request, 'chamados/chamado-criar.html', context)
+    return render(request, template_name, context)
 
 @login_required
 def detalhes(request, hash):
@@ -214,7 +222,7 @@ def attChamado(request, hash):
             message.success(request, f'{atributo.capitalize()} atualizado com sucesso!')
             return JsonResponse({'status': 200})    
     return JsonResponse({'status': 403})
-
+@login_required
 def iniciar_atendimento(request, hash):    
     chamado = Chamado.objects.get(hash=hash)
     pagina_anterior = request.META.get('HTTP_REFERER', '/')
@@ -229,7 +237,7 @@ def iniciar_atendimento(request, hash):
         message.error(request, mensagem)
             
     return redirect(pagina_anterior)
-
+@login_required
 def retomar_atendimento(request, hash):
     chamado = Chamado.objects.get(hash=hash)
     intervalo = Pausas_Execucao_do_Chamado.objects.filter(chamado=chamado).last()
@@ -245,7 +253,7 @@ def retomar_atendimento(request, hash):
         
     return redirect('chamados:index')
     return redirect('chamados:index')
-
+@login_required
 def pausar_atendimento(request, hash):
     chamado = Chamado.objects.get(hash=hash)
     intervalo = Pausas_Execucao_do_Chamado.objects.create(
@@ -261,7 +269,7 @@ def pausar_atendimento(request, hash):
     if status == 400:
         message.error(request, mensagem)
     return redirect('chamados:motivo', hash=hash)
-
+@login_required
 def declarar_motivo_pausa(request, hash):
     chamado = Chamado.objects.get(hash=hash)
     instance = Pausas_Execucao_do_Chamado.objects.filter(chamado=chamado, user_inclusao=Servidor.objects.get(user=request.user)).last()
@@ -279,7 +287,7 @@ def declarar_motivo_pausa(request, hash):
                'submit_text': 'Enviar'
                }
     return render(request, 'chamados/generic_form.html', context)
-
+@login_required
 def finalizar_atendimento(request, hash):
     chamado = Chamado.objects.get(hash=hash)
     chamado.dt_execucao = timezone.now()
@@ -291,7 +299,7 @@ def finalizar_atendimento(request, hash):
         message.error(request, mensagem)
     return redirect('chamados:index')
 
-#criar periodos
+@login_required
 def criar_periodos(request):
     if PeriodoPreferencial.objects.all().exists():
         return HttpResponse("OK. Periodos já criados.")
@@ -300,6 +308,7 @@ def criar_periodos(request):
     PeriodoPreferencial.objects.create(nome="Tarde")    
     return HttpResponse("OK. Periodos criados com sucesso!")
 
+@login_required
 def api_criar_setor(request):
     if request.method == 'POST':
         # print(request.POST)
@@ -316,6 +325,7 @@ def api_criar_setor(request):
         return JsonResponse({'status': 200, 'message': 'Setor criado com sucesso!'})
     return JsonResponse({'status': 400, 'message': 'Erro ao criar setor!'})
 
+@login_required
 def api_criar_servidor(request):
     if request.method == 'POST':
         # print(request.POST)
@@ -332,6 +342,7 @@ def api_criar_servidor(request):
         return JsonResponse({'status': 200, 'message': 'Usuário criado com sucesso!'})        
     return JsonResponse({'status': 400})
 
+@login_required
 def agendar_atendimento(request, hash):
     instance = Chamado.objects.get(hash=hash)
     if request.method == 'POST':
@@ -352,15 +363,78 @@ def agendar_atendimento(request, hash):
                }
     return render(request, 'chamados/generic_form.html', context)
 
+@login_required
 def tickets(request):
-    chamados = Chamado.objects.all()
+    chamados = Chamado.objects.all().order_by('-dt_inclusao')
     secretarias = Secretaria.objects.all()
     atendentes = Atendente.objects.all()
     tipos_chamados = TipoChamado.objects.all()
     context = {
+        'tipos': TipoChamado.objects.all(),
         'chamados': chamados,
         'secretarias': secretarias,
         'atendentes': atendentes,
         'tipos_chamados': tipos_chamados,
     }
     return render(request, 'chamados/tickets.html', context)
+
+
+
+@xframe_options_exempt
+@login_required
+def painel_controle(request):
+    chamados = Chamado.objects.all()
+    total_chamados = chamados.count()
+    chamados_abertos_30dias = chamados.filter(dt_inclusao__gte=datetime.now() - timedelta(days=30)).count()
+    chamados_fechados_30dias = chamados.filter(dt_execucao__gte=datetime.now() - timedelta(days=30)).count()
+    media_diaria = total_chamados / 30
+    data_atual = datetime.now()
+    
+    tres_meses_atras = data_atual - timedelta(days=90)
+    count_abertos = chamados.filter(status='0').count()
+    count_em_atendimento = chamados.filter(status='1').count()
+    count_pendentes = chamados.filter(status='2').count()
+    count_fechados = chamados.filter(status='3').count()
+
+    # Preparando dados para o gráfico de barras
+    tipos_chamados = TipoChamado.objects.all()
+    chamados_por_tipo = [{'tipo': tipo.nome, 'quantidade': chamados.filter(tipo=tipo).count()} for tipo in tipos_chamados]
+
+    data_atual = datetime.now()
+    tres_meses_atras = data_atual - timedelta(days=90)
+
+    semanas = []
+    dados_abertos = []
+    dados_fechados = []
+
+    while tres_meses_atras < data_atual:
+        semana_inicio = tres_meses_atras.strftime('%d/%m/%y')        
+        label_semana = f'{semana_inicio}'
+
+        chamados_semana = chamados.filter(dt_inclusao__gte=tres_meses_atras, dt_inclusao__lt=tres_meses_atras + timedelta(days=7))
+        chamados_abertos_semana = chamados_semana.filter(status='0').count()
+        chamados_fechados_semana = chamados_semana.filter(status='3').count()
+
+        semanas.append(label_semana)
+        dados_abertos.append(chamados_abertos_semana)
+        dados_fechados.append(chamados_fechados_semana)
+
+        tres_meses_atras += timedelta(days=7)
+
+
+    context = {               
+        'tipos': TipoChamado.objects.all(),
+        'count_abertos': count_abertos,
+        'count_em_atendimento': count_em_atendimento,
+        'count_pendentes': count_pendentes,
+        'count_fechados': count_fechados,
+        'chamados_por_tipo': chamados_por_tipo,
+        'semanas': semanas,
+        'dados_abertos': dados_abertos,
+        'dados_fechados': dados_fechados,
+        'total_chamados': total_chamados,
+        'chamados_abertos_30dias': chamados_abertos_30dias-chamados_fechados_30dias,
+        'chamados_fechados_30dias': chamados_fechados_30dias,
+        'media_diaria': "{:.1f}".format(media_diaria)
+    }
+    return render(request, 'chamados/painel_controle.html', context)
