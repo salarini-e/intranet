@@ -1,6 +1,6 @@
 from django import forms
 from .models import *
-from autenticacao.functions import validate_cpf
+from autenticacao.functions import validate_cpf, clear_tel
 
 class FormIndicacaoComitePSPForm(forms.ModelForm):
     class Meta:
@@ -87,16 +87,21 @@ class CadastroAulasEmissoresForm(forms.ModelForm):
         fields = ['nome','cpf', 'matricula', 'secretaria', 'setor', 'telefone']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
-            'cpf': forms.TextInput(attrs={'class': 'form-control'}),
+            'cpf': forms.TextInput(attrs={'class': 'form-control', 'onkeydown': 'mascara(this, icpf)'}),
             'matricula': forms.TextInput(attrs={'class': 'form-control'}),
             'secretaria': forms.TextInput(attrs={'class': 'form-control'}),
             'setor': forms.TextInput(attrs={'class': 'form-control'}),
-            'telefone': forms.TextInput(attrs={'class': 'form-control'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control', 'onkeydown': 'mascara(this, itel)' }),
         }
 
     def clean_cpf(self):
         cpf = validate_cpf(self.cleaned_data["cpf"])
+        if Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas.objects.filter(cpf=cpf).exists():
+            raise forms.ValidationError("Este CPF já está cadastrado no sistema. Por favor, verifique.")
         return cpf
+    def clean_tel(self):
+        telefone = clear_tel(self.cleaned_data["telefone"])
+        return telefone
 
 class CadastroAulasContadoresForm(forms.ModelForm):
     class Meta:
@@ -104,13 +109,20 @@ class CadastroAulasContadoresForm(forms.ModelForm):
         fields = ['nome','cpf', 'matricula', 'secretaria', 'setor', 'telefone']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
-            'cpf': forms.TextInput(attrs={'class': 'form-control'}),
+            'cpf': forms.TextInput(attrs={'class': 'form-control', 'onkeydown': 'mascara(this, icpf)'}),
             'matricula': forms.TextInput(attrs={'class': 'form-control'}),
             'secretaria': forms.TextInput(attrs={'class': 'form-control'}),
             'setor': forms.TextInput(attrs={'class': 'form-control'}),
-            'telefone': forms.TextInput(attrs={'class': 'form-control'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control', 'onkeydown': 'mascara(this, itel)'}),
         }
 
     def clean_cpf(self):
         cpf = validate_cpf(self.cleaned_data["cpf"])
+
+        if Cadastro_Aulas_Treinamento_Tributario_Contadores.objects.filter(cpf=cpf).exists():
+            raise forms.ValidationError("Este CPF já está cadastrado no sistema. Por favor, verifique.")
         return cpf
+    
+    def clean_tel(self):
+        telefone = clear_tel(self.cleaned_data["telefone"])
+        return telefone

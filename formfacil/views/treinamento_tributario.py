@@ -36,7 +36,7 @@ def cadastroTreinamentoTributarioEmissoresTaxas(request):
             'titulo': 'TREINAMENTO TRIBUTÁRIO - EMISSORES DE TAXAS',    
             'subtitulo': 'Subsecretaria de Tecnologia da Informação e Comunicação',
             'mensagem': (
-                "Apenas para as secretarias: Smomu, Serv. Públicos, Meio Ambiente e Saúde. <br><br>"
+                "Apenas para as secretarias: Smomu, Serv. Públicos, Meio Ambiente, Saúde e Vigilância Sanitária. <br><br>"
                 "Data: 07/10 (segunda-feira) <br>"
                 "Horario : das 10h às 12h. <br>"
                 "Local: Acianf - Av. Alberto Braune, 111 (ao lado da loja Ortobom)"
@@ -150,8 +150,7 @@ def logCadastrosRepetidosTTEmissores(request):
 
     # Obtém todos os registros para as matrículas repetidas ou nomes repetidos a partir da data especificada
     cadastros_repetidos = cadastroTreinamentoTributarioEmissoresTaxas.objects.filter(
-        Q(matricula__in=matriculas_repetidas) | Q(nome__in=nomes_repetidos),
-        dt_registro__gte=data_especifica  # Filtra registros a partir da data especificada
+        Q(matricula__in=matriculas_repetidas) | Q(nome__in=nomes_repetidos)
     )
 
     # Renderiza o template com os cadastros repetidos
@@ -186,7 +185,6 @@ def logCadastrosRepetidosTTContadores(request):
     # Obtém todos os registros para as matrículas repetidas ou nomes repetidos a partir da data especificada
     cadastros_repetidos = cadastroTreinamentoTributarioContadores.objects.filter(
         Q(matricula__in=matriculas_repetidas) | Q(nome__in=nomes_repetidos),
-        dt_registro__gte=data_especifica  # Filtra registros a partir da data especificada
     )
 
     # Renderiza o template com os cadastros repetidos
