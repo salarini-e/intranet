@@ -13,6 +13,12 @@
 .app-header-inner-wrapper-chamados{
     margin-left: 40px;
 }
+@media(max-width: 1199.98px) {
+    .app-header-inner-wrapper-chamados{
+        margin-left: 0px;
+    }
+
+}
 .app-logo-chamados-wrapper{
     display: flex;
     align-items: center;

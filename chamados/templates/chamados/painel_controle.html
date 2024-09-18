@@ -1,7 +1,13 @@
 {% extends 'template_chamados.html' %}
 {% block visao %}active{% endblock %}
 {% block main %}   
-			    <h1 class="app-page-title">Painel de controle</h1>
+				<div class="row" style="margin-bottom: 1.5rem;">
+					<div class="col d-flex" style="display: flex;align-items: center;">
+						<h1 class="app-page-title" style="margin-bottom: 0px;">Painel de controle</h1>
+						<a href="/" class="ms-auto me-1 my-auto btn app-btn-secondary"><i class="fa-solid fa-rotate-left me-2"></i>Voltar</a>
+					</div>
+				</div>
+			    
 			    
 			    <!-- <div class="app-card alert alert-dismissible shadow-sm mb-4 border-left-decoration" role="alert">
 				    <div class="inner">
@@ -405,210 +411,210 @@
 	gray: '#a9b5c9',
 	text: '#252930',
 	border: '#e7e9ed'
-};
+	};
 
-// Dados de chamados
+	// Dados de chamados
 
-var semanas = {{ semanas|safe }};
-var dados_abertos = {{ dados_abertos|safe }};
-var dados_fechados = {{ dados_fechados|safe }};
+	var semanas = {{ semanas|safe }};
+	var dados_abertos = {{ dados_abertos|safe }};
+	var dados_fechados = {{ dados_fechados|safe }};
 
 
-var count_abertos = {{ count_abertos }};
-var count_fechados = {{ count_fechados }};
+	var count_abertos = {{ count_abertos }};
+	var count_fechados = {{ count_fechados }};
 
-// Dados para o gráfico de barras
-var chamados_por_tipo = {{ chamados_por_tipo|safe }};
+	// Dados para o gráfico de barras
+	var chamados_por_tipo = {{ chamados_por_tipo|safe }};
 
-// Chart.js Line Chart Example
-var lineChartConfig = {
-	type: 'line',
+	// Chart.js Line Chart Example
+	var lineChartConfig = {
+		type: 'line',
 
-	data: {
-		labels: semanas,
+		data: {
+			labels: semanas,
 
+			datasets: [{
+					label: 'Chamados Abertos',
+					fill: false,
+					backgroundColor: window.chartColors.green,
+					borderColor: window.chartColors.green,
+					data: dados_abertos
+				}, {
+					label: 'Chamados Fechados',
+					fill: false,
+					backgroundColor: window.chartColors.gray,
+					borderColor: window.chartColors.gray,
+					data: dados_fechados
+				}]
+		},
+		options: {
+			responsive: true,
+			aspectRatio: 1.5,
+
+			legend: {
+				display: true,
+				position: 'bottom',
+				align: 'end',
+			},
+
+			title: {
+				display: false,
+				text: 'Quantidade de Chamados',
+			},
+			tooltips: {
+				mode: 'index',
+				intersect: false,
+				titleMarginBottom: 10,
+				bodySpacing: 10,
+				xPadding: 16,
+				yPadding: 16,
+				borderColor: window.chartColors.border,
+				borderWidth: 1,
+				backgroundColor: '#fff',
+				bodyFontColor: window.chartColors.text,
+				titleFontColor: window.chartColors.text,
+
+				callbacks: {
+					label: function(tooltipItem, data) {
+						return tooltipItem.yLabel;
+					}
+				},
+
+			},
+			hover: {
+				mode: 'nearest',
+				intersect: true
+			},
+			scales: {
+				xAxes: [{
+					display: true,
+					gridLines: {
+						drawBorder: false,
+						color: window.chartColors.border,
+					},
+					scaleLabel: {
+						display: false,
+					}
+				}],
+				yAxes: [{
+					display: true,
+					gridLines: {
+						drawBorder: false,
+						color: window.chartColors.border,
+					},
+					scaleLabel: {
+						display: false,
+					},
+					ticks: {
+						beginAtZero: true,
+						userCallback: function(value, index, values) {
+							return value;
+						}
+					},
+				}]
+			}
+		}
+	};
+
+	// Chart.js Bar Chart Example
+	var barChartData = {
+		labels: chamados_por_tipo.map(function(item) { return item.tipo; }),
 		datasets: [{
-                label: 'Chamados Abertos',
-                fill: false,
-                backgroundColor: window.chartColors.green,
-                borderColor: window.chartColors.green,
-                data: dados_abertos
-            }, {
-                label: 'Chamados Fechados',
-                fill: false,
-                backgroundColor: window.chartColors.gray,
-                borderColor: window.chartColors.gray,
-                data: dados_fechados
-            }]
-	},
-	options: {
-		responsive: true,
-		aspectRatio: 1.5,
-
-		legend: {
-			display: true,
-			position: 'bottom',
-			align: 'end',
-		},
-
-		title: {
-			display: false,
-			text: 'Quantidade de Chamados',
-		},
-		tooltips: {
-			mode: 'index',
-			intersect: false,
-			titleMarginBottom: 10,
-			bodySpacing: 10,
-			xPadding: 16,
-			yPadding: 16,
-			borderColor: window.chartColors.border,
+			label: 'Quantidade de Chamados por Tipo',
+			backgroundColor: window.chartColors.green,
+			borderColor: window.chartColors.green,
 			borderWidth: 1,
-			backgroundColor: '#fff',
-			bodyFontColor: window.chartColors.text,
-			titleFontColor: window.chartColors.text,
+			data: chamados_por_tipo.map(function(item) { return item.quantidade; })
+		}]
+	};
 
-			callbacks: {
-				label: function(tooltipItem, data) {
-					return tooltipItem.yLabel;
-				}
+	var barChartConfig = {
+		type: 'bar',
+		data: barChartData,
+		options: {
+			responsive: true,
+			aspectRatio: 1.5,
+
+			legend: {
+				display: true,
+				position: 'bottom',
+				align: 'end',
 			},
 
-		},
-		hover: {
-			mode: 'nearest',
-			intersect: true
-		},
-		scales: {
-			xAxes: [{
-				display: true,
-				gridLines: {
-					drawBorder: false,
-					color: window.chartColors.border,
-				},
-				scaleLabel: {
-					display: false,
-				}
-			}],
-			yAxes: [{
-				display: true,
-				gridLines: {
-					drawBorder: false,
-					color: window.chartColors.border,
-				},
-				scaleLabel: {
-					display: false,
-				},
-				ticks: {
-					beginAtZero: true,
-					userCallback: function(value, index, values) {
-						return value;
-					}
-				},
-			}]
-		}
-	}
-};
-
-// Chart.js Bar Chart Example
-var barChartData = {
-	labels: chamados_por_tipo.map(function(item) { return item.tipo; }),
-	datasets: [{
-		label: 'Quantidade de Chamados por Tipo',
-		backgroundColor: window.chartColors.green,
-		borderColor: window.chartColors.green,
-		borderWidth: 1,
-		data: chamados_por_tipo.map(function(item) { return item.quantidade; })
-	}]
-};
-
-var barChartConfig = {
-	type: 'bar',
-	data: barChartData,
-	options: {
-		responsive: true,
-		aspectRatio: 1.5,
-
-		legend: {
-			display: true,
-			position: 'bottom',
-			align: 'end',
-		},
-
-		title: {
-			display: false,
-			text: 'Quantidade de Chamados por Tipo',
-		},
-		tooltips: {
-			mode: 'index',
-			intersect: false,
-			titleMarginBottom: 10,
-			bodySpacing: 10,
-			xPadding: 16,
-			yPadding: 16,
-			borderColor: window.chartColors.border,
-			borderWidth: 1,
-			backgroundColor: '#fff',
-			bodyFontColor: window.chartColors.text,
-			titleFontColor: window.chartColors.text,
-
-			callbacks: {
-				label: function(tooltipItem, data) {
-					return tooltipItem.yLabel;
-				}
+			title: {
+				display: false,
+				text: 'Quantidade de Chamados por Tipo',
 			},
+			tooltips: {
+				mode: 'index',
+				intersect: false,
+				titleMarginBottom: 10,
+				bodySpacing: 10,
+				xPadding: 16,
+				yPadding: 16,
+				borderColor: window.chartColors.border,
+				borderWidth: 1,
+				backgroundColor: '#fff',
+				bodyFontColor: window.chartColors.text,
+				titleFontColor: window.chartColors.text,
 
-		},
-		hover: {
-			mode: 'nearest',
-			intersect: true
-		},
-		scales: {
-			xAxes: [{
-				display: true,
-				gridLines: {
-					drawBorder: false,
-					color: window.chartColors.border,
-				},
-				scaleLabel: {
-					display: false,
-				}
-			}],
-			yAxes: [{
-				display: true,
-				gridLines: {
-					drawBorder: false,
-					color: window.chartColors.border,
-				},
-				scaleLabel: {
-					display: false,
-				},
-				ticks: {
-					beginAtZero: true,
-					userCallback: function(value, index, values) {
-						return value;
+				callbacks: {
+					label: function(tooltipItem, data) {
+						return tooltipItem.yLabel;
 					}
 				},
-			}]
+
+			},
+			hover: {
+				mode: 'nearest',
+				intersect: true
+			},
+			scales: {
+				xAxes: [{
+					display: true,
+					gridLines: {
+						drawBorder: false,
+						color: window.chartColors.border,
+					},
+					scaleLabel: {
+						display: false,
+					}
+				}],
+				yAxes: [{
+					display: true,
+					gridLines: {
+						drawBorder: false,
+						color: window.chartColors.border,
+					},
+					scaleLabel: {
+						display: false,
+					},
+					ticks: {
+						beginAtZero: true,
+						userCallback: function(value, index, values) {
+							return value;
+						}
+					},
+				}]
+			}
 		}
-	}
-};
+	};
 
 
 
 
-// Generate charts on load
-window.addEventListener('load', function(){
-	
-	var lineChart = document.getElementById('canvas-linechart').getContext('2d');
-	window.myLine = new Chart(lineChart, lineChartConfig);
-	
-	var barChart = document.getElementById('canvas-barchart').getContext('2d');
-	window.myBar = new Chart(barChart, barChartConfig);
-	
+	// Generate charts on load
+	window.addEventListener('load', function(){
+		
+		var lineChart = document.getElementById('canvas-linechart').getContext('2d');
+		window.myLine = new Chart(lineChart, lineChartConfig);
+		
+		var barChart = document.getElementById('canvas-barchart').getContext('2d');
+		window.myBar = new Chart(barChart, barChartConfig);
+		
 
-});	
-	
+	});	
+		
 
 </script>
 {% endblock %}

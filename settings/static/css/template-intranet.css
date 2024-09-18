@@ -14105,7 +14105,8 @@ button.close:focus {
         min-width: 100vw;
         left: 0;
         top: 0;
-        background: rgba(0, 0, 0, .35)
+        background: rgba(0, 0, 0, .35);
+        z-index: -1;
     }
 }
 

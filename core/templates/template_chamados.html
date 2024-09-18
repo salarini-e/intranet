@@ -5,7 +5,6 @@
 <html lang="pt-br" data-bs-theme="{{ request.user|get_tema }}"> 
 <head>
     <title>{% block title %}Intranet PMNF - Bem-vindo{% endblock %}</title>
-    
     <!-- Meta -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -144,7 +143,8 @@
 						style="text-decoration: none; color: black;"
 						data-bs-toggle="tooltip" 
 						data-bs-placement="right" 
-						title="Tickets">
+						title="Tickets"
+						>
 						<a href="{% url 'chamados:tickets' %}" class="sidebar-chamados-item-link"></a>
 						<i class="fa-solid fa-ticket icon-sidebar-chamados"></i>
 						</a>
@@ -168,15 +168,15 @@
 								<a href="" class="submenu-item-chamados"> Empresas</a>
 							</div>
 						</div>
-					</div class="sidebar-chamados-item">
-					<div type="button" 
+					</div>
+					<div class="sidebar-chamados-item" type="button" 
 						data-bs-toggle="dropdown" 
 						aria-expanded="false" 
 						style="text-decoration: none; color: black;"
 						data-bs-toggle="tooltip" 
 						data-bs-placement="right" 
 						title="Soluções" >
-						<a href="{% url 'chamados:tickets' %}" class="sidebar-chamados-item-link">Soluções</a>
+						<a href="{% url 'chamados:tickets' %}" class="sidebar-chamados-item-link"><i class="fa-regular fa-lightbulb icon-sidebar-chamados"></i></a>
 					</div>
 					<div class="sidebar-chamados-item" type="button" 
 						data-bs-toggle="dropdown" 
