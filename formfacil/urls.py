@@ -21,6 +21,8 @@ urlpatterns = [
     path('visualizar/cadastros-treinamento-tributario-contadores/', views.visualizarDados_TT_Contadores, name='cadastros-treinamento-tributario-contadores'),
     
     path('exportar/cadastro-processo-digital/', views.exportar_aulas_processo_digital_to_excel, name='exportar_aulas_processo_digital'),
+    path('exportar/treinamento-tributario-emissores-taxas/', views.exportar_aulas_tributario_emissores_to_excel, name='exportar_treinamento_tributario_emissores_taxas'),
+    path('exportar/treinamento-tributario-contadores/', views.exportar_aulas_tributario_contadores_to_excel, name='exportar_treinamento_tributario_contadores'),
     path('cadastros-repetidos/', views.logCadastrosRepetidos, name='cadastros_repetidos'),
        
 ]

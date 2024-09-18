@@ -4,19 +4,26 @@
 <div class="row">
     <div class="col d-flex">
         <h1 class="app-page-title">Form Fácil</h1>
+            <a class="ms-auto me-1 my-auto btn app-btn-primary" href="{% url 'formfacil:exportar_treinamento_tributario_emissores_taxas' %}"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-file-earmark-arrow-down me-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 0h5.5v1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h1V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2z"/>
+            <path d="M9.5 3V0L14 4.5h-3A1.5 1.5 0 0 1 9.5 3z"/>
+            <path fill-rule="evenodd" d="M8 6a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 10.293V6.5A.5.5 0 0 1 8 6z"/>
+            </svg>Baixar dados em excel</a>
         <!-- <a href="{% url 'formfacil:cadastros_repetidos' %}" class="ms-auto me-1 my-auto btn app-btn-secondary">
             <i class="fa-solid fa-users me-2"></i>Visualizar repetidos
         </a> -->
-        <a href="{% url 'formfacil:index' %}" class="ms-auto me-1 my-auto btn app-btn-secondary">
+        <a href="{% url 'formfacil:index' %}" class="my-auto btn app-btn-secondary">
             <i class="fa-solid fa-rotate-left me-2"></i>Voltar
         </a>
     </div>
 </div>
-
 <div class="row g-4 mb-4 px-3">
     <div class="col app-card app-card-stats-table h-100 shadow-sm p-4">
-        <div class="w-100 d-flex flex-wrap">
-            <h3>Treinamento Tributário - EMISSORES DE TAXAS <span class="text-secondary">(Total: {{ cadastros_emissores.count }})</span></h3>
+        <div class="w-100 d-flex flex-wrap" style="display: flex;flex-direction: column;">
+            <div>
+                <h3>Treinamento Tributário - Emissores de Taxas <span class="text-secondary">(Total: {{ cadastros_emissores.count }})</span></h3>
+            </div>
+            <h5>Dia 07/10 - 10h às 12h</h5>
             <!-- <button class="ms-auto my-auto btn app-btn-secondary" onclick="toogleTable(this, 'table-{{ item.id }}')" style="border:none;">
                 <i class="fa-regular fa-eye me-2"></i>Visualizar registros
             </button> -->
@@ -24,6 +31,7 @@
         <table id="table-{{ item.id }}" class="table table-borderless mb-0">
             <thead>
                 <th>Nome</th>
+                <th>CPF</th>
                 <th>Matricula</th>
                 <th>Secretaria</th>
                 <th>Setor</th>
@@ -34,6 +42,7 @@
                 {% for cadastro in cadastros_emissores %}
                 <tr>
                     <td>{{ cadastro.nome }}</td>
+                    <td>{{ cadastro.cpf }}</td>
                     <td>{{ cadastro.matricula }}</td>
                     <td>{{ cadastro.secretaria }}</td>
                     <td>{{ cadastro.setor }}</td>

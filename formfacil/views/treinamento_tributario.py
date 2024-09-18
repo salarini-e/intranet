@@ -86,50 +86,91 @@ def visualizarDados_TT_Contadores(request):
     return render(request, 'formfacil/template_contadores.html', context)
 
 
-# def exportar_aulas_processo_digital_to_excel(request):
-#     # Create a new workbook and select the active worksheet
-#     wb = Workbook()
-#     ws = wb.active
-#     ws.title = 'Treinamento para Utilização do Processo Digital'
+def exportar_aulas_tributario_emissores_to_excel(request):
+    # Create a new workbook and select the active worksheet
+    wb = Workbook()
+    ws = wb.active
+    ws.title = 'TREINAMENTO TRIBUTÁRIO - EMISSORES DE TAXAS'
 
-#     # Load data from the database
-#     cadastros = Cadastro_Aulas_Processo_Digital.objects.all()
-#     ws.append(['Nome', 'Matrícula', 'Secretaria', 'Setor', 'Telefone', 'Turma escolhida', 'Data de inclusão'])
-#     # Write the data to the worksheet
-#     for item in cadastros:
-#         ws.append([
-#             item.nome,
-#             item.matricula,
-#             item.secretaria,
-#             item.setor,            
-#             item.telefone,
-#             item.turma_escolhida.__str__(),
-#             item.dt_registro.astimezone().strftime('%d/%m/%Y %H:%M:%S')
-#         ])
-#     # for r in dataframe_to_rows(df, index=False, header=True):
-#         # ws.append(r)
+    # Load data from the database
+    cadastros = Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas.objects.all()
+    ws.append(['Nome', 'CPF', 'Matrícula', 'Secretaria', 'Setor', 'Telefone', 'Data de inclusão'])
+    # Write the data to the worksheet
+    for item in cadastros:
+        ws.append([
+            item.nome,
+            item.cpf,
+            item.matricula,
+            item.secretaria,
+            item.setor,            
+            item.telefone,
+            item.dt_registro.astimezone().strftime('%d/%m/%Y %H:%M:%S')
+        ])
+    # for r in dataframe_to_rows(df, index=False, header=True):
+        # ws.append(r)
 
-#     # Create a table
-#     table = Table(displayName=f"TreinamentoProcessoDigital", ref=ws.dimensions)
-#     style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False, showRowStripes=True, showColumnStripes=True)
-#     table.tableStyleInfo = style
-#     ws.add_table(table)
+    # Create a table
+    table = Table(displayName=f"TreinamentoTributarioEmissoresTaxas", ref=ws.dimensions)
+    style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False, showRowStripes=True, showColumnStripes=True)
+    table.tableStyleInfo = style
+    ws.add_table(table)
 
-#     # Save the workbook to a BytesIO object
-#     from io import BytesIO
-#     output = BytesIO()
-#     wb.save(output)
-#     output.seek(0)
+    # Save the workbook to a BytesIO object
+    from io import BytesIO
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
 
-#     # Set up the response
-#     response = HttpResponse(content_type='application/vnd.ms-excel')
-#     response['Content-Disposition'] = 'attachment; filename=AulasProcessoDigital.xlsx'
-#     response.write(output.getvalue())
-#     return response
+    # Set up the response
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=TreinamentoTributarioEmissoresTaxas.xlsx'
+    response.write(output.getvalue())
+    return response
+
+
+def exportar_aulas_tributario_contadores_to_excel(request):
+    # Create a new workbook and select the active worksheet
+    wb = Workbook()
+    ws = wb.active
+    ws.title = 'TREINAMENTO TRIBUTÁRIO - CONTADORES'
+
+    # Load data from the database
+    cadastros = Cadastro_Aulas_Treinamento_Tributario_Contadores.objects.all()
+    ws.append(['Nome', 'CPF', 'Matrícula', 'Secretaria', 'Setor', 'Telefone', 'Data de inclusão'])
+    # Write the data to the worksheet
+    for item in cadastros:
+        ws.append([
+            item.nome,
+            item.cpf,
+            item.matricula,
+            item.secretaria,
+            item.setor,            
+            item.telefone,
+            item.dt_registro.astimezone().strftime('%d/%m/%Y %H:%M:%S')
+        ])
+    # for r in dataframe_to_rows(df, index=False, header=True):
+        # ws.append(r)
+
+    # Create a table
+    table = Table(displayName=f"TreinamentoTributarioContadores", ref=ws.dimensions)
+    style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False, showRowStripes=True, showColumnStripes=True)
+    table.tableStyleInfo = style
+    ws.add_table(table)
+
+    # Save the workbook to a BytesIO object
+    from io import BytesIO
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    # Set up the response
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=TreinamentoTributarioContadores.xlsx'
+    response.write(output.getvalue())
+    return response
+
 
 def logCadastrosRepetidosTTEmissores(request):
-
-    
     # Obtém as matrículas que têm registros repetidos a partir da data especificada
     matriculas_repetidas = (
         cadastroTreinamentoTributarioEmissoresTaxas.objects.filter(~Q(matricula='')) 

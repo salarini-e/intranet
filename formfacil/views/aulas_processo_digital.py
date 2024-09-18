@@ -102,7 +102,7 @@ def exportar_aulas_processo_digital_to_excel(request):
 
 def logCadastrosRepetidos(request):
     # Data específica para filtrar os registros
-    data_especifica = timezone.datetime(2024, 9, 9)
+    data_especifica = timezone.datetime(2024, 9, 16)
     
     # Obtém as matrículas que têm registros repetidos a partir da data especificada
     matriculas_repetidas = (
