@@ -1,5 +1,6 @@
 from django import forms
 from .models import *
+from autenticacao.functions import validate_cpf
 
 class FormIndicacaoComitePSPForm(forms.ModelForm):
     class Meta:
@@ -83,23 +84,33 @@ class FormCadastroAulasProcessoDigital(forms.ModelForm):
 class CadastroAulasEmissoresForm(forms.ModelForm):
     class Meta:
         model = Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas
-        fields = ['nome', 'matricula', 'secretaria', 'setor', 'telefone']
+        fields = ['nome','cpf', 'matricula', 'secretaria', 'setor', 'telefone']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'cpf': forms.TextInput(attrs={'class': 'form-control'}),
             'matricula': forms.TextInput(attrs={'class': 'form-control'}),
             'secretaria': forms.TextInput(attrs={'class': 'form-control'}),
             'setor': forms.TextInput(attrs={'class': 'form-control'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+    def clean_cpf(self):
+        cpf = validate_cpf(self.cleaned_data["cpf"])
+        return cpf
+
 class CadastroAulasContadoresForm(forms.ModelForm):
     class Meta:
         model = Cadastro_Aulas_Treinamento_Tributario_Contadores
-        fields = ['nome', 'matricula', 'secretaria', 'setor', 'telefone']
+        fields = ['nome','cpf', 'matricula', 'secretaria', 'setor', 'telefone']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'cpf': forms.TextInput(attrs={'class': 'form-control'}),
             'matricula': forms.TextInput(attrs={'class': 'form-control'}),
             'secretaria': forms.TextInput(attrs={'class': 'form-control'}),
             'setor': forms.TextInput(attrs={'class': 'form-control'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+    def clean_cpf(self):
+        cpf = validate_cpf(self.cleaned_data["cpf"])
+        return cpf

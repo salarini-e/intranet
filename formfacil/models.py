@@ -112,11 +112,14 @@ class Cadastro_Aulas_Processo_Digital(models.Model):
     dt_registro = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.matricula} - {self.nome}'      
+        return f'{self.matricula} - {self.nome}'     
+    
+     
     
 
 class Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas(models.Model):
     nome = models.CharField(max_length=150, verbose_name='Nome Completo')
+    cpf=models.CharField(max_length=14, verbose_name='CPF', unique=True, null=True)
     matricula = models.CharField(max_length=6, verbose_name='Matrícula', blank=True)
     secretaria = models.CharField(max_length=250)
     setor = models.CharField(max_length=250)
@@ -128,6 +131,7 @@ class Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas(models.Model):
     
 class Cadastro_Aulas_Treinamento_Tributario_Contadores(models.Model):
     nome = models.CharField(max_length=150, verbose_name='Nome Completo')
+    cpf=models.CharField(max_length=14, verbose_name='CPF', unique=True, null=True)
     matricula = models.CharField(max_length=6, verbose_name='Matrícula', blank=True)
     secretaria = models.CharField(max_length=250)
     setor = models.CharField(max_length=250)

@@ -125,6 +125,8 @@ def index(request):
     context = {
         'registros':{
             'aulas_processo_digital': Cadastro_Aulas_Processo_Digital.objects.all().count(),
+            'contador_tributario_emissores': Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas.objects.all().count(),
+            'contador_tributario_contadores': Cadastro_Aulas_Treinamento_Tributario_Contadores.objects.all().count(),
         }
     }
     return render(request, 'formfacil/index.html', context)

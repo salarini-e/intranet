@@ -72,6 +72,7 @@ def cadastroTreinamentoTributarioContadores(request):
 
 def visualizarDados_TT_Emissores(request):
     cadastros_emissores = Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas.objects.all()
+
     context = {
         'cadastros_emissores': cadastros_emissores
     }
@@ -127,14 +128,11 @@ def visualizarDados_TT_Contadores(request):
 #     return response
 
 def logCadastrosRepetidosTTEmissores(request):
-    # Data específica para filtrar os registros
-    data_especifica = timezone.datetime(2024, 9, 9)
+
     
     # Obtém as matrículas que têm registros repetidos a partir da data especificada
     matriculas_repetidas = (
-        cadastroTreinamentoTributarioEmissoresTaxas.objects
-        .filter(dt_registro__gte=data_especifica)  # Filtra registros a partir da data especificada
-        .filter(~Q(matricula=''))  # Filtra apenas os que têm matrícula
+        cadastroTreinamentoTributarioEmissoresTaxas.objects.filter(~Q(matricula='')) 
         .values('matricula')  # Agrupa por matrícula
         .annotate(total=Count('matricula'))  # Conta quantas vezes cada matrícula aparece
         .filter(total__gt=1)  # Filtra apenas as matrículas que aparecem mais de uma vez
@@ -143,9 +141,7 @@ def logCadastrosRepetidosTTEmissores(request):
 
     # Obtém os nomes que têm registros repetidos a partir da data especificada (quando não têm matrícula)
     nomes_repetidos = (
-        cadastroTreinamentoTributarioEmissoresTaxas.objects
-        .filter(dt_registro__gte=data_especifica)  # Filtra registros a partir da data especificada
-        .filter(Q(matricula=''))  # Filtra apenas os que não têm matrícula
+        cadastroTreinamentoTributarioEmissoresTaxas.objects.filter(Q(matricula=''))  # Filtra apenas os que não têm matrícula
         .values('nome')  # Agrupa por nome
         .annotate(total=Count('nome'))  # Conta quantas vezes cada nome aparece
         .filter(total__gt=1)  # Filtra apenas os nomes que aparecem mais de uma vez
