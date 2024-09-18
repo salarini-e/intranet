@@ -27,10 +27,10 @@ admin.site.register(Cadastro_Aulas_Processo_Digital, CadastroAulasProcessoDigita
 
 class CadastroAulasEmissoresAdmin(admin.ModelAdmin):
     # Campos que serão exibidos na lista de registros
-    list_display = ('nome', 'matricula', 'secretaria', 'setor', 'telefone', 'dt_registro')
+    list_display = ('nome', 'matricula', 'cpf', 'secretaria', 'setor', 'telefone', 'dt_registro')
     
     # Campos pelos quais você pode buscar
-    search_fields = ('nome', 'matricula', 'telefone', 'secretaria', 'setor')
+    search_fields = ('nome', 'matricula','cpf', 'telefone', 'secretaria', 'setor')
     
     # Filtros laterais para facilitar a busca
     list_filter = ('secretaria', 'setor')
@@ -40,10 +40,10 @@ class CadastroAulasEmissoresAdmin(admin.ModelAdmin):
 
 class CadastroAulasContadoresAdmin(admin.ModelAdmin):
     # Campos que serão exibidos na lista de registros
-    list_display = ('nome', 'matricula', 'secretaria', 'setor', 'telefone', 'dt_registro')
+    list_display = ('nome', 'matricula', 'cpf', 'secretaria', 'setor', 'telefone', 'dt_registro')
     
     # Campos pelos quais você pode buscar
-    search_fields = ('nome', 'matricula', 'telefone', 'secretaria', 'setor')
+    search_fields = ('nome', 'matricula','cpf', 'telefone', 'secretaria', 'setor')
     
     # Filtros laterais para facilitar a busca
     list_filter = ('secretaria', 'setor')

@@ -99,7 +99,8 @@ class CadastroAulasEmissoresForm(forms.ModelForm):
         if Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas.objects.filter(cpf=cpf).exists():
             raise forms.ValidationError("Este CPF já está cadastrado no sistema. Por favor, verifique.")
         return cpf
-    def clean_tel(self):
+    
+    def clean_telefone(self):
         telefone = clear_tel(self.cleaned_data["telefone"])
         return telefone
 
@@ -123,6 +124,6 @@ class CadastroAulasContadoresForm(forms.ModelForm):
             raise forms.ValidationError("Este CPF já está cadastrado no sistema. Por favor, verifique.")
         return cpf
     
-    def clean_tel(self):
+    def clean_telefone(self):
         telefone = clear_tel(self.cleaned_data["telefone"])
         return telefone

@@ -54,7 +54,5 @@ def enviar_email_apos_cadastrar(user):
     send_mail(mail_subject, message, settings.EMAIL_HOST_USER, [to_email])
 
 def clear_tel(tel):
-    tel = tel.replace('(', '')
-    tel = tel.replace(')', '')
-    tel = tel.replace('-', '')
+    tel = tel.replace('(', '').replace(')', '').replace('-', '').replace(' ', '')
     return tel
