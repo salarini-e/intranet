@@ -36,7 +36,7 @@ def cadastroTreinamentoTributarioEmissoresTaxas(request):
             'titulo': 'TREINAMENTO TRIBUTÁRIO - EMISSORES DE TAXAS',    
             'subtitulo': 'Subsecretaria de Tecnologia da Informação e Comunicação',
             'mensagem': (
-                "Apenas para as secretarias: Smomu, Serv. Públicos, Meio Ambiente, Saúde e Vigilância Sanitária. <br><br>"
+                "Apenas para as secretarias: Smomu, Serv. Públicos, Meio Ambiente e Saúde (Vigilância Sanitária). <br><br>"
                 "Data: 07/10 (segunda-feira) <br>"
                 "Horario : das 10h às 12h. <br>"
                 "Local: Acianf - Av. Alberto Braune, 111 (ao lado da loja Ortobom)"
