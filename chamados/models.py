@@ -216,7 +216,7 @@ class Mensagem(models.Model):
 
 class OSInternet(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado', null=True, blank=True)
-    nofcip = models.CharField(max_length=64, verbose_name='NOFCIP')
+    nofcip = models.CharField(max_length=64, verbose_name='NOFCIP', null=True)
 
     class Meta:
         verbose_name = 'Ordem de Serviço - Internet'
@@ -224,8 +224,8 @@ class OSInternet(models.Model):
 
 class OSImpressora(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado', null=True, blank=True)
-    n_serie = models.CharField(max_length=64, verbose_name='Número de série')
-    contador = models.IntegerField(verbose_name='Contador')
+    n_serie = models.CharField(max_length=64, verbose_name='Número de série', null=True)
+    contador = models.IntegerField(verbose_name='Contador', null=True)
 
     class Meta:
         verbose_name = 'Ordem de Serviço - Impressora'

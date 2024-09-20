@@ -113,20 +113,22 @@ class MensagemForm(forms.ModelForm):
 class OSInternetForm(forms.ModelForm):
     class Meta:
         model = OSInternet
-        fields = ['chamado', 'nofcip']
+        # fields = ['chamado', 'nofcip']
+        fields = ['chamado']
         widgets = {
             'chamado': forms.HiddenInput(),
-            'nofcip': forms.TextInput(attrs={'class': 'form-control mb-3'}),            
+            # 'nofcip': forms.TextInput(attrs={'class': 'form-control mb-3'}),            
         }
 
 class OSImpressoraForm(forms.ModelForm):
     class Meta:
         model = OSImpressora
-        fields = ['chamado', 'n_serie', 'contador']
+        # fields = ['chamado', 'n_serie', 'contador']
+        fields = ['chamado']
         widgets = {
             'chamado': forms.HiddenInput(),            
-            'n_serie': forms.TextInput(attrs={'class': 'form-control mb-3'}),
-            'contador': forms.TextInput(attrs={'class': 'form-control mb-3'}),            
+            # 'n_serie': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            # 'contador': forms.TextInput(attrs={'class': 'form-control mb-3'}),            
         }
 
 class OSSistemasForm(forms.ModelForm):
