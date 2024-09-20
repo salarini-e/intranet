@@ -29,22 +29,22 @@
     display: block;
     width: 26px;
 }
-.sidebar-chamados-item{
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 5px;
-    width: 100%;
-    height: 45px;
-    transition: all .4s ease-in-out;
-    cursor: pointer;
+.nav-item.sidebar-chamados-item{
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 5px !important; 
+    width: 100% !important;
+    height: 45px !important;
+    transition: all .4s ease-in-out !important;
+    cursor: pointer !important;
 }
 .sidebar-chamados-item-link{
     text-decoration: none;
 }
-.sidebar-chamados-item:hover{
-    background-color: #d6d6d6;
+.nav-item.sidebar-chamados-item:hover{
+    background-color: #d6d6d6 !important;
 }
 .icon-sidebar-chamados{
     font-size: 20px;

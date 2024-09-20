@@ -124,34 +124,22 @@
 				
 			    <nav id="app-nav-main" class="app-nav app-nav-main flex-grow-1" style="padding: 0 10px; margin-top: 10px; position: relative !important; overflow-y: unset;">
 					<!-- PAINEL DE CONTROLE -->
-					<div class="sidebar-chamados-item" type="button" 
-						data-bs-toggle="dropdown" 
-						aria-expanded="false" 
-						style="text-decoration: none; color: black;"
-						data-bs-toggle="tooltip" 
-						data-bs-placement="right" 
-						title="Painel de Controle">
+					 <li class="nav-item sidebar-chamados-item">
 						<a href="{% url 'chamados:index' %}" class="sidebar-chamados-item-link" >
 							<i class="fa-solid fa-gauge-high icon-sidebar-chamados"></i>
 						</a>
-					</div>
+					 </li>
 					
 					<!-- TICKETS -->
-					<div class="sidebar-chamados-item" type="button" 
-						data-bs-toggle="dropdown" 
-						aria-expanded="false" 
-						style="text-decoration: none; color: black;"
-						data-bs-toggle="tooltip" 
-						data-bs-placement="right" 
-						title="Tickets"
-						>
-						<a href="{% url 'chamados:tickets' %}" class="sidebar-chamados-item-link"></a>
+					<li class="nav-item sidebar-chamados-item">
+						<a href="{% url 'chamados:tickets' %}" class="sidebar-chamados-item-link">
 						<i class="fa-solid fa-ticket icon-sidebar-chamados"></i>
 						</a>
-					</div>
+					</li>
+					
 					{% if request.user.is_superuser %}
 					<!-- INFORMAÇÕES ADICIONAIS -->
-					<div class="sidebar-chamados-item informacoes-adicionais" 
+					<div class="nav-item sidebar-chamados-item informacoes-adicionais" 
 						type="button" 
 							data-bs-toggle="dropdown" 
 							aria-expanded="false" 
@@ -159,36 +147,28 @@
 							data-bs-toggle="tooltip" 
 							data-bs-placement="right" 
 							title="Informações adicionais">
-						<a href="{% url 'chamados:tickets' %}" class="sidebar-chamados-item-link">
+						<a href="#" class="sidebar-chamados-item-link">
 							<i class="fa-solid fa-circle-info icon-sidebar-chamados"></i>
 						</a>
 						<div class="submenu">
 							<div class="submenu-links">
-								<a href="" class="submenu-item-chamados first">Contatos</a>
-								<a href="" class="submenu-item-chamados"> Empresas</a>
+								<li class="nav-item">
+									<a href="#" class="submenu-item-chamados first">Contatos</a>
+								</li>
+								<li class="nav-item">
+									<a href="#" class="submenu-item-chamados"> Empresas</a>
+								</li>
 							</div>
 						</div>
 					</div>
-					<div class="sidebar-chamados-item" type="button" 
-						data-bs-toggle="dropdown" 
-						aria-expanded="false" 
-						style="text-decoration: none; color: black;"
-						data-bs-toggle="tooltip" 
-						data-bs-placement="right" 
-						title="Soluções" >
-						<a href="{% url 'chamados:tickets' %}" class="sidebar-chamados-item-link"><i class="fa-regular fa-lightbulb icon-sidebar-chamados"></i></a>
-					</div>
-					<div class="sidebar-chamados-item" type="button" 
-						data-bs-toggle="dropdown" 
-						aria-expanded="false" 
-						style="text-decoration: none; color: black;"
-						data-bs-toggle="tooltip" 
-						data-bs-placement="right" 
-						title="Análises">
-						<a href="{% url 'chamados:tickets' %}" class="sidebar-chamados-item-link" >
-						<i class="fa-solid fa-chart-line icon-sidebar-chamados"></i>
-						</a>
-					</div>
+					<li class="nav-item sidebar-chamados-item">
+						<a href="#" class="sidebar-chamados-item-link"><i class="fa-regular fa-lightbulb icon-sidebar-chamados"></i></a>
+					</li>
+					<li class="nav-item sidebar-chamados-item">
+						<a href="#" class="sidebar-chamados-item-link" >
+							<i class="fa-solid fa-chart-line icon-sidebar-chamados"></i>
+							</a>
+					</li>
 					{% endif %}
 					<div class="sidebar-chamados-item" type="button" 
 						data-bs-toggle="dropdown" 

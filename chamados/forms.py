@@ -45,51 +45,65 @@ class SetorWidget(s2forms.ModelSelect2Widget):
     ]
 
 class CriarSetorForm(forms.ModelForm):
+    secretaria = forms.ModelChoiceField(
+        queryset=Secretaria.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control mb-3'})
+    )
+    
     class Meta:
         model = Setor
         fields = ['secretaria', 'nome', 'apelido', 'sigla', 'cep', 'bairro', 'endereco', 'user_inclusao']
         widgets = {
-            'secretaria': SecretariaWidget(attrs={'class': 'form-control mb-3'}),
             'nome': forms.TextInput(attrs={'class': 'form-control mb-3'}),
             'apelido': forms.TextInput(attrs={'class': 'form-control mb-3'}),
             'sigla': forms.TextInput(attrs={'class': 'form-control mb-3'}),
             'cep': forms.TextInput(attrs={'class': 'form-control mb-3'}),
             'bairro': forms.TextInput(attrs={'class': 'form-control mb-3'}),
-            'endereco': forms.TextInput(attrs={'class': 'form-control mb-3'}),            
+            'endereco': forms.TextInput(attrs={'class': 'form-control mb-3'}),
             'user_inclusao': forms.HiddenInput(),
         }
 
-
 class CriarChamadoForm(forms.ModelForm):
-    
+
     def __init__(self, *args, **kwargs):                
+        self.user = kwargs.pop('user', None)  # Remove o usuário dos kwargs
         super(CriarChamadoForm, self).__init__(*args, **kwargs)
+        
         if 'initial' in kwargs:
             if 'secretaria' in kwargs['initial']:
                 self.fields['secretaria'].initial = kwargs['initial']['secretaria']
+        
+        if self.user and self.user.is_superuser:
+             self.fields['prioridade'] = forms.ChoiceField(
+                choices=Chamado.PRIORIDADE_CHOICES,
+                widget=forms.Select(attrs={'class': 'form-select'}),
+                label='Prioridade'
+            )
+        
+    secretaria = forms.ModelChoiceField(
+        queryset=Secretaria.objects.all(),
+        empty_label='Selecione a secretaria',
+        widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'getSetores(this.value)', 'required': 'required'})
+    )
 
-
-    secretaria = forms.ModelChoiceField(queryset=Secretaria.objects.all(), empty_label='Selecione a secretaria', widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'getSetores(this.value)', 'required': 'required'}))
-    # secretaria = SecretariaWidget(attrs={'class': 'form-control mb-3','onchange': 'getSetores(this.value)', 'required': 'required'})
     class Meta:
         model = Chamado
-        fields = ['requisitante', 'assunto', 'secretaria', 'setor', 'endereco','telefone', 'tipo'
-                  , 'descricao', 'user_inclusao', 'anexo']
+        fields = [
+            'requisitante', 'assunto', 'secretaria', 'setor', 
+            'endereco', 'telefone', 'tipo', 'descricao', 
+            'user_inclusao', 'anexo'
+        ]
         widgets = {                        
             'requisitante': forms.Select(attrs={'class': 'form-select'}),
-            # 'secretaria': SecretariaWidget(attrs={'class': 'form-control mb-3','onchange': 'getSetores(this.value)', 'required': 'required'}),
             'setor': forms.Select(attrs={'class': 'form-select'}),
-            'secretaria': SecretariaWidget(attrs={'class': 'form-control mb-3','onchange': 'getSetores(this.value)', 'required': 'required'}),
-            # 'setor': SetorWidget(attrs={'class': 'form-control mb-3'}),
+            'secretaria': SecretariaWidget(attrs={'class': 'form-control mb-3', 'onchange': 'getSetores(this.value)', 'required': 'required'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'requisitante': forms.Select(attrs={'class': 'form-control'}),
             'tipo': forms.HiddenInput(),
             'assunto': forms.TextInput(attrs={'class': 'form-control'}),
             'endereco': forms.TextInput(attrs={'class': 'form-control'}),
             'prioridade': forms.Select(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),            
             'descricao': forms.Textarea(attrs={'class': 'form-control'}),  
-            # 'periodo_preferencial': forms.CheckboxSelectMultiple(),
             'user_inclusao': forms.HiddenInput(),
             'anexo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
@@ -97,7 +111,6 @@ class CriarChamadoForm(forms.ModelForm):
         labels = {
             'secretaria': 'Para qual secretaria é o chamado?',
         }
-
     
 class MensagemForm(forms.ModelForm):
     class Meta:
@@ -149,50 +162,46 @@ class OSTelefoniaForm(forms.ModelForm):
             'ramal': forms.TextInput(attrs={'class': 'form-control mb-3'}),            
         }
 
-class ServidorForm(forms.ModelForm):    
+class ServidorForm(forms.ModelForm):
+    setor = forms.ModelChoiceField(
+        queryset=Setor.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control mb-3'})
+    )
+    
     class Meta:
         model = Servidor
-        fields = [ 'setor', 'nome', 'cpf', 'dt_nascimento', 'matricula', 'telefone', 'email', 'ativo', 'user_inclusao']        
-        widgets = {            
+        fields = ['setor', 'nome', 'cpf', 'dt_nascimento', 'matricula', 'telefone', 'email', 'ativo', 'user_inclusao']
+        widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control mb-3'}),
             'cpf': forms.TextInput(attrs={'class': 'form-control mb-3', 'onkeydown': 'mascara(this, icpf)'}),
             'dt_nascimento': forms.DateInput(attrs={'class': 'form-control mb-3'}),
             'matricula': forms.TextInput(attrs={'class': 'form-control mb-3'}),
-            'telefone': forms.TextInput(attrs={'class': 'form-control mb-3', 'onkeydown':'mascara(this, itel)'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control mb-3', 'onkeydown': 'mascara(this, itel)'}),
             'email': forms.EmailInput(attrs={'class': 'form-control mb-3'}),
-            'setor': SetorWidget(attrs={'class': 'form-control mb-3'}),
             'ativo': forms.CheckboxInput(attrs={'class': 'mb-3'}),
-            
-            'user_inclusao': forms.HiddenInput()
+            'user_inclusao': forms.HiddenInput(),
         }
-    
+
     def create_user(self):
         user = User.objects.create_user(self.cleaned_data['matricula'], self.cleaned_data['email'], self.cleaned_data['cpf'])
         user.save()
         return user
-    
+
     def clean_cpf(self):
         cpf = self.validate_cpf(self.cleaned_data["cpf"])
         return cpf
-    
+
     def clean_telefone(self):
         telefone = self.cleaned_data['telefone']
-        telefone = telefone.replace('(', '')
-        telefone = telefone.replace(')', '')
-        telefone = telefone.replace(' ', '')
-        telefone = telefone.replace('-', '')
+        telefone = telefone.replace('(', '').replace(')', '').replace(' ', '').replace('-', '')
         return telefone
-    
+
     def validate_cpf(self, cpf):
-        """
-        Function that validates a CPF.
-        """
-        cpf = cpf.replace('.', '')
-        cpf = cpf.replace('-', '')
+        cpf = cpf.replace('.', '').replace('-', '')
         if len(cpf) != 11:
-            raise forms.ValidationError(('O CPF deve conter 11 dígitos'), code='invalid1')
+            raise forms.ValidationError('O CPF deve conter 11 dígitos', code='invalid1')
         if cpf in ["00000000000", "11111111111", "22222222222", "33333333333", "44444444444", "55555555555", "66666666666", "77777777777", "88888888888", "99999999999"]:
-            raise forms.ValidationError(('CPF inválido'), code='invalid2')
+            raise forms.ValidationError('CPF inválido', code='invalid2')
 
         sum = 0
         weight = 10
@@ -203,7 +212,8 @@ class ServidorForm(forms.ModelForm):
         if check_digit > 9:
             check_digit = 0
         if check_digit != int(cpf[9]):
-            raise forms.ValidationError(('CPF inválido'), code='invalid2')
+            raise forms.ValidationError('CPF inválido', code='invalid2')
+        
         sum = 0
         weight = 11
         for i in range(10):
@@ -213,10 +223,10 @@ class ServidorForm(forms.ModelForm):
         if check_digit > 9:
             check_digit = 0
         if check_digit != int(cpf[10]):
-            raise forms.ValidationError(('CPF inválido'), code='invalid2')
+            raise forms.ValidationError('CPF inválido', code='invalid2')
         
         if Servidor.objects.filter(cpf=cpf).exists():
-            raise forms.ValidationError(('CPF já cadastrado'), code='invalid2')
+            raise forms.ValidationError('CPF já cadastrado', code='invalid2')
         return cpf
     
 class Form_Agendar_Atendimento(forms.ModelForm):

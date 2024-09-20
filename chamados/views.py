@@ -54,33 +54,38 @@ def zerar_filtros(request):
 @login_required
 def criarChamado(request, sigla):
     if request.user.is_superuser:
-        template_name =  'chamados/chamado-criar-ti.html'
+        template_name = 'chamados/chamado-criar-ti.html'
+        initial_data = {}
     else:
-        template_name =  'chamados/chamado-criar-servidor.html'
-    forms ={
-        'IMP': OSImpressoraForm,
-        'INT': OSInternetForm,
-        'SIS': OSSistemasForm,
-        'TEL': OSTelefoniaForm,
-    }
-    servidor = Servidor.objects.get(user=request.user)
-    tipo = TipoChamado.objects.get(sigla=sigla)
-    if request.POST:
+        template_name = 'chamados/chamado-criar-servidor.html'
+        servidor = Servidor.objects.get(user=request.user)
+        tipo = TipoChamado.objects.get(sigla=sigla)
+        initial_data = {
+            'secretaria': servidor.setor.secretaria.id,
+            'setor': servidor.setor.id,
+            'telefone': servidor.telefone,
+            'tipo': tipo,
+            'requisitante': servidor.id,
+            'user_inclusao': servidor.id
+        }
     
-        form = CriarChamadoForm(request.POST, request.FILES)
-        if sigla in forms:
-            form_ext = forms[sigla](request.POST, request.FILES)
+    if request.POST:
+        form = CriarChamadoForm(request.POST, request.FILES, user=request.user)
+        if sigla in form:
+            form_ext = form[sigla](request.POST, request.FILES)
         else:
             form_ext = None
+        
         if form.is_valid():
-            chamado = form.save()
+            chamado = form.save(commit=False)
             chamado.user_inclusao = servidor
             chamado.save()
             chamado.gerar_hash()
             chamado.gerar_protocolo()
-            if sigla in forms:                
+            
+            if sigla in form:                
                 if form_ext.is_valid():
-                    ext = form_ext.save()
+                    ext = form_ext.save(commit=False)
                     ext.chamado = chamado
                     ext.save()
             
@@ -90,19 +95,21 @@ def criarChamado(request, sigla):
                 message.error(request, mensagem)
             return redirect('chamados:index')
     else:
-        form = CriarChamadoForm(initial={'secretaria': servidor.setor.secretaria.id, 'setor': servidor.setor.id, 'telefone': servidor.telefone, 'tipo': tipo, 'requisitante': servidor.id, 'user_inclusao': servidor.id})
+        form = CriarChamadoForm(initial=initial_data, user=request.user)
+        
         form_ext = None
-        if sigla in forms:
-            form_ext = forms[sigla]()
-            
-
-    context={
+        if sigla in form:
+            form_ext = form[sigla]()
+    
+    context = {
         'form': form,
         'form_ext': form_ext,
         'form_setor': CriarSetorForm(prefix='setor', initial={'user_inclusao': request.user.id}),
         'form_user': ServidorForm(prefix='servidor', initial={'user_inclusao': request.user.id})
     }
+    
     return render(request, template_name, context)
+
 
 @login_required
 def detalhes(request, hash):
@@ -363,21 +370,29 @@ def agendar_atendimento(request, hash):
                }
     return render(request, 'chamados/generic_form.html', context)
 
+
+
 @login_required
 def tickets(request):
-    chamados = Chamado.objects.all().order_by('-dt_inclusao')
+    # Se o usuário for superusuário, lista todos os chamados
+    if request.user.is_superuser:
+        chamados = Chamado.objects.all().order_by('-dt_inclusao')
+    else:
+        # Se não for superusuário, lista apenas os chamados do requisitante
+        chamados = Chamado.objects.filter(requisitante__user=request.user).order_by('-dt_inclusao')
+
     secretarias = Secretaria.objects.all()
     atendentes = Atendente.objects.all()
     tipos_chamados = TipoChamado.objects.all()
+
     context = {
-        'tipos': TipoChamado.objects.all(),
+        'tipos': tipos_chamados,
         'chamados': chamados,
         'secretarias': secretarias,
         'atendentes': atendentes,
         'tipos_chamados': tipos_chamados,
     }
     return render(request, 'chamados/tickets.html', context)
-
 
 
 @xframe_options_exempt

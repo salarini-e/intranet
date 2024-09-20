@@ -95,7 +95,7 @@ class CadastroAulasEmissoresForm(forms.ModelForm):
         }
 
     def clean_cpf(self):
-        cpf = validate_cpf(self.cleaned_data["cpf"])
+        cpf = validate_cpf(cpf = self.cleaned_data["cpf"].strip())
         if Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas.objects.filter(cpf=cpf).exists():
             raise forms.ValidationError("Este CPF já está cadastrado no sistema. Por favor, verifique.")
         return cpf
@@ -118,7 +118,9 @@ class CadastroAulasContadoresForm(forms.ModelForm):
         }
 
     def clean_cpf(self):
-        cpf = validate_cpf(self.cleaned_data["cpf"])
+        cpf = self.cleaned_data["cpf"].replace('.', '').replace('-', '').strip()
+        print("CPF processado:", cpf)  # Para depuração
+        cpf = validate_cpf(cpf)
 
         if Cadastro_Aulas_Treinamento_Tributario_Contadores.objects.filter(cpf=cpf).exists():
             raise forms.ValidationError("Este CPF já está cadastrado no sistema. Por favor, verifique.")
