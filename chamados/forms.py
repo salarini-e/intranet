@@ -64,26 +64,27 @@ class CriarSetorForm(forms.ModelForm):
         }
 
 class CriarChamadoForm(forms.ModelForm):
-
     def __init__(self, *args, **kwargs):                
         self.user = kwargs.pop('user', None)  # Remove o usuário dos kwargs
         super(CriarChamadoForm, self).__init__(*args, **kwargs)
         
-        if 'initial' in kwargs:
-            if 'secretaria' in kwargs['initial']:
-                self.fields['secretaria'].initial = kwargs['initial']['secretaria']
-        
+       
+
         if self.user and self.user.is_superuser:
              self.fields['prioridade'] = forms.ChoiceField(
                 choices=Chamado.PRIORIDADE_CHOICES,
                 widget=forms.Select(attrs={'class': 'form-select'}),
                 label='Prioridade'
             )
+        else:
+             if 'initial' in kwargs:
+                if 'secretaria' in kwargs['initial']:
+                    self.fields['secretaria'].initial = kwargs['initial']['secretaria']
         
     secretaria = forms.ModelChoiceField(
         queryset=Secretaria.objects.all(),
         empty_label='Selecione a secretaria',
-        widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'getSetores(this.value)', 'required': 'required'})
+        widget=SecretariaWidget(attrs={'class': 'form-select', 'onchange': 'getSetores(this.value)', 'required': 'required'})
     )
 
     class Meta:
@@ -94,7 +95,7 @@ class CriarChamadoForm(forms.ModelForm):
             'user_inclusao', 'anexo'
         ]
         widgets = {                        
-            'requisitante': forms.Select(attrs={'class': 'form-select'}),
+            'requisitante': forms.TextInput(attrs={'class': 'form-control'}),
             'setor': forms.Select(attrs={'class': 'form-select'}),
             'secretaria': SecretariaWidget(attrs={'class': 'form-control mb-3', 'onchange': 'getSetores(this.value)', 'required': 'required'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control'}),

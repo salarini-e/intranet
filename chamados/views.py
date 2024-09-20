@@ -379,7 +379,7 @@ def tickets(request):
         chamados = Chamado.objects.all().order_by('-dt_inclusao')
     else:
         # Se não for superusuário, lista apenas os chamados do requisitante
-        chamados = Chamado.objects.filter(requisitante__user=request.user).order_by('-dt_inclusao')
+        chamados = Chamado.objects.filter(user_inclusao__user=request.user).order_by('-dt_inclusao')
 
     secretarias = Secretaria.objects.all()
     atendentes = Atendente.objects.all()

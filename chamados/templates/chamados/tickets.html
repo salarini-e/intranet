@@ -9,18 +9,19 @@
         <div class="col-auto">
             <h1 class="app-page-title tickets mb-0">Bem vindo aos tickets</h1>
         </div>
-        <div class="col-auto">
-    
-                <a href="{% url 'chamados:index' %}" class="my-auto btn app-btn-secondary"><i class="fa-solid fa-rotate-left me-2"></i>Voltar</a>
-        
-            <button class="my-auto btn p-4 py-2" id="mButtonFilters" 
-                    data-bs-toggle="offcanvas" 
-                    data-bs-target="#offcanvasScrolling" 
-                    onclick="hiddenMenuFilters()"
-                    >
-                 <i class="fa-solid fa-angle-left"></i>Filtros
-            </button>
-        </div>
+        {% if request.user.is_superuser%}
+            <div class="col-auto">
+                    <a href="{% url 'chamados:index' %}" class="my-auto btn app-btn-secondary"><i class="fa-solid fa-rotate-left me-2"></i>Voltar</a>
+            
+                <button class="my-auto btn p-4 py-2" id="mButtonFilters" 
+                        data-bs-toggle="offcanvas" 
+                        data-bs-target="#offcanvasScrolling" 
+                        onclick="hiddenMenuFilters()"
+                        >
+                    <i class="fa-solid fa-angle-left"></i>Filtros
+                </button>
+            </div>
+        {% endif %}
     </div>
     <!-- CARDS -->
     <div class="container">
@@ -43,100 +44,119 @@
                                             <span class="chamados-tickets-infos-chamado-text-assunto">{{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}</span>
                                             <div class="solution-infos-wrapper">
                                                 <i class="fa-solid fa-globe" style="width: 10px;"></i>
-                                                <span class="chamados-tickets-infos-chamado-text-requisitante">{{ chamado.requisitante }}
+                                                <span class="chamados-tickets-infos-chamado-text-requisitante">{{ chamado.user_inclusao }}
                                                     <i class="fa-solid fa-circle" style="width: 5px;"></i> Finalizado há 1 dia
                                                     <i class="fa-solid fa-circle" style="width: 5px;"></i> Resolvido no prazo</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-sm-11 chamados-tickets-infos">
-                                        <!-- Dropdown para Prioridade -->
-                                        <span class="prioridade text-line">
-                                            <span class="prioridade-indicador {{ chamado.get_prioridade_class }}"></span>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle" 
-                                                   type="button" 
-                                                   data-bs-toggle="dropdown" 
-                                                   aria-expanded="false" 
-                                                   style="text-decoration: none; color: black;"
-                                                   data-bs-toggle="tooltip" 
-                                                   data-bs-placement="left" 
-                                                   title="Prioridade">
-                                                    {{ chamado.get_prioridade_display }}
-                                                </a>
-                                                <ul class="dropdown-menu">
-                                                    {% for prioridade in chamado.PRIORIDADE_CHOICES %}
-                                                        <li><a class="dropdown-item" href="#" onclick="alert('{{prioridade.0}}')">{{prioridade.1}}</a></li>
-                                                    {% endfor %}
-                                                </ul>
-                                            </div>
-                                        </span>
-    
-                                        <!-- Dropdown para Secretaria (apenas exibição) -->
-                                        <span class="prioridade">
-                                            <div class="dropdown d-inline">
-                                                <a class="dropdown-toggle" 
-                                                   type="button" 
-                                                   data-bs-toggle="dropdown" 
-                                                   aria-expanded="false" 
-                                                   style="text-decoration: none; color: black;"
-                                                   data-bs-toggle="tooltip" 
-                                                   data-bs-placement="left" 
-                                                   title="Secretaria">
-                                                   {{ chamado.setor.secretaria.apelido }}
-                                                </a>
-                                                <ul class="dropdown-menu">
-                                                    {% for secretaria in secretarias %}
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" onclick="alert('{{ secretaria.id }}')">{{ secretaria.apelido }}</a>
-                                                        </li>
-                                                    {% endfor %}
-                                                </ul>
-                                            </div>
-    
-                                            <!-- Dropdown para Atendente -->
-                                            <div class="dropdown d-inline">
-                                                <a class="dropdown-toggle" 
-                                                   type="button" 
-                                                   data-bs-toggle="dropdown" 
-                                                   aria-expanded="false" 
-                                                   style="text-decoration: none; color: black;"
-                                                   data-bs-toggle="tooltip" 
-                                                   data-bs-placement="left" 
-                                                   title="Atendente">
-                                                    / {{ chamado.atendente }}
-                                                </a>
-                                                <ul class="dropdown-menu">
-                                                    {% for atendente in atendentes %}
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" onclick="alert('{{ atendente.id }}')">{{ atendente.nome_servidor }}</a>
-                                                        </li>
-                                                    {% endfor %}
-                                                </ul>
-                                            </div>
-                                        </span>
-    
-                                        <!-- Dropdown para Status -->
-                                        <span class="prioridade">
-                                            <span class="prioridade-indicador {{ chamado.get_status_class }}"></span>
-                                            <div class="dropdown">
-                                                <a class="dropdown-toggle" 
-                                                   type="button" 
-                                                   data-bs-toggle="dropdown" 
-                                                   aria-expanded="false" 
-                                                   style="text-decoration: none; color: black;"
-                                                   data-bs-toggle="tooltip" 
-                                                   data-bs-placement="left" 
-                                                   title="Status">
-                                                    {{ chamado.get_status_display }}
-                                                </a>
-                                                <ul class="dropdown-menu">
-                                                    {% for status in chamado.STATUS_CHOICES %}
-                                                        <li><a class="dropdown-item" href="#" onclick="alert('{{status.0}}')">{{status.1}}</a></li>
-                                                    {% endfor %}
-                                                </ul>
-                                            </div>
-                                        </span>
+                                        <!-- Verificação se o usuário é superusuário -->
+                                        {% if request.user.is_superuser %}
+                                            <!-- Dropdown para Prioridade -->
+                                            <span class="prioridade text-line">
+                                                <span class="prioridade-indicador {{ chamado.get_prioridade_class }}"></span>
+                                                <div class="dropdown">
+                                                    <a class="dropdown-toggle" 
+                                                       type="button" 
+                                                       data-bs-toggle="dropdown" 
+                                                       aria-expanded="false" 
+                                                       style="text-decoration: none; color: black;"
+                                                       data-bs-toggle="tooltip" 
+                                                       data-bs-placement="left" 
+                                                       title="Prioridade">
+                                                        {{ chamado.get_prioridade_display }}
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        {% for prioridade in chamado.PRIORIDADE_CHOICES %}
+                                                            <li><a class="dropdown-item" href="#" onclick="alert('{{prioridade.0}}')">{{prioridade.1}}</a></li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            </span>
+                                    
+                                            <!-- Dropdown para Secretaria -->
+                                            <span class="prioridade">
+                                                <div class="dropdown d-inline">
+                                                    <a class="dropdown-toggle" 
+                                                       type="button" 
+                                                       data-bs-toggle="dropdown" 
+                                                       aria-expanded="false" 
+                                                       style="text-decoration: none; color: black;"
+                                                       data-bs-toggle="tooltip" 
+                                                       data-bs-placement="left" 
+                                                       title="Secretaria">
+                                                       {{ chamado.setor.secretaria.apelido }}
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        {% for secretaria in secretarias %}
+                                                            <li>
+                                                                <a class="dropdown-item" href="#" onclick="alert('{{ secretaria.id }}')">{{ secretaria.apelido }}</a>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                    
+                                                <!-- Dropdown para Atendente -->
+                                                <div class="dropdown d-inline">
+                                                    <a class="dropdown-toggle" 
+                                                       type="button" 
+                                                       data-bs-toggle="dropdown" 
+                                                       aria-expanded="false" 
+                                                       style="text-decoration: none; color: black;"
+                                                       data-bs-toggle="tooltip" 
+                                                       data-bs-placement="left" 
+                                                       title="Atendente">
+                                                        / {{ chamado.atendente }}
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        {% for atendente in atendentes %}
+                                                            <li>
+                                                                <a class="dropdown-item" href="#" onclick="alert('{{ atendente.id }}')">{{ atendente.nome_servidor }}</a>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            </span>
+                                    
+                                            <!-- Dropdown para Status -->
+                                            <span class="prioridade">
+                                                <span class="prioridade-indicador {{ chamado.get_status_class }}"></span>
+                                                <div class="dropdown">
+                                                    <a class="dropdown-toggle" 
+                                                       type="button" 
+                                                       data-bs-toggle="dropdown" 
+                                                       aria-expanded="false" 
+                                                       style="text-decoration: none; color: black;"
+                                                       data-bs-toggle="tooltip" 
+                                                       data-bs-placement="left" 
+                                                       title="Status">
+                                                        {{ chamado.get_status_display }}
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        {% for status in chamado.STATUS_CHOICES %}
+                                                            <li><a class="dropdown-item" href="#" onclick="alert('{{status.0}}')">{{status.1}}</a></li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            </span>
+                                    
+                                        <!-- Caso não seja superusuário, exibir apenas as informações sem permitir alterações -->
+                                        {% else %}
+                                            <span class="prioridade text-line">
+                                                <span class="prioridade-indicador {{ chamado.get_prioridade_class }}"></span>
+                                                {{ chamado.get_prioridade_display }}
+                                            </span>
+                                    
+                                            <span class="prioridade">
+                                                {{ chamado.setor.secretaria.apelido }} / {{ chamado.atendente }}
+                                            </span>
+                                    
+                                            <span class="prioridade">
+                                                <span class="prioridade-indicador {{ chamado.get_status_class }}"></span>
+                                                {{ chamado.get_status_display }}
+                                            </span>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>

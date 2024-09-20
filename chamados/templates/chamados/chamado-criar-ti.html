@@ -43,6 +43,8 @@
 					                    <div class="col-auto">
 					                        <a href="{% url 'chamados:index' %}" class="ms-auto me-1 my-auto btn app-btn-secondary"><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
 											<button onclick="novoUsuario()" class="btn btn-primary"  style="color: white;"><i class="fa-solid fa-user-plus me-2"></i>Novo usuário</button>
+											<button onclick="novoSetor()" class="btn btn-primary ms-auto my-auto"  style="color: white;"><i class="fa-solid fa-users-rectangle me-2"></i>Novo setor</button>
+
 					                    </div>																				
 					                </div>					                
 							    </div>
@@ -101,8 +103,7 @@
 						<div class="app-card-body py-4 px-5">
 							<div class="d-flex">
 								<h4>NOVO USUÁRIO</h4>
-								<button onclick="novoSetor()" class="btn btn-primary ms-auto my-auto"  style="color: white;"><i class="fa-solid fa-users-rectangle me-2"></i>Novo setor</button>
-								<button onclick="novoUsuario()" class="btn"><i class="fa-solid fa-xmark fa-2x"></i></a>
+								<button onclick="novoUsuario()" class="btn ms-auto mb-auto"><i class="fa-solid fa-xmark fa-2x"></i></button>
 							</div>
 							<div id="novousuario">							
 								{{form_user}}		
