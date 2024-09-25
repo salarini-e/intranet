@@ -65,11 +65,9 @@ class CriarSetorForm(forms.ModelForm):
 
 class CriarChamadoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):                
-        self.user = kwargs.pop('user', None)  # Remove o usuário dos kwargs
+        self.user = kwargs.pop('user', None) 
         super(CriarChamadoForm, self).__init__(*args, **kwargs)
         
-       
-
         if self.user and self.user.is_superuser:
              self.fields['prioridade'] = forms.ChoiceField(
                 choices=Chamado.PRIORIDADE_CHOICES,
@@ -80,7 +78,6 @@ class CriarChamadoForm(forms.ModelForm):
              if 'initial' in kwargs:
                 if 'secretaria' in kwargs['initial']:
                     self.fields['secretaria'].initial = kwargs['initial']['secretaria']
-        
     secretaria = forms.ModelChoiceField(
         queryset=Secretaria.objects.all(),
         empty_label='Selecione a secretaria',

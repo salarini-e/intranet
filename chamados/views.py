@@ -65,7 +65,7 @@ def criarChamado(request, sigla):
             'setor': servidor.setor.id,
             'telefone': servidor.telefone,
             'tipo': tipo,
-            'requisitante': servidor.id,
+            'requisitante': servidor.nome,
             'user_inclusao': servidor.id
         }
     
