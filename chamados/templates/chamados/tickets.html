@@ -29,7 +29,7 @@
             <!-- Coluna de 9 colunas -->
             <div class="col-lg-12" id="cards-wrapper" >
                 {% for chamado in chamados %}
-                    <div class="row ticket-chamado-background{% if chamado.status == '4' %} card-status-finalizado{% endif %}">
+                    <div id="chamado-{{chamado.id}}" class="row ticket-chamado-background{% if chamado.status == '4' %} card-status-finalizado{% endif %}">
                         <div class="row">
                             <div class="col-1 m-auto checkbox-container">
                                 <input type="checkbox" class="checkbox-tickets" onchange="toggleStatusCheckBox(this)">
@@ -121,7 +121,7 @@
                                     
                                             <!-- Dropdown para Status -->
                                             <span class="prioridade">
-                                                <span class="prioridade-indicador {{ chamado.get_status_class }}"></span>
+                                                <span id="indicadorStatus-{{chamado.id}}" class="prioridade-indicador {{ chamado.get_status_class }}"></span>
                                                 <div class="dropdown">
                                                     <a class="dropdown-toggle" 
                                                        type="button" 
@@ -130,12 +130,13 @@
                                                        style="text-decoration: none; color: black;"
                                                        data-bs-toggle="tooltip" 
                                                        data-bs-placement="left" 
-                                                       title="Status">
+                                                       title="Status"
+                                                       id="statusSelect-{{chamado.id}}">
                                                         {{ chamado.get_status_display }}
                                                     </a>
                                                     <ul class="dropdown-menu">
                                                         {% for status in chamado.STATUS_CHOICES %}
-                                                            <li><a class="dropdown-item" href="#" onclick="alert('{{status.0}}')">{{status.1}}</a></li>
+                                                            <li><a class="dropdown-item" href="#" onclick="mudar_status('{{chamado.hash}}','{{status.0}}')">{{status.1}}</a></li>
                                                         {% endfor %}
                                                     </ul>
                                                 </div>
@@ -332,7 +333,7 @@
             
         </div>
     </div>
-
+    <script src="/static/js/request.js"></script>				
     <script>
         function toggleStatusCheckBox(checkbox) {
         // Encontre o elemento pai mais próximo com a classe 'row.ticket-chamado-background'
@@ -460,6 +461,43 @@
         
         // Aqui você pode enviar o `dados` para o servidor ou utilizá-lo conforme necessário
         // Exemplo: enviar via AJAX, etc.
+    }
+    
+    function mudar_status_select(id, display_status){
+        let selectStatus = document.getElementById('statusSelect-'+id);
+        selectStatus.innerText = display_status;   
+        let indicadorStatus = document.getElementById('indicadorStatus-'+id);
+        if (display_status == 'Em atendimento'){
+            indicadorStatus.className = 'prioridade-indicador status-atendimento'
+        }else{
+            indicadorStatus.className = 'prioridade-indicador status-'+display_status.toLowerCase();
+        }
+        
+        let card = document.getElementById('chamado-'+id);
+        if (display_status.toLowerCase() == 'finalizado'){
+            card.classList.add('card-status-finalizado');
+        }else{            
+            if (card.classList.contains('card-status-finalizado')) {
+                card.classList.remove('card-status-finalizado');
+            }
+        }
+    }
+    function mudar_status(hash, status){
+        
+        var url = "{% url 'chamados:api_status' %}"; 
+        formData = new FormData();
+        formData.append('hash', hash);
+        formData.append('status', status);
+        formData.append('csrfmiddlewaretoken', '{{csrf_token}}');
+		postRequest(url, formData)
+							.then(response => {
+                                mudar_status_select(response.id, response.display_status)
+							})
+							.catch(error => {
+								console.error(error);
+							});
+        
+					
     }
         </script>
 
