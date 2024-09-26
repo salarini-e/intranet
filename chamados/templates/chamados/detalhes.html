@@ -1,5 +1,8 @@
-{% extends 'template.html' %}
+{% extends 'template_chamados.html' %}
 {% block chamados %}active{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="/static/css/detalhesChamados.css">
+{% endblock %}
 {% block main %}   		    
 				<style>
 					#message{
@@ -51,7 +54,15 @@
 				    </div>
 			    </div>
 			   
-							
+				<div class="detalhes-contato-wrapper">
+					<div class="detalhes-contato-title">
+						<i class="fa-solid fa-info"></i> <span class="detalhes-contato-title-text">DETALHES DO CONTATO</span>
+					</div>	
+					<button class="ms-auto my-auto btn app-btn-secondary" onclick="toogleDetalhesContato(this, 'table-{{item.id}}')" style="border:none; ">
+						<i class="fa-regular fa-eye me-2"></i>
+						Visualizar registros
+					</button>
+				</div>	
 				
 				 <div id="message" class="app-card alert alert-dismissible shadow-sm mb-4 bg-success border-left-decoration" role="alert">
 				    <div class="inner">
@@ -382,6 +393,21 @@
 							window.location.replace("{% url 'chamados:detalhes' chamado.hash %}");
 						}, 500);					
 
+					}
+
+					function toogleDetalhesContato(e, id) {
+						console.log(e.innerHTML);
+						const table = document.getElementById(id);
+
+						if (table.classList.contains('show')) {
+							hiddeTables();
+							e.innerHTML = '<i class="fa-regular fa-eye me-2"></i> Visualizar registros';
+						} else {
+							hiddeTables();
+							table.style.display = 'table'; // Mostra a tabela
+							setTimeout(() => table.classList.add('show'), 100); // Garante a transição suave
+							e.innerHTML = '<i class="fa-regular fa-eye-slash me-2"></i> Ocultar registros';
+						}
 					}
 				</script>		
 {% endblock %}

@@ -41,7 +41,11 @@
                                             {% if chamado.is_novo %}
                                             <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket"> Novo</span>
                                             {% endif %}
-                                            <span class="chamados-tickets-infos-chamado-text-assunto">{{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}</span>
+                                            <a href="{% url 'chamados:detalhes' chamado.hash %}">
+                                                <span class="chamados-tickets-infos-chamado-text-assunto">
+                                                    {{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}
+                                                </span>
+                                                </a>
                                             <div class="solution-infos-wrapper">
                                                 <i class="fa-solid fa-globe" style="width: 10px;"></i>
                                                 <span class="chamados-tickets-infos-chamado-text-requisitante">{{ chamado.user_inclusao }}

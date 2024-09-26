@@ -1,0 +1,16 @@
+.detalhes-contato-wrapper{
+    display: flex;
+    width: 100%;
+    background-color: #fff;
+    justify-content: space-between;
+
+}
+.detalhes-contato-title{
+    display: flex;
+    align-items: center;
+    padding:  1.5rem;
+}
+.detalhes-contato-title-text{
+    margin-left: 5px;
+
+}
