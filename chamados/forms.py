@@ -69,15 +69,30 @@ class CriarChamadoForm(forms.ModelForm):
         super(CriarChamadoForm, self).__init__(*args, **kwargs)
         
         if self.user and self.user.is_superuser:
-             self.fields['prioridade'] = forms.ChoiceField(
+            self.fields['prioridade'] = forms.ChoiceField(
                 choices=Chamado.PRIORIDADE_CHOICES,
                 widget=forms.Select(attrs={'class': 'form-select'}),
-                label='Prioridade'
+                label='Prioridade') 
+            self.fields['requisitante'] = forms.ModelChoiceField(
+                queryset=Servidor.objects.all(),
+                widget=RequisitanteWidget(attrs={'class': 'form-select', 'required': 'required'}),
+                label='Requisitante'
             )
+
         else:
-             if 'initial' in kwargs:
+            try:
+                self.requisitante = Servidor.objects.get(user=self.user)
+                self.fields['requisitante'] = forms.ModelChoiceField(
+                    queryset=Servidor.objects.filter(user=self.user),
+                    widget=forms.Select(attrs={'class': 'form-control mb-3'}),
+                    label='Requisitante',                    
+                )
+            except Servidor.DoesNotExist:
+                self.requisitante = None
+            if 'initial' in kwargs:
                 if 'secretaria' in kwargs['initial']:
-                    self.fields['secretaria'].initial = kwargs['initial']['secretaria']
+                    self.fields['secretaria'].initial = kwargs['initi1al']['secretaria']
+
     secretaria = forms.ModelChoiceField(
         queryset=Secretaria.objects.all(),
         empty_label='Selecione a secretaria',
@@ -91,8 +106,7 @@ class CriarChamadoForm(forms.ModelForm):
             'endereco', 'telefone', 'tipo', 'descricao', 
             'user_inclusao', 'anexo'
         ]
-        widgets = {                        
-            'requisitante': forms.TextInput(attrs={'class': 'form-control'}),
+        widgets = {                                    
             'setor': forms.Select(attrs={'class': 'form-select'}),
             'secretaria': SecretariaWidget(attrs={'class': 'form-control mb-3', 'onchange': 'getSetores(this.value)', 'required': 'required'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control'}),
