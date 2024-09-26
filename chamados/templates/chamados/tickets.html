@@ -59,9 +59,9 @@
                                         {% if request.user.is_superuser %}
                                             <!-- Dropdown para Prioridade -->
                                             <span class="prioridade text-line">
-                                                <span class="prioridade-indicador {{ chamado.get_prioridade_class }}"></span>
+                                                <span id="indicadorPrioridade-{{chamado.id}}" class="prioridade-indicador {{ chamado.get_prioridade_class }}"></span>
                                                 <div class="dropdown">
-                                                    <a class="dropdown-toggle" 
+                                                    <a id="selectPrioridade-{{chamado.id}}" class="dropdown-toggle" 
                                                        type="button" 
                                                        data-bs-toggle="dropdown" 
                                                        aria-expanded="false" 
@@ -73,56 +73,14 @@
                                                     </a>
                                                     <ul class="dropdown-menu">
                                                         {% for prioridade in chamado.PRIORIDADE_CHOICES %}
-                                                            <li><a class="dropdown-item" href="#" onclick="alert('{{prioridade.0}}')">{{prioridade.1}}</a></li>
+                                                            <li><a class="dropdown-item" href="#" onclick="mudar_prioridade('{{chamado.hash}}','{{prioridade.0}}')">{{prioridade.1}}</a></li>
                                                         {% endfor %}
                                                     </ul>
                                                 </div>
                                             </span>
                                     
                                             <!-- Dropdown para Secretaria -->
-                                            <span class="prioridade">
-                                                <div class="dropdown d-inline">
-                                                    <a class="dropdown-toggle" 
-                                                       type="button" 
-                                                       data-bs-toggle="dropdown" 
-                                                       aria-expanded="false" 
-                                                       style="text-decoration: none; color: black;"
-                                                       data-bs-toggle="tooltip" 
-                                                       data-bs-placement="left" 
-                                                       title="Secretaria">
-                                                       {{ chamado.setor.secretaria.apelido }}
-                                                    </a>
-                                                    <ul class="dropdown-menu">
-                                                        {% for secretaria in secretarias %}
-                                                            <li>
-                                                                <a class="dropdown-item" href="#" onclick="alert('{{ secretaria.id }}')">{{ secretaria.apelido }}</a>
-                                                            </li>
-                                                        {% endfor %}
-                                                    </ul>
-                                                </div>
-                                    
-                                                <!-- Dropdown para Atendente -->
-                                                <div class="dropdown d-inline">
-                                                    <a class="dropdown-toggle" 
-                                                       type="button" 
-                                                       data-bs-toggle="dropdown" 
-                                                       aria-expanded="false" 
-                                                       style="text-decoration: none; color: black;"
-                                                       data-bs-toggle="tooltip" 
-                                                       data-bs-placement="left" 
-                                                       title="Atendente">
-                                                        / {{ chamado.atendente }}
-                                                    </a>
-                                                    <ul class="dropdown-menu">
-                                                        {% for atendente in atendentes %}
-                                                            <li>
-                                                                <a class="dropdown-item" href="#" onclick="alert('{{ atendente.id }}')">{{ atendente.nome_servidor }}</a>
-                                                            </li>
-                                                        {% endfor %}
-                                                    </ul>
-                                                </div>
-                                            </span>
-                                    
+                                            
                                             <!-- Dropdown para Status -->
                                             <span class="prioridade">
                                                 <span id="indicadorStatus-{{chamado.id}}" class="prioridade-indicador {{ chamado.get_status_class }}"></span>
@@ -486,6 +444,16 @@
             }
         }
     }
+    function mudar_prioridade_select(id, display_prioridade){
+        let selectPrioridade = document.getElementById('selectPrioridade-'+id);
+        selectPrioridade.innerText = display_prioridade;   
+        let indicadorPrioridade = document.getElementById('indicadorPrioridade-'+id);
+        if (display_prioridade == 'Média'){
+            indicadorPrioridade.className = 'prioridade-indicador prioridade-media'
+        }else{
+            indicadorPrioridade.className = 'prioridade-indicador prioridade-'+display_prioridade.toLowerCase();
+        }        
+    }
     function mudar_status(hash, status){
         
         var url = "{% url 'chamados:api_status' %}"; 
@@ -495,13 +463,38 @@
         formData.append('csrfmiddlewaretoken', '{{csrf_token}}');
 		postRequest(url, formData)
 							.then(response => {
-                                mudar_status_select(response.id, response.display_status)
+                                if (response.status == 200){
+                                    alert(response.message +" (" + response.status+")")
+                                    mudar_status_select(response.id, response.display_status)
+                                }else{
+                                    alert(response.message +" (" + response.status+")")
+                                }                                   
 							})
 							.catch(error => {
-								console.error(error);
-							});
+                                alert('Erro ao mudar status. Tente novamente mais tarde.')
+								console.error(error)
+							});				
+    }
+    function mudar_prioridade(hash, prioridade){
         
-					
+        var url = "{% url 'chamados:api_prioridade' %}"; 
+        formData = new FormData();
+        formData.append('hash', hash);
+        formData.append('prioridade', prioridade);
+        formData.append('csrfmiddlewaretoken', '{{csrf_token}}');
+		postRequest(url, formData)
+							.then(response => {
+                                if (response.status == 200){
+                                    // alert(response.message +" (" + response.status+")")
+                                    mudar_prioridade_select(response.id, response.display_prioridade)
+                                }else{
+                                    alert(response.message +" (" + response.status+")")
+                                }                                   
+							})
+							.catch(error => {
+                                alert('Erro ao mudar status. Tente novamente mais tarde.')
+								console.error(error)
+							});				
     }
         </script>
 
