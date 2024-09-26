@@ -17,7 +17,9 @@ urlpatterns = [
     path('<hash>/retomar/', views.retomar_atendimento, name='retomar'),
     path('<hash>/finalizar-atendimento/', views.finalizar_atendimento, name='finalizar'),
     path('<hash>/detalhes/agendar', views.agendar_atendimento, name='agendar_atendimento'),    
-    path('<hash>/detalhes/imprimir', views.detalhes_imprimir, name='imprimir'),    
+    path('<hash>/detalhes/imprimir', views.detalhes_imprimir, name='imprimir'), 
+
+    path('<matricula>/ver-perfil/', views.ver_perfil, name='ver-perfil'),
 
     path('criar-periodos/', views.criar_periodos, name='criar_periodos'),
     path('api/', views.index, name='api'),

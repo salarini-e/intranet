@@ -1,0 +1,64 @@
+{% extends 'template_chamados.html' %}
+{% block chamados %}active{% endblock %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="/static/css/perfil.css">
+{% endblock %}
+{% block main %}   
+
+
+<div class="perfil-wrapper">
+    <div class="perfil-image">
+        {% if usuario.avatar %}
+        <img src="{{ usuario.avatar.url }}" alt="{{ usuario.nome }}" class="img-avatar">
+        {% else %}
+            <img src="{% static 'images/users/avatar.png' %}" alt="Avatar padrão" class="img-avatar">
+        {% endif %}
+    </div>
+    <div class="perfil-infos">
+            <span class="perfil-infos-nome-text">{{usuario.nome}}</span>
+            <a class="perfil-infos-secretaria-link" href="">
+                <span class="perfil-infos-secretaria-text">{{usuario.setor.secretaria}}</span>
+            </a>
+    </div>
+
+    <div class="perfil-buttons">
+
+    </div>
+</div>
+{% if chamado %}
+
+<div class="perfil-wrapper mt-5">
+    <div class="perfil-image">
+        
+        </div>
+    </div>
+</div>
+{% endif %}
+<!-- colocar um botão de mais informações -->
+<div>
+    <div id="detalhes-contato" class="detalhes-contato">
+        <div class="detalhe-contato-menu-wrapper">
+            <div class="detalhe-contato-menu-email">
+                <span><strong>E-mail</strong></span>
+                <span>{{usuario.email}}</span>
+            </div>
+
+            <div class="detalhe-contato-menu-email">
+                <span><strong>Telefone</strong></span>
+                <span>{{usuario.telefone}}</span>
+            </div>
+
+            <div class="detalhe-contato-menu-setor">
+                <span><strong>Setor</strong></span>
+                <span>{{usuario.setor}}</span>
+            </div>
+
+            <div class="detalhe-contato-menu-matricula">
+                <span><strong>Matrícula</strong></span>
+                <span>{{usuario.matricula}}</span>
+            </div>
+        </div>
+    </div>	
+</div>
+{% endblock %}

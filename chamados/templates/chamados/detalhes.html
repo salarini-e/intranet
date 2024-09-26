@@ -1,6 +1,8 @@
 {% extends 'template_chamados.html' %}
 {% block chamados %}active{% endblock %}
 {% block css %}
+{% load static %}
+
 <link rel="stylesheet" href="/static/css/detalhesChamados.css">
 {% endblock %}
 {% block main %}   		    
@@ -69,7 +71,7 @@
 					</div>
 				</div>
 				<div class="detalhes-contato-arrows-sep" id="detalhes-contato-arrows-sep"></div>
-				
+				<!-- WRAPPER DETALHES DE CONTATO -->
 				<div id="detalhes-contato" class="detalhes-contato">
 					<div class="detalhe-contato-menu-wrapper">
 						<div class="detalhe-contato-menu-email">
@@ -93,13 +95,83 @@
 						</div>
 					</div>
 					<div class="detalhe-contato-ver-perfil">
-						<a href="">
-							
+						<a href="{% url 'chamados:ver-perfil' chamado.requisitante.matricula %}" class="detalhe-contato-ver-perfil-link" target="_blank">
+							<span>Exibir atividades</span>
 						</a>
 
 					</div>
 				</div>	
 				
+				<!-- WRAPPER INFORMAÇÕES DO CHAMADO -->
+				<div class="content-chamado-messages-wrapper">
+					<div class="content-chamado-messages-title">
+						<i class="fa-solid fa-globe"></i>
+						<span class="content-chamado-messages-title-text">{{ chamado.assunto }}</span>
+					</div>
+					<!-- WRAPPER LISTAR MENSAGENS -->
+					<div class="first-message-user-wrapper">
+						<div class="first-message-user-header">
+							<div class="perfil-image">
+								{% if chamado.requisitante.avatar %}
+									<img src="{{ chamado.requisitante.avatar.url }}" alt="{{ chamado.requisitante.nome }}" class="img-avatar">
+								{% else %}
+									<img src="{% static 'images/users/avatar.png' %}" alt="Avatar padrão" class="img-avatar">
+								{% endif %}
+							</div>
+							<div class="messages-nome-time-wrapper">
+								<a href="{% url 'chamados:ver-perfil' chamado.requisitante.matricula %}" target="_blank">
+									<span class="message-user-nome">
+										{{chamado.requisitante.nome}}
+									</span>
+								</a>
+								
+								<div>Há 6 horas</div>
+							</div>
+							
+						</div>
+						<div class="first-message-user-content">
+							<span class="messages-chamado-descricao-text">
+								{{chamado.descricao}}
+							</span>
+						</div>
+					</div>
+
+					{% for mensagem in mensagens %}
+								<hr>
+		                		<div class="section-intro mb-2">
+									<div class="row">
+										<div class="col d-flex">
+											<strong>{{mensagem.autor}}</strong>
+											<i class="ms-auto">{{mensagem.dt_inclusao|date:"d/m/y"}} {{mensagem.dt_inclusao|date:"H:i"}}</i>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col d-flex">
+											<p>{{mensagem.mensagem}}</p>											
+											{% if mensagem.anexo %}<button onclick="visualizarAnexo('{{mensagem.anexo.url}}')" class="my-auto ms-auto btn app-btn-secondary"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</button>{% endif %}
+										</div>
+									</div>									
+								</div>
+						{% endfor %}				
+						{% if messages %}
+						<div class="alert alert-dismissible shadow-sm bg-success border-left-decoration" role="alert">
+							<div class="inner">
+								<div class="app-card-body px-3 px-lg-4">						    
+									<div class="row gx-5 gy-3">
+										<div class="col-12 col">
+											<div class="text-light" style="color: white;">
+											{% for message in messages %}
+											{{message}}
+											{% endfor %}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						{% endif %}
+				</div>
+
 				 <div id="message" class="app-card alert alert-dismissible shadow-sm mb-4 bg-success border-left-decoration" role="alert">
 				    <div class="inner">
 					    <div class="app-card-body px-3 px-lg-4">						    
@@ -114,23 +186,7 @@
 					    
 				    </div>
 			    </div>
-				{% if messages %}
-				<div class="alert alert-dismissible shadow-sm bg-success border-left-decoration" role="alert">
-				    <div class="inner">
-					    <div class="app-card-body px-3 px-lg-4">						    
-						    <div class="row gx-5 gy-3">
-						        <div class="col-12 col">
-							        <div class="text-light" style="color: white;">
-							        {% for message in messages %}
-							        {{message}}
-							        {% endfor %}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				{% endif %}
+				
 				<div class="row my-3">
 	                <div class="col col-md">
 		                <div class="app-card shadow-sm p-4">
@@ -211,17 +267,7 @@
 
 							    <div class="row justify-content-between">
 								    <div class="col-auto">
-								        {% if ext %}
-										{% if chamado.tipo.sigla == 'IMP' %}
-										
-											<div class="mb-2"><strong>Número de serie:</strong> {{ext.n_serie}}</div>
-											<div class="mb-2"><strong>Contador:</strong> {{ext.contador}}</div>
-										{% elif chamado.tipo.sigla == 'INT' %}
-											<div class="mb-2"><strong>NOFCIP:</strong> {{ext.nofcip}}</div>									
-										{% elif chamado.tipo.sigla == 'SIS' %}
-											<div class="mb-2"><strong>Sistema:</strong> {{ext.sistema}}</div>									
-										{% endif %}
-										{% endif %}
+								        
 								    </div>
 									{% if chamado.anexo %}
 								    <div class="col-auto d-flex">

@@ -1,0 +1,33 @@
+.perfil-wrapper{
+    display: flex;
+    width: 100%;
+    background-color: white;
+    align-items: center;
+    padding: 15px;
+}
+
+.perfil-image{
+    padding: 1.7rem;
+}
+.img-avatar{
+    border-radius: 50%;
+    height: 60px;
+    width: 60px;
+}
+.perfil-infos{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.perfil-infos-nome-text{
+    color: black;
+    line-height: 24px;
+    font-weight: 600;
+    letter-spacing: .5px;
+    font-size: 22px;
+}
+.perfil-infos-secretaria-link{
+    text-decoration: none;
+    color: #2c5cc5;
+    font-size: 14px;
+}

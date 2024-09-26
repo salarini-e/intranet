@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.clickjacking import xframe_options_exempt
 from datetime import datetime, timedelta
-
+from django.shortcuts import get_object_or_404
 from .models import TipoChamado, Secretaria, Setor, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem, OSTelefonia, PeriodoPreferencial, Pausas_Execucao_do_Chamado
 from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm, ServidorForm,
                     MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm, CriarSetorForm, Form_Agendar_Atendimento,
@@ -108,7 +108,6 @@ def criarChamado(request, sigla):
 
 @login_required
 def detalhes(request, hash):
-    
     chamado = Chamado.objects.get(hash=hash)
     servidor = Servidor.objects.get(user=request.user)
     if request.method == 'POST':        
@@ -122,20 +121,16 @@ def detalhes(request, hash):
         # else:
         #     print(form.errors)
 
-    extensoes = {
-        'IMP': OSImpressora,
-        'INT': OSInternet,
-        'SIS': OSSistemas,
-        'TEL': OSTelefonia,
-    }
-    if chamado.tipo.sigla in extensoes:
-        extensao = extensoes[chamado.tipo.sigla].objects.get(chamado=chamado)
-    else:
-        extensao = None
+    # extensoes = {
+    #     'IMP': OSImpressora,
+    #     'INT': OSInternet,
+    #     'SIS': OSSistemas,
+    #     'TEL': OSTelefonia,
+    # }
+
 
     context = {
-        'chamado': chamado,
-        'ext': extensao,    
+        'chamado': chamado,    
         'servidor': servidor,    
         'atendentes': Atendente.objects.filter(ativo=True),
         'atendente': Atendente.objects.filter(servidor=servidor),   
@@ -479,3 +474,18 @@ def painel_controle(request):
         'media_diaria': "{:.1f}".format(media_diaria)
     }
     return render(request, 'chamados/painel_controle.html', context)
+
+
+@login_required
+def ver_perfil(request,matricula):
+    is_atendente = Atendente.objects.filter(servidor=Servidor.objects.get(user=request.user)).exists(),
+
+    servidor= get_object_or_404(Servidor, matricula=matricula)
+
+    context = {
+        'usuario': servidor
+    }
+    if is_atendente or servidor.user == request.user:
+        chamado = Chamado.objects.filter(requisitante = servidor).order_by('-dt_inclusao')
+        context['chamado']= chamado
+    return render(request, 'chamados/perfil.html', context)
