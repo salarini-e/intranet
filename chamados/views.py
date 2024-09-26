@@ -71,10 +71,8 @@ def criarChamado(request, sigla):
     
     if request.POST:
         form = CriarChamadoForm(request.POST, request.FILES, user=request.user)
-        if sigla in form:
-            form_ext = form[sigla](request.POST, request.FILES)
-        else:
-            form_ext = None
+       
+        form_ext = None
         
         if form.is_valid():
             chamado = form.save(commit=False)
@@ -97,13 +95,10 @@ def criarChamado(request, sigla):
     else:
         form = CriarChamadoForm(initial=initial_data, user=request.user)
         
-        form_ext = None
-        if sigla in form:
-            form_ext = form[sigla]()
+
     
     context = {
         'form': form,
-        'form_ext': form_ext,
         'form_setor': CriarSetorForm(prefix='setor', initial={'user_inclusao': request.user.id}),
         'form_user': ServidorForm(prefix='servidor', initial={'user_inclusao': request.user.id})
     }
