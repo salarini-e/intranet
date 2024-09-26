@@ -328,6 +328,37 @@ def api_criar_setor(request):
     return JsonResponse({'status': 400, 'message': 'Erro ao criar setor!'})
 
 @login_required
+def api_mudar_status(request):
+    # servidor = Servidor.objects.filter(user=request.user).last()
+    # if not servidor in Atendente.objects.all():
+    #     return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
+    if request.method == 'POST':
+        data = request.POST
+        try:
+            chamado = Chamado.objects.get(hash=data['hash'])
+            chamado.status = data['status']
+            chamado.save()
+            return JsonResponse({'status': 200, 'message': 'Status atualizado com sucesso!', 'display_status': chamado.get_status_display(), 'id': chamado.id})
+        except:
+            return JsonResponse({'status': 400, 'message': 'Erro ao atualizar status!'})
+    return JsonResponse({'status': 400, 'message': 'Método não permitido!'})
+
+@login_required
+def api_mudar_prioridade(request):
+    if not request.user in Atendente.objects.all():
+        return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
+    if request.method == 'POST':
+        data = request.POST
+        try:
+            chamado = Chamado.objects.get(hash=hash)
+            chamado.prioridade = data['prioridade']
+            chamado.save()
+            return JsonResponse({'status': 200, 'message': 'Prioridade atualizada com sucesso!'})
+        except:
+            return JsonResponse({'status': 400, 'message': 'Erro ao atualizar prioridade!'})
+    return JsonResponse({'status': 400, 'message': 'Método não permitido!'})
+
+@login_required
 def api_criar_servidor(request):
     if request.method == 'POST':
         # print(request.POST)
