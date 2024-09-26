@@ -3,14 +3,72 @@
     width: 100%;
     background-color: #fff;
     justify-content: space-between;
+    padding:  1.5rem;
+    cursor: pointer;
 
+}
+
+.detalhes-contato-arrows-sep{
+    display: none;
+    transition: all 0.2s ease-in-out;
+}
+.detalhes-contato-arrows-sep.show{
+    display: flex;
+    position: relative;
+    content: '';
+    width: 100%;
+    height: 2px;
+    background-color: #c9c9c9;
 }
 .detalhes-contato-title{
     display: flex;
     align-items: center;
-    padding:  1.5rem;
+    
 }
-.detalhes-contato-title-text{
-    margin-left: 5px;
+.detalhes-contato-requisitante{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 10px;
+}
 
+.detalhes-contato-arrows{
+    display: flex;
+    align-items: center;
+}
+.detalhes-contato-arrow-link{
+    text-decoration: none;
+    cursor: pointer;
+}
+.detalhes-contato-arrow-link-up {
+    display: none;
+}
+.detalhes-contato {
+    display: none;
+}
+.detalhes-contato.show {
+    display: flex;
+    width: 100%;
+    background-color: white;
+    transition: all 0.4s ease-in-out;
+}
+
+.detalhe-contato-menu-wrapper{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 10px;
+    padding: 1.7rem;
+}
+.detalhe-contato-menu-email, .detalhe-contato-menu-telefone, .detalhe-contato-menu-setor, .detalhe-contato-menu-matricula{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 30px;
+}
+@media(max-width:768px){
+    .detalhe-contato-menu-wrapper{
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 1rem;
+    }
 }

@@ -51,7 +51,7 @@ class Servidor(models.Model):
     
     user=models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True)
     nome=models.CharField(max_length=64, verbose_name='Nome')    
-    cpf=models.CharField(max_length=14, verbose_name='CPF')    
+    cpf=models.CharField(max_length=14, verbose_name='CPF', unique=True)    
     dt_nascimento=models.DateField(verbose_name='Data de nascimento')
     matricula=models.CharField(max_length=14, verbose_name='Matrícula', unique=True)
     telefone=models.CharField(max_length=15, verbose_name='Telefone')

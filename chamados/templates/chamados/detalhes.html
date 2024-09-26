@@ -54,14 +54,50 @@
 				    </div>
 			    </div>
 			   
-				<div class="detalhes-contato-wrapper">
+				<div class="detalhes-contato-wrapper"  onclick="toggleDetalhesContato()">
 					<div class="detalhes-contato-title">
-						<i class="fa-solid fa-info"></i> <span class="detalhes-contato-title-text">DETALHES DO CONTATO</span>
-					</div>	
-					<button class="ms-auto my-auto btn app-btn-secondary" onclick="toogleDetalhesContato(this, 'table-{{item.id}}')" style="border:none; ">
-						<i class="fa-regular fa-eye me-2"></i>
-						Visualizar registros
-					</button>
+						<i class="fa-solid fa-info"></i> 
+						<div class="detalhes-contato-requisitante">
+							<span class="detalhes-contato-title-text"><strong>{{chamado.requisitante.nome}}</strong></span><span class="detalhes-contato-title-text">{{chamado.requisitante.setor.secretaria}}</span>
+						</div>
+					</div>  
+					<div class="detalhes-contato-arrows">
+						<a class="detalhes-contato-arrow-link" onclick="toggleDetalhesContato()">
+							<i class="fa-solid fa-arrow-down detalhes-contato-arrow-link-down" id="arrow-down"></i>
+							<i class="fa-solid fa-arrow-up detalhes-contato-arrow-link-up" id="arrow-up" style="display: none;"></i>
+						</a>
+					</div>
+				</div>
+				<div class="detalhes-contato-arrows-sep" id="detalhes-contato-arrows-sep"></div>
+				
+				<div id="detalhes-contato" class="detalhes-contato">
+					<div class="detalhe-contato-menu-wrapper">
+						<div class="detalhe-contato-menu-email">
+							<span><strong>E-mail</strong></span>
+							<span>{{chamado.requisitante.email}}</span>
+						</div>
+
+						<div class="detalhe-contato-menu-email">
+							<span><strong>Telefone</strong></span>
+							<span>{{chamado.requisitante.telefone}}</span>
+						</div>
+
+						<div class="detalhe-contato-menu-setor">
+							<span><strong>Setor</strong></span>
+							<span>{{chamado.requisitante.setor}}</span>
+						</div>
+
+						<div class="detalhe-contato-menu-matricula">
+							<span><strong>Matrícula</strong></span>
+							<span>{{chamado.requisitante.matricula}}</span>
+						</div>
+					</div>
+					<div class="detalhe-contato-ver-perfil">
+						<a href="">
+							
+						</a>
+
+					</div>
 				</div>	
 				
 				 <div id="message" class="app-card alert alert-dismissible shadow-sm mb-4 bg-success border-left-decoration" role="alert">
@@ -395,19 +431,23 @@
 
 					}
 
-					function toogleDetalhesContato(e, id) {
-						console.log(e.innerHTML);
-						const table = document.getElementById(id);
+					function toggleDetalhesContato() {
+						const arrowDown = document.getElementById('arrow-down');
+						const arrowUp = document.getElementById('arrow-up');
+						const detalhesDiv = document.getElementById('detalhes-contato');
+						const detalhesAfter = document.getElementById('detalhes-contato-arrows-sep');
 
-						if (table.classList.contains('show')) {
-							hiddeTables();
-							e.innerHTML = '<i class="fa-regular fa-eye me-2"></i> Visualizar registros';
+						if (arrowDown.style.display === 'none') {
+							arrowDown.style.display = 'inline-block'; 
+							arrowUp.style.display = 'none';           
+							detalhesDiv.classList.remove('show');   
+							detalhesAfter.classList.remove('show');   
 						} else {
-							hiddeTables();
-							table.style.display = 'table'; // Mostra a tabela
-							setTimeout(() => table.classList.add('show'), 100); // Garante a transição suave
-							e.innerHTML = '<i class="fa-regular fa-eye-slash me-2"></i> Ocultar registros';
+							arrowDown.style.display = 'none';       
+							arrowUp.style.display = 'inline-block'; 
+							detalhesDiv.classList.add('show');  
+							detalhesAfter.classList.add('show');   
 						}
 					}
-				</script>		
+	</script>		
 {% endblock %}

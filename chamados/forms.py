@@ -76,22 +76,24 @@ class CriarChamadoForm(forms.ModelForm):
             self.fields['requisitante'] = forms.ModelChoiceField(
                 queryset=Servidor.objects.all(),
                 widget=RequisitanteWidget(attrs={'class': 'form-select', 'required': 'required'}),
-                label='Requisitante'
+                label='Nome do Servidor'
             )
 
         else:
             try:
-                self.requisitante = Servidor.objects.get(user=self.user)
                 self.fields['requisitante'] = forms.ModelChoiceField(
                     queryset=Servidor.objects.filter(user=self.user),
                     widget=forms.Select(attrs={'class': 'form-control mb-3'}),
-                    label='Requisitante',                    
+                    label='Nome do Servidor',                    
                 )
+
+                # self.fields['requisitante'].initial = Servidor.objects.get(user=self.user).id
+
             except Servidor.DoesNotExist:
                 self.requisitante = None
             if 'initial' in kwargs:
                 if 'secretaria' in kwargs['initial']:
-                    self.fields['secretaria'].initial = kwargs['initi1al']['secretaria']
+                    self.fields['secretaria'].initial = kwargs['initial']['secretaria']
 
     secretaria = forms.ModelChoiceField(
         queryset=Secretaria.objects.all(),
