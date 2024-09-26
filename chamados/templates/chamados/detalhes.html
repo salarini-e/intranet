@@ -108,7 +108,7 @@
 						<i class="fa-solid fa-globe"></i>
 						<span class="content-chamado-messages-title-text">{{ chamado.assunto }}</span>
 					</div>
-					<!-- WRAPPER LISTAR MENSAGENS -->
+					<!-- WRAPPER LISTAR MENSAGENS PRIMEIRA MENSAGEM -->
 					<div class="first-message-user-wrapper">
 						<div class="first-message-user-header">
 							<div class="perfil-image">
@@ -119,13 +119,18 @@
 								{% endif %}
 							</div>
 							<div class="messages-nome-time-wrapper">
-								<a href="{% url 'chamados:ver-perfil' chamado.requisitante.matricula %}" target="_blank">
-									<span class="message-user-nome">
-										{{chamado.requisitante.nome}}
-									</span>
-								</a>
+								<div class="messages-nome-time">
+									<a href="{% url 'chamados:ver-perfil' chamado.requisitante.matricula %}" target="_blank">
+										<span class="message-user-nome">
+											{{chamado.requisitante.nome}}
+										</span>
+									</a>
+										<span>Há 6 horas</span>	
+								</div>
 								
-								<div>Há 6 horas</div>
+								<div class="message-user-time">
+									<span>{{chamado.dt_inclusao|date:"d/m/y"}} {% if request.user == chamado.autor.user or request.user.is_superuser %}{{chamado.dt_inclusao|date:"H:i"}}{% endif %}</span>
+								</div>
 							</div>
 							
 						</div>
@@ -133,27 +138,98 @@
 							<span class="messages-chamado-descricao-text">
 								{{chamado.descricao}}
 							</span>
+							{% if mensagem.anexo %}<button onclick="visualizarAnexo('{{mensagem.anexo.url}}')" class="my-auto ms-auto btn app-btn-secondary"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</button>{% endif %}
 						</div>
 					</div>
-
+					<!-- WRAPPER LISTAR MENSAGENS DEMAIS MENSAGENS -->
 					{% for mensagem in mensagens %}
-								<hr>
-		                		<div class="section-intro mb-2">
-									<div class="row">
-										<div class="col d-flex">
-											<strong>{{mensagem.autor}}</strong>
-											<i class="ms-auto">{{mensagem.dt_inclusao|date:"d/m/y"}} {{mensagem.dt_inclusao|date:"H:i"}}</i>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col d-flex">
-											<p>{{mensagem.mensagem}}</p>											
-											{% if mensagem.anexo %}<button onclick="visualizarAnexo('{{mensagem.anexo.url}}')" class="my-auto ms-auto btn app-btn-secondary"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</button>{% endif %}
-										</div>
-									</div>									
+						<div class="first-message-user-wrapper">
+							<div class="first-message-user-header">
+								<div class="perfil-image">
+									{% if mensagem.autor == 'Atendente' %}
+										<img src="{% static 'images/users/atendenteAvatar.png' %}" alt="Avatar padrão" class="img-avatar">
+									{% else %}
+										{% if mensagem.user_inclusao.avatar %}
+											<img src="{{ mensagem.user_inclusao.avatar.url }}" alt="{{ mensagem.user_inclusao.nome }}" class="img-avatar">
+										{% else %}
+											<img src="{% static 'images/users/avatar.png' %}" alt="Avatar padrão" class="img-avatar">
+										{% endif %}
+									{% endif %}
 								</div>
-						{% endfor %}				
-						{% if messages %}
+								<div class="messages-nome-time-wrapper">
+									<div class="messages-nome-time">
+										{% if mensagem.autor != 'Atendente' %}
+										<a href="{% url 'chamados:ver-perfil' mensagem.user_inclusao.matricula %}" target="_blank">
+											<span class="message-user-nome">
+												{{mensagem.user_inclusao}}
+											</span>
+										</a>
+										{% else %}
+										<a >
+											<span class="message-user-nome">
+												Atendente
+											</span>
+										</a>
+										{% endif %}
+											<span>Há 6 horas</span>	
+									</div>
+									
+									<div class="message-user-time">
+										<span>{{mensagem.dt_inclusao|date:"d/m/y"}} {% if request.user == mensagem.autor.user or request.user.is_superuser %}{{mensagem.dt_inclusao|date:"H:i"}}{% endif %}</span>
+										
+									</div>
+								</div>
+								
+							</div>
+							<div class="first-message-user-content">
+								<span class="messages-chamado-descricao-text">
+									{{mensagem.mensagem}}
+								</span>
+								{% if mensagem.anexo %}<button onclick="visualizarAnexo('{{mensagem.anexo.url}}')" class="my-auto ms-auto btn app-btn-secondary"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</button>{% endif %}
+							</div>
+						</div>
+						{% endfor %}
+						
+						<!-- PARTE PARA ENVIAR RESPOSTA -->
+						<div class="messages-options">
+							<button class="responder-button" id="responderButton" onclick="responderMessage()">
+								<i class="fa-solid fa-arrow-turn-up"></i> Responder
+							</button>
+						</div>
+						<!-- voltar style="display: none;" -->
+						<div id="msg" class="send-resposta-wrapper" >
+							<form class="w-100" method="POST" enctype="multipart/form-data">
+								{% csrf_token %}
+								
+								<div class="form-wrapper">
+									<div class="text-input-mensagem">
+										<span>Nova Mensagem</span>
+										<textarea name="mensagem" cols="40" rows="10" class="form-control mb-3" required id="id_mensagem"></textarea>
+
+									</div>
+									<div class="div-anexo">	
+										<span>Anexo</span>												
+										<input type="file" name="anexo" class="form-control m-auto" id="id_anexo">
+										<input type="hidden" name="chamado" id="id_chamado" value="{{chamado.id}}">
+										<input type="hidden" name="user_inclusao" id="id_user_inclusao" value='{{servidor.id}}'>
+									</div>
+								</div>			
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+									<label class="form-check-label" for="flexSwitchCheckDefault">Mensagem normal</label>
+									<label class="form-check-label" for="flexSwitchCheckDefault">Mensagem Interna</label>
+								</div>				
+								<button onclick="closeResponderMessage()">X</button>		
+								<button type="submit" class="btn app-btn-primary my-auto">
+									<i class="fa-solid fa-comment me-2"></i> Enviar mensagem
+								</button>
+							</form>
+						</div>
+						
+						
+						
+				</div>
+				{% if messages %}
 						<div class="alert alert-dismissible shadow-sm bg-success border-left-decoration" role="alert">
 							<div class="inner">
 								<div class="app-card-body px-3 px-lg-4">						    
@@ -169,9 +245,7 @@
 								</div>
 							</div>
 						</div>
-						{% endif %}
-				</div>
-
+				{% endif %}
 				 <div id="message" class="app-card alert alert-dismissible shadow-sm mb-4 bg-success border-left-decoration" role="alert">
 				    <div class="inner">
 					    <div class="app-card-body px-3 px-lg-4">						    
@@ -494,6 +568,15 @@
 							detalhesDiv.classList.add('show');  
 							detalhesAfter.classList.add('show');   
 						}
+					}
+
+					function responderMessage() {
+						document.getElementById('responderButton').style.display = 'none';
+						document.getElementById('msg').style.display = 'block';
+					}
+					function closeResponderMessage() {
+						document.getElementById('responderButton').style.display = 'inline-block';
+						document.getElementById('msg').style.display = 'none';
 					}
 	</script>		
 {% endblock %}

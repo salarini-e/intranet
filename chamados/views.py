@@ -340,8 +340,8 @@ def api_mudar_status(request):
 
 @login_required
 def api_mudar_prioridade(request):
-    # if not request.user in Atendente.objects.all():
-    #     return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
+    if not request.user in Atendente.objects.all():
+        return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
     if request.method == 'POST':
         data = request.POST
         try:            

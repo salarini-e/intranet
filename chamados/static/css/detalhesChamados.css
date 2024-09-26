@@ -91,7 +91,6 @@
 .content-chamado-messages-wrapper{
     width: 100%;
     background-color: white;
-    height: 500px;
     margin-top: 15px;
 }
 .content-chamado-messages-wrapper{
@@ -114,7 +113,7 @@
 }
 
 .first-message-user-wrapper{
-    padding: 1.75rem;
+    padding: 0 1.75rem 1.75rem 1.75rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -136,19 +135,72 @@
     width: 100%;
     max-width: 95vw;
 }
-.message-user-nome{
+.messages-nome-time{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
     margin-left: 10px;
+}
+.message-user-nome{
     color: #2c5cc5;
     text-transform: uppercase;
     font-weight: 600;
     font-size: 14px;
 }
+.message-user-time{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
 .first-message-user-content{
     padding-left: 3.2rem;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
 }
 .messages-chamado-descricao-text{
     color: black;
     font-size: 14px;
+}
+.messages-options{
+    padding: 1.75rem;
+    display: flex;
+    align-items: center;
+}
+
+.responder-button{
+    text-decoration: none;
+    background-color: #15a362;
+    color: #fff;
+    font-weight: 600;
+    padding: .5rem 1rem;
+    font-size: .875rem;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+}
+.fa-arrow-turn-up{
+    rotate: -90deg;
+    margin-right: 5px;
+}
+
+.send-resposta-wrapper{
+    display: flex;
+    width: 100%;
+    padding: 1.75rem;
+    flex-direction: column;
+    justify-content: center;
+}
+.form-wrapper{
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+.text-input-mensagem{
+    width: 100%;
+    max-width: 50vw;
+    margin-right: 15px;
 }
 @media(max-width:768px){
     .detalhe-contato-menu-wrapper{
@@ -159,6 +211,18 @@
     .detalhe-contato-ver-perfil{
         padding: 0 1rem;
         margin-bottom: 1rem;
+    }
+    .content-chamado-messages-title{
+        padding-left: 1rem;
+    }
+    .first-message-user-wrapper{
+        padding-left: 1rem;
+    }
+    .messages-options{
+        padding-left: 1rem;
+    }
+    .send-resposta-wrapper{
+        padding: 1rem;
     }
 }
 
