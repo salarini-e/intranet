@@ -118,6 +118,22 @@
     flex-direction: column;
     justify-content: center;
 }
+.first-message-user-wrapper-confidencial{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 10px;
+    background-color: #f8d7da;
+    margin-left: 1.75rem;
+    margin-right: 1.75rem;
+    margin-bottom: 1.75rem;
+    padding: 1.75rem 0 1.75rem 0;
+}
+.message-user-mensagem-confidencial{
+    color: black;
+    font-size: 14px;
+    margin-left: 15px;
+}
 .first-message-user-header{
     display: flex;
     align-items: center;
@@ -151,6 +167,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin-left: 10px;
 }
 .first-message-user-content{
     padding-left: 3.2rem;
@@ -248,7 +265,7 @@
     background-color: black;
 }
 .form-check.form-switch{
-    margin: 15px 0;
+    margin-top: 15px;
 }
 .form-check-input{
     border: 1px solid black;
@@ -262,6 +279,7 @@
     display: flex;
     align-items: center;
     justify-content: end;
+    margin-top: 15px;
 }
 .button-close-send-messages{
     border: none;
@@ -373,6 +391,10 @@
     .first-message-user-wrapper{
         padding-left: 1rem;
     }
+    .first-message-user-wrapper-confidencial{
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
     .messages-options{
         padding-left: 1rem;
     }
@@ -404,5 +426,10 @@
 @media(max-width:600px){
     .detalhe-contato-menu-wrapper{
         grid-template-columns: repeat(1, 1fr);
+    }
+}
+@media(max-width:363px){
+    .message-user-mensagem-confidencial{
+        margin-left: 0px;
     }
 }

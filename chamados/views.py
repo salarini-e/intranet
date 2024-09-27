@@ -121,6 +121,7 @@ def detalhes(request, hash):
             mensagem = form.save(commit=False)
             mensagem.chamado = chamado
             mensagem.user_inclusao = servidor
+            mensagem.confidencial = request.POST.get('confidencial') == '1'
             mensagem.save()            
             message.success(request, 'Mensagem enviada com sucesso!')
         # else:

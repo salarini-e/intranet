@@ -1,8 +1,8 @@
 {% extends 'template_chamados.html' %}
 {% block chamados %}active{% endblock %}
+{% load custom_filters %}
 {% block css %}
 {% load static %}
-
 <link rel="stylesheet" href="/static/css/detalhesChamados.css">
 {% endblock %}
 {% block main %}   		    
@@ -125,7 +125,7 @@
 											{{chamado.requisitante.nome}}
 										</span>
 									</a>
-										<span>Há 6 horas</span>	
+										<span>{{chamado.dt_inclusao|tempo_desde }}</span>	
 								</div>
 								
 								<div class="message-user-time">
@@ -143,6 +143,39 @@
 					</div>
 					<!-- WRAPPER LISTAR MENSAGENS DEMAIS MENSAGENS -->
 					{% for mensagem in mensagens %}
+					{% if mensagem.confidencial %}
+						{% if request.user.is_authenticated and request.user.is_superuser %}
+							<div class="first-message-user-wrapper-confidencial">
+								<div class="first-message-user-header">
+									<div class="perfil-image">
+										<img src="{% static 'images/users/atendenteAvatar.png' %}" alt="Avatar padrão" class="img-avatar">
+									</div>
+									<div class="messages-nome-time-wrapper">
+										<div class="messages-nome-time">
+											<div>
+												<span class="message-user-nome">Atendente</span>
+												<span class="message-user-mensagem-confidencial">Mensagem interna</span>
+											</div>
+											<span>{{ mensagem.dt_inclusao|tempo_desde }}</span>
+										</div>
+										<div class="message-user-time">
+											<span>{{ mensagem.dt_inclusao|date:"d/m/y"}} {{ mensagem.dt_inclusao|date:"H:i" }}</span>
+										</div>
+									</div>
+								</div>
+								<div class="first-message-user-content">
+									<span class="messages-chamado-descricao-text">
+										Esta mensagem é confidencial: {{ mensagem.mensagem }}
+									</span>
+									{% if mensagem.anexo %}
+										<button onclick="visualizarAnexo('{{ mensagem.anexo.url }}')" class="my-auto ms-auto btn app-btn-secondary">
+											<i class="fa-solid fa-paperclip me-2"></i>Ver anexo
+										</button>
+									{% endif %}
+								</div>
+							</div>
+						{% endif %}
+					{% else %}
 						<div class="first-message-user-wrapper">
 							<div class="first-message-user-header">
 								<div class="perfil-image">
@@ -159,45 +192,39 @@
 								<div class="messages-nome-time-wrapper">
 									<div class="messages-nome-time">
 										{% if mensagem.autor != 'Atendente' %}
-										<a href="{% url 'chamados:ver-perfil' mensagem.user_inclusao.matricula %}" target="_blank">
-											<span class="message-user-nome">
-												{{mensagem.user_inclusao}}
-											</span>
-										</a>
+											<a href="{% url 'chamados:ver-perfil' mensagem.user_inclusao.matricula %}" target="_blank">
+												<span class="message-user-nome">{{ mensagem.user_inclusao }}</span>
+											</a>
 										{% else %}
-										<a >
-											<span class="message-user-nome">
-												Atendente
-											</span>
-										</a>
+											<a><span class="message-user-nome">Atendente</span></a>
 										{% endif %}
-											<span>Há 6 horas</span>	
+										<span>{{ mensagem.dt_inclusao|tempo_desde }}</span>
 									</div>
-									
 									<div class="message-user-time">
-										<span>{{mensagem.dt_inclusao|date:"d/m/y"}} {% if request.user == mensagem.autor.user or request.user.is_superuser %}{{mensagem.dt_inclusao|date:"H:i"}}{% endif %}</span>
-										
+										<span>{{ mensagem.dt_inclusao|date:"d/m/y" }} {% if request.user == mensagem.autor.user or request.user.is_superuser %}{{ mensagem.dt_inclusao|date:"H:i" }}{% endif %}</span>
 									</div>
 								</div>
-								
 							</div>
 							<div class="first-message-user-content">
-								<span class="messages-chamado-descricao-text">
-									{{mensagem.mensagem}}
-								</span>
-								{% if mensagem.anexo %}<button onclick="visualizarAnexo('{{mensagem.anexo.url}}')" class="my-auto ms-auto btn app-btn-secondary"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</button>{% endif %}
+								<span class="messages-chamado-descricao-text">{{ mensagem.mensagem }}</span>
+								{% if mensagem.anexo %}
+									<button onclick="visualizarAnexo('{{ mensagem.anexo.url }}')" class="my-auto ms-auto btn app-btn-secondary">
+										<i class="fa-solid fa-paperclip me-2"></i>Ver anexo
+									</button>
+								{% endif %}
 							</div>
 						</div>
-						{% endfor %}
-						
+					{% endif %}
+				{% endfor %}
+										
 						<!-- PARTE PARA ENVIAR RESPOSTA -->
-						<div class="messages-options">
+						<div class="messages-options" id="responderButtonWrapper">
 							<button class="responder-button" id="responderButton" onclick="responderMessage()">
 								<i class="fa-solid fa-arrow-turn-up"></i> Responder
 							</button>
 						</div>
-						<!-- voltar style="display: none;" -->
-						<div id="msg" class="send-resposta-wrapper">
+						<!-- voltar -->
+						<div id="msg" class="send-resposta-wrapper" style="display: none;">
 							<form class="w-100" method="POST" enctype="multipart/form-data">
 								{% csrf_token %}
 								
@@ -216,11 +243,13 @@
 										</div>											
 									</div>
 								</div>		
-
+								{% if request.user.is_authenticated and request.user.is_superuser  %}  
 								<div class="form-check form-switch">
 									<input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="0">
+									<input type="hidden" name="confidencial" id="id_confidencial" value="0">
 									<label class="form-check-label" id="switchLabel" for="flexSwitchCheckDefault">Mensagem normal</label>
-								</div>			
+								</div>		
+								{% endif %}	
 								<div class="send-messages-buttons-wrapper">
 									<button onclick="openPopup()" class="button-close-send-messages" type="button"><i class="fa-solid fa-trash-can trash-icon"></i></button>		
 									<button type="submit" class="btn app-btn-primary my-auto">
@@ -587,8 +616,8 @@
 					}
 
 					function responderMessage() {
-						document.getElementById('responderButton').style.display = 'none';
-						document.getElementById('msg').style.display = 'block';
+						document.getElementById('responderButtonWrapper').style.display = 'none';
+						document.getElementById('msg').style.display = 'flex';
 					}
 					function openPopup(){
 						document.getElementById('confirmPopup').style.display='block';
@@ -601,7 +630,7 @@
 					function closeResponderMessage() {
 						document.getElementById('confirmPopup').style.display='none';
 						document.getElementById('popupOverlay').style.display= 'none';
-						document.getElementById('responderButton').style.display = 'inline-block';
+						document.getElementById('responderButtonWrapper').style.display = 'flex';
 						document.getElementById('msg').style.display = 'none';
 					}
 					const switchInput = document.getElementById('flexSwitchCheckDefault');
@@ -616,5 +645,9 @@
 							switchInput.value = '0'; 
 						}
 					});
+					document.getElementById('flexSwitchCheckDefault').addEventListener('change', function() {
+					document.getElementById('id_confidencial').value = this.checked ? "1" : "0";
+				});
+
 	</script>		
 {% endblock %}
