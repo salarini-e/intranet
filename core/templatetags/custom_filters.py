@@ -15,12 +15,12 @@ def tempo_desde(data):
     delta = agora - data
 
     if delta.days > 1:
-        return f"Há {delta.days} dias"
+        return f"há {delta.days} dias"
     elif delta.days == 1:
-        return "Há 1 dia"
+        return "há 1 dia"
     else:
         horas = delta.seconds // 3600
         if horas > 0:
-            return f"Há {horas} horas"
+            return f"há {horas} horas"
         else:
-            return "Há menos de uma hora"
+            return "há menos de uma hora"

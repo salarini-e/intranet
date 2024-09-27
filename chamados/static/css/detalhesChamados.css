@@ -169,6 +169,10 @@
     justify-content: center;
     margin-left: 10px;
 }
+.message-user-haxtime{
+    font-size: 12px;
+    font-style: italic;
+}
 .first-message-user-content{
     padding-left: 3.2rem;
     display: flex;

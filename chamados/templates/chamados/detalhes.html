@@ -45,7 +45,7 @@
 					                        <a href="{% url 'chamados:imprimir' chamado.hash %}" target="_blank" class="btn app-btn-primary"><i class="fa-solid fa-print me-2"></i>Imprimir</a>
 					                    </div>
 										<div class="col-auto">
-					                        <a href="{% url 'chamados:index' %}" class="btn btn-danger" style="color: white;"><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
+					                        <a href="{% url 'chamados:tickets' %}" class="btn btn-danger" style="color: white;"><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
 					                    </div>
 										
 					                </div>
@@ -125,7 +125,7 @@
 											{{chamado.requisitante.nome}}
 										</span>
 									</a>
-										<span>{{chamado.dt_inclusao|tempo_desde }}</span>	
+										<span class="message-user-haxtime">{{chamado.dt_inclusao|tempo_desde }}</span>	
 								</div>
 								
 								<div class="message-user-time">
@@ -156,7 +156,7 @@
 												<span class="message-user-nome">Atendente</span>
 												<span class="message-user-mensagem-confidencial">Mensagem interna</span>
 											</div>
-											<span>{{ mensagem.dt_inclusao|tempo_desde }}</span>
+											<span class="message-user-haxtime">{{ mensagem.dt_inclusao|tempo_desde }}</span>
 										</div>
 										<div class="message-user-time">
 											<span>{{ mensagem.dt_inclusao|date:"d/m/y"}} {{ mensagem.dt_inclusao|date:"H:i" }}</span>
@@ -198,7 +198,7 @@
 										{% else %}
 											<a><span class="message-user-nome">Atendente</span></a>
 										{% endif %}
-										<span>{{ mensagem.dt_inclusao|tempo_desde }}</span>
+										<span class="message-user-haxtime">{{ mensagem.dt_inclusao|tempo_desde }}</span>
 									</div>
 									<div class="message-user-time">
 										<span>{{ mensagem.dt_inclusao|date:"d/m/y" }} {% if request.user == mensagem.autor.user or request.user.is_superuser %}{{ mensagem.dt_inclusao|date:"H:i" }}{% endif %}</span>
@@ -497,7 +497,7 @@
 				</div>
 				{% endif %}
 				{% endif %}
-				<div class="row my-3  mb-5">
+				<!-- <div class="row my-3  mb-5">
 	                <div class="col col-md">
 		                <div class="app-card shadow-sm p-4">
 							<div class="app-card-body">
@@ -547,7 +547,7 @@
 							</div>
 						</div>
 	                </div>
-				</div>
+				</div> -->
 						
 			        
 			        </div>
