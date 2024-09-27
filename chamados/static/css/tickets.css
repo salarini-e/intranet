@@ -124,7 +124,7 @@
 }
 
 .prioridade-media{
-    background-color: yellow;
+    background-color: rgb(231, 231, 17);
 }
 
 .prioridade-alta{
@@ -140,7 +140,7 @@
 }
 
 .status-atendimento {
-    background-color: #b3fce6; /* Medium Orchid */
+    background-color: #4eaa8e; /* Medium Orchid */
 }
 
 .status-pendente {

@@ -58,7 +58,11 @@
 			   
 				<div class="detalhes-contato-wrapper"  onclick="toggleDetalhesContato()">
 					<div class="detalhes-contato-title">
-						<i class="fa-solid fa-info"></i> 
+						{% if chamado.requisitante.avatar %}
+						<img src="{{ chamado.requisitante.avatar.url }}" alt="{{ chamado.requisitante.nome }}" class="img-avatar">
+						{% else %}
+						<img src="{% static 'images/users/avatar.png' %}" alt="Avatar padrão" class="img-avatar">
+						{% endif %}
 						<div class="detalhes-contato-requisitante">
 							<span class="detalhes-contato-title-text"><strong>{{chamado.requisitante.nome}}</strong></span><span class="detalhes-contato-title-text">{{chamado.requisitante.setor.secretaria}}</span>
 						</div>
@@ -94,6 +98,10 @@
 							<span>{{chamado.requisitante.matricula}}</span>
 						</div>
 					</div>
+					<div class="detalhe-contato-menu-endereço">
+						<span><strong>Endereço</strong></span>
+						<span>{{chamado.setor.endereco}} - {{chamado.setor.bairro}}, {{chamado.setor.cep}}</span>
+					</div>
 					<div class="detalhe-contato-ver-perfil">
 						<a href="{% url 'chamados:ver-perfil' chamado.requisitante.matricula %}" class="detalhe-contato-ver-perfil-link" target="_blank">
 							<span>Exibir atividades</span>
@@ -101,9 +109,98 @@
 
 					</div>
 				</div>	
+				<!-- DETALHES CHAMADOS WRAPPER
+				<div class="detalhes-chamados-wrapper" onclick="toggleDetalhesChamado()">
+					<div class="detalhes-chamados-text">
+						<i class="fa-solid fa-info"></i> 
+						<span class="detalhes-chamados-text-text"><strong>Detalhes do chamado</strong></span>
+					</div>
+					<div class="detalhes-chamado-arrows">
+							<a class="detalhes-chamado-arrow-link" onclick="toggleDetalhesChamado()">
+								<i class="fa-solid fa-arrow-down detalhes-chamado-arrow-link-down" id="arrow-down-chamados"></i>
+								<i class="fa-solid fa-arrow-up detalhes-chamado-arrow-link-up" id="arrow-up-chamados" style="display: none;"></i>
+							</a>
+					</div>
+					
+				</div>
+				<div class="detalhes-chamado-arrows-sep" id="detalhes-chamado-arrows-sep"></div>
+				<div id="detalhes-chamado" class="detalhes-chamado">
+					<div class="detalhes-chamado-content-wrapper">
+						<div>
+							<span><strong>Número do chamado</strong></span>
+							<span>#{{chamado.id}}</span>
+						</div>
+					</div>
+				</div> -->
+
 				
 				<!-- WRAPPER INFORMAÇÕES DO CHAMADO -->
 				<div class="content-chamado-messages-wrapper">
+					<div class="content-chamado-informacoes">
+						<div class="content-chamado-informacoes-prioridade-status-wrapper">	
+							<!-- PRIORIDADE -->
+							<div class="content-chamado-informacoes-prioridade">
+								<div class="dropdown prioridade-indicador {{ chamado.get_prioridade_class }}" id="indicadorPrioridade-{{chamado.id}}">
+									{% if request.user.is_superuser or is_atendente %}
+									<a id="selectPrioridade-{{chamado.id}}" class="dropdown-toggle selectPrioridade badge py-0" 
+									   type="button" 
+									   data-bs-toggle="dropdown" 
+									   aria-expanded="false" 
+									   style="text-decoration: none; color: black;"
+									   data-bs-toggle="tooltip" 
+									   data-bs-placement="left" 
+									   title="Prioridade">
+									   <span class="">
+										   {{ chamado.get_prioridade_display }}
+									   </span>
+									</a>
+									<ul class="dropdown-menu">
+										{% for prioridade in chamado.PRIORIDADE_CHOICES %}
+											<li><a class="dropdown-item" href="#" onclick="mudar_prioridade('{{chamado.hash}}','{{prioridade.0}}')">{{prioridade.1}}</a></li>
+										{% endfor %}
+									</ul>
+									{% else %}
+									<span class="badge py-0">
+										{{ chamado.get_prioridade_display }}
+									</span>
+									{% endif %}
+								</div>
+							</div>
+
+							<!-- STATUS -->
+							<div class="content-chamado-informacoes-status">
+								<div class="dropdown status-indicador {{ chamado.get_status_class }}" id="indicadorStatus-{{chamado.id}}">
+									{% if request.user.is_superuser or is_atendente %}
+									<a id="statusSelect-{{chamado.id}}" class="dropdown-toggle badge py-0" 
+									   type="button" 
+									   data-bs-toggle="dropdown" 
+									   aria-expanded="false" 
+									   style="text-decoration: none; color: black;"
+									   data-bs-toggle="tooltip" 
+									   data-bs-placement="left" 
+									   title="Status">
+									   <span class="">
+										   {{ chamado.get_status_display }}
+									   </span>
+									</a>
+									<ul class="dropdown-menu">
+										{% for status in chamado.STATUS_CHOICES %}
+											<li><a class="dropdown-item" href="#" onclick="mudar_status('{{chamado.hash}}','{{status.0}}')">{{status.1}}</a></li>
+										{% endfor %}
+									</ul>
+									{% else %}
+									<span class="badge py-0">
+										{{ chamado.get_status_display }}
+									</span>
+									{% endif %}
+								</div>
+							</div>
+							
+							
+						</div>
+						
+						<span><strong>{{chamado.tipo.nome}}</strong></span>
+					</div>
 					<div class="content-chamado-messages-title">
 						<i class="fa-solid fa-globe"></i>
 						<span class="content-chamado-messages-title-text">{{ chamado.assunto }}</span>
@@ -144,7 +241,7 @@
 					<!-- WRAPPER LISTAR MENSAGENS DEMAIS MENSAGENS -->
 					{% for mensagem in mensagens %}
 					{% if mensagem.confidencial %}
-						{% if request.user.is_authenticated and request.user.is_superuser %}
+						{% if request.user.is_superuser or is_atendente %}
 							<div class="first-message-user-wrapper-confidencial">
 								<div class="first-message-user-header">
 									<div class="perfil-image">
@@ -574,7 +671,8 @@
 				</div>
 				
 				<script src="/static/js/openModal.js"></script>		
-				<script src="/static/js/request.js"></script>		
+				<script src="/static/js/request.js"></script>	
+					
 				<script>
 					function visualizarAnexo(url){
 						document.getElementById('anexo-url').src = url;
@@ -614,7 +712,24 @@
 							detalhesAfter.classList.add('show');   
 						}
 					}
+					function toggleDetalhesChamado(){
+						const arrowDownChamados = document.getElementById('arrow-down-chamados');
+						const arrowUpChamados = document.getElementById('arrow-up-chamados');
+						const detalhesDivChamados = document.getElementById('detalhes-chamado');
+						const detalhesAfterChamados = document.getElementById('detalhes-chamado-arrows-sep');
 
+						if (arrowDownChamados.style.display === 'none') {
+							arrowDownChamados.style.display = 'inline-block'; 
+							arrowUpChamados.style.display = 'none';           
+							detalhesDivChamados.classList.remove('show');   
+							detalhesAfterChamados.classList.remove('show');   
+						} else {
+							arrowDownChamados.style.display = 'none';       
+							arrowUpChamados.style.display = 'inline-block'; 
+							detalhesDivChamados.classList.add('show');  
+							detalhesAfterChamados.classList.add('show');   
+						}
+					}
 					function responderMessage() {
 						document.getElementById('responderButtonWrapper').style.display = 'none';
 						document.getElementById('msg').style.display = 'flex';
@@ -648,6 +763,73 @@
 					document.getElementById('flexSwitchCheckDefault').addEventListener('change', function() {
 					document.getElementById('id_confidencial').value = this.checked ? "1" : "0";
 				});
+
+				function mudar_status_select(id, display_status){
+					let selectStatus = document.getElementById('statusSelect-'+id);
+					selectStatus.innerText = display_status;   
+					let indicadorStatus = document.getElementById('indicadorStatus-'+id);
+					if (display_status == 'Em atendimento'){
+						indicadorStatus.className = 'status-indicador status-atendimento'
+					}else{
+						indicadorStatus.className = 'status-indicador status-'+display_status.toLowerCase();
+					}
+				}
+				function mudar_prioridade_select(id, display_prioridade){
+					let selectPrioridade = document.getElementById('selectPrioridade-'+id);
+					selectPrioridade.innerText = display_prioridade;   
+					let indicadorPrioridade = document.getElementById('indicadorPrioridade-'+id);
+					if (display_prioridade == 'Média'){
+						indicadorPrioridade.className = 'prioridade-indicador prioridade-media'
+					}else{
+						indicadorPrioridade.className = 'prioridade-indicador prioridade-'+display_prioridade.toLowerCase();
+					}    
+					
+					if (display_prioridade == 'Não definida'){
+						indicadorPrioridade.className = 'prioridade-indicador prioridade-nao-definida'
+					}else{
+						indicadorPrioridade.className = 'prioridade-indicador prioridade-'+display_prioridade.toLowerCase();
+					}   
+				}
+				function mudar_status(hash, status){
+					
+					var url = "{% url 'chamados:api_status' %}"; 
+					formData = new FormData();
+					formData.append('hash', hash);
+					formData.append('status', status);
+					formData.append('csrfmiddlewaretoken', '{{csrf_token}}');
+					postRequest(url, formData)
+										.then(response => {
+											if (response.status == 200){
+												mudar_status_select(response.id, response.display_status)
+											}else{
+												alert(response.message +" (" + response.status+")")
+											}                                   
+										})
+										.catch(error => {
+											alert('Erro ao mudar status. Tente novamente mais tarde.')
+											console.error(error)
+										});				
+				}
+				function mudar_prioridade(hash, prioridade){
+					
+					var url = "{% url 'chamados:api_prioridade' %}"; 
+					formData = new FormData();
+					formData.append('hash', hash);
+					formData.append('prioridade', prioridade);
+					formData.append('csrfmiddlewaretoken', '{{csrf_token}}');
+					postRequest(url, formData)
+										.then(response => {
+											if (response.status == 200){
+												mudar_prioridade_select(response.id, response.display_prioridade)
+											}else{
+												alert(response.message +" (" + response.status+")")
+											}                                   
+										})
+										.catch(error => {
+											alert('Erro ao mudar status. Tente novamente mais tarde.')
+											console.error(error)
+										});				
+				}
 
 	</script>		
 {% endblock %}

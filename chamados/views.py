@@ -142,7 +142,8 @@ def detalhes(request, hash):
         'atendente': Atendente.objects.filter(servidor=servidor),   
         'mensagens': Mensagem.objects.filter(chamado=chamado),   
         'prioridades': chamado.PRIORIDADE_CHOICES,
-        'status': chamado.STATUS_CHOICES,         
+        'status': chamado.STATUS_CHOICES,     
+        'is_atendente': Atendente.objects.filter(servidor = servidor, ativo = True).exists()    
     }
     return render(request, 'chamados/detalhes.html', context)
 
@@ -331,7 +332,9 @@ def api_criar_setor(request):
 @login_required
 def api_mudar_status(request):
     servidor = Servidor.objects.filter(user=request.user).last()
-    if not servidor in Atendente.objects.all():
+    if request.user.is_superuser or servidor in Atendente.objects.all():
+        pass
+    else:
         return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
     if request.method == 'POST':
         data = request.POST
@@ -346,7 +349,10 @@ def api_mudar_status(request):
 
 @login_required
 def api_mudar_prioridade(request):
-    if not request.user in Atendente.objects.all():
+    servidor = Servidor.objects.filter(user=request.user).last()
+    if request.user.is_superuser or servidor in Atendente.objects.all():
+        pass
+    else:
         return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
     if request.method == 'POST':
         data = request.POST

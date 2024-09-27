@@ -62,6 +62,7 @@ class Servidor(models.Model):
     user_inclusao=models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', blank=True, null=True, related_name='servidor_user_inclusao')
     ativo  = models.BooleanField(default=True)
 
+    
     def save(self, *args, **kwargs):
         # Verifique se houve uma alteração no avatar
         if self.pk:  # Se o objeto já existe no banco de dados

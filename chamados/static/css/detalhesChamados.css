@@ -1,4 +1,4 @@
-.detalhes-contato-wrapper{
+.detalhes-contato-wrapper, .detalhes-chamados-wrapper{
     display: flex;
     width: 100%;
     background-color: #fff;
@@ -7,12 +7,21 @@
     cursor: pointer;
 
 }
-
-.detalhes-contato-arrows-sep{
+.detalhes-chamados-wrapper{
+    margin-top: 10px;
+}
+.detalhes-chamados-text{
+    display: flex;
+    align-items: center;
+}
+.detalhes-chamados-text-text{
+    margin-left: 10px;
+}
+.detalhes-contato-arrows-sep, .detalhes-chamado-arrows-sep{
     display: none;
     transition: all 0.2s ease-in-out;
 }
-.detalhes-contato-arrows-sep.show{
+.detalhes-contato-arrows-sep.show, .detalhes-chamado-arrows-sep.show{
     display: flex;
     position: relative;
     content: '';
@@ -32,21 +41,21 @@
     margin-left: 10px;
 }
 
-.detalhes-contato-arrows{
+.detalhes-contato-arrows, .detalhes-chamado-arrows{
     display: flex;
     align-items: center;
 }
-.detalhes-contato-arrow-link{
+.detalhes-contato-arrow-link, .detalhes-chamado-arrow-link{
     text-decoration: none;
     cursor: pointer;
 }
-.detalhes-contato-arrow-link-up {
+.detalhes-contato-arrow-link-up, .detalhes-chamado-arrow-link-up {
     display: none;
 }
-.detalhes-contato {
+.detalhes-contato, .detalhes-chamado {
     display: none;
 }
-.detalhes-contato.show {
+.detalhes-contato.show, .detalhes-chamado.show {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -65,6 +74,17 @@
     flex-direction: column;
     justify-content: center;
     margin-right: 30px;
+}
+.detalhe-contato-menu-endereço{
+    display: flex;
+    flex-direction: column;
+    padding: 0 1.7rem 1.7rem 1.7rem;
+}
+
+.detalhes-chamado-content-wrapper{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 1.7rem;
 }
 .detalhe-contato-ver-perfil{
     padding: 0 1.7rem;
@@ -97,6 +117,13 @@
     display: flex;
     flex-direction: column;
 }
+.content-chamado-informacoes{
+    display: flex;
+    padding: 1.75rem 1.75rem 0 1.75rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .content-chamado-messages-title{
     display: flex;
     align-items: center;
@@ -379,8 +406,78 @@
     background-color: #b35c59;
     color: white;   
 }
+
+.prioridade-indicador, .status-indicador{
+    border-radius: 5px;
+    padding: .25rem;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+.dropdown-toggle.selectPrioridade{
+    border-radius: .375rem !important;
+    color: white !important;
+}
+
+.drop-down-prioridade-atual{
+    font-weight: 700 !important;
+    font-size: 0.75em !important;
+}
+.prioridade-nao-definida{
+    background-color: rgb(114, 7, 78);
+}
+
+.prioridade-baixa{
+    background-color: green;
+}
+
+.prioridade-media{
+    background-color: rgb(231, 231, 17);
+}
+
+.prioridade-alta{
+    background-color: red;
+}
+
+.prioridade-desconhecida{
+    background-color: lightgray;  /* Cor para desconhecido */
+}
+.content-chamado-informacoes-prioridade-status-wrapper{
+    display: flex;
+    align-items: center;
+}
+
+.status-aberto {
+    background-color: #6495ED; /* Cornflower Blue */
+}
+
+.status-atendimento {
+    background-color: #4eaa8e; /* Medium Orchid */
+}
+
+.status-pendente {
+    background-color: #FF8C00; /* Dark Orange */
+}
+
+.status-fechado {
+    background-color: #464646; /* Dim Gray */
+}
+.status-finalizado{
+    background-color: black; 
+}
 @media(max-width:768px){
     .detalhe-contato-menu-wrapper{
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 1rem;
+    }
+    .content-chamado-informacoes{
+        padding: 1rem;
+    }
+    .detalhe-contato-menu-endereço{
+        padding: 0 1rem 1rem 1rem;
+    }
+    .detalhes-chamado-content-wrapper{
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
         padding: 1rem;
@@ -431,6 +528,10 @@
     .detalhe-contato-menu-wrapper{
         grid-template-columns: repeat(1, 1fr);
     }
+    .detalhes-chamado-content-wrapper{
+        grid-template-columns: repeat(1, 1fr);
+
+    }   
 }
 @media(max-width:363px){
     .message-user-mensagem-confidencial{
