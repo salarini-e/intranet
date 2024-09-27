@@ -55,7 +55,12 @@ def zerar_filtros(request):
 def criarChamado(request, sigla):
     if request.user.is_superuser:
         template_name = 'chamados/chamado-criar-ti.html'
-        initial_data = {}
+        servidor = Servidor.objects.get(user=request.user)
+        tipo = TipoChamado.objects.get(sigla=sigla)
+        initial_data = {
+            'tipo': tipo,  
+            'user_inclusao': servidor.id
+        }
     else:
         template_name = 'chamados/chamado-criar-servidor.html'
         servidor = Servidor.objects.get(user=request.user)
