@@ -197,36 +197,52 @@
 							</button>
 						</div>
 						<!-- voltar style="display: none;" -->
-						<div id="msg" class="send-resposta-wrapper" >
+						<div id="msg" class="send-resposta-wrapper">
 							<form class="w-100" method="POST" enctype="multipart/form-data">
 								{% csrf_token %}
 								
 								<div class="form-wrapper">
 									<div class="text-input-mensagem">
 										<span>Nova Mensagem</span>
-										<textarea name="mensagem" cols="40" rows="10" class="form-control mb-3" required id="id_mensagem"></textarea>
+										<textarea name="mensagem" class="send-message-chamado-textarea" required id="id_mensagem"></textarea>
 
 									</div>
 									<div class="div-anexo">	
-										<span>Anexo</span>												
-										<input type="file" name="anexo" class="form-control m-auto" id="id_anexo">
-										<input type="hidden" name="chamado" id="id_chamado" value="{{chamado.id}}">
-										<input type="hidden" name="user_inclusao" id="id_user_inclusao" value='{{servidor.id}}'>
+										<span>Anexo</span>	
+										<div class="div-anexo-input">
+											<input type="file" name="anexo" class="form-control m-auto input-anexo" id="id_anexo">
+											<input type="hidden" name="chamado" id="id_chamado" value="{{chamado.id}}">
+											<input type="hidden" name="user_inclusao" id="id_user_inclusao" value='{{servidor.id}}'>
+										</div>											
 									</div>
-								</div>			
+								</div>		
+
 								<div class="form-check form-switch">
-									<input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-									<label class="form-check-label" for="flexSwitchCheckDefault">Mensagem normal</label>
-									<label class="form-check-label" for="flexSwitchCheckDefault">Mensagem Interna</label>
-								</div>				
-								<button onclick="closeResponderMessage()">X</button>		
-								<button type="submit" class="btn app-btn-primary my-auto">
-									<i class="fa-solid fa-comment me-2"></i> Enviar mensagem
-								</button>
+									<input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="0">
+									<label class="form-check-label" id="switchLabel" for="flexSwitchCheckDefault">Mensagem normal</label>
+								</div>			
+								<div class="send-messages-buttons-wrapper">
+									<button onclick="openPopup()" class="button-close-send-messages" type="button"><i class="fa-solid fa-trash-can trash-icon"></i></button>		
+									<button type="submit" class="btn app-btn-primary my-auto">
+										<i class="fa-solid fa-comment me-2"></i> Enviar mensagem
+									</button>
+								</div>
 							</form>
 						</div>
 						
-						
+						<div class="popup-overlay" id="popupOverlay" style="display: none;" onclick="closePopup()"></div>
+						<div id="confirmPopup" class="confirm-popup" style="display: none;">
+							<div class="popup-content">
+								<div class="popup-text">
+									<span class="popup-text-title">Descartar rascunho</span>
+									<span class="popup-text-subtitle">Seu rascunho será descartado. Tem certeza?</span>
+								</div>
+								<div class="popup-buttons-wrapper">
+									<button onclick="closePopup()" class="popup-button no">Não</button>
+									<button onclick="closeResponderMessage()" class="popup-button yes">Sim</button>
+								</div>
+							</div>
+						</div>
 						
 				</div>
 				{% if messages %}
@@ -574,9 +590,31 @@
 						document.getElementById('responderButton').style.display = 'none';
 						document.getElementById('msg').style.display = 'block';
 					}
+					function openPopup(){
+						document.getElementById('confirmPopup').style.display='block';
+						document.getElementById('popupOverlay').style.display= 'block';
+					}
+					function closePopup(){
+						document.getElementById('confirmPopup').style.display='none';
+						document.getElementById('popupOverlay').style.display= 'none';
+					}
 					function closeResponderMessage() {
+						document.getElementById('confirmPopup').style.display='none';
+						document.getElementById('popupOverlay').style.display= 'none';
 						document.getElementById('responderButton').style.display = 'inline-block';
 						document.getElementById('msg').style.display = 'none';
 					}
+					const switchInput = document.getElementById('flexSwitchCheckDefault');
+					const switchLabel = document.getElementById('switchLabel');
+
+					switchInput.addEventListener('change', function() {
+						if (switchInput.checked) {
+							switchLabel.textContent = 'Mensagem Interna';
+							switchInput.value = '1';
+						} else {
+							switchLabel.textContent = 'Mensagem normal';
+							switchInput.value = '0'; 
+						}
+					});
 	</script>		
 {% endblock %}
