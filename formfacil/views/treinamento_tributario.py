@@ -54,7 +54,7 @@ def cadastroTreinamentoTributarioContadores(request):
             'mensagem': (
                 "Data: 11/10 (sexta-feira) <br>"
                 "Horario : das 10h às 12h. <br>"
-                "Local: Auditório da Educação"
+                "Local: A definir"
             )
         }
         return render(request, 'formfacil/formfacil_form.html', context)
@@ -78,7 +78,7 @@ def cadastroTreinamentoTributarioContadores(request):
             'mensagem': (
                 "Data: 11/10 (sexta-feira) <br>"
                 "Horario : das 10h às 12h. <br>"
-                "Local: Auditório da Educação"
+                "Local: A definir"
             )
         }
     return render(request, 'formfacil/formfacil_form.html', context)
