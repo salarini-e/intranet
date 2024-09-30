@@ -1,0 +1,99 @@
+.sidepanel-wrapper{
+    display: flex;
+    flex-direction: column;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 64px;
+    background-color: hsl(0, 0%, 100%);
+    z-index: 900;
+    line-height: 20px;
+    height: 100%;
+}
+.app-header-inner-wrapper-chamados{
+    margin-left: 40px;
+}
+@media(max-width: 1199.98px) {
+    .app-header-inner-wrapper-chamados{
+        margin-left: 0px;
+    }
+
+}
+.app-logo-chamados-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 53px;
+}
+.app-logo-chamados-image{
+    display: block;
+    width: 26px;
+}
+.nav-item.sidebar-chamados-item{
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 5px !important; 
+    width: 100% !important;
+    height: 45px !important;
+    transition: all .4s ease-in-out !important;
+    cursor: pointer !important;
+}
+.sidebar-chamados-item-link{
+    text-decoration: none;
+}
+.nav-item.sidebar-chamados-item:hover{
+    background-color: #d6d6d6 !important;
+}
+.icon-sidebar-chamados{
+    font-size: 20px;
+    color: black;
+}
+
+.submenu {
+    display: none; /* Oculto por padrão */
+    position: absolute;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 2px;
+    border-radius: 8px;
+    z-index: 1000;
+    width: 150px;
+}
+
+.sidebar-chamados-item {
+    position: relative;
+}
+
+/* Exibir submenu fora da nav (ajustar posição conforme necessário) */
+.sidebar-chamados-item:hover .submenu {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    top: 0;
+    left: 100%; /* Colocar o submenu à direita do item pai */
+}
+.submenu-links{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8px;
+}
+
+.submenu-item-chamados{
+    text-decoration: none;
+    font-size:16px;
+    color: black;
+    transition: all .4s ease-in-out;
+    height: 30px;
+    border-radius: 2px;
+    padding-left: 5px;
+    display: flex;
+    align-items: center;
+    
+}
+.submenu-item-chamados:hover{
+    background-color: #c9c9c9;
+    color: black;
+}
