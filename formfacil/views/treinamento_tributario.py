@@ -45,7 +45,20 @@ def cadastroTreinamentoTributarioEmissoresTaxas(request):
     return render(request, 'formfacil/formfacil_form.html', context)
 
 def cadastroTreinamentoTributarioContadores(request):
-    if request.method == 'POST':
+    qntd = Cadastro_Aulas_Treinamento_Tributario_Contadores.objects.all().count()
+    if qntd >= 80:
+        context = {
+            'form': 'Excedeu o limite de inscrições para este treinamento.',
+            'titulo': 'TREINAMENTO TRIBUTÁRIO - CONTADORES',    
+            'subtitulo': 'Subsecretaria de Tecnologia da Informação e Comunicação',
+            'mensagem': (
+                "Data: 11/10 (sexta-feira) <br>"
+                "Horario : das 10h às 12h. <br>"
+                "Local: Auditório da Educação"
+            )
+        }
+        return render(request, 'formfacil/formfacil_form.html', context)
+    if request.method == 'POST':       
         form = CadastroAulasContadoresForm(request.POST)
         if form.is_valid():
             form.save()
@@ -65,7 +78,7 @@ def cadastroTreinamentoTributarioContadores(request):
             'mensagem': (
                 "Data: 11/10 (sexta-feira) <br>"
                 "Horario : das 10h às 12h. <br>"
-                "Local: Sala de treinamento da Ciência e Tecnologia"
+                "Local: Auditório da Educação"
             )
         }
     return render(request, 'formfacil/formfacil_form.html', context)
