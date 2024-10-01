@@ -8,6 +8,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
 from instituicoes.models import Servidor
+from .models import Chamado
 
 class Email_Chamado:
     def __init__(self, chamado):
@@ -205,3 +206,97 @@ def verificar_chamados_atrasados():
     
     # Retorna True se houver algum chamado atrasado, caso contrário, False
     return chamados_atrasados_data_agendada.exists(), chamados_atrasados_trinta_dias.exists()
+
+def carregar_novos_filtros(request):
+    print(request.POST)
+    agentes = request.POST['agentes']
+    #     status = request.POST['status']
+    #     tiposChamados = request.POST['tiposChamados']
+    #     prioridade = request.POST['prioridade']
+    #     criadoEm = request.POST['criadoEm']
+    #     fechadoEm = request.POST['fechadoEm']
+    #     resolvidoEm = request.POST['resolvidoEm']
+    #     venceEm = request.POST['venceEm']
+    #     # print("Agentes", agentes)
+    agentesLista = agentes.split(';')
+    #     statusLista = status.split(';')
+    #     tiposChamadosLista = tiposChamados.split(';')
+    #     prioridadeLista = prioridade.split(';')
+    agentesLista.pop()
+    agentes = []
+    request.session['agentes']=None
+    for id_agente in agentesLista:
+        
+        agente = Atendente.objects.get(id=id_agente)
+        agentes.append({'id': agente.id, 'nome': agente.nome_servidor})
+    #     statusLista.pop()
+    #     tiposChamadosLista.pop()
+    #     prioridadeLista.pop()
+    #     # print("Lista Agentes", agentesLista)
+        request.session['agentes'] = agentes
+    #     request.session['status'] = statusLista
+    #     request.session['tiposChamados'] = tiposChamadosLista
+    #     request.session['prioridade'] = prioridadeLista
+    #     request.session['criadoEm'] = criadoEm
+    #     request.session['fechadoEm'] = fechadoEm
+    #     request.session['resolvidoEm'] = resolvidoEm
+    #     request.session['venceEm'] = venceEm
+    # else:
+    #     try:
+    #         agentes = request.session.get('agentes', '')
+    #         status = request.session.get('status', '')
+    #         tiposChamados = request.session.get('tiposChamados', '')
+    #         prioridade =  request.session.get('prioridade', '')
+    #         criadoEm =  request.session.get('criadoEm', '')
+    #         fechadoEm = request.session.get('fechadoEm', '')
+    #         resolvidoEm = request.session.get('resolvidoEm', '')
+    #         venceEm = request.session.get('venceEm', '')
+    #     except Exception as E:
+    #         print(E)
+    #         pass
+
+    pass
+
+
+def make_query_chamados(request):
+
+    sql = "SELECT * FROM chamados_chamado WHERE hash!=''"
+    str_id_agentes = ''
+    print(request.session['agentes']    )
+    for agente in request.session['agentes']:
+        print(agente)
+        str_id_agentes += str(agente['id'])+','
+    
+    if  'agentes' in request.session:
+        sql += f' AND atendente_id IN ({str_id_agentes[:-1]})'
+    
+    sql+= ' ORDER BY dt_inclusao DESC'
+    return sql 
+ 
+from django.db import connection, models
+def filtrar_chamados(request):
+   
+    if request.user.is_superuser:
+        
+        sql = make_query_chamados(request)
+        chamados = Chamado.objects.all().order_by('-dt_inclusao')
+    else:
+        # Se não for superusuário, lista apenas os chamados do requisitante
+        chamados = Chamado.objects.filter(user_inclusao__user=request.user).order_by('-dt_inclusao')
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        results = cursor.fetchall()
+
+        queryset = []
+        for row in results:
+            print(row, '\n')
+            data=[
+                # 'id': row[0],
+            ]
+            # chamado = Chamado(**data)
+            # queryset.append(chamado)
+            # queryset = sorted(queryset, key=lambda x: (x.dt_alteracao if x.dt_alteracao else x.dt_solicitacao), reverse=True)
+    
+
+    return chamados

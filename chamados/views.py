@@ -405,7 +405,7 @@ def agendar_atendimento(request, hash):
     return render(request, 'chamados/generic_form.html', context)
 
 
-
+from .functions import carregar_novos_filtros, filtrar_chamados
 @login_required
 def tickets(request):
     # Se o usuário for superusuário, lista todos os chamados
@@ -415,6 +415,9 @@ def tickets(request):
         # Se não for superusuário, lista apenas os chamados do requisitante
         chamados = Chamado.objects.filter(user_inclusao__user=request.user).order_by('-dt_inclusao')
 
+    if request.method == 'POST':
+      carregar_novos_filtros(request)
+    chamados = filtrar_chamados(request)
     secretarias = Secretaria.objects.all()
     atendentes = Atendente.objects.all()
     tipos_chamados = TipoChamado.objects.all()

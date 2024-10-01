@@ -138,6 +138,7 @@
                 <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Filtros</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" onclick="hiddenMenuFilters()"></button>
             </div>
+            <!-- FILTRO -->
             <div class="offcanvas-body">
                 <form method="POST" class="row" id="filter-form">
                     <div class="col">
@@ -145,10 +146,18 @@
                         <div class="container mt-3" id="container-agentes">
                             <span class="filter-title-itens">Agentes incluem</span>
                             <div class="multi-select-input form-select" id="multiSelectInputAgentes">
+                                {% if request.session.agentes %}
+                                {% for agente in  request.session.agentes %}
+                                <div class="selected-option" data-value="{{agente.id}}">{{agente.nome}} <button onclick="removeOption('{{agente.id}}', 'multiSelectInputAgentes')">×</button></div>
+                                {% endfor %}
+                                {% endif %}
+                                <input type="hidden" name="agentes" id="id_agentes" {% if request.session.agentes %}value='{% for agente in  request.session.agentes %}{{agente.id}};{%endfor%}'{% endif %}>
                                 <select id="agentesSelect" class="select-input form-select" aria-label="Select Agentes">
                                     <option value="" class="options-filter"></option>
                                     {% for atendente in atendentes %}
-                                        <option value="{{atendente.id}}" class="options-filter">{{atendente.nome_servidor}}</option>
+                                    <option value="{{ atendente.id }}" class="options-filter" {% if atendente.id|stringformat:"s" in agentes_selecionados %}selected{% endif %}>
+                                        {{ atendente.nome_servidor }}
+                                    </option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -156,6 +165,7 @@
                         <div class="container mt-3" id="container-status">
                             <span class="filter-title-itens">Status incluem</span>
                             <div class="multi-select-input form-select" id="multiSelectInputStatus">
+                                <input type="hidden" name="status" id="id_status">
                                 <select id="statusSelect" class="select-input form-select" aria-label="Select Status">
                                     <option value="" class="options-filter"></option>
                                     {% for status in chamados.0.STATUS_CHOICES %}
@@ -168,6 +178,7 @@
                         <div class="container mt-3" id="container-grupos">
                             <span class="filter-title-itens">Grupos incluem</span>
                             <div class="multi-select-input form-select" id="multiSelectInputTiposChamados">
+                                <input type="hidden" name="tiposChamados" id="id_chamados">
                                 <select id="tiposChamadosSelect" class="select-input form-select" aria-label="Select Tipo Chamado">
                                     <option value="" class="options-filter"></option>
                                     {% for tipochamado in tipos_chamados %}
@@ -179,6 +190,8 @@
                         <div class="container mt-3" id="container-prioridades">
                             <span class="filter-title-itens">Prioridades incluem</span>
                             <div class="multi-select-input form-select" id="multiSelectInputPrioridade">
+                              
+                                <input type="hidden" name="prioridade" id="id_prioridade">
                                 <select id="PrioridadeSelect" class="select-input form-select" aria-label="Select Tipo Chamado">
                                     <option value="" class="options-filter"></option>
                                     {% for prioridade in chamados.0.PRIORIDADE_CHOICES %}
@@ -193,7 +206,7 @@
                         <div class="container mt-3">
                             <span class="filter-title-itens">Criado</span>
                             <div class="multi-select-input" id="multiSelectInputCriado">
-                                <select id="CriadoSelect" class="select-input form-select" aria-label="Select Tipo Chamado">
+                                <select id="CriadoSelect" name="criadoEm" class="select-input form-select" aria-label="Select Tipo Chamado">
                                     <option value="" class="options-filter">Qualquer hora</option>
                                     <option value="5min" class="options-filter">Nos últimos 5 minutos</option>
                                     <option value="15min" class="options-filter">Nos últimos 15 minutos</option>
@@ -216,7 +229,7 @@
                         <div class="container mt-3">
                             <span class="filter-title-itens">Fechado em</span>
                             <div class="multi-select-input" id="multiSelectInputFechado">
-                                <select id="FechadoSelect" class="select-input form-select" aria-label="Select Tipo Chamado">
+                                <select id="FechadoSelect" name="fechadoEm" class="select-input form-select" aria-label="Select Tipo Chamado">
                                     <option value="" class="options-filter">Qualquer hora</option>
                                     <option value="5min" class="options-filter">Nos últimos 5 minutos</option>
                                     <option value="15min" class="options-filter">Nos últimos 15 minutos</option>
@@ -239,7 +252,7 @@
                         <div class="container mt-3">
                             <span class="filter-title-itens">Resolvido em</span>
                             <div class="multi-select-input" id="multiSelectInputResolvido">
-                                <select id="ResolvidoSelect" class="select-input form-select" aria-label="Select Tipo Chamado">
+                                <select id="ResolvidoSelect" name="resolvidoEm" class="select-input form-select" aria-label="Select Tipo Chamado">
                                     <option value="" class="options-filter">Qualquer hora</option>
                                     <option value="5min" class="options-filter">Nos últimos 5 minutos</option>
                                     <option value="15min" class="options-filter">Nos últimos 15 minutos</option>
@@ -262,7 +275,7 @@
                         <div class="container mt-3">
                             <span class="filter-title-itens">Resolução vence em</span>
                             <div class="multi-select-input" id="multiSelectInputVence">
-                                <select id="VenceSelect" class="select-input form-select" aria-label="Select Tipo Chamado">
+                                <select id="VenceSelect" name="venceEm" class="select-input form-select" aria-label="Select Tipo Chamado">
                                     <option value="" class="options-filter">Qualquer hora</option>
                                     <option value="5min" class="options-filter">Nos últimos 5 minutos</option>
                                     <option value="15min" class="options-filter">Nos últimos 15 minutos</option>
@@ -283,10 +296,10 @@
                             </div>
                         </div> 
                             <div class="container">
-                                <button class="filter-button btn app-btn-secondary" onclick="saveOptionsFilter()" type="submit">Aplicar</button> 
+                                <button class="filter-button btn app-btn-secondary"  type="submit">Aplicar</button> 
                             </div>
                         </div>
-                        </form>
+                        
                     </div>
                     </div>
                 </form>
@@ -313,14 +326,16 @@
 
 
     // Função para adicionar a opção selecionada
-    function addSelectedOption(selectId, containerId) {
+    function addSelectedOption(selectId, containerId, hiddenInputId) {
         const select = document.getElementById(selectId);
         const container = document.getElementById(containerId);
-
+        const hiddenInput = document.getElementById(hiddenInputId);
+        
         select.addEventListener('change', function() {
             const selectedValue = select.value;
             const selectedText = select.options[select.selectedIndex].text;
-            const selectedId = select.options[select.selectedIndex].getAttribute('data-id'); // Supondo que o ID seja um atributo data-id
+            const selectedId = select.options[select.selectedIndex].getAttribute('data-id'); 
+
 
             if (!selectedValue) return; // Ignore if no value is selected
 
@@ -329,7 +344,8 @@
                 const selectedOptionElement = document.createElement('div');
                 selectedOptionElement.className = 'selected-option';
                 selectedOptionElement.setAttribute('data-value', selectedValue);
-                selectedOptionElement.setAttribute('data-id', selectedId); // Adiciona o atributo data-id
+                hiddenInput.value += select.value + ';'
+                selectedOptionElement.setAttribute('data-id', selectedId);
                 selectedOptionElement.innerHTML = `${selectedText} <button onclick="removeOption('${selectedValue}', '${containerId}')">&times;</button>`;
 
                 container.insertBefore(selectedOptionElement, select);
@@ -344,11 +360,18 @@
         function removeOption(value, containerId) {
             const container = document.getElementById(containerId);
             const optionElement = container.querySelector(`[data-value="${value}"]`);
+            let hiddenInputRemove = document.getElementById('id_agentes');
+            valores = hiddenInputRemove.value
+            console.log(valores)
+            valores = valores.replace(value+';', '')
+            console.log(valores)
             if (optionElement) {
                 container.removeChild(optionElement);
+                hiddenInputRemove.value = valores
             }
+            // hiddenInputRemove.value = ''
         }
-
+        
         // Função para obter todos os valores e IDs das opções selecionadas
         function getSelectedOptions(containerId) {
             const container = document.getElementById(containerId);
@@ -364,12 +387,10 @@
         }
 
     // Inicialize as funções para os selects
-    addSelectedOption('agentesSelect', 'multiSelectInputAgentes');
-    addSelectedOption('statusSelect', 'multiSelectInputStatus');
-    addSelectedOption('tiposChamadosSelect', 'multiSelectInputTiposChamados');
-    addSelectedOption('PrioridadeSelect', 'multiSelectInputPrioridade')
-
-
+    addSelectedOption('agentesSelect', 'multiSelectInputAgentes', 'id_agentes');
+    addSelectedOption('statusSelect', 'multiSelectInputStatus','id_status');
+    addSelectedOption('tiposChamadosSelect', 'multiSelectInputTiposChamados', 'id_chamados');
+    addSelectedOption('PrioridadeSelect', 'multiSelectInputPrioridade', 'id_prioridade')
 
     function hiddenMenuFilters() {
         var button = document.getElementById('mButtonFilters');
@@ -476,7 +497,6 @@
 							});				
     }
     function mudar_prioridade(hash, prioridade){
-        
         var url = "{% url 'chamados:api_prioridade' %}"; 
         formData = new FormData();
         formData.append('hash', hash);
