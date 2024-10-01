@@ -8,7 +8,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
 from instituicoes.models import Servidor
-from .models import Chamado
+from .models import Chamado, TipoChamado
 
 class Email_Chamado:
     def __init__(self, chamado):
@@ -210,32 +210,55 @@ def verificar_chamados_atrasados():
 def carregar_novos_filtros(request):
     print(request.POST)
     agentes = request.POST['agentes']
-    #     status = request.POST['status']
-    #     tiposChamados = request.POST['tiposChamados']
-    #     prioridade = request.POST['prioridade']
+    status = request.POST['status']
+    tiposChamados = request.POST['tiposChamados']
+    prioridade = request.POST['prioridade']
     #     criadoEm = request.POST['criadoEm']
     #     fechadoEm = request.POST['fechadoEm']
     #     resolvidoEm = request.POST['resolvidoEm']
     #     venceEm = request.POST['venceEm']
     #     # print("Agentes", agentes)
     agentesLista = agentes.split(';')
-    #     statusLista = status.split(';')
-    #     tiposChamadosLista = tiposChamados.split(';')
-    #     prioridadeLista = prioridade.split(';')
+    statusLista = status.split(';')
+    tiposChamadosLista = tiposChamados.split(';')
+    prioridadeLista = prioridade.split(';')
     agentesLista.pop()
+    statusLista.pop()
+    tiposChamadosLista.pop()
+    prioridadeLista.pop()
+
     agentes = []
+    status =[]
+    tiposChamados = []
+    prioridades = []
+
     request.session['agentes']=None
     for id_agente in agentesLista:
-        
         agente = Atendente.objects.get(id=id_agente)
         agentes.append({'id': agente.id, 'nome': agente.nome_servidor})
-    #     statusLista.pop()
-    #     tiposChamadosLista.pop()
-    #     prioridadeLista.pop()
-    #     # print("Lista Agentes", agentesLista)
-        request.session['agentes'] = agentes
-    #     request.session['status'] = statusLista
-    #     request.session['tiposChamados'] = tiposChamadosLista
+    
+    request.session['status']=None
+    status_choices = dict(Chamado.STATUS_CHOICES)
+    for id_status in statusLista:
+        if id_status in status_choices:
+            status.append({'id': id_status, 'nome': status_choices[id_status]})
+   
+    request.session['tiposChamados'] = None
+    for id_tipos_chamados in tiposChamadosLista:
+        tipoChamado = TipoChamado.objects.get(id=id_tipos_chamados)
+        tiposChamados.append({'id': tipoChamado.id, 'nome': tipoChamado.nome})
+   
+    request.session['prioridade'] = None
+    prioridades_choices = dict(Chamado.PRIORIDADE_CHOICES)
+    for id_prioridade in prioridadeLista:
+        if id_prioridade in prioridades_choices:
+            prioridades.append({'id': id_prioridade, 'nome': prioridades_choices[id_prioridade]})
+
+    request.session['agentes'] = agentes
+    request.session['status'] = status
+    request.session['tiposChamados'] = tiposChamados
+    request.session['prioridade'] = prioridades
+    print("Prioridades: ", prioridades)
     #     request.session['prioridade'] = prioridadeLista
     #     request.session['criadoEm'] = criadoEm
     #     request.session['fechadoEm'] = fechadoEm
@@ -259,44 +282,95 @@ def carregar_novos_filtros(request):
 
 
 def make_query_chamados(request):
-
     sql = "SELECT * FROM chamados_chamado WHERE hash!=''"
-    str_id_agentes = ''
-    print(request.session['agentes']    )
-    for agente in request.session['agentes']:
-        print(agente)
-        str_id_agentes += str(agente['id'])+','
-    
-    if  'agentes' in request.session:
-        sql += f' AND atendente_id IN ({str_id_agentes[:-1]})'
-    
-    sql+= ' ORDER BY dt_inclusao DESC'
-    return sql 
+    # CONCATENAR CASO TENHA AGENTE SELECIONADO
+    if 'agentes' in request.session and request.session['agentes'] is not None:
+        str_id_agentes = ''
+        for agente in request.session['agentes']:
+            str_id_agentes += str(agente['id']) + ','
+
+        if str_id_agentes:
+            sql += f" AND profissional_designado_id IN ({str_id_agentes[:-1]})"
+
+    # CONCATENAR CASO TENHA STATUS SELECIONADO
+    if 'status' in request.session and request.session['status'] is not None:
+        str_id_status = ''
+        for status_item in request.session['status']:
+            str_id_status += str(status_item['id']) + ','
+
+        if str_id_status:
+            sql += f" AND status IN ({str_id_status[:-1]})"
+
+    # CONCATENAR CASO TENHA TIPO DO CHAMADO SELECIONADO
+    if 'tiposChamados' in request.session and request.session['tiposChamados'] is not None:
+        str_id_tiposChamados = ''
+        for tipoChamado in request.session['tiposChamados']:
+            str_id_tiposChamados += str(tipoChamado['id']) + ','
+
+        if str_id_tiposChamados:
+            sql += f" AND tipo_id IN ({str_id_tiposChamados[:-1]})"
+
+    # CONCATENAR CASO TENHA PRIORIDADE SELECIONADA
+    if 'prioridade' in request.session and request.session['prioridade'] is not None:
+        str_id_prioridade = ''
+        
+        for prioridade_item in request.session['prioridade']:
+            if prioridade_item['id'] == '-':
+                str_id_prioridade += "'"+str(prioridade_item['id']) + "',"
+            else:
+                str_id_prioridade += str(prioridade_item['id']) + ','
+
+        if str_id_prioridade:
+            sql += f" AND prioridade IN ({str_id_prioridade[:-1]})"
+
+    print('SQL', sql)
+    sql += " ORDER BY dt_inclusao DESC"
+    return sql
  
 from django.db import connection, models
 def filtrar_chamados(request):
-   
     if request.user.is_superuser:
-        
         sql = make_query_chamados(request)
-        chamados = Chamado.objects.all().order_by('-dt_inclusao')
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            results = cursor.fetchall()
+
+            queryset = []
+            for row in results:
+                data = {
+                    'id': row[0],
+                    'telefone': row[1],
+                    'assunto': row[2],
+                    'prioridade': row[3],
+                    'status': row[4],
+                    'descricao': row[5],
+                    'dt_inclusao': row[6],
+                    'dt_atualizacao': row[7],
+                    'dt_execucao': row[8],
+                    'dt_fechamento': row[9],
+                    'n_protocolo': row[10],
+                    'anexo': row[11],
+                    'hash': row[12],
+                    'atendente_id': row[13],
+                    'profissional_designado_id': row[14],
+                    'requisitante_id': row[15],
+                    'setor_id': row[16],
+                    'user_atualizacao_id': row[17],
+                    'user_inclusao_id': row[18],
+                    'tipo_id': row[19],
+                    'dt_inicio_execucao': row[20],
+                    'dt_agendamento': row[21],
+                    'endereco': row[22]
+                }
+                chamado = Chamado(**data)
+                queryset.append(chamado)
+            queryset = sorted(queryset, key=lambda x: (x.dt_atualizacao if x.dt_atualizacao else x.dt_inclusao), reverse=True)
+            print("chamado:", queryset, '\n')
+        
+        return queryset  
+
     else:
-        # Se não for superusuário, lista apenas os chamados do requisitante
-        chamados = Chamado.objects.filter(user_inclusao__user=request.user).order_by('-dt_inclusao')
+        queryset = Chamado.objects.filter(user_inclusao__user=request.user).order_by('-dt_inclusao')
 
-    with connection.cursor() as cursor:
-        cursor.execute(sql)
-        results = cursor.fetchall()
-
-        queryset = []
-        for row in results:
-            print(row, '\n')
-            data=[
-                # 'id': row[0],
-            ]
-            # chamado = Chamado(**data)
-            # queryset.append(chamado)
-            # queryset = sorted(queryset, key=lambda x: (x.dt_alteracao if x.dt_alteracao else x.dt_solicitacao), reverse=True)
-    
-
-    return chamados
+    return queryset

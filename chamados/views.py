@@ -408,12 +408,6 @@ def agendar_atendimento(request, hash):
 from .functions import carregar_novos_filtros, filtrar_chamados
 @login_required
 def tickets(request):
-    # Se o usuário for superusuário, lista todos os chamados
-    if request.user.is_superuser:
-        chamados = Chamado.objects.all().order_by('-dt_inclusao')
-    else:
-        # Se não for superusuário, lista apenas os chamados do requisitante
-        chamados = Chamado.objects.filter(user_inclusao__user=request.user).order_by('-dt_inclusao')
 
     if request.method == 'POST':
       carregar_novos_filtros(request)

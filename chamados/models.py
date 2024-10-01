@@ -65,7 +65,7 @@ class PeriodoPreferencial(models.Model):
 
 class Chamado(models.Model):
     PRIORIDADE_CHOICES =(
-        ('', 'Não definida'),
+        ('-', 'Não definida'),
         ('0', 'Baixa'),
         ('1', 'Média'),
         ('2', 'Alta')        
@@ -158,7 +158,7 @@ class Chamado(models.Model):
 
     def get_prioridade_class(self):
         prioridade_classes = {
-            '': 'prioridade-nao-definida', 
+            '-': 'prioridade-nao-definida', 
             '0': 'prioridade-baixa',
             '1': 'prioridade-media',
             '2': 'prioridade-alta',
@@ -177,6 +177,11 @@ class Chamado(models.Model):
         
     def is_novo(self):
         dt_atual = timezone.now()
+        
+        # Certifique-se de que self.dt_inclusao também tem informação de fuso horário
+        if timezone.is_naive(self.dt_inclusao):
+            self.dt_inclusao = timezone.make_aware(self.dt_inclusao)
+
         hora = timedelta(hours=1)
         valor = dt_atual - self.dt_inclusao <= hora
         return valor

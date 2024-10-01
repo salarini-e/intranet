@@ -143,16 +143,17 @@
                 <form method="POST" class="row" id="filter-form">
                     <div class="col">
                         {% csrf_token %}	
+                        <!-- AGENTES -->
                         <div class="container mt-3" id="container-agentes">
                             <span class="filter-title-itens">Agentes incluem</span>
                             <div class="multi-select-input form-select" id="multiSelectInputAgentes">
                                 {% if request.session.agentes %}
                                 {% for agente in  request.session.agentes %}
-                                <div class="selected-option" data-value="{{agente.id}}">{{agente.nome}} <button onclick="removeOption('{{agente.id}}', 'multiSelectInputAgentes')">×</button></div>
+                                <div class="selected-option id_agentesOptions" data-value="{{agente.id}}">{{agente.nome}} <button onclick="removeOption('{{agente.id}}', 'multiSelectInputAgentes', 'id_agentes')">×</button></div>
                                 {% endfor %}
                                 {% endif %}
-                                <input type="hidden" name="agentes" id="id_agentes" {% if request.session.agentes %}value='{% for agente in  request.session.agentes %}{{agente.id}};{%endfor%}'{% endif %}>
-                                <select id="agentesSelect" class="select-input form-select" aria-label="Select Agentes">
+                                <input class="input-hidden-values" type="hidden" name="agentes" id="id_agentes" {% if request.session.agentes %}value='{% for agente in  request.session.agentes %}{{agente.id}};{%endfor%}'{% endif %}>
+                                <select id="agentesSelect" class="select-input form-select" aria-label="Select Agentes" data-id="id_agentes">
                                     <option value="" class="options-filter"></option>
                                     {% for atendente in atendentes %}
                                     <option value="{{ atendente.id }}" class="options-filter" {% if atendente.id|stringformat:"s" in agentes_selecionados %}selected{% endif %}>
@@ -162,46 +163,68 @@
                                 </select>
                             </div>
                         </div>	
+                        <!-- STATUS -->
                         <div class="container mt-3" id="container-status">
                             <span class="filter-title-itens">Status incluem</span>
                             <div class="multi-select-input form-select" id="multiSelectInputStatus">
-                                <input type="hidden" name="status" id="id_status">
-                                <select id="statusSelect" class="select-input form-select" aria-label="Select Status">
+                                {% if request.session.status %}
+                                {% for status in request.session.status %}
+                                <div class="selected-option id_statusOptions" data-value="{{status.id}}">{{status.nome}} <button onclick="removeOption('{{status.id}}', 'multiSelectInputStatus')">×</button></div>
+                                {% endfor %}
+                                {% endif %}
+                                <input type="hidden" name="status" id="id_status" {% if request.session.status %}value='{% for status in request.session.status %}{{status.id}};{% endfor %}'{% endif %}>
+                                <select id="statusSelect" class="select-input form-select" aria-label="Select Status" data-id="id_status">
                                     <option value="" class="options-filter"></option>
                                     {% for status in chamados.0.STATUS_CHOICES %}
-                                        <option value="{{status.0}}" class="options-filter">{{status.1}}</option>
+                                    <option value="{{status.0}}" class="options-filter" {% if status.0|stringformat:"s" in status_selecionados %}selected{% endif %}>
+                                        {{status.1}}
+                                    </option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
-                        
+                        <!-- TIPOS CHAMADOS -->
                         <div class="container mt-3" id="container-grupos">
                             <span class="filter-title-itens">Grupos incluem</span>
                             <div class="multi-select-input form-select" id="multiSelectInputTiposChamados">
-                                <input type="hidden" name="tiposChamados" id="id_chamados">
-                                <select id="tiposChamadosSelect" class="select-input form-select" aria-label="Select Tipo Chamado">
+                                {% if request.session.tiposChamados %}
+                                {% for tipochamado in request.session.tiposChamados %}
+                                <div class="selected-option id_tiposChamadosOptions" data-value="{{tipochamado.id}}">{{tipochamado.nome}} 
+                                    <button onclick="removeOption('{{tipochamado.id}}', 'multiSelectInputTiposChamados', 'id_chamados')">×</button>
+                                </div>
+                                {% endfor %}
+                                {% endif %}
+                                <input type="hidden" name="tiposChamados" id="id_chamados" {% if request.session.tiposChamados %}value='{% for tipochamado in request.session.tiposChamados %}{{tipochamado.id}};{% endfor %}'{% endif %}>
+                                <select id="tiposChamadosSelect" class="select-input form-select" aria-label="Select Tipo Chamado" data-id="id_chamados">
                                     <option value="" class="options-filter"></option>
                                     {% for tipochamado in tipos_chamados %}
-                                        <option value="{{tipochamado.id}}" class="options-filter">{{tipochamado.nome}}</option>
+                                    <option value="{{tipochamado.id}}" class="options-filter" {% if tipochamado.id|stringformat:"s" in tiposChamados_selecionados %}selected{% endif %}>
+                                        {{tipochamado.nome}}
+                                    </option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
+                        <!-- PRIORIDADE -->
                         <div class="container mt-3" id="container-prioridades">
                             <span class="filter-title-itens">Prioridades incluem</span>
                             <div class="multi-select-input form-select" id="multiSelectInputPrioridade">
-                              
-                                <input type="hidden" name="prioridade" id="id_prioridade">
-                                <select id="PrioridadeSelect" class="select-input form-select" aria-label="Select Tipo Chamado">
+                                {% if request.session.prioridade %}
+                                {% for prioridade in request.session.prioridade %}
+                                <div class="selected-option id_prioridadeOptions" data-value="{{prioridade.id}}">{{prioridade.nome}} 
+                                    <button onclick="removeOption('{{prioridade.id}}', 'multiSelectInputPrioridade', 'id_prioridade')">×</button>
+                                </div>
+                                {% endfor %}
+                                {% endif %}
+                                <input type="hidden" name="prioridade" id="id_prioridade" {% if request.session.prioridade %}value='{% for prioridade in request.session.prioridade %}{{prioridade.id}};{% endfor %}'{% endif %}>
+                                <select id="PrioridadeSelect" class="select-input form-select" aria-label="Select Prioridade" data-id="id_prioridade">
                                     <option value="" class="options-filter"></option>
                                     {% for prioridade in chamados.0.PRIORIDADE_CHOICES %}
-                                    <!-- a prioridade não definina n tem valor, aí entra como vazio -->
-                                        <option value="{{prioridade.0}}" class="options-filter">{{prioridade.1}}</option>
+                                    <option value="{{prioridade.0}}" class="options-filter">{{prioridade.1}}</option>
                                     {% endfor %}
-                                    
                                 </select>
                             </div>
-                        </div>  
+                        </div>
 
                         <div class="container mt-3">
                             <span class="filter-title-itens">Criado</span>
@@ -326,28 +349,28 @@
 
 
     // Função para adicionar a opção selecionada
+
     function addSelectedOption(selectId, containerId, hiddenInputId) {
         const select = document.getElementById(selectId);
         const container = document.getElementById(containerId);
         const hiddenInput = document.getElementById(hiddenInputId);
         
-        select.addEventListener('change', function() {
-            const selectedValue = select.value;
+        select.addEventListener('change', function(e) {
+            let selectedValue = select.value;
             const selectedText = select.options[select.selectedIndex].text;
             const selectedId = select.options[select.selectedIndex].getAttribute('data-id'); 
 
-
+            
             if (!selectedValue) return; // Ignore if no value is selected
-
+            
             // Verifica se a opção já foi adicionada
             if (!document.querySelector(`#${containerId} [data-value="${selectedValue}"]`)) {
                 const selectedOptionElement = document.createElement('div');
-                selectedOptionElement.className = 'selected-option';
+                selectedOptionElement.className = `selected-option ${e.target.dataset.id}Options`;
                 selectedOptionElement.setAttribute('data-value', selectedValue);
                 hiddenInput.value += select.value + ';'
                 selectedOptionElement.setAttribute('data-id', selectedId);
-                selectedOptionElement.innerHTML = `${selectedText} <button onclick="removeOption('${selectedValue}', '${containerId}')">&times;</button>`;
-
+                selectedOptionElement.innerHTML = `${selectedText} <button onclick="removeOption('${selectedValue}', '${containerId}', '${e.target.dataset.id}')">&times;</button>`;
                 container.insertBefore(selectedOptionElement, select);
             }
 
@@ -357,19 +380,21 @@
     }
 
     // Função para remover a opção
-        function removeOption(value, containerId) {
+        // function removeInput(id)
+        function removeOption(value, containerId, id_input) {
             const container = document.getElementById(containerId);
             const optionElement = container.querySelector(`[data-value="${value}"]`);
-            let hiddenInputRemove = document.getElementById('id_agentes');
-            valores = hiddenInputRemove.value
-            console.log(valores)
-            valores = valores.replace(value+';', '')
-            console.log(valores)
+            let hiddenInput = document.getElementById(id_input);
+
+            valoresAgentes = hiddenInput.value
+            console.log(valoresAgentes)
+            valoresAgentes = valoresAgentes.replace(value+';', '')
+            console.log(valoresAgentes)
             if (optionElement) {
                 container.removeChild(optionElement);
-                hiddenInputRemove.value = valores
+                hiddenInput.value = valoresAgentes
             }
-            // hiddenInputRemove.value = ''
+            
         }
         
         // Função para obter todos os valores e IDs das opções selecionadas
@@ -392,6 +417,21 @@
     addSelectedOption('tiposChamadosSelect', 'multiSelectInputTiposChamados', 'id_chamados');
     addSelectedOption('PrioridadeSelect', 'multiSelectInputPrioridade', 'id_prioridade')
 
+    function clearInputs(){
+        ids = ['agentes', 'status', 'tiposChamados', 'prioridade']
+
+        ids.forEach(id => {
+            document.getElementById('id_'+id).value = ''
+            opcoesDiv = document.querySelectorAll('.id_'+id+'Options')
+            opcoesDiv.forEach(div =>
+                {
+                    div.remove()
+                }
+            )
+            console.log(opcoesDiv)
+        });
+    }
+    // clearInputs();
     function hiddenMenuFilters() {
         var button = document.getElementById('mButtonFilters');
         var cardsWrapper = document.getElementById('cards-wrapper');
