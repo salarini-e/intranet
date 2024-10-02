@@ -13,6 +13,7 @@ from django.utils import timezone
 from .functions import enviar_email_atendente, Email_Chamado
 from django.urls import reverse
 from .functions import obter_filtros, verificar_filtrado, obter_chamados, obter_atendente, obter_opcoes_filtros, paginar_chamados, verificar_chamados_atrasados
+from django.core.paginator import Paginator
 
 @login_required
 def index(request):
@@ -408,20 +409,23 @@ def agendar_atendimento(request, hash):
 from .functions import carregar_novos_filtros, filtrar_chamados
 @login_required
 def tickets(request):
-
     if request.method == 'POST':
       carregar_novos_filtros(request)
+    
     chamados = filtrar_chamados(request)
     secretarias = Secretaria.objects.all()
     atendentes = Atendente.objects.all()
     tipos_chamados = TipoChamado.objects.all()
-
+    # Paginação
+    paginator = Paginator(chamados, 25) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     context = {
         'tipos': tipos_chamados,
-        'chamados': chamados,
+        'chamados': page_obj,  
         'secretarias': secretarias,
         'atendentes': atendentes,
-        'tipos_chamados': tipos_chamados,
+        'tipos_chamados': tipos_chamados, 
     }
     return render(request, 'chamados/tickets.html', context)
 

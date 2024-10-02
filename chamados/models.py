@@ -6,6 +6,7 @@ import hashlib
 from django.utils import timezone
 from datetime import datetime, timedelta
 
+
 class TipoChamado(models.Model):
     nome = models.CharField(max_length=164, verbose_name='Nome')
     sigla = models.CharField(max_length=8, verbose_name='Sigla')
@@ -184,9 +185,22 @@ class Chamado(models.Model):
         hora = timedelta(hours=1)
         valor = dt_atual - self.dt_inclusao <= hora
         return valor
+    def tempo_desde(self, data):
+        agora = timezone.now()
+        delta = agora - data
 
+        if delta.days > 1:
+            return f"há {delta.days} dias"
+        elif delta.days == 1:
+            return "há 1 dia"
+        else:
+            horas = delta.seconds // 3600
+            if horas > 0:
+                return f"há {horas} horas"
+            else:
+                return "há menos de uma hora"
+            
     def status_andamento_ticket(self):
-    
         if timezone.is_naive(self.dt_inclusao):
             self.dt_inclusao = timezone.make_aware(self.dt_inclusao)
 
@@ -204,9 +218,13 @@ class Chamado(models.Model):
 
 
         if dt_inclusao_dt == dt_atualizacao_dt:
-            return 'Criado em: ' + dt_atualizacao_str
+            result = self.tempo_desde(self.dt_atualizacao)
+            return 'Criado ' + result
         else:
-            return 'Atualizado em: ' + dt_atualizacao_str
+            result = self.tempo_desde(self.dt_atualizacao)
+            return 'Atualizado ' + result 
+        
+        
 class Pausas_Execucao_do_Chamado(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')
     dt_inicio = models.DateTimeField(verbose_name='Data de início da pausa')

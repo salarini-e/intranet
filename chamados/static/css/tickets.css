@@ -86,7 +86,7 @@
     align-items: center;
     margin-top: .5rem !important;
 }
-.chamados-tickets-infos-chamado-text-requisitante{
+.chamados-tickets-infos-chamado-text-requisitante, .chamados-tickets-infos-chamado-text-status{
     font: var(--bs-font-sans-serif);
     font-size: 10px;
     margin-left: 3px;

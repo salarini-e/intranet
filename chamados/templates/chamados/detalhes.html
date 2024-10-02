@@ -222,7 +222,7 @@
 											{{chamado.requisitante.nome}}
 										</span>
 									</a>
-										<span class="message-user-haxtime">{{chamado.dt_inclusao|tempo_desde }}</span>	
+										<span class="message-user-haxtime">{{chamado.tempo_desde:dt_inclusao }}</span>	
 								</div>
 								
 								<div class="message-user-time">
@@ -253,7 +253,7 @@
 												<span class="message-user-nome">Atendente</span>
 												<span class="message-user-mensagem-confidencial">Mensagem interna</span>
 											</div>
-											<span class="message-user-haxtime">{{ mensagem.dt_inclusao|tempo_desde }}</span>
+											<span class="message-user-haxtime">{{chamado.tempo_desde:mensagem.dt_inclusao }}</span>
 										</div>
 										<div class="message-user-time">
 											<span>{{ mensagem.dt_inclusao|date:"d/m/y"}} {{ mensagem.dt_inclusao|date:"H:i" }}</span>
@@ -295,7 +295,7 @@
 										{% else %}
 											<a><span class="message-user-nome">Atendente</span></a>
 										{% endif %}
-										<span class="message-user-haxtime">{{ mensagem.dt_inclusao|tempo_desde }}</span>
+										<span class="message-user-haxtime">{{chamado.tempo_desde:mensagem.dt_inclusao}}</span>
 									</div>
 									<div class="message-user-time">
 										<span>{{ mensagem.dt_inclusao|date:"d/m/y" }} {% if request.user == mensagem.autor.user or request.user.is_superuser %}{{ mensagem.dt_inclusao|date:"H:i" }}{% endif %}</span>
