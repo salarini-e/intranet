@@ -780,15 +780,15 @@
 					let indicadorPrioridade = document.getElementById('indicadorPrioridade-'+id);
 					if (display_prioridade == 'Média'){
 						indicadorPrioridade.className = 'prioridade-indicador prioridade-media'
-					}else{
+					}
+					else if(display_prioridade ==  'Não definida'){
+						indicadorPrioridade.className = 'prioridade-indicador prioridade-nao-definida'
+					}
+					else{
 						indicadorPrioridade.className = 'prioridade-indicador prioridade-'+display_prioridade.toLowerCase();
 					}    
 					
-					if (display_prioridade == 'Não definida'){
-						indicadorPrioridade.className = 'prioridade-indicador prioridade-nao-definida'
-					}else{
-						indicadorPrioridade.className = 'prioridade-indicador prioridade-'+display_prioridade.toLowerCase();
-					}   
+					  
 				}
 				function mudar_status(hash, status){
 					

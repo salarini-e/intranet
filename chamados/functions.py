@@ -9,6 +9,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from instituicoes.models import Servidor
 from .models import Chamado, TipoChamado
+from django.utils import timezone
+
 
 class Email_Chamado:
     def __init__(self, chamado):
@@ -213,7 +215,7 @@ def carregar_novos_filtros(request):
     status = request.POST['status']
     tiposChamados = request.POST['tiposChamados']
     prioridade = request.POST['prioridade']
-    #     criadoEm = request.POST['criadoEm']
+    criadoEm = request.POST['criadoEm']
     #     fechadoEm = request.POST['fechadoEm']
     #     resolvidoEm = request.POST['resolvidoEm']
     #     venceEm = request.POST['venceEm']
@@ -258,9 +260,8 @@ def carregar_novos_filtros(request):
     request.session['status'] = status
     request.session['tiposChamados'] = tiposChamados
     request.session['prioridade'] = prioridades
-    print("Prioridades: ", prioridades)
-    #     request.session['prioridade'] = prioridadeLista
-    #     request.session['criadoEm'] = criadoEm
+    # print("Prioridades: ", prioridades)
+    request.session['criadoEm'] = criadoEm
     #     request.session['fechadoEm'] = fechadoEm
     #     request.session['resolvidoEm'] = resolvidoEm
     #     request.session['venceEm'] = venceEm
@@ -279,6 +280,44 @@ def carregar_novos_filtros(request):
     #         pass
 
     pass
+
+
+def calcular_tempo_criacao(selecao_tempo):
+    agora = timezone.now()
+    
+    if selecao_tempo == '5min':
+        return agora - timedelta(minutes=5)
+    elif selecao_tempo == '15min':
+        return agora - timedelta(minutes=15)
+    elif selecao_tempo == '30min':
+        return agora - timedelta(minutes=30)
+    elif selecao_tempo == '1hora':
+        return agora - timedelta(hours=1)
+    elif selecao_tempo == '4horas':
+        return agora - timedelta(hours=4)
+    elif selecao_tempo == '12horas':
+        return agora - timedelta(hours=12)
+    elif selecao_tempo == '24horas':
+        return agora - timedelta(days=1)
+    elif selecao_tempo == 'Hoje':
+        return agora.replace(hour=0, minute=0, second=0, microsecond=0)
+    elif selecao_tempo == 'Ontem':
+        return (agora - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    elif selecao_tempo == 'EstaSemana':
+        return agora - timedelta(days=agora.weekday())  # Início da semana
+    elif selecao_tempo == 'EsteMes':
+        return agora.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    elif selecao_tempo == '7dias':
+        return agora - timedelta(days=7)
+    elif selecao_tempo == '30dias':
+        return agora - timedelta(days=30)
+    elif selecao_tempo == '60dias':
+        return agora - timedelta(days=60)
+    elif selecao_tempo == '180dias':
+        return agora - timedelta(days=180)
+    else:
+        return ''
+    
 
 
 def make_query_chamados(request):
@@ -323,7 +362,15 @@ def make_query_chamados(request):
         if str_id_prioridade:
             sql += f" AND prioridade IN ({str_id_prioridade[:-1]})"
 
-    print('SQL', sql)
+    # Uso da função em uma query
+    if 'criadoEm' in request.session and request.session['criadoEm'] is not None:
+        tempo_limite = calcular_tempo_criacao(request.session['criadoEm'])
+        if tempo_limite!='':
+            print("Data limite", tempo_limite.strftime('%Y-%m-%d %H:%M:%S'))
+            sql += f" AND dt_inclusao >= '{tempo_limite.strftime('%Y-%m-%d %H:%M:%S')}'"
+
+
+    # print('SQL', sql)
     sql += " ORDER BY dt_inclusao DESC"
     return sql
  

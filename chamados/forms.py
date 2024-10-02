@@ -106,7 +106,7 @@ class CriarChamadoForm(forms.ModelForm):
         fields = [
             'requisitante', 'assunto', 'secretaria', 'setor', 
             'endereco', 'telefone', 'tipo', 'descricao', 
-            'user_inclusao', 'anexo'
+            'user_inclusao', 'anexo', 'prioridade'
         ]
         widgets = {                                    
             'setor': forms.Select(attrs={'class': 'form-select'}),
