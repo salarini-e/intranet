@@ -218,6 +218,14 @@
     #offcanvasScrolling.active {
         transform: translateX(0); /* Exibe a sidebar sobre o conteúdo */
     }
+    .top-buttons-background{
+    width: 100% !important;
+        display: flex !important;
+        justify-content: end !important; 
+    }
+    .chamados-tickets-infos{
+        padding-left: 1.5rem;
+    }
 }
 
 .multi-select-input.form-select{

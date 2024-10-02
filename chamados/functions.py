@@ -217,9 +217,10 @@ def carregar_novos_filtros(request):
     prioridade = request.POST['prioridade']
     criadoEm = request.POST['criadoEm']
     fechadoEm = request.POST['fechadoEm']
-    #     resolvidoEm = request.POST['resolvidoEm']
-    #     venceEm = request.POST['venceEm']
-    #     # print("Agentes", agentes)
+    agendadoPara = request.POST['agendadoPara']
+    atualizacaoEm = request.POST['atualizacaoEm']
+
+
     agentesLista = agentes.split(';')
     statusLista = status.split(';')
     tiposChamadosLista = tiposChamados.split(';')
@@ -263,8 +264,8 @@ def carregar_novos_filtros(request):
     # print("Prioridades: ", prioridades)
     request.session['criadoEm'] = criadoEm
     request.session['fechadoEm'] = fechadoEm
-    #     request.session['resolvidoEm'] = resolvidoEm
-    #     request.session['venceEm'] = venceEm
+    request.session['agendadoPara'] = agendadoPara
+    request.session['atualizacaoEm'] = atualizacaoEm
     # else:
     #     try:
     #         agentes = request.session.get('agentes', '')
@@ -273,8 +274,8 @@ def carregar_novos_filtros(request):
     #         prioridade =  request.session.get('prioridade', '')
     #         criadoEm =  request.session.get('criadoEm', '')
     #         fechadoEm = request.session.get('fechadoEm', '')
-    #         resolvidoEm = request.session.get('resolvidoEm', '')
-    #         venceEm = request.session.get('venceEm', '')
+    #         agendadoPara = request.session.get('agendadoPara', '')
+    #         atualizacaoEm = request.session.get('atualizacaoEm', '')
     #     except Exception as E:
     #         print(E)
     #         pass
@@ -372,6 +373,17 @@ def make_query_chamados(request):
             sql += " AND dt_fechamento IS NOT NULL"
             sql += f" AND dt_fechamento >= '{tempo_limite_fechadoEm.strftime('%Y-%m-%d %H:%M:%S')}'"
 
+    if 'agendadoPara' in request.session and request.session['agendadoPara'] is not None:
+        tempo_limite_agendadoPara = calcular_tempo_criacao(request.session['agendadoPara'])
+        if tempo_limite_agendadoPara!='':
+            sql += " AND dt_agendamento IS NOT NULL"
+            sql += f" AND dt_agendamento >= '{tempo_limite_agendadoPara.strftime('%Y-%m-%d %H:%M:%S')}'"
+
+    if 'atualizacaoEm' in request.session and request.session['atualizacaoEm'] is not None:
+        tempo_limite_atualizacaoEm = calcular_tempo_criacao(request.session['atualizacaoEm'])
+        if tempo_limite_atualizacaoEm!='':
+            sql += " AND dt_atualizacao IS NOT NULL"
+            sql += f" AND dt_atualizacao >= '{tempo_limite_atualizacaoEm.strftime('%Y-%m-%d %H:%M:%S')}'"
 
     # print('SQL', sql)
     sql += " ORDER BY dt_inclusao DESC"

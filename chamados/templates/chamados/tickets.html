@@ -10,13 +10,13 @@
             <h1 class="app-page-title tickets mb-0">Bem vindo aos tickets</h1>
         </div>
         {% if request.user.is_superuser%}
-            <div class="col-auto">
+            <div class="col-auto top-buttons-background">
                     <a href="{% url 'chamados:index' %}" class="my-auto btn app-btn-secondary"><i class="fa-solid fa-rotate-left me-2"></i>Voltar</a>
             
                 <button class="my-auto btn p-4 py-2" id="mButtonFilters" 
                         data-bs-toggle="offcanvas" 
                         data-bs-target="#offcanvasScrolling" 
-                        onclick="hiddenMenuFilters()"
+                        onclick="toggleMenuFilters()"
                         >
                     <i class="fa-solid fa-angle-left"></i><i class="fa-solid fa-filter mx-2"></i>Filtros
                 </button>
@@ -127,7 +127,7 @@
                     </div>
                 {% endfor %}
             </div>
-
+            {% if request.user.is_superuser %}
             <div style="margin-top: 53px; z-index: 10; width: 280px; background-color: #f5f5f5;" 
                 class="offcanvas offcanvas-end filters-wrapper" 
                 data-bs-scroll="true" data-bs-backdrop="false" 
@@ -136,7 +136,7 @@
 
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Filtros</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" onclick="hiddenMenuFilters()"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" onclick="toggleMenuFilters()"></button>
             </div>
             <!-- FILTRO -->
             <div class="offcanvas-body">
@@ -273,48 +273,48 @@
                             </div>
                         </div> 
                         <div class="container mt-3">
-                            <span class="filter-title-itens">Resolvido em</span>
+                            <span class="filter-title-itens">Agendado para</span>
                             <div class="multi-select-input" id="multiSelectInputResolvido">
-                                <select id="ResolvidoSelect" name="resolvidoEm" class="select-input form-select" aria-label="Select Tipo Chamado">
-                                    <option value="" class="options-filter">Qualquer hora</option>
-                                    <option value="5min" class="options-filter">Nos últimos 5 minutos</option>
-                                    <option value="15min" class="options-filter">Nos últimos 15 minutos</option>
-                                    <option value="30min" class="options-filter">Nos últimos 30 minutos</option>
-                                    <option value="1hora" class="options-filter">Na última hora</option>
-                                    <option value="4horas" class="options-filter">Nas últimas 4 horas</option>
-                                    <option value="12horas" class="options-filter">Nas últimas 12 horas</option>
-                                    <option value="24horas" class="options-filter">Nas últimas 24 horas</option>
-                                    <option value="Hoje" class="options-filter">Hoje</option>
-                                    <option value="Ontem" class="options-filter">Ontem</option>
-                                    <option value="EstaSemana" class="options-filter">Esta semana</option>
-                                    <option value="EsteMes" class="options-filter">Este mês</option>
-                                    <option value="7dias" class="options-filter">Nos últimos 7 dias</option>
-                                    <option value="30dias" class="options-filter">Nos últimos 30 dias</option>
-                                    <option value="60dias" class="options-filter">Nos últimos 60 dias</option>
-                                    <option value="180dias" class="options-filter">Nos últimos 180 dias</option>
+                                <select id="agendadoPara" name="agendadoPara" class="select-input form-select" aria-label="Select Tipo Chamado">
+                                    <option value="" class="options-filter" {% if request.session.agendadoPara == ''  %}selected{% endif %}></option>
+                                    <option value="5min" class="options-filter" {% if request.session.agendadoPara == '5min'  %}selected{% endif %}>Nos últimos 5 minutos</option>
+                                    <option value="15min" class="options-filter" {% if request.session.agendadoPara == '15min'  %}selected{% endif %}>Nos últimos 15 minutos</option>
+                                    <option value="30min" class="options-filter" {% if request.session.agendadoPara == '30min'  %}selected{% endif %}>Nos últimos 30 minutos</option>
+                                    <option value="1hora" class="options-filter" {% if request.session.agendadoPara == '1hora'  %}selected{% endif %}>Na última hora</option>
+                                    <option value="4horas" class="options-filter" {% if request.session.agendadoPara == '4horas'  %}selected{% endif %}>Nas últimas 4 horas</option>
+                                    <option value="12horas" class="options-filter" {% if request.session.agendadoPara == '12horas'  %}selected{% endif %}>Nas últimas 12 horas</option>
+                                    <option value="24horas" class="options-filter" {% if request.session.agendadoPara == '24horas'  %}selected{% endif %}>Nas últimas 24 horas</option>
+                                    <option value="Hoje" class="options-filter" {% if request.session.agendadoPara == 'Hoje'  %}selected{% endif %}>Hoje</option>
+                                    <option value="Ontem" class="options-filter" {% if request.session.agendadoPara == 'Ontem'  %}selected{% endif %}>Ontem</option>
+                                    <option value="EstaSemana" class="options-filter" {% if request.session.agendadoPara == 'EstaSemana'  %}selected{% endif %}>Esta semana</option>
+                                    <option value="EsteMes" class="options-filter" {% if request.session.agendadoPara == 'EsteMes'  %}selected{% endif %}>Este mês</option>
+                                    <option value="7dias" class="options-filter" {% if request.session.agendadoPara == '7dias'  %}selected{% endif %}>Nos últimos 7 dias</option>
+                                    <option value="30dias" class="options-filter" {% if request.session.agendadoPara == '30dias'  %}selected{% endif %}>Nos últimos 30 dias</option>
+                                    <option value="60dias" class="options-filter" {% if request.session.agendadoPara == '60dias'  %}selected{% endif %}>Nos últimos 60 dias</option>
+                                    <option value="180dias" class="options-filter" {% if request.session.agendadoPara == '180dias'  %}selected{% endif %}>Nos últimos 180 dias</option>
                                 </select>
                             </div>
                         </div> 
                         <div class="container mt-3">
-                            <span class="filter-title-itens">Resolução vence em</span>
+                            <span class="filter-title-itens">Atualização em</span>
                             <div class="multi-select-input" id="multiSelectInputVence">
-                                <select id="VenceSelect" name="venceEm" class="select-input form-select" aria-label="Select Tipo Chamado">
-                                    <option value="" class="options-filter">Qualquer hora</option>
-                                    <option value="5min" class="options-filter">Nos últimos 5 minutos</option>
-                                    <option value="15min" class="options-filter">Nos últimos 15 minutos</option>
-                                    <option value="30min" class="options-filter">Nos últimos 30 minutos</option>
-                                    <option value="1hora" class="options-filter">Na última hora</option>
-                                    <option value="4horas" class="options-filter">Nas últimas 4 horas</option>
-                                    <option value="12horas" class="options-filter">Nas últimas 12 horas</option>
-                                    <option value="24horas" class="options-filter">Nas últimas 24 horas</option>
-                                    <option value="Hoje" class="options-filter">Hoje</option>
-                                    <option value="Ontem" class="options-filter">Ontem</option>
-                                    <option value="EstaSemana" class="options-filter">Esta semana</option>
-                                    <option value="EsteMes" class="options-filter">Este mês</option>
-                                    <option value="7dias" class="options-filter">Nos últimos 7 dias</option>
-                                    <option value="30dias" class="options-filter">Nos últimos 30 dias</option>
-                                    <option value="60dias" class="options-filter">Nos últimos 60 dias</option>
-                                    <option value="180dias" class="options-filter">Nos últimos 180 dias</option>
+                                <select id="atualizacaoEm" name="atualizacaoEm" class="select-input form-select" aria-label="Select Tipo Chamado">
+                                    <option value="" class="options-filter" {% if request.session.atualizacaoEm == ''  %}selected{% endif %}></option>
+                                    <option value="5min" class="options-filter" {% if request.session.atualizacaoEm == '5min'  %}selected{% endif %}>Nos últimos 5 minutos</option>
+                                    <option value="15min" class="options-filter" {% if request.session.atualizacaoEm == '15min'  %}selected{% endif %}>Nos últimos 15 minutos</option>
+                                    <option value="30min" class="options-filter" {% if request.session.atualizacaoEm == '30min'  %}selected{% endif %}>Nos últimos 30 minutos</option>
+                                    <option value="1hora" class="options-filter" {% if request.session.atualizacaoEm == '1hora'  %}selected{% endif %}>Na última hora</option>
+                                    <option value="4horas" class="options-filter" {% if request.session.atualizacaoEm == '4horas'  %}selected{% endif %}>Nas últimas 4 horas</option>
+                                    <option value="12horas" class="options-filter" {% if request.session.atualizacaoEm == '12horas'  %}selected{% endif %}>Nas últimas 12 horas</option>
+                                    <option value="24horas" class="options-filter" {% if request.session.atualizacaoEm == '24horas'  %}selected{% endif %}>Nas últimas 24 horas</option>
+                                    <option value="Hoje" class="options-filter" {% if request.session.atualizacaoEm == 'Hoje'  %}selected{% endif %}>Hoje</option>
+                                    <option value="Ontem" class="options-filter" {% if request.session.atualizacaoEm == 'Ontem'  %}selected{% endif %}>Ontem</option>
+                                    <option value="EstaSemana" class="options-filter" {% if request.session.atualizacaoEm == 'EstaSemana'  %}selected{% endif %}>Esta semana</option>
+                                    <option value="EsteMes" class="options-filter" {% if request.session.atualizacaoEm == 'EsteMes'  %}selected{% endif %}>Este mês</option>
+                                    <option value="7dias" class="options-filter" {% if request.session.atualizacaoEm == '7dias'  %}selected{% endif %}>Nos últimos 7 dias</option>
+                                    <option value="30dias" class="options-filter" {% if request.session.atualizacaoEm == '30dias'  %}selected{% endif %}>Nos últimos 30 dias</option>
+                                    <option value="60dias" class="options-filter" {% if request.session.atualizacaoEm == '60dias'  %}selected{% endif %}>Nos últimos 60 dias</option>
+                                    <option value="180dias" class="options-filter" {% if request.session.atualizacaoEm == '180dias'  %}selected{% endif %}>Nos últimos 180 dias</option>
                                 </select>
                             </div>
                         </div> 
@@ -327,9 +327,10 @@
                     </div>
                     </div>
                 </form>
+                {% endif %}
             </div>
         </div>
-            
+        
         </div>
     </div>
     <script src="/static/js/request.js"></script>				
@@ -419,7 +420,7 @@
 
     function clearInputs(){
         ids = ['agentes', 'status', 'tiposChamados', 'prioridade']
-        ids_selects = ['criadoEm', 'fechadoEm']
+        ids_selects = ['criadoEm', 'fechadoEm', 'agendadoPara','atualizacaoEm']
         // parte para limpar os selects multiplos
         ids.forEach(id => {
             document.getElementById('id_'+id).value = ''
@@ -439,35 +440,62 @@
             }
         });
     }
-    // clearInputs();
     function hiddenMenuFilters() {
         var button = document.getElementById('mButtonFilters');
         var cardsWrapper = document.getElementById('cards-wrapper');
         var filtersWrapper = document.getElementById('offcanvasScrolling');
-        
+
+        // Lógica para iniciar a visibilidade do filtro baseado na largura da tela
         if (window.matchMedia("(min-width: 768px)").matches) {
-            if (button.style.marginRight === '250px') {
-                // Voltar o botão para a posição original
-                button.style.marginRight = '0px';
-                cardsWrapper.style.paddingRight = '0px';
-                button.innerHTML = '<i class="fa-solid fa-angle-left"></i><i class="fa-solid fa-filter mx-2"></i>Filtros';
-                filtersWrapper.classList.remove('active');
-            } else {
-                // Mover o botão para a esquerda em 250px
-                button.style.marginRight = '250px';
-                cardsWrapper.style.paddingRight = '250px';
-                button.innerHTML = '<i class="fa-solid fa-angle-right"></i><i class="fa-solid fa-filter mx-2"></i>Filtros';
-                filtersWrapper.classList.add('active');
-            }
+            // Telas grandes: inicia aberta
+            filtersWrapper.classList.add('active', 'show');
+            button.style.marginRight = '250px'; // Mover o botão para a esquerda
+            cardsWrapper.style.paddingRight = '250px'; // Adiciona padding ao cardsWrapper
+            button.innerHTML = '<i class="fa-solid fa-angle-right"></i><i class="fa-solid fa-filter mx-2"></i>Filtros';
+        } else {
+            // Telas pequenas: inicia fechada
+            filtersWrapper.classList.remove('active', 'show'); // Assegura que está fechada
+            button.style.marginRight = '0px'; // Reseta a margem do botão
+            cardsWrapper.style.paddingRight = '0px'; // Reseta o padding do cardsWrapper
+            button.innerHTML = '<i class="fa-solid fa-angle-left"></i><i class="fa-solid fa-filter mx-2"></i>Filtros';
         }
-        else{
+    }
+
+    // Função para alternar o estado do menu ao clicar no botão
+    function toggleMenuFilters() {
+        var button = document.getElementById('mButtonFilters');
+        var cardsWrapper = document.getElementById('cards-wrapper');
+        var filtersWrapper = document.getElementById('offcanvasScrolling');
+
+        if (window.matchMedia("(min-width: 768px)").matches) {
+            // Telas grandes: alternar entre abrir e fechar
             if (filtersWrapper.classList.contains('active')) {
-                filtersWrapper.classList.remove('active');
+                button.style.marginRight = '0px'; // Voltar o botão para a posição original
+                cardsWrapper.style.paddingRight = '0px'; // Reseta o padding
+                button.innerHTML = '<i class="fa-solid fa-angle-left"></i><i class="fa-solid fa-filter mx-2"></i>Filtros';
+                filtersWrapper.classList.remove('active', 'show'); // Fecha o filtro
             } else {
-                filtersWrapper.classList.add('active');
+                button.style.marginRight = '250px'; // Mover o botão para a esquerda
+                cardsWrapper.style.paddingRight = '250px'; // Adiciona padding ao cardsWrapper
+                button.innerHTML = '<i class="fa-solid fa-angle-right"></i><i class="fa-solid fa-filter mx-2"></i>Filtros';
+                filtersWrapper.classList.add('active', 'show'); // Abre o filtro
+            }
+        } else {
+            // Telas pequenas: alternar entre abrir e fechar
+            if (filtersWrapper.classList.contains('active')) {
+                filtersWrapper.classList.remove('active', 'show'); // Fecha o filtro
+            } else {
+                filtersWrapper.classList.add('active', 'show'); // Abre o filtro
             }
         }
     }
+
+    // Adiciona um listener para carregar o filtro quando a página é carregada
+    document.addEventListener('DOMContentLoaded', hiddenMenuFilters);
+
+
+    // Adiciona um listener para redimensionar a janela
+    window.addEventListener('resize', hiddenMenuFilters);
 
     function saveOptionsFilter() {
         event.preventDefault(); // Evita o comportamento padrão de envio do formulário
@@ -568,6 +596,7 @@
 								console.error(error)
 							});				
     }
+
         </script>
 
 {% endblock %}
