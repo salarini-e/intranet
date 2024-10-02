@@ -190,12 +190,12 @@
                                 {% if request.session.tiposChamados %}
                                 {% for tipochamado in request.session.tiposChamados %}
                                 <div class="selected-option id_tiposChamadosOptions" data-value="{{tipochamado.id}}">{{tipochamado.nome}} 
-                                    <button onclick="removeOption('{{tipochamado.id}}', 'multiSelectInputTiposChamados', 'id_chamados')">×</button>
+                                    <button onclick="removeOption('{{tipochamado.id}}', 'multiSelectInputTiposChamados', 'id_tiposChamados')">×</button>
                                 </div>
                                 {% endfor %}
                                 {% endif %}
-                                <input type="hidden" name="tiposChamados" id="id_chamados" {% if request.session.tiposChamados %}value='{% for tipochamado in request.session.tiposChamados %}{{tipochamado.id}};{% endfor %}'{% endif %}>
-                                <select id="tiposChamadosSelect" class="select-input form-select" aria-label="Select Tipo Chamado" data-id="id_chamados">
+                                <input type="hidden" name="tiposChamados" id="id_tiposChamados" {% if request.session.tiposChamados %}value='{% for tipochamado in request.session.tiposChamados %}{{tipochamado.id}};{% endfor %}'{% endif %}>
+                                <select id="tiposChamadosSelect" class="select-input form-select" aria-label="Select Tipo Chamado" data-id="id_tiposChamados">
                                     <option value="" class="options-filter"></option>
                                     {% for tipochamado in tipos_chamados %}
                                     <option value="{{tipochamado.id}}" class="options-filter" {% if tipochamado.id|stringformat:"s" in tiposChamados_selecionados %}selected{% endif %}>
@@ -319,6 +319,7 @@
                             </div>
                         </div> 
                             <div class="container">
+                                <button class="filter-button btn app-btn-secondary"  type="button" onclick="clearInputs()"><i class="fa-solid fa-filter-circle-xmark me-2"></i>Limpar filtros</button> 
                                 <button class="filter-button btn app-btn-secondary"  type="submit">Aplicar</button> 
                             </div>
                         </div>
@@ -356,7 +357,7 @@
         const hiddenInput = document.getElementById(hiddenInputId);
         
         select.addEventListener('change', function(e) {
-            let selectedValue = select.value;
+            const selectedValue = select.value;
             const selectedText = select.options[select.selectedIndex].text;
             const selectedId = select.options[select.selectedIndex].getAttribute('data-id'); 
 
@@ -414,8 +415,8 @@
     // Inicialize as funções para os selects
     addSelectedOption('agentesSelect', 'multiSelectInputAgentes', 'id_agentes');
     addSelectedOption('statusSelect', 'multiSelectInputStatus','id_status');
-    addSelectedOption('tiposChamadosSelect', 'multiSelectInputTiposChamados', 'id_chamados');
-    addSelectedOption('PrioridadeSelect', 'multiSelectInputPrioridade', 'id_prioridade')
+    addSelectedOption('tiposChamadosSelect', 'multiSelectInputTiposChamados', 'id_tiposChamados');
+    addSelectedOption('PrioridadeSelect', 'multiSelectInputPrioridade', 'id_prioridade');
 
     function clearInputs(){
         ids = ['agentes', 'status', 'tiposChamados', 'prioridade']
@@ -428,7 +429,7 @@
                     div.remove()
                 }
             )
-            console.log(opcoesDiv)
+            // console.log(opcoesDiv)
         });
     }
     // clearInputs();
