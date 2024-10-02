@@ -185,6 +185,28 @@ class Chamado(models.Model):
         valor = dt_atual - self.dt_inclusao <= hora
         return valor
 
+    def status_andamento_ticket(self):
+    
+        if timezone.is_naive(self.dt_inclusao):
+            self.dt_inclusao = timezone.make_aware(self.dt_inclusao)
+
+        if timezone.is_naive(self.dt_atualizacao):
+            self.dt_atualizacao = timezone.make_aware(self.dt_atualizacao)
+
+        # Formatar as datas para o mesmo formato
+        format_string = "%Y-%m-%d %H:%M:%S.%f"
+        dt_inclusao_str = self.dt_inclusao.strftime(format_string).strip()
+        dt_atualizacao_str = self.dt_atualizacao.strftime(format_string).strip()
+
+        # Converter as strings de volta para objetos datetime
+        dt_inclusao_dt = datetime.strptime(dt_inclusao_str, format_string)
+        dt_atualizacao_dt = datetime.strptime(dt_atualizacao_str, format_string)
+
+
+        if dt_inclusao_dt == dt_atualizacao_dt:
+            return 'Criado em: ' + dt_atualizacao_str
+        else:
+            return 'Atualizado em: ' + dt_atualizacao_str
 class Pausas_Execucao_do_Chamado(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')
     dt_inicio = models.DateTimeField(verbose_name='Data de início da pausa')

@@ -49,8 +49,9 @@
                                             <div class="solution-infos-wrapper">
                                                 <i class="fa-solid fa-globe" style="width: 10px;"></i>
                                                 <span class="chamados-tickets-infos-chamado-text-requisitante">{{ chamado.user_inclusao }}
-                                                    <i class="fa-solid fa-circle" style="width: 5px;"></i> Finalizado há 1 dia
-                                                    <i class="fa-solid fa-circle" style="width: 5px;"></i> Resolvido no prazo</span>
+                                                    <i class="fa-solid fa-circle" style="width: 5px;"></i> {{chamado.status_andamento_ticket}}
+                                                    <i class="fa-solid fa-circle" style="width: 5px;"></i> Resolvido no prazo
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
