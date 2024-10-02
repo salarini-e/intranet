@@ -216,7 +216,7 @@ def carregar_novos_filtros(request):
     tiposChamados = request.POST['tiposChamados']
     prioridade = request.POST['prioridade']
     criadoEm = request.POST['criadoEm']
-    #     fechadoEm = request.POST['fechadoEm']
+    fechadoEm = request.POST['fechadoEm']
     #     resolvidoEm = request.POST['resolvidoEm']
     #     venceEm = request.POST['venceEm']
     #     # print("Agentes", agentes)
@@ -262,7 +262,7 @@ def carregar_novos_filtros(request):
     request.session['prioridade'] = prioridades
     # print("Prioridades: ", prioridades)
     request.session['criadoEm'] = criadoEm
-    #     request.session['fechadoEm'] = fechadoEm
+    request.session['fechadoEm'] = fechadoEm
     #     request.session['resolvidoEm'] = resolvidoEm
     #     request.session['venceEm'] = venceEm
     # else:
@@ -319,7 +319,6 @@ def calcular_tempo_criacao(selecao_tempo):
         return ''
     
 
-
 def make_query_chamados(request):
     sql = "SELECT * FROM chamados_chamado WHERE hash!=''"
     # CONCATENAR CASO TENHA AGENTE SELECIONADO
@@ -362,12 +361,16 @@ def make_query_chamados(request):
         if str_id_prioridade:
             sql += f" AND prioridade IN ({str_id_prioridade[:-1]})"
 
-    # Uso da função em uma query
     if 'criadoEm' in request.session and request.session['criadoEm'] is not None:
-        tempo_limite = calcular_tempo_criacao(request.session['criadoEm'])
-        if tempo_limite!='':
-            print("Data limite", tempo_limite.strftime('%Y-%m-%d %H:%M:%S'))
-            sql += f" AND dt_inclusao >= '{tempo_limite.strftime('%Y-%m-%d %H:%M:%S')}'"
+        tempo_limite_criadoEm = calcular_tempo_criacao(request.session['criadoEm'])
+        if tempo_limite_criadoEm!='':
+            sql += f" AND dt_inclusao >= '{tempo_limite_criadoEm.strftime('%Y-%m-%d %H:%M:%S')}'"
+
+    if 'fechadoEm' in request.session and request.session['fechadoEm'] is not None:
+        tempo_limite_fechadoEm = calcular_tempo_criacao(request.session['fechadoEm'])
+        if tempo_limite_fechadoEm!='':
+            sql += " AND dt_fechamento IS NOT NULL"
+            sql += f" AND dt_fechamento >= '{tempo_limite_fechadoEm.strftime('%Y-%m-%d %H:%M:%S')}'"
 
 
     # print('SQL', sql)

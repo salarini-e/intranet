@@ -252,23 +252,23 @@
                         <div class="container mt-3">
                             <span class="filter-title-itens">Fechado em</span>
                             <div class="multi-select-input" id="multiSelectInputFechado">
-                                <select id="FechadoSelect" name="fechadoEm" class="select-input form-select" aria-label="Select Tipo Chamado">
-                                    <option value="" class="options-filter">Qualquer hora</option>
-                                    <option value="5min" class="options-filter">Nos últimos 5 minutos</option>
-                                    <option value="15min" class="options-filter">Nos últimos 15 minutos</option>
-                                    <option value="30min" class="options-filter">Nos últimos 30 minutos</option>
-                                    <option value="1hora" class="options-filter">Na última hora</option>
-                                    <option value="4horas" class="options-filter">Nas últimas 4 horas</option>
-                                    <option value="12horas" class="options-filter">Nas últimas 12 horas</option>
-                                    <option value="24horas" class="options-filter">Nas últimas 24 horas</option>
-                                    <option value="Hoje" class="options-filter">Hoje</option>
-                                    <option value="Ontem" class="options-filter">Ontem</option>
-                                    <option value="EstaSemana" class="options-filter">Esta semana</option>
-                                    <option value="EsteMes" class="options-filter">Este mês</option>
-                                    <option value="7dias" class="options-filter">Nos últimos 7 dias</option>
-                                    <option value="30dias" class="options-filter">Nos últimos 30 dias</option>
-                                    <option value="60dias" class="options-filter">Nos últimos 60 dias</option>
-                                    <option value="180dias" class="options-filter">Nos últimos 180 dias</option>
+                                <select id="fechadoEm" name="fechadoEm" class="select-input form-select" aria-label="Select Tipo Chamado">
+                                    <option value="" class="options-filter" {% if request.session.fechadoEm == ''  %}selected{% endif %}></option>
+                                    <option value="5min" class="options-filter" {% if request.session.fechadoEm == '5min'  %}selected{% endif %}>Nos últimos 5 minutos</option>
+                                    <option value="15min" class="options-filter" {% if request.session.fechadoEm == '15min'  %}selected{% endif %}>Nos últimos 15 minutos</option>
+                                    <option value="30min" class="options-filter" {% if request.session.fechadoEm == '30min'  %}selected{% endif %}>Nos últimos 30 minutos</option>
+                                    <option value="1hora" class="options-filter" {% if request.session.fechadoEm == '1hora'  %}selected{% endif %}>Na última hora</option>
+                                    <option value="4horas" class="options-filter" {% if request.session.fechadoEm == '4horas'  %}selected{% endif %}>Nas últimas 4 horas</option>
+                                    <option value="12horas" class="options-filter" {% if request.session.fechadoEm == '12horas'  %}selected{% endif %}>Nas últimas 12 horas</option>
+                                    <option value="24horas" class="options-filter" {% if request.session.fechadoEm == '24horas'  %}selected{% endif %}>Nas últimas 24 horas</option>
+                                    <option value="Hoje" class="options-filter" {% if request.session.fechadoEm == 'Hoje'  %}selected{% endif %}>Hoje</option>
+                                    <option value="Ontem" class="options-filter" {% if request.session.fechadoEm == 'Ontem'  %}selected{% endif %}>Ontem</option>
+                                    <option value="EstaSemana" class="options-filter" {% if request.session.fechadoEm == 'EstaSemana'  %}selected{% endif %}>Esta semana</option>
+                                    <option value="EsteMes" class="options-filter" {% if request.session.fechadoEm == 'EsteMes'  %}selected{% endif %}>Este mês</option>
+                                    <option value="7dias" class="options-filter" {% if request.session.fechadoEm == '7dias'  %}selected{% endif %}>Nos últimos 7 dias</option>
+                                    <option value="30dias" class="options-filter" {% if request.session.fechadoEm == '30dias'  %}selected{% endif %}>Nos últimos 30 dias</option>
+                                    <option value="60dias" class="options-filter" {% if request.session.fechadoEm == '60dias'  %}selected{% endif %}>Nos últimos 60 dias</option>
+                                    <option value="180dias" class="options-filter" {% if request.session.fechadoEm == '180dias'  %}selected{% endif %}>Nos últimos 180 dias</option>
                                 </select>
                             </div>
                         </div> 
@@ -419,7 +419,7 @@
 
     function clearInputs(){
         ids = ['agentes', 'status', 'tiposChamados', 'prioridade']
-        ids_selects = ['criadoEm']
+        ids_selects = ['criadoEm', 'fechadoEm']
         // parte para limpar os selects multiplos
         ids.forEach(id => {
             document.getElementById('id_'+id).value = ''

@@ -79,7 +79,6 @@ class Chamado(models.Model):
         ('4', 'Finalizado'),
     )
 
-
     setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, verbose_name='Para qual setor é o chamado?', null=True)
     telefone=models.CharField(max_length=14, verbose_name='Qual telefone para contato?')
     requisitante = models.ForeignKey(Servidor, verbose_name='Nome do servidor', null=True, on_delete=models.SET_NULL)
