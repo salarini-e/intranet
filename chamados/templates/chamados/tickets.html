@@ -532,59 +532,47 @@
         var cardsWrapper = document.getElementById('cards-wrapper');
         var filtersWrapper = document.getElementById('offcanvasScrolling');
 
-        // Lógica para iniciar a visibilidade do filtro baseado na largura da tela
         if (window.matchMedia("(min-width: 768px)").matches) {
-            // Telas grandes: inicia aberta
             filtersWrapper.classList.add('active', 'show');
-            button.style.marginRight = '250px'; // Mover o botão para a esquerda
-            cardsWrapper.style.paddingRight = '250px'; // Adiciona padding ao cardsWrapper
+            button.style.marginRight = '250px'; 
+            cardsWrapper.style.paddingRight = '250px';
             button.innerHTML = '<i class="fa-solid fa-angle-right"></i><i class="fa-solid fa-filter mx-2"></i>Filtros';
         } else {
-            // Telas pequenas: inicia fechada
-            filtersWrapper.classList.remove('active', 'show'); // Assegura que está fechada
-            button.style.marginRight = '0px'; // Reseta a margem do botão
-            cardsWrapper.style.paddingRight = '0px'; // Reseta o padding do cardsWrapper
+            filtersWrapper.classList.remove('active', 'show'); 
+            button.style.marginRight = '0px'; 
+            cardsWrapper.style.paddingRight = '0px'; 
             button.innerHTML = '<i class="fa-solid fa-angle-left"></i><i class="fa-solid fa-filter mx-2"></i>Filtros';
         }
     }
 
-    // Função para alternar o estado do menu ao clicar no botão
     function toggleMenuFilters() {
         var button = document.getElementById('mButtonFilters');
         var cardsWrapper = document.getElementById('cards-wrapper');
         var filtersWrapper = document.getElementById('offcanvasScrolling');
-        var alertWrapper = document.getElementById('createTicketAlert');
 
         if (window.matchMedia("(min-width: 768px)").matches) {
             // Telas grandes: alternar entre abrir e fechar
             if (filtersWrapper.classList.contains('active')) {
                 button.style.marginRight = '0px'; 
                 cardsWrapper.style.paddingRight = '0px'; 
-                alertWrapper.style.paddingRight = '0px';
                 button.innerHTML = '<i class="fa-solid fa-angle-left"></i><i class="fa-solid fa-filter mx-2"></i>Filtros';
-                filtersWrapper.classList.remove('active', 'show'); // Fecha o filtro
+                filtersWrapper.classList.remove('active', 'show');
             } else {
-                button.style.marginRight = '250px'; // Mover o botão para a esquerda
-                cardsWrapper.style.paddingRight = '250px'; // Adiciona padding ao cardsWrapper
-                alertWrapper.style.paddingRight = '250px';
+                button.style.marginRight = '250px'; 
+                cardsWrapper.style.paddingRight = '250px'; 
                 button.innerHTML = '<i class="fa-solid fa-angle-right"></i><i class="fa-solid fa-filter mx-2"></i>Filtros';
-                filtersWrapper.classList.add('active', 'show'); // Abre o filtro
+                filtersWrapper.classList.add('active', 'show'); 
             }
         } else {
-            // Telas pequenas: alternar entre abrir e fechar
             if (filtersWrapper.classList.contains('active')) {
-                filtersWrapper.classList.remove('active', 'show'); // Fecha o filtro
+                filtersWrapper.classList.remove('active', 'show'); 
             } else {
-                filtersWrapper.classList.add('active', 'show'); // Abre o filtro
+                filtersWrapper.classList.add('active', 'show'); 
             }
         }
     }
 
-    // Adiciona um listener para carregar o filtro quando a página é carregada
     document.addEventListener('DOMContentLoaded', hiddenMenuFilters);
-
-
-    // Adiciona um listener para redimensionar a janela
     window.addEventListener('resize', hiddenMenuFilters);
 
     function saveOptionsFilter() {
