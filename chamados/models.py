@@ -185,6 +185,7 @@ class Chamado(models.Model):
         hora = timedelta(hours=1)
         valor = dt_atual - self.dt_inclusao <= hora
         return valor
+    
     def tempo_desde(self, data):
         agora = timezone.now()
         delta = agora - data

@@ -385,7 +385,7 @@ def make_query_chamados(request):
             sql += " AND dt_atualizacao IS NOT NULL"
             sql += f" AND dt_atualizacao >= '{tempo_limite_atualizacaoEm.strftime('%Y-%m-%d %H:%M:%S')}'"
 
-    # print('SQL', sql)
+    print('SQL', sql)
     sql += " ORDER BY dt_inclusao DESC"
     return sql
  

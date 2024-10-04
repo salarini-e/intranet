@@ -368,6 +368,38 @@ def api_mudar_prioridade(request):
     return JsonResponse({'status': 400, 'message': 'Método não permitido!'})
 
 @login_required
+def api_mudar_atendente(request):
+    servidor = Servidor.objects.filter(user=request.user).last()
+    if request.user.is_superuser or servidor in Atendente.objects.all():
+        pass
+    else:
+        return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
+    
+    if request.method == 'POST':
+        data = request.POST
+        try:            
+            chamado = Chamado.objects.get(hash=data['hash'])
+            
+            # Buscar a instância do atendente
+            atendente = Atendente.objects.get(id=data['atendente'])
+            
+            # Atribuir a instância do atendente ao chamado
+            chamado.profissional_designado = atendente
+            chamado.save()
+            print("Chamado id", chamado.id)
+            return JsonResponse({
+                'status': 200,
+                'message': 'Atendente atualizado com sucesso!',
+                'display_atendente':  chamado.profissional_designado.nome_servidor,  # Exibir o nome do atendente no retorno
+                'id': chamado.id
+            })
+        except Exception as E:
+            print(E)
+            return JsonResponse({'status': 400, 'message': 'Erro ao atualizar atendente!'})
+    
+    return JsonResponse({'status': 400, 'message': 'Método não permitido!'})
+
+@login_required
 def api_criar_servidor(request):
     if request.method == 'POST':
         # print(request.POST)
@@ -416,6 +448,7 @@ def tickets(request):
     secretarias = Secretaria.objects.all()
     atendentes = Atendente.objects.all()
     tipos_chamados = TipoChamado.objects.all()
+    
     # Paginação
     paginator = Paginator(chamados, 25) 
     page_number = request.GET.get('page')

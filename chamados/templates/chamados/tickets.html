@@ -85,8 +85,35 @@
                                                     </ul>
                                                 </div>
                                             </span>
-                                    
-                                            <!-- Dropdown para Secretaria -->
+                                           
+                                            <span class="prioridade">
+                                                
+                                                <!-- Dropdown para Atendente -->
+                                                <div class="dropdown d-inline">
+                                                    <a class="dropdown-toggle" 
+                                                       id="selectAtendente-{{chamado.id}}"
+                                                       type="button" 
+                                                       data-bs-toggle="dropdown" 
+                                                       aria-expanded="false" 
+                                                       style="text-decoration: none; color: black;"
+                                                       data-bs-toggle="tooltip" 
+                                                       data-bs-placement="left" 
+                                                       title="Atendente">
+                                                       {% if chamado.atendente%}
+                                                       {{ chamado.atendente }}
+                                                       {% else %}
+                                                       Não atribuido
+                                                       {% endif %}
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        {% for atendente in atendentes %}
+                                                            <li>
+                                                                <a class="dropdown-item" href="#" onclick="mudar_atendente('{{chamado.hash}}', '{{atendente.id}}')">{{ atendente.nome_servidor }}</a>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            </span>
                                             
                                             <!-- Dropdown para Status -->
                                             <span class="prioridade">
@@ -209,7 +236,7 @@
                             <div class="multi-select-input form-select" id="multiSelectInputStatus">
                                 {% if request.session.status %}
                                 {% for status in request.session.status %}
-                                <div class="selected-option id_statusOptions" data-value="{{status.id}}">{{status.nome}} <button onclick="removeOption('{{status.id}}', 'multiSelectInputStatus')">×</button></div>
+                                <div class="selected-option id_statusOptions" data-value="{{status.id}}">{{status.nome}} <button onclick="removeOption('{{status.id}}', 'multiSelectInputStatus','id_status')">×</button></div>
                                 {% endfor %}
                                 {% endif %}
                                 <input type="hidden" name="status" id="id_status" {% if request.session.status %}value='{% for status in request.session.status %}{{status.id}};{% endfor %}'{% endif %}>
@@ -595,6 +622,10 @@
             indicadorPrioridade.className = 'prioridade-indicador prioridade-'+display_prioridade.toLowerCase();
         }        
     }
+    function mudar_atendente_select(id, display_atendente){
+        let selectAtendente = document.getElementById('selectAtendente-'+id);
+        selectAtendente.innerText = display_atendente;   
+    }
     function mudar_status(hash, status){
         
         var url = "{% url 'chamados:api_status' %}"; 
@@ -627,6 +658,26 @@
                                 if (response.status == 200){
                                     // alert(response.message +" (" + response.status+")")
                                     mudar_prioridade_select(response.id, response.display_prioridade)
+                                }else{
+                                    alert(response.message +" (" + response.status+")")
+                                }                                   
+							})
+							.catch(error => {
+                                alert('Erro ao mudar status. Tente novamente mais tarde.')
+								console.error(error)
+							});				
+    }
+    function mudar_atendente(hash, atendente){
+        var url = "{% url 'chamados:api_atendente' %}"; 
+        formData = new FormData();
+        formData.append('hash', hash);
+        formData.append('atendente', atendente);
+        formData.append('csrfmiddlewaretoken', '{{csrf_token}}');
+		postRequest(url, formData)
+							.then(response => {
+                                if (response.status == 200){
+                                    // alert(response.message +" (" + response.status+")")
+                                    mudar_atendente_select(response.id, response.display_atendente)
                                 }else{
                                     alert(response.message +" (" + response.status+")")
                                 }                                   
