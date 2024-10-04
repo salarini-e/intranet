@@ -102,12 +102,12 @@
 						<span><strong>Endereço</strong></span>
 						<span>{{chamado.setor.endereco}} - {{chamado.setor.bairro}}, {{chamado.setor.cep}}</span>
 					</div>
-					<div class="detalhe-contato-ver-perfil">
+					<!-- <div class="detalhe-contato-ver-perfil">
 						<a href="{% url 'chamados:ver-perfil' chamado.requisitante.matricula %}" class="detalhe-contato-ver-perfil-link" target="_blank">
 							<span>Exibir atividades</span>
 						</a>
 
-					</div>
+					</div> -->
 				</div>	
 				<!-- DETALHES CHAMADOS WRAPPER
 				<div class="detalhes-chamados-wrapper" onclick="toggleDetalhesChamado()">
@@ -341,7 +341,7 @@
 									</div>
 								</div>		
 								{% if request.user.is_authenticated and request.user.is_superuser  %}  
-								{% if or is_atendente %}
+								{% if is_atendente %}
 								<div class="form-check form-switch">
 									<input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="0">
 									<input type="hidden" name="confidencial" id="id_confidencial" value="0">
