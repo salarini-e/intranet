@@ -178,7 +178,6 @@ class Chamado(models.Model):
     def is_novo(self):
         dt_atual = timezone.now()
         
-        # Certifique-se de que self.dt_inclusao também tem informação de fuso horário
         if timezone.is_naive(self.dt_inclusao):
             self.dt_inclusao = timezone.make_aware(self.dt_inclusao)
 
@@ -186,10 +185,8 @@ class Chamado(models.Model):
         valor = dt_atual - self.dt_inclusao <= hora
         return valor
     
-    def tempo_desde(self, data):
-        agora = timezone.now()
-        delta = agora - data
-
+    def __processTime(self, delta):
+        print("Delta recebido:", delta)
         if delta.days > 1:
             return f"há {delta.days} dias"
         elif delta.days == 1:
@@ -200,6 +197,21 @@ class Chamado(models.Model):
                 return f"há {horas} horas"
             else:
                 return "há menos de uma hora"
+                
+    def getCreateTime(self):
+        agora_utc = timezone.now()
+        dt_inclusao_naive = self.dt_inclusao.replace(tzinfo=None)
+        delta = agora_utc.replace(tzinfo=None) - dt_inclusao_naive
+
+        return self.__processTime(delta)
+
+    def getUpdateTime(self):
+        agora_utc = timezone.now()
+        # Remover o fuso horário de dt_atualizacao
+        dt_atualizacao_naive = self.dt_atualizacao.replace(tzinfo=None)
+        delta = agora_utc.replace(tzinfo=None) - dt_atualizacao_naive
+
+        return self.__processTime(delta)
             
     def status_andamento_ticket(self):
         if timezone.is_naive(self.dt_inclusao):
@@ -208,22 +220,27 @@ class Chamado(models.Model):
         if timezone.is_naive(self.dt_atualizacao):
             self.dt_atualizacao = timezone.make_aware(self.dt_atualizacao)
 
-        # Formatar as datas para o mesmo formato
-        format_string = "%Y-%m-%d %H:%M:%S.%f"
-        dt_inclusao_str = self.dt_inclusao.strftime(format_string).strip()
-        dt_atualizacao_str = self.dt_atualizacao.strftime(format_string).strip()
+        agora_utc = timezone.now()
+        print("Data atual (UTC):", agora_utc)
 
-        # Converter as strings de volta para objetos datetime
-        dt_inclusao_dt = datetime.strptime(dt_inclusao_str, format_string)
-        dt_atualizacao_dt = datetime.strptime(dt_atualizacao_str, format_string)
+        # Remover o fuso horário das datas
+        dt_inclusao_naive = self.dt_inclusao.replace(tzinfo=None)
+        dt_atualizacao_naive = self.dt_atualizacao.replace(tzinfo=None)
+        agora_naive = agora_utc.replace(tzinfo=None)
 
+        delta_inclusao = agora_naive - dt_inclusao_naive
+        delta_atualizacao = agora_naive - dt_atualizacao_naive
 
-        if dt_inclusao_dt == dt_atualizacao_dt:
-            result = self.tempo_desde(self.dt_atualizacao)
+        if dt_atualizacao_naive <= dt_inclusao_naive + timedelta(minutes=5):
+            result = self.getCreateTime()
             return 'Criado ' + result
         else:
-            result = self.tempo_desde(self.dt_atualizacao)
-            return 'Atualizado ' + result 
+            result = self.getUpdateTime()
+            return 'Atualizado ' + result
+    
+    def status_andamento_ticket_detalhes(self):
+        result = self.getUpdateTime()
+        return result
         
         
 class Pausas_Execucao_do_Chamado(models.Model):
@@ -254,7 +271,33 @@ class Mensagem(models.Model):
             return 'Atendente'
         else:
             return self.user_inclusao
-        
+    
+    def __processTime(self, delta):
+        if delta.days > 1:
+            return f"há {delta.days} dias"
+        elif delta.days == 1:
+            return "há 1 dia"
+        else:
+            horas = delta.seconds // 3600
+            if horas > 0:
+                return f"há {horas} horas"
+            else:
+                return "há menos de uma hora"
+            
+    def getCreateTime(self):
+        agora_utc = timezone.now()
+        dt_inclusao_naive = self.dt_inclusao.replace(tzinfo=None)
+        delta = agora_utc.replace(tzinfo=None) - dt_inclusao_naive
+
+        return self.__processTime(delta)
+
+
+    def status_andamento_mensagem(self):
+        result = self.getCreateTime()
+        return result
+
+    
+    
     class Meta:
         verbose_name = 'Mensagem'
         verbose_name_plural = 'Mensagens'

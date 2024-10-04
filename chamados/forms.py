@@ -106,7 +106,7 @@ class CriarChamadoForm(forms.ModelForm):
         fields = [
             'requisitante', 'assunto', 'secretaria', 'setor', 
             'endereco', 'telefone', 'tipo', 'descricao', 
-            'user_inclusao', 'anexo', 'prioridade'
+            'user_inclusao', 'anexo'
         ]
         widgets = {                                    
             'setor': forms.Select(attrs={'class': 'form-select'}),
@@ -125,6 +125,16 @@ class CriarChamadoForm(forms.ModelForm):
         labels = {
             'secretaria': 'Para qual secretaria é o chamado?',
         }
+    def save(self, commit=True):
+        chamado = super().save(commit=False)
+        if self.user and not self.user.is_superuser:
+            chamado.prioridade = '-'
+        elif chamado.prioridade == '':
+            chamado.prioridade = '-' 
+
+        if commit:
+            chamado.save()
+        return chamado
     
 class MensagemForm(forms.ModelForm):
     class Meta:

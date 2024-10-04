@@ -108,13 +108,16 @@
     margin-bottom: 5px;
 }
 
-.prioridade-indicador {
-    width: 10px;
+.prioridade-indicador, .user-icon {
+    width: 10px;    
     height: 10px;
     border-radius: 2px;  /* Ajuste o arredondamento se necessário */
     margin-right: 8px;
 }
 
+.user-i{
+    color: black;
+}
 .prioridade-nao-definida{
     background-color: rgb(114, 7, 78);  /* Cor opcional para 'Não definida' */
 }

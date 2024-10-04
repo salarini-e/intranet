@@ -23,11 +23,30 @@
             </div>
         {% endif %}
     </div>
+    
     <!-- CARDS -->
     <div class="container">
+        
         <div class="row">
             <!-- Coluna de 9 colunas -->
             <div class="col-lg-12" id="cards-wrapper" >
+                {% if messages %}
+						<div class="alert alert-dismissible shadow-sm bg-success border-left-decoration" role="alert" id="createTicketAlert" style="margin-left: -0.75rem; margin-right: 0.75rem;">
+							<div class="inner">
+								<div class="app-card-body px-3 px-lg-4">						    
+									<div class="row gx-5 gy-3">
+										<div class="col-12 col">
+											<div class="text-light" style="color: white;">
+											{% for message in messages %}
+											{{message}}
+											{% endfor %}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+	            {% endif %}
                 {% for chamado in chamados %}
                     <div id="chamado-{{chamado.id}}" class="row ticket-chamado-background{% if chamado.status == '4' %} card-status-finalizado{% endif %}">
                         <div class="row">
@@ -90,6 +109,7 @@
                                                 
                                                 <!-- Dropdown para Atendente -->
                                                 <div class="dropdown d-inline">
+                                                    <span class="user-icon"><i class="fa-solid fa-user user-i"></i></span>
                                                     <a class="dropdown-toggle" 
                                                        id="selectAtendente-{{chamado.id}}"
                                                        type="button" 
@@ -145,9 +165,9 @@
                                                 {{ chamado.get_prioridade_display }}
                                             </span>
                                     
-                                            <span class="prioridade">
+                                            <!-- <span class="prioridade">
                                                 {{ chamado.setor.secretaria.apelido }} / {{ chamado.atendente }}
-                                            </span>
+                                            </span> -->
                                     
                                             <span class="prioridade">
                                                 <span class="prioridade-indicador {{ chamado.get_status_class }}"></span>
@@ -533,17 +553,20 @@
         var button = document.getElementById('mButtonFilters');
         var cardsWrapper = document.getElementById('cards-wrapper');
         var filtersWrapper = document.getElementById('offcanvasScrolling');
+        var alertWrapper = document.getElementById('createTicketAlert');
 
         if (window.matchMedia("(min-width: 768px)").matches) {
             // Telas grandes: alternar entre abrir e fechar
             if (filtersWrapper.classList.contains('active')) {
-                button.style.marginRight = '0px'; // Voltar o botão para a posição original
-                cardsWrapper.style.paddingRight = '0px'; // Reseta o padding
+                button.style.marginRight = '0px'; 
+                cardsWrapper.style.paddingRight = '0px'; 
+                alertWrapper.style.paddingRight = '0px';
                 button.innerHTML = '<i class="fa-solid fa-angle-left"></i><i class="fa-solid fa-filter mx-2"></i>Filtros';
                 filtersWrapper.classList.remove('active', 'show'); // Fecha o filtro
             } else {
                 button.style.marginRight = '250px'; // Mover o botão para a esquerda
                 cardsWrapper.style.paddingRight = '250px'; // Adiciona padding ao cardsWrapper
+                alertWrapper.style.paddingRight = '250px';
                 button.innerHTML = '<i class="fa-solid fa-angle-right"></i><i class="fa-solid fa-filter mx-2"></i>Filtros';
                 filtersWrapper.classList.add('active', 'show'); // Abre o filtro
             }

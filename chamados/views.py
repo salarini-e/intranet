@@ -97,7 +97,7 @@ def criarChamado(request, sigla):
             mensagem, status = Email_Chamado(chamado).chamado_criado()
             if status == 400:
                 message.error(request, mensagem)
-            return redirect('chamados:index')
+            return redirect('chamados:tickets')
     else:
         form = CriarChamadoForm(initial=initial_data, user=request.user)
         
@@ -116,6 +116,8 @@ def criarChamado(request, sigla):
 def detalhes(request, hash):
     chamado = Chamado.objects.get(hash=hash)
     servidor = Servidor.objects.get(user=request.user)
+    tipos_chamados = TipoChamado.objects.all()
+
     if request.method == 'POST':        
         form = MensagemForm(request.POST, request.FILES)
         if form.is_valid():
@@ -144,7 +146,9 @@ def detalhes(request, hash):
         'mensagens': Mensagem.objects.filter(chamado=chamado),   
         'prioridades': chamado.PRIORIDADE_CHOICES,
         'status': chamado.STATUS_CHOICES,     
-        'is_atendente': Atendente.objects.filter(servidor = servidor, ativo = True).exists()    
+        'is_atendente': Atendente.objects.filter(servidor = servidor, ativo = True).exists(),
+        'tipos': tipos_chamados,
+        'tipos_chamados': tipos_chamados
     }
     return render(request, 'chamados/detalhes.html', context)
 
@@ -443,7 +447,6 @@ from .functions import carregar_novos_filtros, filtrar_chamados
 def tickets(request):
     if request.method == 'POST':
       carregar_novos_filtros(request)
-    
     chamados = filtrar_chamados(request)
     secretarias = Secretaria.objects.all()
     atendentes = Atendente.objects.all()
