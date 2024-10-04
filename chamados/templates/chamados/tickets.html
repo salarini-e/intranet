@@ -180,6 +180,7 @@
                         </div>
                     </div>
                 {% endfor %}
+                {% if chamados %}
                 <ul class="pagination justify-content-center" style="margin-left: -0.75rem !important;margin-right: 0.75rem !important; margin-top: 1.5rem;">
                     <!-- Botão de 'Previous' -->
                     {% if chamados.has_previous %}
@@ -212,6 +213,7 @@
                         </li>
                     {% endif %}
                 </ul>
+                {% endif %}
             </div>
             
             {% if request.user.is_superuser or is_atendente%}
