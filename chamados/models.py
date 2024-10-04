@@ -186,7 +186,6 @@ class Chamado(models.Model):
         return valor
     
     def __processTime(self, delta):
-        print("Delta recebido:", delta)
         if delta.days > 1:
             return f"há {delta.days} dias"
         elif delta.days == 1:
@@ -221,7 +220,6 @@ class Chamado(models.Model):
             self.dt_atualizacao = timezone.make_aware(self.dt_atualizacao)
 
         agora_utc = timezone.now()
-        print("Data atual (UTC):", agora_utc)
 
         # Remover o fuso horário das datas
         dt_inclusao_naive = self.dt_inclusao.replace(tzinfo=None)

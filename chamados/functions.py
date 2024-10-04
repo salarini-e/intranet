@@ -385,7 +385,7 @@ def make_query_chamados(request):
             sql += " AND dt_atualizacao IS NOT NULL"
             sql += f" AND dt_atualizacao >= '{tempo_limite_atualizacaoEm.strftime('%Y-%m-%d %H:%M:%S')}'"
 
-    print('SQL', sql)
+    # print('SQL', sql)
     sql += " ORDER BY dt_inclusao DESC"
     return sql
  
@@ -428,7 +428,7 @@ def filtrar_chamados(request):
                 chamado = Chamado(**data)
                 queryset.append(chamado)
             queryset = sorted(queryset, key=lambda x: (x.dt_atualizacao if x.dt_atualizacao else x.dt_inclusao), reverse=True)
-            print("chamado:", queryset, '\n')
+            # print("chamado:", queryset, '\n')
         
         return queryset  
 
