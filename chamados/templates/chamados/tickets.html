@@ -184,11 +184,11 @@
                     <!-- Botão de 'Previous' -->
                     {% if chamados.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ chamados.previous_page_number }}" tabindex="-1">Previous</a>
+                            <a class="page-link" href="?page={{ chamados.previous_page_number }}" tabindex="-1">Anterior</a>
                         </li>
                     {% else %}
                         <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
                         </li>
                     {% endif %}
                 
@@ -204,11 +204,11 @@
                     <!-- Botão de 'Next' -->
                     {% if chamados.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ chamados.next_page_number }}">Next</a>
+                            <a class="page-link" href="?page={{ chamados.next_page_number }}">Próximo</a>
                         </li>
                     {% else %}
                         <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Próximo</a>
                         </li>
                     {% endif %}
                 </ul>
