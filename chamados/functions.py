@@ -433,7 +433,7 @@ def filtrar_chamados(request):
         return queryset  
 
     else:
-        queryset = Chamado.objects.filter(user_inclusao__user=request.user).order_by('-dt_inclusao')
+        queryset = Chamado.objects.filter(requisitante__user=request.user).order_by('-dt_inclusao')
 
     return queryset
 
