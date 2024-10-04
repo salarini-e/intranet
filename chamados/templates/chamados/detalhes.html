@@ -340,8 +340,8 @@
 										</div>											
 									</div>
 								</div>		
-								{% if request.user.is_authenticated and request.user.is_superuser  %}  
-								{% if is_atendente %}
+								{% if request.user.is_authenticated %}  
+								{% if request.user.is_superuser or is_atendente %}
 								<div class="form-check form-switch">
 									<input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="0">
 									<input type="hidden" name="confidencial" id="id_confidencial" value="0">
