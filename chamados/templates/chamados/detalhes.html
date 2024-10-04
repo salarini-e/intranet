@@ -341,11 +341,13 @@
 									</div>
 								</div>		
 								{% if request.user.is_authenticated and request.user.is_superuser  %}  
+								{% if or is_atendente %}
 								<div class="form-check form-switch">
 									<input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="0">
 									<input type="hidden" name="confidencial" id="id_confidencial" value="0">
 									<label class="form-check-label" id="switchLabel" for="flexSwitchCheckDefault">Mensagem normal</label>
 								</div>		
+								{% endif %}	
 								{% endif %}	
 								<div class="send-messages-buttons-wrapper">
 									<button onclick="openPopup()" class="button-close-send-messages" type="button"><i class="fa-solid fa-trash-can trash-icon"></i></button>		

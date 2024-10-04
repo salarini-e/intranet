@@ -200,7 +200,6 @@ def attChamado(request, hash):
     if atendente.exists():
         chamado = Chamado.objects.get(hash=hash)
         if request.POST:
-            # print(request.POST)
             atributo = request.POST['atributo']
             if atributo == 'status':
                 chamado.status = request.POST['valor']   
