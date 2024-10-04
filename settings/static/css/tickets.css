@@ -4,6 +4,18 @@
     box-sizing: border-box;
 }
 
+.ticket-chamado-background.card-status-finalizado::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(228, 227, 227, 0.7); /* Cor cinza claro com transparência */
+    z-index: 10; /* Para garantir que o overlay fique acima do conteúdo */
+    pointer-events: none; /* Para garantir que o overlay não interfira na interação com o conteúdo */
+}
+
 .ticket-chamado-background{
     display: flex;
     align-items: center;
@@ -23,11 +35,33 @@
     justify-content: start;
     align-items: left;
 }
-.checkbox-tickets{
-    position: absolute;
-    transform: translate(-50%,-50%);
+
+.checkbox-container {
+    position: relative;
+    width: 20px;
+    height: 20px;
 }
+
+.checkbox-tickets {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px; 
+    accent-color: #007bff;
+    cursor: pointer; 
+}
+
+.checkbox-tickets:focus {
+    outline: none; 
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); 
+}
+
 .chamados-tickets-infos-chamado-text{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     margin-left: 10px;
 }
 .chamados-tickets-infos-chamado-text-assunto{
@@ -35,33 +69,55 @@
     font-size: 12px;
     color: black;
 }
-.chamados-tickets-infos-chamado-text-requisitante{
-    font: var(--bs-font-sans-serif);
-    font-size: 10px;
+
+.chamados-tickets-infos-chamado-text-assunto.validade-ticket{
+    padding: 2px;
+    border-radius: 5px;
+    width: 50px;
+    text-align: center;
+    color: #007958;
+    border: 1px solid #b4e5d9;
+    background-color: #e0f5f0;
+    margin-bottom: 5px;
 }
 
+.solution-infos-wrapper{
+    display: flex;
+    align-items: center;
+    margin-top: .5rem !important;
+}
+.chamados-tickets-infos-chamado-text-requisitante, .chamados-tickets-infos-chamado-text-status{
+    font: var(--bs-font-sans-serif);
+    font-size: 10px;
+    margin-left: 3px;
+}
 .chamados-tickets-infos{
     display: flex;
     flex-direction: column;
     padding-left: 3%;
     font-size: 11px;
-    /* justify-content: center; */
-    /* align-items: center; */
-    /* text-align: center; */
-}
+    justify-content: center;
 
+}
 .prioridade {
     display: flex;
     align-items: center;
 }
 
-.prioridade-indicador {
-    width: 10px;
+.text-line{
+    margin-bottom: 5px;
+}
+
+.prioridade-indicador, .user-icon {
+    width: 10px;    
     height: 10px;
     border-radius: 2px;  /* Ajuste o arredondamento se necessário */
     margin-right: 8px;
 }
 
+.user-i{
+    color: black;
+}
 .prioridade-nao-definida{
     background-color: rgb(114, 7, 78);  /* Cor opcional para 'Não definida' */
 }
@@ -71,7 +127,7 @@
 }
 
 .prioridade-media{
-    background-color: yellow;
+    background-color: rgb(231, 231, 17);
 }
 
 .prioridade-alta{
@@ -87,7 +143,7 @@
 }
 
 .status-atendimento {
-    background-color: #b3fce6; /* Medium Orchid */
+    background-color: #4eaa8e; /* Medium Orchid */
 }
 
 .status-pendente {
@@ -104,3 +160,102 @@
 .dropdown-menu.show{
     margin-left: -20px !important;
 }
+
+.row.ticket-chamado-background.checked {
+    position: relative;
+    box-shadow: 0 0 0 0.5px #b9b9b9;
+}
+
+.multi-select-input {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.selected-option {
+    background-color: #e9ecef;
+    padding: 2px 5px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    margin: 2px;
+    font-size: 14px;
+}
+.selected-option button {
+    background: none;
+    border: none;
+    margin-left: 5px;
+    color: red;
+    font-weight: bold;
+    cursor: pointer;
+} 
+
+#mButtonFilters{
+    transition: margin-right 1s ease-in-out;
+}
+#cards-wrapper{
+    transition: padding-right 1s ease-in-out;
+}
+
+
+.filters-wrapper {
+    transition: transform 1s ease-in-out; 
+    transform: translateX(-250px); 
+}
+
+
+
+@media(max-width:768px){
+    #offcanvasScrolling {
+        position: fixed; /* Permite que a sidebar flutue sobre o conteúdo */
+        top: 0;
+        right: 0;
+        height: 100%;
+        z-index: 1050; /* Garante que a sidebar fique sobre o conteúdo */
+        width: 280px; /* Largura da sidebar */
+        transition: transform 0.3s ease-in-out; /* Suaviza a transição ao abrir/fechar */
+        transform: translateX(100%); /* Inicialmente oculta a sidebar */
+    }
+    .app-page-title.tickets{
+        font-size: 1rem;
+    }
+    #offcanvasScrolling.active {
+        transform: translateX(0); /* Exibe a sidebar sobre o conteúdo */
+    }
+    .top-buttons-background{
+    width: 100% !important;
+        display: flex !important;
+        justify-content: end !important; 
+    }
+    .chamados-tickets-infos{
+        padding-left: 1.5rem;
+    }
+}
+
+.multi-select-input.form-select{
+    background-image: none;
+    padding: 0;
+    border: none;
+}
+.select-input.form-select{
+    padding: .375rem .75rem;
+    height: 32px;
+    font-size: 14px;
+}
+
+.filter-title-itens{
+    font-size: 12px;
+    color: #475867;
+    font-weight: 500;
+}
+.options-filter{
+    font-size: 14px;
+}
+.filter-button{
+    width: 100%;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+}
+
