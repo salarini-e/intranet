@@ -69,7 +69,6 @@ def processar_csv(csv_file_path, cursor):
     # Processar o CSV e inserir novos registros
     # with open(csv_file_path, newline='', encoding='ANSI') as csvfile:
     with open(csv_file_path, newline='', encoding='ISO-8859-1') as csvfile:
-
         reader = csv.DictReader(csvfile, delimiter=';')
         for row in reader:
             situacao_funcional = row['Situação Funcional']
