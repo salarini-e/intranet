@@ -98,15 +98,40 @@
 							<span>{{chamado.requisitante.matricula}}</span>
 						</div>
 					</div>
-					<div class="detalhe-contato-menu-endereço">
-						<span><strong>Endereço</strong></span>
-						<span>{{chamado.setor.endereco}} - {{chamado.setor.bairro}}, {{chamado.setor.cep}}</span>
+					<div class="detalhe-contato-menu-wrapper-2">
+						<div class="detalhe-contato-menu-endereco">
+							<span><strong>Endereço</strong></span>
+							<span>{{chamado.setor.endereco}} - {{chamado.setor.bairro}}, {{chamado.setor.cep}}</span>
+						</div>
+						<!-- <div class="detalhe-contato-menu-pp">
+							<span><strong>Período preferencial</strong></span>
+							<span>
+								{% for periodo in chamado.periodo_preferencial.all %}
+									{{ periodo }}
+									{% if not forloop.last %}/{% endif %}
+									{% empty %}
+									Não atribuído
+								{% endfor %}	
+							</span>
+						</div> -->
+						<div class="detalhe-contato-menu-data">
+							{% if chamado.dt_fechamento %}
+								<span><strong>Dt. Fechamento</strong></span>
+									<span>
+										{{chamado.dt_fechamento|date:"d/m/Y H:i"}}
+									</span>
+							{% else  %}
+							<span><strong>Dt. Solicitação</strong></span>
+							<span>
+								{{chamado.dt_inclusao|date:"d/m/Y H:i"}}
+							</span>
+							{% endif %}
+						</div>
 					</div>
 					<!-- <div class="detalhe-contato-ver-perfil">
 						<a href="{% url 'chamados:ver-perfil' chamado.requisitante.matricula %}" class="detalhe-contato-ver-perfil-link" target="_blank">
 							<span>Exibir atividades</span>
 						</a>
-
 					</div> -->
 				</div>	
 				<!-- DETALHES CHAMADOS WRAPPER
@@ -154,7 +179,7 @@
 										   {{ chamado.get_prioridade_display }}
 									   </span>
 									</a>
-									<ul class="dropdown-menu">
+									<ul class="dropdown-menu prioridade-detalhes-ul">
 										{% for prioridade in chamado.PRIORIDADE_CHOICES %}
 											<li><a class="dropdown-item" href="#" onclick="mudar_prioridade('{{chamado.hash}}','{{prioridade.0}}')">{{prioridade.1}}</a></li>
 										{% endfor %}
@@ -183,7 +208,7 @@
 										   {{ chamado.get_status_display }}
 									   </span>
 									</a>
-									<ul class="dropdown-menu">
+									<ul class="dropdown-menu status-detalhes-ul">
 										{% for status in chamado.STATUS_CHOICES %}
 											<li><a class="dropdown-item" href="#" onclick="mudar_status('{{chamado.hash}}','{{status.0}}')">{{status.1}}</a></li>
 										{% endfor %}
@@ -196,6 +221,37 @@
 								</div>
 							</div>
 							
+							<!-- ATENDENTENTE -->
+							<div class="content-chamado-informacoes-atendente">
+								<div class="dropdown atendente-indicador select-atendente-detalhes " id="indicadorAtendente-{{chamado.id}}">
+									{% if request.user.is_superuser or is_atendente %}
+									<span class="user-icon-detalhes"><i class="fa-solid fa-user user-i"></i></span>
+									<a id="selectAtendente-{{chamado.id}}" class="dropdown-toggle badge py-0 select-atendente-detalhes" 
+									   type="button" 
+									   data-bs-toggle="dropdown" 
+									   aria-expanded="false" 
+									   style="text-decoration: none; color: black;"
+									   data-bs-toggle="tooltip" 
+									   data-bs-placement="left" 
+									   title="Atendente">
+									   <span class="">
+										{% if chamado.profissional_designado%}
+										{{ chamado.profissional_designado }}
+										{% else %}
+										Não atribuído
+										{% endif %}
+									   </span>
+									</a>
+									<ul class="dropdown-menu atendente-detalhes-ul">
+										{% for atendente in atendentes %}
+                                            <li>
+                                                <a class="dropdown-item" href="#" onclick="mudar_atendente('{{chamado.hash}}', '{{atendente.id}}')">{{ atendente.nome_servidor }}</a>
+                                            </li>
+                                        {% endfor %}
+									</ul>
+									{% endif %}
+								</div>
+							</div>
 							
 						</div>
 						
@@ -407,7 +463,7 @@
 				    </div>
 			    </div>
 				
-				<div class="row my-3">
+				<!-- <div class="row my-3">
 	                <div class="col col-md">
 		                <div class="app-card shadow-sm p-4">
 							<div class="app-card-body">
@@ -422,8 +478,8 @@
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="row g-4 settings-section">
+				</div> -->
+				<!-- <div class="row g-4 settings-section">
 	                <div class="col-12 col-md-4">
 		                <div class="app-card shadow-sm p-4" style="height: 100%;">
 							<div class="app-card-body">
@@ -435,8 +491,8 @@
 								</div>
 							</div>
 						</div>
-	                </div>
-	                <div class="col-12 col-md-8">
+	                </div> -->
+	                <!-- <div class="col-12 col-md-8">
 		                <div class="app-card app-card-settings shadow-sm p-4"  style="height: 100%;">
 						    
 						    <div class="app-card-body">
@@ -499,13 +555,13 @@
 									{% endif %}
 							    </div>
 								    
-						    </div><!--//app-card-body-->
+						    </div>
 						    
-						</div><!--//app-card-->
+						</div>
 	                </div>
                 </div>
-				
-				{% if atendente.exists %}
+				 -->
+				<!-- {% if atendente.exists %}
 				{% if chamado.profissional_designado  or request.user.is_superuser %}
 				<div class="row my-3">
 	                <div class="col col-md">
@@ -597,7 +653,7 @@
 					</div>
 				</div>
 				{% endif %}
-				{% endif %}
+				{% endif %} -->
 				<!-- <div class="row my-3  mb-5">
 	                <div class="col col-md">
 		                <div class="app-card shadow-sm p-4">
@@ -792,6 +848,10 @@
 					
 					  
 				}
+				function mudar_atendente_select(id, display_atendente){
+					let selectAtendente = document.getElementById('selectAtendente-'+id);
+					selectAtendente.innerText = display_atendente;   
+				}
 				function mudar_status(hash, status){
 					
 					var url = "{% url 'chamados:api_status' %}"; 
@@ -823,6 +883,27 @@
 										.then(response => {
 											if (response.status == 200){
 												mudar_prioridade_select(response.id, response.display_prioridade)
+											}else{
+												alert(response.message +" (" + response.status+")")
+											}                                   
+										})
+										.catch(error => {
+											alert('Erro ao mudar status. Tente novamente mais tarde.')
+											console.error(error)
+										});				
+				}
+
+				function mudar_atendente(hash, atendente){
+					var url = "{% url 'chamados:api_atendente' %}"; 
+					formData = new FormData();
+					formData.append('hash', hash);
+					formData.append('atendente', atendente);
+					formData.append('csrfmiddlewaretoken', '{{csrf_token}}');
+					postRequest(url, formData)
+										.then(response => {
+											if (response.status == 200){
+												// alert(response.message +" (" + response.status+")")
+												mudar_atendente_select(response.id, response.display_atendente)
 											}else{
 												alert(response.message +" (" + response.status+")")
 											}                                   
