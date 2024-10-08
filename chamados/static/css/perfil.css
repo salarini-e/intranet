@@ -65,46 +65,54 @@
     align-items: center;
     margin-right: 15px;
     height: 188px;
-    position: relative; /* Permite que os elementos filhos sejam posicionados em relação a este */
+    position: relative; 
 }
 
-
-.timeline-icon {
-    position: relative; /* Necessário para o posicionamento dos pseudo-elementos */
-    margin: auto; /* Espaçamento em cima e embaixo do ícone */
+.timeline-label {
+    position: relative; 
+    margin-bottom: 20px; 
 }
 
-/* Linha acima do ícone */
-.timeline-icon::before {
+.timeline-label::after {
     content: '';
     position: absolute;
-    top: -20px; /* Posição inicial acima do ícone */
-    left: 50%; /* Centraliza horizontalmente */
-    height: 20px; /* Altura da linha acima do ícone */
-    width: 2px; /* Espessura da linha */
-    background-color: #000; /* Cor da linha, ajuste conforme necessário */
-    transform: translateX(-50%); /* Ajusta a linha para centralizar */
+    top: 100%; 
+    left: 50%; 
+    height: 60px; 
+    width: 2px; 
+    background-color: #5d6778; 
+    transform: translateX(-50%); 
 }
 
-/* Linha abaixo do ícone até o final da div */
+.timeline-icon {
+    position: relative; 
+    margin: auto;
+    top: -10px;
+    font-size: 24px;
+    color: #2c5cc5;
+}
+
 .timeline-icon::after {
     content: '';
     position: absolute;
     bottom: -20px; /* Posição inicial abaixo do ícone */
     left: 50%; /* Centraliza horizontalmente */
-    height: calc(100% - 40px); /* Altura da linha abaixo do ícone (total - margens) */
+    height: calc(100% + 20px); /* Altura da linha que vai até o final da div */
     width: 2px; /* Espessura da linha */
-    background-color: #000; /* Cor da linha, ajuste conforme necessário */
+    background-color: #5d6778; /* Cor da linha, ajuste conforme necessário */
     transform: translateX(-50%); /* Ajusta a linha para centralizar */
+    top:40px;
+    height: 60px;
 }
-
 .timeline-item {
     display: flex;
     align-items: center;
     padding: 0 1.7rem 0 1.7rem;
     position: relative;
 }
-
+.timeline-item:last-child{
+    padding-bottom: 20px;
+}
 .timeline-infos-right {
     display: flex;
     flex-direction: column;
@@ -154,7 +162,7 @@
     z-index: 50;
 }
 
-@media(max-width:768px){
+@media(max-width:900px){
     .timeline-infos-chamado{
         flex-direction: column;
         justify-content: center;
@@ -166,14 +174,24 @@
     
 }
 @media(max-width:500px){
+    .timeline-wrapper{
+        padding-top: 0px;
+    }
     .timeline-item{
         flex-direction: column;
         justify-content: center;
         align-items: start;
     }
     .timeline-infos-left{
+        display: block;
         flex-direction: row;
+        align-items: center;
+        justify-content: start;
         margin-bottom: 15px;
+        height: 100%;
+    }
+    .timeline-icon{
+        position: unset;
     }
     .timeline-infos-right{
         padding: 0 1rem;
@@ -182,7 +200,17 @@
     .timeline-icon{
         margin-left: 5px;
     }
-    .timeline-item:first-child{
+    .timeline-item{
         padding-top: 1.7rem;
+    }
+    .timeline-icon{
+        font-size: 16px;
+        color: #5d6778;
+    }
+    .timeline-icon::after{
+        height: 0;
+    }
+    .timeline-label::after{
+        height: 0;
     }
 }

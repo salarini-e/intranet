@@ -526,27 +526,15 @@ def painel_controle(request):
 
 
 @login_required
-def ver_perfil(request, matricula):
+def ver_perfil(request,matricula):
     is_atendente = Atendente.objects.filter(servidor=Servidor.objects.get(user=request.user)).exists(),
-    servidor = get_object_or_404(Servidor, matricula=matricula)
 
-    # Data limite de duas semanas atrás
-    duas_semanas_atras = timezone.now() - timedelta(weeks=2)
+    servidor= get_object_or_404(Servidor, matricula=matricula)
 
     context = {
         'usuario': servidor
     }
     if is_atendente or servidor.user == request.user:
-        # Chamados de até duas semanas atrás
-        chamados_recentes = Chamado.objects.filter(
-            requisitante=servidor, 
-            dt_inclusao__gte=duas_semanas_atras
-        ).order_by('-dt_inclusao')
-
-        # Todos os chamados (inclui os chamados antigos)
-        todos_chamados = Chamado.objects.filter(requisitante=servidor).order_by('-dt_inclusao')
-
-        context['chamados_recentes'] = chamados_recentes
-        context['todos_chamados'] = todos_chamados
-
+        chamado = Chamado.objects.filter(requisitante = servidor).order_by('-dt_inclusao')
+        context['chamado']= chamado
     return render(request, 'chamados/perfil.html', context)

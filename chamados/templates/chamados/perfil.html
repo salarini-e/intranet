@@ -58,13 +58,14 @@
 </div>
 
 <div class="timeline-wrapper" id="timeline-recent"> 
-    {% if chamados_recentes %}
-    {% for chamado in chamados_recentes%}
+    {% if chamado %}
+    {% for chamado in chamado%}
     <div class="timeline-item">
         <div class="timeline-infos-left">
             <span class="timeline-label">{{ chamado.get_formatted_inclusao|safe }}</span>
             <span class="timeline-icon"><i class="fas fa-globe"></i></span>
         </div>
+
         <div class="timeline-infos-right">
             <span class="timeline-hour">
                 {{chamado.dt_inclusao|date:"H:i"}}
@@ -98,7 +99,7 @@
 </div>
 
 
-{% if chamados_recentes and chamados.paginator.num_pages > 1 %}
+{% if chamado and chamados.paginator.num_pages > 1 %}
 <ul class="pagination justify-content-center" style="margin-left: -0.75rem !important;margin-right: 0.75rem !important; margin-top: 1.5rem;">
     <!-- Botão de 'Previous' -->
     {% if chamados.has_previous %}
