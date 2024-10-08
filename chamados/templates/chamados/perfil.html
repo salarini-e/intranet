@@ -8,25 +8,76 @@
 
 
 <div class="perfil-wrapper">
-    <div class="perfil-image">
-        {% if usuario.avatar %}
-        <img src="{{ usuario.avatar.url }}" alt="{{ usuario.nome }}" class="img-avatar">
-        {% else %}
-            <img src="{% static 'images/users/avatar.png' %}" alt="Avatar padrão" class="img-avatar">
-        {% endif %}
+    <div class="perfil-name-wrapper">
+        <div class="perfil-image">
+            {% if usuario.avatar %}
+            <img src="{{ usuario.avatar.url }}" alt="{{ usuario.nome }}" class="img-avatar">
+            {% else %}
+                <img src="{% static 'images/users/avatar.png' %}" alt="Avatar padrão" class="img-avatar">
+            {% endif %}
+        </div>
+        <div class="perfil-infos">
+                <span class="perfil-infos-nome-text">{{usuario.nome}}</span>
+                <a class="perfil-infos-secretaria-link" href="">
+                    <span class="perfil-infos-secretaria-text">{{usuario.setor.secretaria}}</span>
+                </a>
+        </div>
     </div>
-    <div class="perfil-infos">
-            <span class="perfil-infos-nome-text">{{usuario.nome}}</span>
-            <a class="perfil-infos-secretaria-link" href="">
-                <span class="perfil-infos-secretaria-text">{{usuario.setor.secretaria}}</span>
-            </a>
-    </div>
-
+    
     <div class="perfil-buttons">
-
+        <div class="perfil-buttons-timeline">
+            <a href="" class="perfil-buttons-link">
+                Linha do tempo
+            </a>
+        </div>
+        <div class="perfil-buttons-tickets">
+            <a href="" class="perfil-buttons-link">
+                Tickets
+            </a>
+        </div>
     </div>
 </div>
-{% if chamado %}
+
+<div class="timeline-wrapper" id="timeline-recent"> 
+    {% if chamado %}
+    {% for chamado in chamado%}
+    <div class="timeline-item">
+        <div class="timeline-infos-left">
+            <span class="timeline-label">HOJE</span>
+            <span class="timeline-icon"><i class="fas fa-globe"></i></span>
+        </div>
+        <div class="timeline-infos-right">
+            <span class="timeline-hour">
+                {{chamado.dt_inclusao|date:"H:i"}}
+            </span>
+            <span class="timeline-assunto">
+                {{chamado.assunto}} <span class="timeline-assunto-id-chamado">#{{ chamado.id|stringformat:"04d" }}</span>
+            </span>
+            <div class="timeline-infos-chamado">
+                <span class="timeline-info-chamado">Prioridade: {{chamado.get_prioridade_display}}</span>
+                <span class="dot-separator-timeline">•</span>
+                <span class="timeline-info-chamado">Status: {{chamado.get_status_display}}</span>
+                <span class="dot-separator-timeline">•</span>
+                <span class="timeline-info-chamado">Grupo: {{chamado.tipo}}</span>
+                <span class="dot-separator-timeline">•</span>
+                <span class="timeline-info-chamado">Analista: 
+                    {% if chamado.profissional_designado %}
+                    {{chamado.profissional_designado}}
+                    {% else %}
+                    Não atribuído
+                    {% endif%}
+                </span>
+            </div>
+            <span class="timeline-info-atualizacao-chamado">{{chamado.get_ultima_acao }}</span>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <span class="perfil-sem-ticket">O usuário não possui tickets abertos recentemente!</span>
+    {% endif %}
+   
+</div>
+<!-- {% if chamado %}
 
 <div class="perfil-wrapper mt-5">
     <div class="perfil-image">
@@ -35,7 +86,7 @@
     </div>
 </div>
 {% endif %}
-<!-- colocar um botão de mais informações -->
+
 <div>
     <div id="detalhes-contato" class="detalhes-contato">
         <div class="detalhe-contato-menu-wrapper">
@@ -60,5 +111,5 @@
             </div>
         </div>
     </div>	
-</div>
+</div> -->
 {% endblock %}

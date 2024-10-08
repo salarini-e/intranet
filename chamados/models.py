@@ -192,11 +192,22 @@ class Chamado(models.Model):
             return "há 1 dia"
         else:
             horas = delta.seconds // 3600
+            minutos = (delta.seconds % 3600) // 60  # Calcular minutos restantes
+            
             if horas > 0:
-                return f"há {horas} horas"
+                if horas == 1:
+                    return f"há {horas} hora"
+                else:
+                    return f"há {horas} horas"
             else:
-                return "há menos de uma hora"
-                
+                if minutos > 0:
+                    if minutos == 1:
+                        return f"há {minutos} minuto"
+                    else:
+                        return f"há {minutos} minutos"
+                else:
+                    return "há menos de um minuto"
+    
     def getCreateTime(self):
         agora_utc = timezone.now()
         dt_inclusao_naive = self.dt_inclusao.replace(tzinfo=None)
@@ -204,42 +215,60 @@ class Chamado(models.Model):
 
         return self.__processTime(delta)
 
-    def getUpdateTime(self):
-        agora_utc = timezone.now()
-        # Remover o fuso horário de dt_atualizacao
-        dt_atualizacao_naive = self.dt_atualizacao.replace(tzinfo=None)
-        delta = agora_utc.replace(tzinfo=None) - dt_atualizacao_naive
+    def status_andamento_ticket_detalhes(self):
+        result = self.getCreateTime()
+        return result
+    
+    # MÉTODO PARA TEXTO NO PERFIL DO USUÁRIO
+    def get_ultima_acao(self):
+        agora = timezone.now()
 
-        return self.__processTime(delta)
-            
-    def status_andamento_ticket(self):
+        # Tornar dt_inclusao aware (com timezone) se necessário
         if timezone.is_naive(self.dt_inclusao):
             self.dt_inclusao = timezone.make_aware(self.dt_inclusao)
 
+        # Tornar dt_atualizacao aware (com timezone) se necessário
         if timezone.is_naive(self.dt_atualizacao):
             self.dt_atualizacao = timezone.make_aware(self.dt_atualizacao)
 
-        agora_utc = timezone.now()
+        # Verifica e ajusta última alteração de prioridade se presente
+        if hasattr(self, 'ultima_prioridade_alterada') and self.ultima_prioridade_alterada:
+            if timezone.is_naive(self.ultima_prioridade_alterada):
+                self.ultima_prioridade_alterada = timezone.make_aware(self.ultima_prioridade_alterada)
+            delta = agora - self.ultima_prioridade_alterada
+            return f"Prioridade alterada {self.__processTime(delta)}"
 
-        # Remover o fuso horário das datas
-        dt_inclusao_naive = self.dt_inclusao.replace(tzinfo=None)
-        dt_atualizacao_naive = self.dt_atualizacao.replace(tzinfo=None)
-        agora_naive = agora_utc.replace(tzinfo=None)
+        # Verifica e ajusta última alteração de status se presente
+        if hasattr(self, 'ultima_status_alterada') and self.ultima_status_alterada:
+            if timezone.is_naive(self.ultima_status_alterada):
+                self.ultima_status_alterada = timezone.make_aware(self.ultima_status_alterada)
+            delta = agora - self.ultima_status_alterada
+            return f"Status alterado {self.__processTime(delta)}"
 
-        delta_inclusao = agora_naive - dt_inclusao_naive
-        delta_atualizacao = agora_naive - dt_atualizacao_naive
+        # Verifica a última mensagem e a processa, se for do atendente
+        ultima_mensagem = Mensagem.objects.filter(chamado=self).order_by('-dt_inclusao').first()
+        if ultima_mensagem and ultima_mensagem.autor() == 'Atendente':
+            if not ultima_mensagem.confidencial:
+                if timezone.is_naive(ultima_mensagem.dt_inclusao):
+                    ultima_mensagem.dt_inclusao = timezone.make_aware(ultima_mensagem.dt_inclusao)
+                delta = agora - ultima_mensagem.dt_inclusao
+                return f"Respondido pelo atendente {self.__processTime(delta)}"
 
-        if dt_atualizacao_naive <= dt_inclusao_naive + timedelta(minutes=5):
-            result = self.getCreateTime()
-            return 'Criado ' + result
-        else:
-            result = self.getUpdateTime()
-            return 'Atualizado ' + result
-    
-    def status_andamento_ticket_detalhes(self):
-        result = self.getUpdateTime()
-        return result
-        
+        # Verifica se o status é finalizado
+        if self.status == '4':
+            if timezone.is_naive(self.dt_fechamento):
+                self.dt_fechamento = timezone.make_aware(self.dt_fechamento)
+            delta = agora - self.dt_fechamento
+            return f"Finalizado {self.__processTime(delta)}"
+
+        # Caso não haja mensagens e dt_inclusao seja igual a dt_atualizacao
+        if not ultima_mensagem and self.dt_inclusao == self.dt_atualizacao:
+            delta = agora - self.dt_inclusao
+            return f"Criado {self.__processTime(delta)}"
+
+        # Subtração entre agora e dt_atualizacao para o tempo atualizado
+        delta = agora - self.dt_atualizacao
+        return f"Atualizado {self.__processTime(delta)}"
         
 class Pausas_Execucao_do_Chamado(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')
@@ -263,7 +292,7 @@ class Mensagem(models.Model):
     user_inclusao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True, related_name="user_inclusao_mensagens")
     confidencial = models.BooleanField(default=False, verbose_name='Confidencial')
 
-    def autor(self):        
+    def autor(self):                
         atendente = Atendente.objects.filter(servidor=self.user_inclusao)
         if atendente.exists():
             return 'Atendente'
@@ -277,10 +306,21 @@ class Mensagem(models.Model):
             return "há 1 dia"
         else:
             horas = delta.seconds // 3600
+            minutos = (delta.seconds % 3600) // 60  # Calcular minutos restantes
+            
             if horas > 0:
-                return f"há {horas} horas"
+                if horas == 1:
+                    return f"há {horas} hora"
+                else:
+                    return f"há {horas} horas"
             else:
-                return "há menos de uma hora"
+                if minutos > 0:
+                    if minutos == 1:
+                        return f"há {minutos} minuto"
+                    else:
+                        return f"há {minutos} minutos"
+                else:
+                    return "há menos de um minuto"
             
     def getCreateTime(self):
         agora_utc = timezone.now()
@@ -289,13 +329,10 @@ class Mensagem(models.Model):
 
         return self.__processTime(delta)
 
-
     def status_andamento_mensagem(self):
         result = self.getCreateTime()
         return result
 
-    
-    
     class Meta:
         verbose_name = 'Mensagem'
         verbose_name_plural = 'Mensagens'

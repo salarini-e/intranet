@@ -128,11 +128,11 @@
 							{% endif %}
 						</div>
 					</div>
-					<!-- <div class="detalhe-contato-ver-perfil">
+					<div class="detalhe-contato-ver-perfil">
 						<a href="{% url 'chamados:ver-perfil' chamado.requisitante.matricula %}" class="detalhe-contato-ver-perfil-link" target="_blank">
 							<span>Exibir atividades</span>
 						</a>
-					</div> -->
+					</div>
 				</div>	
 				<!-- DETALHES CHAMADOS WRAPPER
 				<div class="detalhes-chamados-wrapper" onclick="toggleDetalhesChamado()">
@@ -318,7 +318,7 @@
 								</div>
 								<div class="first-message-user-content">
 									<span class="messages-chamado-descricao-text">
-										Esta mensagem é confidencial: {{ mensagem.mensagem }}
+									{{ mensagem.mensagem }}
 									</span>
 									{% if mensagem.anexo %}
 										<button onclick="visualizarAnexo('{{ mensagem.anexo.url }}')" class="my-auto ms-auto btn app-btn-secondary">
