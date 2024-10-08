@@ -187,7 +187,7 @@ def obter_opcoes_filtros():
     }
 
 def paginar_chamados(request, chamados):
-    paginator = Paginator(chamados, 50)  # Mostra 10 chamados por página
+    paginator = Paginator(chamados, 25) 
     page_number = request.GET.get('page')
     return paginator.get_page(page_number)
 

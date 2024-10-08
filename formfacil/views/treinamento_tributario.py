@@ -46,7 +46,7 @@ def cadastroTreinamentoTributarioEmissoresTaxas(request):
 
 def cadastroTreinamentoTributarioContadores(request):
     qntd = Cadastro_Aulas_Treinamento_Tributario_Contadores.objects.all().count()
-    if qntd >= 80:
+    if qntd > 80:
         context = {
             'form': 'Excedeu o limite de inscrições para este treinamento.',
             'titulo': 'TREINAMENTO TRIBUTÁRIO - CONTADORES',    

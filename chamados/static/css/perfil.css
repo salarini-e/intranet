@@ -55,20 +55,53 @@
     justify-content: center;
     background-color: white;
     margin-top: 15px;
+    padding-top: 20px;
+    
 }
 
 .timeline-infos-left {
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative;
     margin-right: 15px;
+    height: 188px;
+    position: relative; /* Permite que os elementos filhos sejam posicionados em relação a este */
+}
+
+
+.timeline-icon {
+    position: relative; /* Necessário para o posicionamento dos pseudo-elementos */
+    margin: auto; /* Espaçamento em cima e embaixo do ícone */
+}
+
+/* Linha acima do ícone */
+.timeline-icon::before {
+    content: '';
+    position: absolute;
+    top: -20px; /* Posição inicial acima do ícone */
+    left: 50%; /* Centraliza horizontalmente */
+    height: 20px; /* Altura da linha acima do ícone */
+    width: 2px; /* Espessura da linha */
+    background-color: #000; /* Cor da linha, ajuste conforme necessário */
+    transform: translateX(-50%); /* Ajusta a linha para centralizar */
+}
+
+/* Linha abaixo do ícone até o final da div */
+.timeline-icon::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; /* Posição inicial abaixo do ícone */
+    left: 50%; /* Centraliza horizontalmente */
+    height: calc(100% - 40px); /* Altura da linha abaixo do ícone (total - margens) */
+    width: 2px; /* Espessura da linha */
+    background-color: #000; /* Cor da linha, ajuste conforme necessário */
+    transform: translateX(-50%); /* Ajusta a linha para centralizar */
 }
 
 .timeline-item {
     display: flex;
     align-items: center;
-    padding: 0 1.7rem 1.7rem 1.7rem;
+    padding: 0 1.7rem 0 1.7rem;
     position: relative;
 }
 
@@ -109,6 +142,18 @@
 .timeline-info-atualizacao-chamado{
     font-size: 14px;
 }
+.timeline-label{
+    padding: 4px 16px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .2px;
+    text-align: center;
+    background-color: #e5f2fd;
+    border-radius: 16px;
+    color: #183247;
+    z-index: 50;
+}
+
 @media(max-width:768px){
     .timeline-infos-chamado{
         flex-direction: column;
@@ -119,4 +164,25 @@
         display: none;
     }
     
+}
+@media(max-width:500px){
+    .timeline-item{
+        flex-direction: column;
+        justify-content: center;
+        align-items: start;
+    }
+    .timeline-infos-left{
+        flex-direction: row;
+        margin-bottom: 15px;
+    }
+    .timeline-infos-right{
+        padding: 0 1rem;
+        
+    }
+    .timeline-icon{
+        margin-left: 5px;
+    }
+    .timeline-item:first-child{
+        padding-top: 1.7rem;
+    }
 }

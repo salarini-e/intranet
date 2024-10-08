@@ -269,6 +269,36 @@ class Chamado(models.Model):
         # Subtração entre agora e dt_atualizacao para o tempo atualizado
         delta = agora - self.dt_atualizacao
         return f"Atualizado {self.__processTime(delta)}"
+    
+    # PARTE PARA TIMELIME
+    def get_formatted_inclusao(self):
+        # Verificar se dt_inclusao está com timezone correto
+        if timezone.is_naive(self.dt_inclusao):
+            self.dt_inclusao = timezone.make_aware(self.dt_inclusao)
+
+        agora = timezone.now()
+        data_inclusao = self.dt_inclusao.date()
+
+        # Diferença de dias entre hoje e a data de inclusão
+        delta = (agora.date() - data_inclusao).days
+
+        if delta == 0:
+            # Se o chamado foi criado hoje
+            return '<span class="timeline-label">HOJE</span>'
+        elif delta == 1:
+            # Se o chamado foi criado ontem
+            return '<span class="timeline-label">ONTEM</span>'
+        else:
+            # Para dias anteriores, exibir: dia da semana, dia do mês, mês e ano
+            dias_semana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"]
+            meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+
+            dia_semana = dias_semana[data_inclusao.weekday()]  # Obter dia da semana
+            dia = data_inclusao.day  # Obter dia do mês
+            mes = meses[data_inclusao.month - 1]  # Obter mês
+            ano = data_inclusao.year  # Obter ano
+
+            return f'<span class="timeline-label">{dia_semana}, {dia} {mes}, {ano}</span>'
         
 class Pausas_Execucao_do_Chamado(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')
