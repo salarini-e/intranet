@@ -46,7 +46,7 @@ def cadastroTreinamentoTributarioEmissoresTaxas(request):
 
 def cadastroTreinamentoTributarioContadores(request):
     qntd = Cadastro_Aulas_Treinamento_Tributario_Contadores.objects.all().count()
-    if qntd > 80:
+    if qntd >= 82:
         context = {
             'form': 'Excedeu o limite de inscrições para este treinamento.',
             'titulo': 'TREINAMENTO TRIBUTÁRIO - CONTADORES',    
@@ -54,7 +54,7 @@ def cadastroTreinamentoTributarioContadores(request):
             'mensagem': (
                 "Data: 11/10 (sexta-feira) <br>"
                 "Horario : das 10h às 12h. <br>"
-                "Local: A definir"
+                "Local: SEBRAE (ARP)"
             )
         }
         return render(request, 'formfacil/formfacil_form.html', context)
@@ -78,7 +78,7 @@ def cadastroTreinamentoTributarioContadores(request):
             'mensagem': (
                 "Data: 11/10 (sexta-feira) <br>"
                 "Horario : das 10h às 12h. <br>"
-                "Local: A definir"
+                "Local: SEBRAE (ARP)"
             )
         }
     return render(request, 'formfacil/formfacil_form.html', context)
