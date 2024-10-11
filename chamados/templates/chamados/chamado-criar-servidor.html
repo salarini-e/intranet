@@ -1,5 +1,8 @@
 {% extends 'template_chamados.html' %}
 {% block chamados %}active{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="/static/css/tickets.css">
+{% endblock %}
 {% block main %}   		    
 				{{ form.media.css }}
 				<style>
@@ -99,8 +102,38 @@
 					function callSetor(e){
 						var url = "{% url 'tel:api' %}getSetores/"+e.value+"/"; 
 						getRequest(url, montarSelect);
-					}					
-				</script>
+					}		
+					
+					function icpf(v){
+						v=v.replace(/\D/g,"")                    //Remove tudo o que nao e digito
+						v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+						v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+																//de novo (para o segundo bloco de numeros)
+						v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hifen entre o terceiro e o quarto digitos
+						return v
+					}
+					function itel(v){
+						v=v.replace(/\D/g,"")                 //Remove tudo o que nao e digito
+						v=v.replace(/^(\d\d)(\d)/g,"($1) $2") //Coloca parenteses em volta dos dois primeiros digitos
+						console.log(v.length)
+						if (v.length<14){
+							v=v.replace(/(\d{4})(\d)/,"$1-$2")    //Coloca hifen entre o quarto e o quinto digitos
+						}else{
+							v=v.replace(/(\d{4,5})(\d)/,"$1-$2")    //Coloca hifen entre o quarto e o quinto digitos
+						}
+						
+						return v
+					}
+					function mascara(o,f){
+						v_obj=o
+						v_fun=f
+						setTimeout("execmascara()",1)
+					}
+					function execmascara(){
+							v_obj.value=v_fun(v_obj.value)
+						}	
+				</script>			
+				
 				<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 				{{ form.media.js }}						  
 {% endblock %}

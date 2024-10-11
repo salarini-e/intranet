@@ -258,3 +258,19 @@
     justify-content: center;
     margin-top: 15px;
 }
+
+
+/* MUDAR OS CAMPOS DO FORMS */
+.select2-container--default .select2-selection--single{
+    padding-top: .6rem !important;
+    padding-bottom: .6rem !important;
+    height: 2.5rem !important;
+    border-color: #e7e9ed !important;
+    color: #5d6778 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow{
+    position: relative !important;
+}

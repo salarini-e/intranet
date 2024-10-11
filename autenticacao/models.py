@@ -10,7 +10,7 @@ class Pessoa(models.Model):
     nome=models.CharField(max_length=64, verbose_name='Nome')
     email=models.EmailField()
     cpf=models.CharField(max_length=14, verbose_name='CPF', unique=True, null=True)
-    telefone=models.CharField(max_length=15, verbose_name='Telefone', null=True)
+    telefone=models.CharField(max_length=16, verbose_name='Telefone', null=True)
     dt_nascimento=models.DateField(verbose_name='Data de nascimento', null=True)
     bairro=models.CharField(max_length=64, verbose_name='Bairro', null=True)
     endereco=models.CharField(max_length=128, verbose_name='Endereço', null=True)

@@ -135,7 +135,7 @@ class Cadastro_Aulas_Treinamento_Tributario_Contadores(models.Model):
     matricula = models.CharField(max_length=6, verbose_name='Matrícula', blank=True)
     secretaria = models.CharField(max_length=250)
     setor = models.CharField(max_length=250)
-    telefone = models.CharField(max_length=15, verbose_name='Seu telefone', blank=False) 
+    telefone = models.CharField(max_length=16, verbose_name='Seu telefone', blank=False) 
     dt_registro = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

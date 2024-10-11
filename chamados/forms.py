@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 from django.utils import timezone
+from autenticacao.functions import validate_cpf, clear_tel
 from django_select2 import forms as s2forms
 
 class TipoChamadoForm(forms.ModelForm):
@@ -111,7 +112,7 @@ class CriarChamadoForm(forms.ModelForm):
         widgets = {                                    
             'setor': forms.Select(attrs={'class': 'form-select'}),
             'secretaria': SecretariaWidget(attrs={'class': 'form-control mb-3', 'onchange': 'getSetores(this.value)', 'required': 'required'}),
-            'telefone': forms.TextInput(attrs={'class': 'form-control'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control', 'onkeydown': 'mascara(this, itel)'}),
             'tipo': forms.HiddenInput(),
             'assunto': forms.TextInput(attrs={'class': 'form-control'}),
             'endereco': forms.TextInput(attrs={'class': 'form-control'}),
@@ -125,12 +126,19 @@ class CriarChamadoForm(forms.ModelForm):
         labels = {
             'secretaria': 'Para qual secretaria é o chamado?',
         }
+    
+    def clean_telefone(self):
+        telefone = clear_tel(self.cleaned_data["telefone"])
+        return telefone
+
     def save(self, commit=True):
         chamado = super().save(commit=False)
+        chamado.telefone = clear_tel(self.cleaned_data.get("telefone", ""))
+        
         if self.user and not self.user.is_superuser:
             chamado.prioridade = '-'
         elif chamado.prioridade == '':
-            chamado.prioridade = '-' 
+            chamado.prioridade = '-'
 
         if commit:
             chamado.save()
