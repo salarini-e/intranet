@@ -82,14 +82,14 @@ class CriarChamadoForm(forms.ModelForm):
 
         else:
             try:
+                servidor = Servidor.objects.get(user=self.user)
                 self.fields['requisitante'] = forms.ModelChoiceField(
                     queryset=Servidor.objects.filter(user=self.user),
                     widget=forms.Select(attrs={'class': 'form-control mb-3'}),
                     label='Nome do Servidor',                    
                 )
-
-                # self.fields['requisitante'].initial = Servidor.objects.get(user=self.user).id
-
+                # Define o valor inicial para o requisitante
+                self.fields['requisitante'].initial = servidor.id
             except Servidor.DoesNotExist:
                 self.requisitante = None
             if 'initial' in kwargs:
