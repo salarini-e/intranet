@@ -7,6 +7,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 
 
+
 class TipoChamado(models.Model):
     nome = models.CharField(max_length=164, verbose_name='Nome')
     sigla = models.CharField(max_length=8, verbose_name='Sigla')

@@ -14,6 +14,9 @@ from .functions import enviar_email_atendente, Email_Chamado
 from django.urls import reverse
 from .functions import obter_filtros, verificar_filtrado, obter_chamados, obter_atendente, obter_opcoes_filtros, paginar_chamados, verificar_chamados_atrasados
 from django.core.paginator import Paginator
+from autenticacao.functions import clear_tel
+import re
+
 
 @login_required
 def index(request):
@@ -51,65 +54,74 @@ def zerar_filtros(request):
         del request.session['filtros']
     return redirect('chamados:index')  # Redireciona de volta para a página inicial onde os filtros são aplicados
 
-
 @login_required
 def criarChamado(request, sigla):
+    def itel(v):
+        # Remove todos os caracteres que não são dígitos
+        v = re.sub(r'\D', '', v)
+
+        # Adiciona parênteses e espaço para o DDD
+        v = re.sub(r'^(\d{2})(\d)', r'(\1) \2', v)
+
+        # Verifica o comprimento da string para formatar o número corretamente
+        if len(v) == 14:  # Formato DDD + 9 dígitos (celular)
+            v = re.sub(r'(\d{5})(\d)', r'\1-\2', v)  # Coloca hífen entre o 5º e 6º dígitos
+        else:  # Formato DDD + 8 dígitos (fixo)
+            v = re.sub(r'(\d{4})(\d)', r'\1-\2', v)  # Coloca hífen entre o 4º e 5º dígitos
+
+        return v
     if request.user.is_superuser:
         template_name = 'chamados/chamado-criar-ti.html'
         servidor = Servidor.objects.get(user=request.user)
         tipo = TipoChamado.objects.get(sigla=sigla)
         initial_data = {
-            'tipo': tipo,  
+            'tipo': tipo,
             'user_inclusao': servidor.id
         }
     else:
         template_name = 'chamados/chamado-criar-servidor.html'
         servidor = Servidor.objects.get(user=request.user)
         tipo = TipoChamado.objects.get(sigla=sigla)
+        telefone_formatado = itel(servidor.telefone)  # Formata o telefone
         initial_data = {
             'secretaria': servidor.setor.secretaria.id,
             'setor': servidor.setor.id,
-            'telefone': servidor.telefone,
+            'telefone': telefone_formatado,  # Usa o telefone formatado
             'tipo': tipo,
             'requisitante': servidor.id, 
             'user_inclusao': servidor.id
         }
-    
+
     if request.POST:
         form = CriarChamadoForm(request.POST, request.FILES, user=request.user)
-       
-        form_ext = None
-        
+
         if form.is_valid():
             chamado = form.save(commit=False)
             chamado.user_inclusao = servidor
+            
+            # Salva o telefone sem formatação
+            chamado.telefone = clear_tel(form.cleaned_data['telefone'])  # Aplica clear_tel
+            
             chamado.save()
             chamado.gerar_hash()
             chamado.gerar_protocolo()
-            
-            if sigla in form:                
-                if form_ext.is_valid():
-                    ext = form_ext.save(commit=False)
-                    ext.chamado = chamado
-                    ext.save()
-            
-            message.success(request, 'Chamado criado com sucesso! Seu protocolo é {}'.format(chamado.n_protocolo))    
+
+            message.success(request, 'Chamado criado com sucesso! Seu protocolo é {}'.format(chamado.n_protocolo))
             mensagem, status = Email_Chamado(chamado).chamado_criado()
             if status == 400:
                 message.error(request, mensagem)
             return redirect('chamados:tickets')
     else:
         form = CriarChamadoForm(initial=initial_data, user=request.user)
-        
 
-    
     context = {
         'form': form,
         'form_setor': CriarSetorForm(prefix='setor', initial={'user_inclusao': request.user.id}),
         'form_user': ServidorForm(prefix='servidor', initial={'user_inclusao': request.user.id})
     }
-    
+
     return render(request, template_name, context)
+
 
 
 @login_required

@@ -112,17 +112,20 @@
 						v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hifen entre o terceiro e o quarto digitos
 						return v
 					}
-					function itel(v){
-						v=v.replace(/\D/g,"")                 //Remove tudo o que nao e digito
-						v=v.replace(/^(\d\d)(\d)/g,"($1) $2") //Coloca parenteses em volta dos dois primeiros digitos
-						console.log(v.length)
-						if (v.length<14){
-							v=v.replace(/(\d{4})(\d)/,"$1-$2")    //Coloca hifen entre o quarto e o quinto digitos
-						}else{
-							v=v.replace(/(\d{4,5})(\d)/,"$1-$2")    //Coloca hifen entre o quarto e o quinto digitos
-						}
+					function itel(v) {
+						v = v.replace(/\D/g, ""); // Remove tudo o que não é dígito
+
+						// Coloca parênteses em volta dos dois primeiros dígitos (DDD)
+						v = v.replace(/^(\d{2})(\d)/g, "($1) $2"); 
 						
-						return v
+						if (v.length === 14) { // Formato DDD + 9 dígitos (celular)
+							v = v.replace(/(\d{5})(\d)/, "$1-$2"); // Coloca hífen entre o 5º e 6º dígitos
+							
+						} else { // Formato DDD + 8 dígitos (fixo)
+							v = v.replace(/(\d{4})(\d)/, "$1-$2"); // Coloca hífen entre o 4º e 5º dígitos
+						} 
+						
+						return v;
 					}
 					function mascara(o,f){
 						v_obj=o
