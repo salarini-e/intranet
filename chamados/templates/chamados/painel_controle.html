@@ -1,5 +1,9 @@
 {% extends 'template_chamados.html' %}
 {% block visao %}active{% endblock %}
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="/static/css/painelControle.css">
+{% endblock %}
 {% block main %}   
 				<div class="row" style="margin-bottom: 1.5rem;">
 					<div class="col d-flex" style="display: flex;align-items: center;">
@@ -89,6 +93,31 @@
 					    </div>
 				    </div>
 			    </div>
+
+				<!-- TICKETS NÃO RESOLVIDOS -->
+				<div class="infos-tickets-abertos">
+					<div class="infos-tickets-abertos-header">
+						<h4 class="infos-tickets-abertos-header-title">Tickets não resolvidos</h4>
+						<a href="{% url 'chamados:detalhesTicketsNaoResolvidos' %}" class="infos-tickets-abertos-header-link">
+							Exibir detalhes
+						</a>
+					</div>
+					<div class="infos-tickets-abertos-title">
+							<span class="title-grupos">Grupo</span>
+							<span class="title-status">Aberto</span>
+					</div>
+					{% for tipo, quantidade in chamados_abertos_por_tipo.items %}
+					<div class="infos-tickets-abertos-content">
+						<div class="infos-tickets-abertos-content-infos">
+							<span class="infos-tickets-abertos-content-tipo">{{tipo}}</span>
+							<span class="infos-tickets-abertos-content-number">{{ quantidade }}</span>
+						</div>
+					</div>
+					{% endfor %}
+					
+				</div>
+
+
 			    <div class="row g-4 mb-4">
 			        <div class="col-12 col-lg-6">
 				        <div class="app-card app-card-chart h-100 shadow-sm">

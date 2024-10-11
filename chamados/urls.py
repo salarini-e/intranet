@@ -6,7 +6,8 @@ from . import views
 
 app_name = 'chamados'
 urlpatterns = [
-    path('', views.painel_controle, name='index'),        
+    path('', views.painel_controle, name='index'),   
+    path("detalhesTicketsNaoResolvidos/", views.ver_detalhes_tickets_nao_resolvidos, name="detalhesTicketsNaoResolvidos"),    
     path('zerar-filtros/', views.zerar_filtros, name='zerar_filtros'),
     path('criar-chamado/<sigla>/', views.criarChamado, name='criar'),
     path('<hash>/detalhes/', views.detalhes, name='detalhes'),    

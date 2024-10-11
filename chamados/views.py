@@ -16,6 +16,7 @@ from .functions import obter_filtros, verificar_filtrado, obter_chamados, obter_
 from django.core.paginator import Paginator
 from autenticacao.functions import clear_tel
 import re
+from django.db.models import Count, Q
 
 @login_required
 def index(request):
@@ -456,26 +457,54 @@ def agendar_atendimento(request, hash):
 
 
 from .functions import carregar_novos_filtros, filtrar_chamados
+
 @login_required
 def tickets(request):
     if request.method == 'POST':
-      carregar_novos_filtros(request)
+        carregar_novos_filtros(request)
+
+    # Recupera os chamados, que é uma lista
     chamados = filtrar_chamados(request)
+
+    
+   # Filtros adicionais da URL
+    status = request.GET.get('status')
+    tipo = request.GET.get('tipo')
+
+    # Depuração: Mostrar a URL e os parâmetros recebidos
+    print("URL recebida:", request.get_full_path())  # Mostra a URL completa
+    print("Status recebido:", status)
+    print("Tipo recebido:", tipo)  # Deve mostrar o ID do tipo
+
+    # Filtra os chamados por tipo e status se apropriado
+    if tipo:
+        if status:  # Se o status também for passado
+            chamados = [chamado for chamado in chamados if chamado.tipo_id == int(tipo) and chamado.status == str(status)]
+            print("Chamados filtrados por tipo e status:", [(chamado.id, chamado.tipo_id, chamado.status) for chamado in chamados])
+        else:  # Se apenas o tipo foi passado
+            chamados = [chamado for chamado in chamados if chamado.tipo_id == int(tipo)]
+            print("Chamados filtrados apenas por tipo:", [(chamado.id, chamado.tipo_id, chamado.status) for chamado in chamados])
+    elif status:  # Se apenas o status for passado
+        chamados = [chamado for chamado in chamados if chamado.status == str(status)]
+        print("Chamados filtrados apenas por status:", [(chamado.id, chamado.tipo_id, chamado.status) for chamado in chamados])
+
     secretarias = Secretaria.objects.all()
     atendentes = Atendente.objects.all()
     tipos_chamados = TipoChamado.objects.all()
-    
+
     # Paginação
-    paginator = Paginator(chamados, 25) 
+    paginator = Paginator(chamados, 25)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
     context = {
         'tipos': tipos_chamados,
-        'chamados': page_obj,  
+        'chamados': page_obj,
         'secretarias': secretarias,
         'atendentes': atendentes,
-        'tipos_chamados': tipos_chamados, 
+        'tipos_chamados': tipos_chamados,
     }
+
     return render(request, 'chamados/tickets.html', context)
 
 
@@ -488,6 +517,7 @@ def painel_controle(request):
     chamados_fechados_30dias = chamados.filter(dt_execucao__gte=datetime.now() - timedelta(days=30)).count()
     media_diaria = total_chamados / 30
     data_atual = datetime.now()
+    tipos_chamados = TipoChamado.objects.all()
     
     tres_meses_atras = data_atual - timedelta(days=90)
     count_abertos = chamados.filter(status='0').count()
@@ -496,9 +526,11 @@ def painel_controle(request):
     count_fechados = chamados.filter(status='3').count()
 
     # Preparando dados para o gráfico de barras
-    tipos_chamados = TipoChamado.objects.all()
     chamados_por_tipo = [{'tipo': tipo.nome, 'quantidade': chamados.filter(tipo=tipo).count()} for tipo in tipos_chamados]
-
+    # Criando dicionário para armazenar quantidades de chamados abertos por tipo
+    chamados_abertos_por_tipo = {
+        tipo.nome: chamados.filter(tipo=tipo, status='0').count() for tipo in tipos_chamados
+    }
     data_atual = datetime.now()
     tres_meses_atras = data_atual - timedelta(days=90)
 
@@ -534,10 +566,32 @@ def painel_controle(request):
         'total_chamados': total_chamados,
         'chamados_abertos_30dias': chamados_abertos_30dias-chamados_fechados_30dias,
         'chamados_fechados_30dias': chamados_fechados_30dias,
-        'media_diaria': "{:.1f}".format(media_diaria)
+        'media_diaria': "{:.1f}".format(media_diaria),
+        'chamados_abertos_por_tipo': chamados_abertos_por_tipo,
+        'chamado': chamados.first()
     }
     return render(request, 'chamados/painel_controle.html', context)
 
+@login_required
+def ver_detalhes_tickets_nao_resolvidos(request):
+    chamados = (
+        TipoChamado.objects.annotate(
+            aberto=Count('chamado', filter=Q(chamado__status='0')),
+            pendente=Count('chamado', filter=Q(chamado__status='2')),
+        )
+        .annotate(total=Count('chamado'))
+        .values('id','nome')  # Aqui você está selecionando o nome do tipo
+        .annotate(aberto=Count('chamado', filter=Q(chamado__status='0')),
+                  pendente=Count('chamado', filter=Q(chamado__status='2')),
+                  total=Count('chamado'))  # Total de chamados por tipo
+        .order_by('nome')  # Ordena pela coluna nome do TipoChamado
+    )
+
+    context = {
+        'chamados': chamados
+    }
+
+    return render(request, 'chamados/verDetalhesTicketsNaoResolvidos.html', context)
 
 @login_required
 def ver_perfil(request,matricula):

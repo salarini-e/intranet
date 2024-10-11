@@ -1,0 +1,10 @@
+.table{
+    padding: 1rem;
+}
+
+.table-detalhes-header, .table-detalhes-row{
+    text-align: center !important;
+}
+.table-detalhes-header-grupos, .table-detalhes-row-nome{
+    text-align: left;
+}

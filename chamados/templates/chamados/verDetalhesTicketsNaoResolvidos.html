@@ -1,0 +1,57 @@
+{% extends 'template_chamados.html' %}
+{% block visao %}active{% endblock %}
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="/static/css/detalhesTicketsNaoResolvidos.css">
+{% endblock %}
+{% block main %} 
+
+<div class="row g-3 mb-4 align-items-center justify-content-between">
+    <div class="col-auto">
+        <h1 class="app-page-title tickets mb-0">Painel de controle > Tickets não resolvidos</h1>
+    </div>
+        <div class="col-auto top-buttons-background">
+                <a href="{% url 'chamados:index' %}" class="my-auto btn app-btn-secondary"><i class="fa-solid fa-rotate-left me-2"></i>Voltar</a>
+        </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="table-detalhes-header-grupos">Grupos</th>
+            <th class="table-detalhes-header">Aberto</th>
+            <th class="table-detalhes-header">Pendente</th>
+            <th class="table-detalhes-header">Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for chamado in chamados %}
+        <tr>
+            <td class="table-detalhes-row-nome">{{ chamado.nome }}</td>
+            <td class="table-detalhes-row">
+                <!-- É chamado.id pois na views daqui foi chamado de 'id','nome' como values -->
+                <a href="{% url 'chamados:tickets' %}?status=0&tipo={{ chamado.id }}">
+                    {{ chamado.aberto }}
+                </a>
+            </td>
+            <td class="table-detalhes-row">
+                <a href="{% url 'chamados:tickets' %}?status=2&tipo={{ chamado.id }}">
+                    {{ chamado.pendente }}
+                </a>
+            </td>
+            <td class="table-detalhes-row">
+                <a href="{% url 'chamados:tickets' %}?tipo={{ chamado.id }}">
+                    {{ chamado.total }}
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" class="table-detalhes-row">Nenhum chamado encontrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}
