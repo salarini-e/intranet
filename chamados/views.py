@@ -17,7 +17,6 @@ from django.core.paginator import Paginator
 from autenticacao.functions import clear_tel
 import re
 
-
 @login_required
 def index(request):
     filtros = obter_filtros(request)
@@ -115,6 +114,7 @@ def criarChamado(request, sigla):
         form = CriarChamadoForm(initial=initial_data, user=request.user)
 
     context = {
+        'tipos': TipoChamado.objects.all(),
         'form': form,
         'form_setor': CriarSetorForm(prefix='setor', initial={'user_inclusao': request.user.id}),
         'form_user': ServidorForm(prefix='servidor', initial={'user_inclusao': request.user.id})
@@ -182,26 +182,27 @@ def detalhes_imprimir(request, hash):
         # else:
         #     print(form.errors)
 
-    extensoes = {
-        'IMP': OSImpressora,
-        'INT': OSInternet,
-        'SIS': OSSistemas,
-        'TEL': OSTelefonia,
-    }
-    if chamado.tipo.sigla in extensoes:
-        extensao = extensoes[chamado.tipo.sigla].objects.get(chamado=chamado)
-    else:
-        extensao = None
+    # extensoes = {
+    #     'IMP': OSImpressora,
+    #     'INT': OSInternet,
+    #     'SIS': OSSistemas,
+    #     'TEL': OSTelefonia,
+    # }
+    # if chamado.tipo.sigla in extensoes:
+    #     extensao = extensoes[chamado.tipo.sigla].objects.get(chamado=chamado)
+    # else:
+    #     extensao = None
 
     context = {
         'chamado': chamado,
-        'ext': extensao,    
+        # 'ext': extensao,    
         'servidor': servidor,    
         'atendentes': Atendente.objects.filter(ativo=True),
         'atendente': Atendente.objects.filter(servidor=servidor),   
         'mensagens': Mensagem.objects.filter(chamado=chamado),   
         'prioridades': chamado.PRIORIDADE_CHOICES,
-        'status': chamado.STATUS_CHOICES,         
+        'status': chamado.STATUS_CHOICES,   
+              
     }
     return render(request, 'chamados/detalhes-imprimir.html', context)
 
@@ -242,6 +243,7 @@ def attChamado(request, hash):
             message.success(request, f'{atributo.capitalize()} atualizado com sucesso!')
             return JsonResponse({'status': 200})    
     return JsonResponse({'status': 403})
+
 @login_required
 def iniciar_atendimento(request, hash):    
     chamado = Chamado.objects.get(hash=hash)
@@ -544,7 +546,8 @@ def ver_perfil(request,matricula):
     servidor= get_object_or_404(Servidor, matricula=matricula)
 
     context = {
-        'usuario': servidor
+        'usuario': servidor,
+        'tipos': TipoChamado.objects.all()
     }
     if is_atendente or servidor.user == request.user:
         chamado = Chamado.objects.filter(requisitante = servidor).order_by('-dt_inclusao')
