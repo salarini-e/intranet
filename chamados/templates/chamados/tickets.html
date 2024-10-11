@@ -67,7 +67,9 @@
                                                 </a>
                                             <div class="solution-infos-wrapper">
                                                 <i class="fa-solid fa-globe" style="width: 10px;"></i>
-                                                <span class="chamados-tickets-infos-chamado-text-requisitante">{{ chamado.requisitante }}
+                                                <a href="{% url 'chamados:ver-perfil' chamado.requisitante.matricula %}" class="tickets-user-link" target="_blank">
+                                                    <span class="chamados-tickets-infos-chamado-text-requisitante">{{ chamado.requisitante }}
+                                                </a>
                                                 </span>
                                                 <span class="chamados-tickets-infos-chamado-text-status">
                                                     <i class="fa-solid fa-circle" style="width: 5px;"></i> {{chamado.get_ultima_acao}}

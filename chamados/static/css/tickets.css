@@ -259,6 +259,18 @@
     margin-top: 15px;
 }
 
+.tickets-user-link{
+    text-decoration: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #5d6778;
+    transition: all .3s ease-in-out;
+}
+
+.tickets-user-link:hover{
+    color: #15a362;
+}
 
 /* MUDAR OS CAMPOS DO FORMS */
 .select2-container--default .select2-selection--single{
