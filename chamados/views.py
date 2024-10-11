@@ -466,33 +466,30 @@ def tickets(request):
     # Recupera os chamados, que é uma lista
     chamados = filtrar_chamados(request)
 
-    
-   # Filtros adicionais da URL
+
+    # PARTE PARA LISTAR OS TICKETS NA ABA DE TICKETS NÃO RESOLVIDOS DO PAINEL DE CONTROLE
     status = request.GET.get('status')
     tipo = request.GET.get('tipo')
+    profissional_designado = request.GET.get('profissional_designado')
 
-    # Depuração: Mostrar a URL e os parâmetros recebidos
-    print("URL recebida:", request.get_full_path())  # Mostra a URL completa
-    print("Status recebido:", status)
-    print("Tipo recebido:", tipo)  # Deve mostrar o ID do tipo
-
-    # Filtra os chamados por tipo e status se apropriado
     if tipo:
-        if status:  # Se o status também for passado
+        if status:
             chamados = [chamado for chamado in chamados if chamado.tipo_id == int(tipo) and chamado.status == str(status)]
-            print("Chamados filtrados por tipo e status:", [(chamado.id, chamado.tipo_id, chamado.status) for chamado in chamados])
-        else:  # Se apenas o tipo foi passado
+        else:
             chamados = [chamado for chamado in chamados if chamado.tipo_id == int(tipo)]
-            print("Chamados filtrados apenas por tipo:", [(chamado.id, chamado.tipo_id, chamado.status) for chamado in chamados])
-    elif status:  # Se apenas o status for passado
-        chamados = [chamado for chamado in chamados if chamado.status == str(status)]
-        print("Chamados filtrados apenas por status:", [(chamado.id, chamado.tipo_id, chamado.status) for chamado in chamados])
+    
+    elif profissional_designado:
+        if status: 
+            chamados = [chamado for chamado in chamados if chamado.profissional_designado_id == int(profissional_designado) and chamado.status == str(status)]
+            print("Chamados filtrados por profissional designado e status:", [(chamado.id, chamado.profissional_designado_id, chamado.status) for chamado in chamados])
+        else: 
+            chamados = [chamado for chamado in chamados if chamado.profissional_designado_id == int(profissional_designado)]
+            print("Chamados filtrados apenas por profissional designado:", [(chamado.id, chamado.profissional_designado_id, chamado.status) for chamado in chamados])
 
     secretarias = Secretaria.objects.all()
     atendentes = Atendente.objects.all()
     tipos_chamados = TipoChamado.objects.all()
 
-    # Paginação
     paginator = Paginator(chamados, 25)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -574,7 +571,7 @@ def painel_controle(request):
 
 @login_required
 def ver_detalhes_tickets_nao_resolvidos(request):
-    chamados = (
+    chamados_grupos = (
         TipoChamado.objects.annotate(
             aberto=Count('chamado', filter=Q(chamado__status='0')),
             pendente=Count('chamado', filter=Q(chamado__status='2')),
@@ -586,9 +583,21 @@ def ver_detalhes_tickets_nao_resolvidos(request):
                   total=Count('chamado'))  # Total de chamados por tipo
         .order_by('nome')  # Ordena pela coluna nome do TipoChamado
     )
+     # Consulta para profissionais designados
+    chamados_profissionais = (
+        Atendente.objects.annotate(
+            aberto=Count('profissional_designado_chamados', filter=Q(profissional_designado_chamados__status='0')),
+            pendente=Count('profissional_designado_chamados', filter=Q(profissional_designado_chamados__status='2')),
+            total=Count('profissional_designado_chamados')  # Total de chamados por profissional
+        )
+        .values('id', 'nome_servidor', 'aberto', 'pendente', 'total')  # Seleciona id, nome e contagens
+        .order_by('nome_servidor')  # Ordena pela coluna nome do Profissional
+    )
 
+    
     context = {
-        'chamados': chamados
+        'chamados_grupos': chamados_grupos,
+        'chamados_profissionais': chamados_profissionais
     }
 
     return render(request, 'chamados/verDetalhesTicketsNaoResolvidos.html', context)

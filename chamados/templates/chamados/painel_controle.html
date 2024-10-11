@@ -93,7 +93,7 @@
 					    </div>
 				    </div>
 			    </div>
-
+				{% if request.user.is_superuser %}
 				<!-- TICKETS NÃO RESOLVIDOS -->
 				<div class="infos-tickets-abertos">
 					<div class="infos-tickets-abertos-header">
@@ -116,6 +116,8 @@
 					{% endfor %}
 					
 				</div>
+
+				{% endif %}
 
 
 			    <div class="row g-4 mb-4">

@@ -15,7 +15,13 @@
         </div>
 </div>
 
-<table class="table">
+<div class="links-wrapper">
+    <a href="#" id="link-grupos" class="active" onclick="toggleTable('grupos')">Grupos</a>
+    <a href="#" id="link-analistas" onclick="toggleTable('analistas')">Analistas</a>
+</div>  
+
+<!-- Tabela de Grupos -->
+<table class="table" id="table-grupos">
     <thead>
         <tr>
             <th class="table-detalhes-header-grupos">Grupos</th>
@@ -25,22 +31,21 @@
         </tr>
     </thead>
     <tbody>
-        {% for chamado in chamados %}
+        {% for chamado in chamados_grupos %}
         <tr>
             <td class="table-detalhes-row-nome">{{ chamado.nome }}</td>
             <td class="table-detalhes-row">
-                <!-- É chamado.id pois na views daqui foi chamado de 'id','nome' como values -->
-                <a href="{% url 'chamados:tickets' %}?status=0&tipo={{ chamado.id }}">
+                <a href="{% url 'chamados:tickets' %}?status=0&tipo={{ chamado.id }}" target="_blank">
                     {{ chamado.aberto }}
                 </a>
             </td>
             <td class="table-detalhes-row">
-                <a href="{% url 'chamados:tickets' %}?status=2&tipo={{ chamado.id }}">
+                <a href="{% url 'chamados:tickets' %}?status=2&tipo={{ chamado.id }}" target="_blank">
                     {{ chamado.pendente }}
                 </a>
             </td>
             <td class="table-detalhes-row">
-                <a href="{% url 'chamados:tickets' %}?tipo={{ chamado.id }}">
+                <a href="{% url 'chamados:tickets' %}?tipo={{ chamado.id }}" target="_blank">
                     {{ chamado.total }}
                 </a>
             </td>
@@ -53,5 +58,62 @@
     </tbody>
 </table>
 
+<!-- Tabela de Profissionais Designados -->
+<table class="table" id="table-analistas" style="display: none;">
+    <thead>
+        <tr>
+            <th class="table-detalhes-header-grupos">Analista</th>
+            <th class="table-detalhes-header">Aberto</th>
+            <th class="table-detalhes-header">Pendente</th>
+            <th class="table-detalhes-header">Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for profissional in chamados_profissionais %}
+        <tr>
+            <td class="table-detalhes-row-nome">{{ profissional.nome_servidor }}</td>
+            <td class="table-detalhes-row">
+                <a href="{% url 'chamados:tickets' %}?status=0&profissional_designado={{ profissional.id }}" target="_blank">
+                    {{ profissional.aberto }}
+                </a>
+            </td>
+            <td class="table-detalhes-row">
+                <a href="{% url 'chamados:tickets' %}?status=2&profissional_designado={{ profissional.id }}" target="_blank">
+                    {{ profissional.pendente }}
+                </a>
+            </td>
+            <td class="table-detalhes-row">
+                <a href="{% url 'chamados:tickets' %}?profissional_designado={{ profissional.id }}" target="_blank">
+                    {{ profissional.total }}
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" class="table-detalhes-row">Nenhum chamado encontrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script>
+    function toggleTable(table) {
+        // Oculta ambas as tabelas
+        document.getElementById('table-grupos').style.display = 'none';
+        document.getElementById('table-analistas').style.display = 'none';
+
+        // Remove a classe active de ambos os links
+        document.getElementById('link-grupos').classList.remove('active');
+        document.getElementById('link-analistas').classList.remove('active');
+
+        // Mostra a tabela selecionada e destaca o link correspondente
+        if (table === 'grupos') {
+            document.getElementById('table-grupos').style.display = 'table'; // Exibe a tabela de grupos
+            document.getElementById('link-grupos').classList.add('active'); // Adiciona a classe de destaque
+        } else if (table === 'analistas') {
+            document.getElementById('table-analistas').style.display = 'table'; // Exibe a tabela de analistas
+            document.getElementById('link-analistas').classList.add('active'); // Adiciona a classe de destaque
+        }
+    }
+</script>
 
 {% endblock %}
