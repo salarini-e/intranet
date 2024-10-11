@@ -54,7 +54,7 @@ class Servidor(models.Model):
     cpf=models.CharField(max_length=14, verbose_name='CPF', unique=True)    
     dt_nascimento=models.DateField(verbose_name='Data de nascimento')
     matricula=models.CharField(max_length=14, verbose_name='Matrícula', unique=True)
-    telefone=models.CharField(max_length=16, verbose_name='Telefone')
+    telefone=models.CharField(max_length=15, verbose_name='Telefone')
     email=models.EmailField(max_length=64, verbose_name='E-mail')
     setor=models.ForeignKey(Setor, on_delete=models.CASCADE, verbose_name='Setor')
     avatar=models.ImageField(upload_to='avatars/', null=True, blank=True)

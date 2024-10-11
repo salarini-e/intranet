@@ -81,7 +81,7 @@ class Chamado(models.Model):
     )
 
     setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, verbose_name='Para qual setor é o chamado?', null=True)
-    telefone=models.CharField(max_length=16, verbose_name='Qual telefone para contato?')
+    telefone=models.CharField(max_length=15, verbose_name='Qual telefone para contato?')
     requisitante = models.ForeignKey(Servidor, verbose_name='Nome do servidor', null=True, on_delete=models.SET_NULL)
     endereco =models.CharField(max_length=250, verbose_name = 'Endereço', blank=True, null=True)
     tipo = models.ForeignKey(TipoChamado, on_delete=models.SET_NULL, verbose_name='Tipo chamado', null=True)
