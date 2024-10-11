@@ -176,15 +176,14 @@ class Chamado(models.Model):
         return status_classes[self.status]
         
     def is_novo(self):
-        dt_atual = timezone.now()
-        
-        if timezone.is_naive(self.dt_inclusao):
-            self.dt_inclusao = timezone.make_aware(self.dt_inclusao)
+        # Remove o timezone de dt_inclusao e dt_atual
+        dt_inclusao_naive = self.dt_inclusao.replace(tzinfo=None)
+        dt_atual_naive = timezone.now().replace(tzinfo=None)
 
         hora = timedelta(hours=1)
-        valor = dt_atual - self.dt_inclusao <= hora
+        valor = dt_atual_naive - dt_inclusao_naive <= hora
         return valor
-    
+
     def __processTime(self, delta):
         if delta.days > 1:
             return f"há {delta.days} dias"
@@ -192,7 +191,7 @@ class Chamado(models.Model):
             return "há 1 dia"
         else:
             horas = delta.seconds // 3600
-            minutos = (delta.seconds % 3600) // 60  # Calcular minutos restantes
+            minutos = (delta.seconds % 3600) // 60 
             
             if horas > 0:
                 if horas == 1:
@@ -221,63 +220,53 @@ class Chamado(models.Model):
     
     # MÉTODO PARA TEXTO NO PERFIL DO USUÁRIO
     def get_ultima_acao(self):
-        agora = timezone.now()
+        agora = timezone.now().replace(tzinfo=None)
 
-        # Tornar dt_inclusao aware (com timezone) se necessário
-        if timezone.is_naive(self.dt_inclusao):
-            self.dt_inclusao = timezone.make_aware(self.dt_inclusao)
-
-        # Tornar dt_atualizacao aware (com timezone) se necessário
-        if timezone.is_naive(self.dt_atualizacao):
-            self.dt_atualizacao = timezone.make_aware(self.dt_atualizacao)
+        # Remove timezone de dt_inclusao e dt_atualizacao
+        dt_inclusao_naive = self.dt_inclusao.replace(tzinfo=None)
+        dt_atualizacao_naive = self.dt_atualizacao.replace(tzinfo=None)
 
         # Verifica e ajusta última alteração de prioridade se presente
         if hasattr(self, 'ultima_prioridade_alterada') and self.ultima_prioridade_alterada:
-            if timezone.is_naive(self.ultima_prioridade_alterada):
-                self.ultima_prioridade_alterada = timezone.make_aware(self.ultima_prioridade_alterada)
-            delta = agora - self.ultima_prioridade_alterada
+            ultima_prioridade_alterada_naive = self.ultima_prioridade_alterada.replace(tzinfo=None)
+            delta = agora - ultima_prioridade_alterada_naive
             return f"Prioridade alterada {self.__processTime(delta)}"
 
         # Verifica e ajusta última alteração de status se presente
         if hasattr(self, 'ultima_status_alterada') and self.ultima_status_alterada:
-            if timezone.is_naive(self.ultima_status_alterada):
-                self.ultima_status_alterada = timezone.make_aware(self.ultima_status_alterada)
-            delta = agora - self.ultima_status_alterada
+            ultima_status_alterada_naive = self.ultima_status_alterada.replace(tzinfo=None)
+            delta = agora - ultima_status_alterada_naive
             return f"Status alterado {self.__processTime(delta)}"
 
         # Verifica a última mensagem e a processa, se for do atendente
         ultima_mensagem = Mensagem.objects.filter(chamado=self).order_by('-dt_inclusao').first()
         if ultima_mensagem and ultima_mensagem.autor() == 'Atendente':
             if not ultima_mensagem.confidencial:
-                if timezone.is_naive(ultima_mensagem.dt_inclusao):
-                    ultima_mensagem.dt_inclusao = timezone.make_aware(ultima_mensagem.dt_inclusao)
-                delta = agora - ultima_mensagem.dt_inclusao
+                ultima_mensagem_inclusao_naive = ultima_mensagem.dt_inclusao.replace(tzinfo=None)
+                delta = agora - ultima_mensagem_inclusao_naive
                 return f"Respondido pelo atendente {self.__processTime(delta)}"
 
         # Verifica se o status é finalizado
         if self.status == '4':
-            if timezone.is_naive(self.dt_fechamento):
-                self.dt_fechamento = timezone.make_aware(self.dt_fechamento)
-            delta = agora - self.dt_fechamento
+            dt_fechamento_naive = self.dt_fechamento.replace(tzinfo=None)
+            delta = agora - dt_fechamento_naive
             return f"Finalizado {self.__processTime(delta)}"
 
-        # Caso não haja mensagens e dt_inclusao seja igual a dt_atualizacao
-        if not ultima_mensagem and self.dt_inclusao == self.dt_atualizacao:
-            delta = agora - self.dt_inclusao
+        # Caso não haja mensagens e dt_atualizacao tenha diferenca de no max 30 segundos
+        if not ultima_mensagem and abs((dt_atualizacao_naive - dt_inclusao_naive).total_seconds()) <= 30:
+            delta = agora - dt_inclusao_naive
             return f"Criado {self.__processTime(delta)}"
 
         # Subtração entre agora e dt_atualizacao para o tempo atualizado
-        delta = agora - self.dt_atualizacao
+        delta = agora - dt_atualizacao_naive
         return f"Atualizado {self.__processTime(delta)}"
     
     # PARTE PARA TIMELIME
     def get_formatted_inclusao(self):
-        # Verificar se dt_inclusao está com timezone correto
-        if timezone.is_naive(self.dt_inclusao):
-            self.dt_inclusao = timezone.make_aware(self.dt_inclusao)
+        dt_inclusao_naive = self.dt_inclusao.replace(tzinfo=None)
+        agora = timezone.now().replace(tzinfo=None)
 
-        agora = timezone.now()
-        data_inclusao = self.dt_inclusao.date()
+        data_inclusao = dt_inclusao_naive.date()
 
         # Diferença de dias entre hoje e a data de inclusão
         delta = (agora.date() - data_inclusao).days
@@ -298,7 +287,7 @@ class Chamado(models.Model):
             mes = meses[data_inclusao.month - 1]  # Obter mês
             ano = data_inclusao.year  # Obter ano
 
-            return f'<span class="timeline-label">{dia_semana}, {dia} {mes}, {ano}</span>'
+        return f'<span class="timeline-label">{dia_semana}, {dia} {mes}, {ano}</span>'
         
 class Pausas_Execucao_do_Chamado(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')
