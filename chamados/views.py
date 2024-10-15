@@ -482,6 +482,16 @@ def tickets(request):
         # Filtra apenas os chamados onde o profissional designado é None
         chamados = [chamado for chamado in chamados if chamado.profissional_designado is None]
 
+    # Filtro para os últimos 30 dias
+    if request.GET.get('ultimos_30_dias') == 'True':
+        data_limite = timezone.now().replace(tzinfo=None) - timedelta(days=30)
+        chamados = [chamado for chamado in chamados if chamado.dt_inclusao >= data_limite]
+
+    if request.GET.get('nao_resolvidos') == 'True':
+        chamados = [chamado for chamado in chamados if chamado.status != '4']
+        print("Total chamados nao resolvidos: ", len(chamados), "\n\n\n")
+        print("Chamados:", chamados)
+
     # PARTE PARA LISTAR OS TICKETS NA ABA DE TICKETS NÃO RESOLVIDOS DO PAINEL DE CONTROLE
     status = request.GET.get('status')
     tipo = request.GET.get('tipo')
@@ -496,10 +506,11 @@ def tickets(request):
     elif profissional_designado:
         if status: 
             chamados = [chamado for chamado in chamados if chamado.profissional_designado_id == int(profissional_designado) and chamado.status == str(status)]
-            print("Chamados filtrados por profissional designado e status:", [(chamado.id, chamado.profissional_designado_id, chamado.status) for chamado in chamados])
         else: 
             chamados = [chamado for chamado in chamados if chamado.profissional_designado_id == int(profissional_designado)]
-            print("Chamados filtrados apenas por profissional designado:", [(chamado.id, chamado.profissional_designado_id, chamado.status) for chamado in chamados])
+    elif status and not tipo and not profissional_designado:
+        chamados = [chamado for chamado in chamados if chamado.status == str(status)]
+        
 
     secretarias = Secretaria.objects.all()
     atendentes = Atendente.objects.all()
@@ -509,12 +520,18 @@ def tickets(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    # MANTER O FILTRO NA URL MESMO AO TROCAR A PÁGINA DO PAGINATOR
+    current_query = request.GET.copy()
+    if 'page' in current_query:
+        del current_query['page']  # Remover o parâmetro 'page'
+
     context = {
         'tipos': tipos_chamados,
         'chamados': page_obj,
         'secretarias': secretarias,
         'atendentes': atendentes,
         'tipos_chamados': tipos_chamados,
+        'current_query': current_query.urlencode() 
     }
 
     return render(request, 'chamados/tickets.html', context)
@@ -525,29 +542,50 @@ def tickets(request):
 def painel_controle(request):
     chamados = Chamado.objects.all()
     total_chamados = chamados.count()
-    chamados_abertos_30dias = chamados.filter(dt_inclusao__gte=datetime.now() - timedelta(days=30)).count()
-    chamados_fechados_30dias = chamados.filter(dt_execucao__gte=datetime.now() - timedelta(days=30)).count()
+    chamados_abertos_30dias = chamados.filter(dt_inclusao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30), status='0').count()
+    print("Total chamados 30 dias: ", chamados_abertos_30dias)
+    chamados_fechados_30dias = chamados.filter(dt_execucao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30)).count()
     media_diaria = total_chamados / 30
     data_atual = datetime.now()
     tipos_chamados = TipoChamado.objects.all()
-
-
-
-   
 
     tres_meses_atras = data_atual - timedelta(days=90)
     count_abertos = chamados.filter(status='0').count()
     count_em_atendimento = chamados.filter(status='1').count()
     count_pendentes = chamados.filter(status='2').count()
     count_fechados = chamados.filter(status='3').count()
+    count_finalizados = chamados.filter(status='4').count()
+    total_nao_resolvidos = total_chamados - count_finalizados
     total_nao_atribuidos = chamados.filter(profissional_designado__isnull=True).count()
-
+    # Calcular a porcentagem de não atribuídos
+    porcentagem_nao_atribuidos = (total_nao_atribuidos / total_chamados * 100) if total_chamados > 0 else 0
+    # Calcular a porcentagem de não resolvidos
+    porcentagem_nao_resolvidos = (total_nao_resolvidos / total_chamados * 100) if total_chamados > 0 else 0
+    #Calcular a porcentagem de abertos nos ultimos trinta dias em relação ao total
+    # porcentagem_abertos_ultimos_trinta_dias =   (chamados_abertos_30dias / total_chamados * 100) if total_chamados > 0 else 0
     # Preparando dados para o gráfico de barras
     chamados_por_tipo = [{'tipo': tipo.nome, 'quantidade': chamados.filter(tipo=tipo).count()} for tipo in tipos_chamados]
     # Criando dicionário para armazenar quantidades de chamados abertos por tipo
     chamados_abertos_por_tipo = {
         tipo.nome: chamados.filter(tipo=tipo, status='0').count() for tipo in tipos_chamados
     }
+
+    # Chamados criados entre 30 e 60 dias atrás
+    chamados_abertos_30_a_60_dias = chamados.filter(
+        dt_inclusao__lt=datetime.now().replace(tzinfo=None) - timedelta(days=30),
+        dt_inclusao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=60), status='0'
+    ).count()
+
+    # Verifica se houve aumento ou diminuição
+    aumento_chamados_abertos_30_dias= chamados_abertos_30dias > chamados_abertos_30_a_60_dias
+
+    # Cálculo da porcentagem em relação ao total de chamados
+    porcentagem_abertos_30dias = (chamados_abertos_30dias / total_chamados * 100) if total_chamados > 0 else 0
+    porcentagem_abertos_30_a_60_dias = (chamados_abertos_30_a_60_dias / total_chamados * 100) if total_chamados > 0 else 0
+
+    variacao_30_a_60_dias = abs(porcentagem_abertos_30dias - porcentagem_abertos_30_a_60_dias)
+    
+
     data_atual = datetime.now()
     tres_meses_atras = data_atual - timedelta(days=90)
 
@@ -581,12 +619,17 @@ def painel_controle(request):
         'dados_abertos': dados_abertos,
         'dados_fechados': dados_fechados,
         'total_chamados': total_chamados,
-        'chamados_abertos_30dias': chamados_abertos_30dias-chamados_fechados_30dias,
+        'chamados_abertos_30dias': chamados_abertos_30dias,
         'chamados_fechados_30dias': chamados_fechados_30dias,
         'media_diaria': "{:.1f}".format(media_diaria),
         'chamados_abertos_por_tipo': chamados_abertos_por_tipo,
         'chamado': chamados.first(),
-        'total_nao_atribuidos': total_nao_atribuidos
+        'total_nao_atribuidos': total_nao_atribuidos,
+        'porcentagem_nao_atribuidos': "{:.1f}".format(porcentagem_nao_atribuidos), 
+        'variacao_30_a_60_dias': "{:.1f}".format(variacao_30_a_60_dias),
+        'aumento_chamados_abertos_30_dias': aumento_chamados_abertos_30_dias,
+        'total_nao_resolvidos':  total_nao_resolvidos,
+        'porcentagem_nao_resolvidos': "{:.1f}".format(porcentagem_nao_resolvidos)
     }
     return render(request, 'chamados/painel_controle.html', context)
 
