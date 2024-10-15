@@ -1,0 +1,75 @@
+.infos-tickets-abertos{
+    display: flex;
+    background-color: white;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem;
+    margin-bottom: 25px;
+}
+.infos-tickets-abertos-header-title{
+    font-size: 18px;
+    font-weight: 500;
+}
+.infos-tickets-abertos-header-link{
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.1;
+}
+
+.infos-tickets-abertos-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.title-grupos{
+    color: black;
+    font-size: 16px;
+}
+
+.title-status {
+    display: flex;
+    align-items: center;
+    color: black;
+    font-size: 16px;
+}
+
+.dropdown-toggle {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+}
+
+
+.infos-tickets-abertos-title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.infos-tickets-abertos-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 12px;
+}
+.infos-tickets-abertos-content::before{
+    content: '';
+    width: 100%;
+    height: 1px;
+    background-color: #5d6778;
+    margin-bottom: 12px;
+}
+.infos-tickets-abertos-content-infos{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.infos-tickets-abertos-content-tipo{
+    color: black;
+    font-size: 14px;
+}
+.infos-tickets-abertos-content-number{
+    font-size: 14px;
+}

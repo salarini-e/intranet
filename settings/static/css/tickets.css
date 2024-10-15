@@ -259,3 +259,31 @@
     margin-top: 15px;
 }
 
+.tickets-user-link{
+    text-decoration: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #5d6778;
+    transition: all .3s ease-in-out;
+}
+
+.tickets-user-link:hover{
+    color: #15a362;
+}
+
+/* MUDAR OS CAMPOS DO FORMS */
+.select2-container--default .select2-selection--single{
+    padding-top: .6rem !important;
+    padding-bottom: .6rem !important;
+    height: 2.5rem !important;
+    border-color: #e7e9ed !important;
+    color: #5d6778 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow{
+    position: relative !important;
+}
+

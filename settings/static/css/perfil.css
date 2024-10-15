@@ -2,10 +2,14 @@
     display: flex;
     width: 100%;
     background-color: white;
-    align-items: center;
-    padding: 15px;
+    flex-direction: column;
+    justify-content: center;
 }
+.perfil-name-wrapper{
+    display: flex;
+    align-items: center;
 
+}
 .perfil-image{
     padding: 1.7rem;
 }
@@ -30,4 +34,183 @@
     text-decoration: none;
     color: #2c5cc5;
     font-size: 14px;
+}
+.perfil-buttons{
+    display: flex;
+    align-items: center;
+    height: 40px;
+    width: 100%;
+    box-shadow: 0 1px 3px 0 rgba(24, 50, 71, .1), 0 0 0 1px rgba(24, 50, 71, .05);
+    background-color: #f5f7f9;
+    padding-left: 1.7rem;
+}
+.perfil-buttons-link{
+    text-decoration: none;
+    cursor: pointer; 
+    margin-right: 15px;
+}
+.timeline-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: white;
+    margin-top: 15px;
+    padding-top: 20px;
+    
+}
+
+.timeline-infos-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 15px;
+    height: 188px;
+    position: relative; 
+}
+
+.timeline-label {
+    position: relative; 
+    margin-bottom: 20px; 
+}
+
+.timeline-label::after {
+    content: '';
+    position: absolute;
+    top: 100%; 
+    left: 50%; 
+    height: 60px; 
+    width: 2px; 
+    background-color: #5d6778; 
+    transform: translateX(-50%); 
+}
+
+.timeline-icon {
+    position: relative; 
+    margin: auto;
+    top: -10px;
+    font-size: 24px;
+    color: #2c5cc5;
+}
+
+.timeline-icon::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; /* Posição inicial abaixo do ícone */
+    left: 50%; /* Centraliza horizontalmente */
+    height: calc(100% + 20px); /* Altura da linha que vai até o final da div */
+    width: 2px; /* Espessura da linha */
+    background-color: #5d6778; /* Cor da linha, ajuste conforme necessário */
+    transform: translateX(-50%); /* Ajusta a linha para centralizar */
+    top:40px;
+    height: 60px;
+}
+.timeline-item {
+    display: flex;
+    align-items: center;
+    padding: 0 1.7rem 0 1.7rem;
+    position: relative;
+}
+.timeline-item:last-child{
+    padding-bottom: 20px;
+}
+.timeline-infos-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1.7rem 0;
+}
+.timeline-hour{
+    color: black;
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+.timeline-assunto{
+    color: black;
+    font-weight: 300;
+    font-size: 18px;
+}
+.timeline-assunto-id-chamado{
+    font-size: 14px;
+    color: #5d6778;
+}
+.timeline-infos-chamado{
+    display: flex;
+    align-items: center;
+}
+
+.timeline-info-chamado {
+    position: relative; 
+    font-size: 12px;
+}
+.dot-separator-timeline{
+    margin-right: 5px;
+    margin-left: 5px;
+}
+.timeline-info-atualizacao-chamado{
+    font-size: 14px;
+}
+.timeline-label{
+    padding: 4px 16px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .2px;
+    text-align: center;
+    background-color: #e5f2fd;
+    border-radius: 16px;
+    color: #183247;
+    z-index: 50;
+}
+
+@media(max-width:900px){
+    .timeline-infos-chamado{
+        flex-direction: column;
+        justify-content: center;
+        align-items: start;
+    }
+    .dot-separator-timeline{
+        display: none;
+    }
+    
+}
+@media(max-width:500px){
+    .timeline-wrapper{
+        padding-top: 0px;
+    }
+    .timeline-item{
+        flex-direction: column;
+        justify-content: center;
+        align-items: start;
+    }
+    .timeline-infos-left{
+        display: block;
+        flex-direction: row;
+        align-items: center;
+        justify-content: start;
+        margin-bottom: 15px;
+        height: 100%;
+    }
+    .timeline-icon{
+        position: unset;
+    }
+    .timeline-infos-right{
+        padding: 0 1rem;
+        
+    }
+    .timeline-icon{
+        margin-left: 5px;
+    }
+    .timeline-item{
+        padding-top: 1.7rem;
+    }
+    .timeline-icon{
+        font-size: 16px;
+        color: #5d6778;
+    }
+    .timeline-icon::after{
+        height: 0;
+    }
+    .timeline-label::after{
+        height: 0;
+    }
 }

@@ -18,8 +18,9 @@
     margin-left: 10px;
 }
 .detalhes-contato-arrows-sep, .detalhes-chamado-arrows-sep{
-    display: none;
-    transition: all 0.2s ease-in-out;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+
 }
 .detalhes-contato-arrows-sep.show, .detalhes-chamado-arrows-sep.show{
     display: flex;
@@ -28,6 +29,9 @@
     width: 100%;
     height: 2px;
     background-color: #c9c9c9;
+}
+.detalhes-contato-arrows-sep.show {
+    opacity: 1;
 }
 .detalhes-contato-title{
     display: flex;
@@ -53,14 +57,15 @@
     display: none;
 }
 .detalhes-contato, .detalhes-chamado {
-    display: none;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    background-color: white;
 }
 .detalhes-contato.show, .detalhes-chamado.show {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    background-color: white;
-    transition: all 0.4s ease-in-out;
+    max-height: 1000px;
+    opacity: 1;
 }
 
 .detalhe-contato-menu-wrapper{
@@ -69,16 +74,31 @@
     gap: 10px;
     padding: 1.7rem;
 }
+
+
+.detalhes-contato-arrow-link-down {
+    transition: transform 0.5s ease-out;
+}
+
+.detalhes-contato-arrow-link-down.rotated {
+    transform: rotate(-180deg); 
+}
+
 .detalhe-contato-menu-email, .detalhe-contato-menu-telefone, .detalhe-contato-menu-setor, .detalhe-contato-menu-matricula{
     display: flex;
     flex-direction: column;
     justify-content: center;
     margin-right: 30px;
 }
-.detalhe-contato-menu-endereço{
+.detalhe-contato-menu-wrapper-2{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding:  1.7rem 1.7rem 1.7rem;
+}
+.detalhe-contato-menu-endereco , .detalhe-contato-menu-pp, .detalhe-contato-menu-data{
     display: flex;
     flex-direction: column;
-    padding: 0 1.7rem 1.7rem 1.7rem;
 }
 
 .detalhes-chamado-content-wrapper{
@@ -154,7 +174,7 @@
     margin-left: 1.75rem;
     margin-right: 1.75rem;
     margin-bottom: 1.75rem;
-    padding: 1.75rem 0 1.75rem 0;
+    padding: 1.75rem 1rem;
 }
 .message-user-mensagem-confidencial{
     color: black;
@@ -446,7 +466,37 @@
     display: flex;
     align-items: center;
 }
+.content-chamado-informacoes-atendente{
+    display: flex;
+    background-color: transparent;
+    align-items: center;
+}
+.select-atendente-detalhes{
+    background-color: transparent !important;
+}
+.user-icon-detalhes{
+    color: black;
+    font-size: 12px;
+}
+.dropdown-menu.prioridade-detalhes-ul{
+    margin-top: 2px !important;
+    margin-left: -6px !important;
+}
+.dropdown-menu.status-detalhes-ul{
+    margin-top: 2px !important;
+    margin-left: -6px !important;
+}
+.dropdown-menu.atendente-detalhes-ul{
+    margin-left: -18px !important;
+}
+.select-atendente-detalhes{
+    padding: 0px 1px;
+}
 
+.user-icon-detalhes i{
+    width: 10px !important;
+    height: 10px !important;
+}
 .status-aberto {
     background-color: #6495ED; /* Cornflower Blue */
 }
@@ -469,7 +519,12 @@
     .detalhe-contato-menu-wrapper{
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
-        padding: 1rem;
+        padding: 1rem 1rem 10px 1rem;
+    }
+    .detalhe-contato-menu-wrapper-2{
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 0 1rem 1rem 1rem;
     }
     .content-chamado-informacoes{
         padding: 1rem;
@@ -517,7 +572,22 @@
         width: 100%;
         max-width: 100vw;
     }
+    .content-chamado-informacoes{
+        flex-direction: column;
+        justify-content: center;
+        align-items: start;
+    }
     
+}
+@media(max-width:520px){
+    .content-chamado-informacoes-prioridade-status-wrapper{
+        flex-direction: column;
+        align-items: start;
+        justify-content: center;
+    }
+    .content-chamado-informacoes-prioridade, .content-chamado-informacoes-status, .content-chamado-informacoes-atendente{
+        margin-bottom: 15px;
+    }
 }
 @media(max-width:1200px){
     .confirm-popup {
@@ -530,8 +600,10 @@
     }
     .detalhes-chamado-content-wrapper{
         grid-template-columns: repeat(1, 1fr);
-
     }   
+    .detalhe-contato-menu-wrapper-2{
+        grid-template-columns: repeat(1, 1fr);
+    }
 }
 @media(max-width:363px){
     .message-user-mensagem-confidencial{
