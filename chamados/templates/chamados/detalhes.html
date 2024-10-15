@@ -67,10 +67,11 @@
 							<span class="detalhes-contato-title-text"><strong>{{chamado.requisitante.nome}}</strong></span><span class="detalhes-contato-title-text">{{chamado.requisitante.setor.secretaria}}</span>
 						</div>
 					</div>  
-					<div class="detalhes-contato-arrows">
-						<a class="detalhes-contato-arrow-link" onclick="toggleDetalhesContato()">
-							<i class="fa-solid fa-arrow-down detalhes-contato-arrow-link-down" id="arrow-down"></i>
-							<i class="fa-solid fa-arrow-up detalhes-contato-arrow-link-up" id="arrow-up" style="display: none;"></i>
+					<div class="detalhes-contato-arrows" >
+						<a class="detalhes-contato-arrow-link" >
+							<i class="fa-solid fa-chevron-down detalhes-contato-arrow-link-down" id="arrow-down"></i>
+							<!-- <i class="fa-solid fa-arrow-down detalhes-contato-arrow-link-down" id="arrow-down"></i> -->
+							<!-- <i class="fa-solid fa-arrow-up detalhes-contato-arrow-link-up" id="arrow-up" style="display: none;"></i> -->
 						</a>
 					</div>
 				</div>
@@ -85,7 +86,7 @@
 
 						<div class="detalhe-contato-menu-email">
 							<span><strong>Telefone</strong></span>
-							<span>{{chamado.requisitante.telefone}}</span>
+							<span>{{ requisitante_telefone }}</span>
 						</div>
 
 						<div class="detalhe-contato-menu-setor">
@@ -754,20 +755,19 @@
 
 					function toggleDetalhesContato() {
 						const arrowDown = document.getElementById('arrow-down');
-						const arrowUp = document.getElementById('arrow-up');
 						const detalhesDiv = document.getElementById('detalhes-contato');
 						const detalhesAfter = document.getElementById('detalhes-contato-arrows-sep');
 
-						if (arrowDown.style.display === 'none') {
-							arrowDown.style.display = 'inline-block'; 
-							arrowUp.style.display = 'none';           
-							detalhesDiv.classList.remove('show');   
-							detalhesAfter.classList.remove('show');   
+						// Alterna a rotação da seta
+						arrowDown.classList.toggle('rotated');
+
+						// Alterna a abertura da div
+						if (detalhesDiv.classList.contains('show')) {
+							detalhesDiv.classList.remove('show');
+							detalhesAfter.classList.remove('show');
 						} else {
-							arrowDown.style.display = 'none';       
-							arrowUp.style.display = 'inline-block'; 
-							detalhesDiv.classList.add('show');  
-							detalhesAfter.classList.add('show');   
+							detalhesDiv.classList.add('show');
+							detalhesAfter.classList.add('show');
 						}
 					}
 					function toggleDetalhesChamado(){

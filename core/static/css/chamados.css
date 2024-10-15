@@ -9,6 +9,8 @@
     z-index: 900;
     line-height: 20px;
     height: 100%;
+    position: relative;
+    z-index: 900 !important;
 }
 .app-header-inner-wrapper-chamados{
     margin-left: 40px;

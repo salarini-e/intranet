@@ -150,6 +150,17 @@ def detalhes(request, hash):
     #     'TEL': OSTelefonia,
     # }
 
+    # Função para formatar o telefone
+    def itel(v):
+        v = re.sub(r'\D', '', v)
+        v = re.sub(r'^(\d{2})(\d)', r'(\1) \2', v)
+        if len(v) == 14:
+            v = re.sub(r'(\d{5})(\d)', r'\1-\2', v)
+        else:
+            v = re.sub(r'(\d{4})(\d)', r'\1-\2', v)
+        return v
+    
+    requisitante_telefone = itel(chamado.requisitante.telefone)
 
     context = {
         'chamado': chamado,    
@@ -161,7 +172,8 @@ def detalhes(request, hash):
         'status': chamado.STATUS_CHOICES,     
         'is_atendente': Atendente.objects.filter(servidor = servidor, ativo = True).exists(),
         'tipos': tipos_chamados,
-        'tipos_chamados': tipos_chamados
+        'tipos_chamados': tipos_chamados,
+        'requisitante_telefone': requisitante_telefone
     }
     return render(request, 'chamados/detalhes.html', context)
 
