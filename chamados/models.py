@@ -185,6 +185,11 @@ class Chamado(models.Model):
         valor = dt_atual_naive - dt_inclusao_naive <= hora
         return valor
     
+    def respondido_pelo_cliente(self):
+        ultima_mensagem = Mensagem.objects.filter(chamado=self).order_by('-dt_inclusao').first()
+        if ultima_mensagem and ultima_mensagem.user_inclusao_id == self.requisitante_id and ultima_mensagem.autor() != 'Atendente':
+            return True
+    
     def __processTime(self, delta):
         if delta.days > 1:
             return f"há {delta.days} dias"
@@ -249,14 +254,10 @@ class Chamado(models.Model):
         ultima_mensagem = Mensagem.objects.filter(chamado=self).order_by('-dt_inclusao').first()
 
         if ultima_mensagem and ultima_mensagem.autor() == 'Atendente':
-            # Verifica se o atendente associado à última mensagem está ativo
-            atendente = Atendente.objects.filter(servidor=ultima_mensagem.user_inclusao).first()
-            
-            if atendente and atendente.ativo:  # Somente continua se o atendente for ativo
-                if not ultima_mensagem.confidencial:
-                    ultima_mensagem_inclusao_naive = ultima_mensagem.dt_inclusao.replace(tzinfo=None)
-                    delta = agora - ultima_mensagem_inclusao_naive
-                    return f"Respondido pelo atendente {self.__processTime(delta)}"
+            if not ultima_mensagem.confidencial:
+                ultima_mensagem_inclusao_naive = ultima_mensagem.dt_inclusao.replace(tzinfo=None)
+                delta = agora - ultima_mensagem_inclusao_naive
+                return f"Respondido pelo atendente {self.__processTime(delta)}"
 
         # Verifica se existe uma última mensagem e se o autor dessa mensagem é o requisitante
         elif ultima_mensagem and ultima_mensagem.user_inclusao_id == self.requisitante_id:

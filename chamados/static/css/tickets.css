@@ -79,8 +79,12 @@
     border: 1px solid #b4e5d9;
     background-color: #e0f5f0;
     margin-bottom: 5px;
+    padding: 0 10px;
 }
 
+.respondido-cliente{
+    color: #2c5cc5 !important;
+}
 .solution-infos-wrapper{
     display: flex;
     align-items: center;

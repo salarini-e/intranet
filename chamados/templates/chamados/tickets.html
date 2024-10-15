@@ -58,8 +58,24 @@
                                     <div class="col-lg-8 col-sm-11 chamados-tickets-infos-chamado">
                                         <div class="chamados-tickets-infos-chamado-text">
                                             {% if chamado.is_novo %}
+                                            {% if chamado.respondido_pelo_cliente %}
+                                            <div>
+                                                <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket"> Novo</span>
+                                                {% if request.user.is_superuser or is_atendente%}
+                                                <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket respondido-cliente"> Respondido pelo cliente</span>
+                                                {% endif %}
+                                            </div>
+                                            {% else %}
                                             <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket"> Novo</span>
                                             {% endif %}
+                                            {% else %}
+                                            {% if chamado.respondido_pelo_cliente %}
+                                            {% if request.user.is_superuser or is_atendente%}
+                                            <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket respondido-cliente"> Respondido pelo cliente</span>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endif %}
+
                                             <a href="{% url 'chamados:detalhes' chamado.hash %}">
                                                 <span class="chamados-tickets-infos-chamado-text-assunto">
                                                     {{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}
