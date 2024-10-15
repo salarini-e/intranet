@@ -71,7 +71,9 @@
                                             {% else %}
                                             {% if chamado.respondido_pelo_cliente %}
                                             {% if request.user.is_superuser or is_atendente%}
-                                            <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket respondido-cliente"> Respondido pelo cliente</span>
+                                            <div>
+                                                <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket respondido-cliente"> Respondido pelo cliente</span>
+                                            </div>
                                             {% endif %}
                                             {% endif %}
                                             {% endif %}

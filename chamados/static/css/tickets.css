@@ -71,15 +71,14 @@
 }
 
 .chamados-tickets-infos-chamado-text-assunto.validade-ticket{
-    padding: 2px;
     border-radius: 5px;
-    width: 50px;
     text-align: center;
+    width: 50px;
     color: #007958;
     border: 1px solid #b4e5d9;
     background-color: #e0f5f0;
     margin-bottom: 5px;
-    padding: 0 10px;
+    padding: 2px 10px;
 }
 
 .respondido-cliente{
