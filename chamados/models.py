@@ -184,7 +184,7 @@ class Chamado(models.Model):
         hora = timedelta(hours=1)
         valor = dt_atual_naive - dt_inclusao_naive <= hora
         return valor
-
+    
     def __processTime(self, delta):
         if delta.days > 1:
             return f"há {delta.days} dias"
@@ -219,13 +219,19 @@ class Chamado(models.Model):
         result = self.getCreateTime()
         return result
     
-    # MÉTODO PARA TEXTO NO PERFIL DO USUÁRIO
     def get_ultima_acao(self):
         agora = timezone.now().replace(tzinfo=None)
 
-        # Remove timezone de dt_inclusao e dt_atualizacao
-        dt_inclusao_naive = self.dt_inclusao.replace(tzinfo=None)
-        dt_atualizacao_naive = self.dt_atualizacao.replace(tzinfo=None)
+        # Verifica se dt_inclusao e dt_atualizacao não são None
+        if self.dt_inclusao:
+            dt_inclusao_naive = self.dt_inclusao.replace(tzinfo=None)
+        else:
+            dt_inclusao_naive = None
+
+        if self.dt_atualizacao:
+            dt_atualizacao_naive = self.dt_atualizacao.replace(tzinfo=None)
+        else:
+            dt_atualizacao_naive = None
 
         # Verifica e ajusta última alteração de prioridade se presente
         if hasattr(self, 'ultima_prioridade_alterada') and self.ultima_prioridade_alterada:
@@ -241,27 +247,40 @@ class Chamado(models.Model):
 
         # Verifica a última mensagem e a processa, se for do atendente
         ultima_mensagem = Mensagem.objects.filter(chamado=self).order_by('-dt_inclusao').first()
+
         if ultima_mensagem and ultima_mensagem.autor() == 'Atendente':
-            if not ultima_mensagem.confidencial:
-                ultima_mensagem_inclusao_naive = ultima_mensagem.dt_inclusao.replace(tzinfo=None)
-                delta = agora - ultima_mensagem_inclusao_naive
-                return f"Respondido pelo atendente {self.__processTime(delta)}"
+            # Verifica se o atendente associado à última mensagem está ativo
+            atendente = Atendente.objects.filter(servidor=ultima_mensagem.user_inclusao).first()
+            
+            if atendente and atendente.ativo:  # Somente continua se o atendente for ativo
+                if not ultima_mensagem.confidencial:
+                    ultima_mensagem_inclusao_naive = ultima_mensagem.dt_inclusao.replace(tzinfo=None)
+                    delta = agora - ultima_mensagem_inclusao_naive
+                    return f"Respondido pelo atendente {self.__processTime(delta)}"
+
+        # Verifica se existe uma última mensagem e se o autor dessa mensagem é o requisitante
+        elif ultima_mensagem and ultima_mensagem.user_inclusao_id == self.requisitante_id:
+            ultima_mensagem_inclusao_naive = ultima_mensagem.dt_inclusao.replace(tzinfo=None)
+            delta = agora - ultima_mensagem_inclusao_naive
+            return f"Respondido pelo cliente {self.__processTime(delta)}"
 
         # Verifica se o status é finalizado
-        if self.status == '4':
+        if self.status == '4' and self.dt_fechamento:
             dt_fechamento_naive = self.dt_fechamento.replace(tzinfo=None)
             delta = agora - dt_fechamento_naive
             return f"Finalizado {self.__processTime(delta)}"
 
         # Caso não haja mensagens e dt_atualizacao tenha diferenca de no max 30 segundos
-        if not ultima_mensagem and abs((dt_atualizacao_naive - dt_inclusao_naive).total_seconds()) <= 30:
+        if not ultima_mensagem and dt_inclusao_naive and dt_atualizacao_naive and abs((dt_atualizacao_naive - dt_inclusao_naive).total_seconds()) <= 30:
             delta = agora - dt_inclusao_naive
             return f"Criado {self.__processTime(delta)}"
 
         # Subtração entre agora e dt_atualizacao para o tempo atualizado
-        delta = agora - dt_atualizacao_naive
-        return f"Atualizado {self.__processTime(delta)}"
-    
+        if dt_atualizacao_naive:
+            delta = agora - dt_atualizacao_naive
+            return f"Atualizado {self.__processTime(delta)}"
+
+        return "Sem ações recentes"
     # PARTE PARA TIMELIME
     def get_formatted_inclusao(self):
         dt_inclusao_naive = self.dt_inclusao.replace(tzinfo=None)

@@ -543,8 +543,8 @@ def painel_controle(request):
     chamados = Chamado.objects.all()
     total_chamados = chamados.count()
     chamados_abertos_30dias = chamados.filter(dt_inclusao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30), status='0').count()
-    print("Total chamados 30 dias: ", chamados_abertos_30dias)
     chamados_fechados_30dias = chamados.filter(dt_execucao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30)).count()
+    chamados_finalizados_30dias =  chamados.filter(dt_execucao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30), status = '4').count()
     media_diaria = total_chamados / 30
     data_atual = datetime.now()
     tipos_chamados = TipoChamado.objects.all()
@@ -614,6 +614,7 @@ def painel_controle(request):
         'count_em_atendimento': count_em_atendimento,
         'count_pendentes': count_pendentes,
         'count_fechados': count_fechados,
+        'count_finalizados': count_finalizados,
         'chamados_por_tipo': chamados_por_tipo,
         'semanas': semanas,
         'dados_abertos': dados_abertos,
@@ -621,6 +622,7 @@ def painel_controle(request):
         'total_chamados': total_chamados,
         'chamados_abertos_30dias': chamados_abertos_30dias,
         'chamados_fechados_30dias': chamados_fechados_30dias,
+        'chamados_finalizados_30dias': chamados_finalizados_30dias,
         'media_diaria': "{:.1f}".format(media_diaria),
         'chamados_abertos_por_tipo': chamados_abertos_por_tipo,
         'chamado': chamados.first(),
