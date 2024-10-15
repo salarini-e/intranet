@@ -475,15 +475,18 @@ def tickets(request):
     if request.method == 'POST':
         carregar_novos_filtros(request)
 
-    # Recupera os chamados, que é uma lista
     chamados = filtrar_chamados(request)
 
+    # CONDIÇÃO PARA O PAINEL DE CONTROLE (LISTAR TODOS OS TICKETS QUE NÃO ESTÃO ATRIBUÍDOS)
+    if request.GET.get('profissional_designado__isnull') == 'True':
+        # Filtra apenas os chamados onde o profissional designado é None
+        chamados = [chamado for chamado in chamados if chamado.profissional_designado is None]
 
     # PARTE PARA LISTAR OS TICKETS NA ABA DE TICKETS NÃO RESOLVIDOS DO PAINEL DE CONTROLE
     status = request.GET.get('status')
     tipo = request.GET.get('tipo')
     profissional_designado = request.GET.get('profissional_designado')
-
+     # CONDIÇÃO PARA O PAINEL DE CONTROLE (LISTAR OS TICKETS DE ACORDO COM O TIPO, STATUS, PROFISSIONAL DESIGINADO) -> TICKETS NÃO RESOLVIDOS
     if tipo:
         if status:
             chamados = [chamado for chamado in chamados if chamado.tipo_id == int(tipo) and chamado.status == str(status)]
@@ -527,12 +530,17 @@ def painel_controle(request):
     media_diaria = total_chamados / 30
     data_atual = datetime.now()
     tipos_chamados = TipoChamado.objects.all()
-    
+
+
+
+   
+
     tres_meses_atras = data_atual - timedelta(days=90)
     count_abertos = chamados.filter(status='0').count()
     count_em_atendimento = chamados.filter(status='1').count()
     count_pendentes = chamados.filter(status='2').count()
     count_fechados = chamados.filter(status='3').count()
+    total_nao_atribuidos = chamados.filter(profissional_designado__isnull=True).count()
 
     # Preparando dados para o gráfico de barras
     chamados_por_tipo = [{'tipo': tipo.nome, 'quantidade': chamados.filter(tipo=tipo).count()} for tipo in tipos_chamados]
@@ -577,7 +585,8 @@ def painel_controle(request):
         'chamados_fechados_30dias': chamados_fechados_30dias,
         'media_diaria': "{:.1f}".format(media_diaria),
         'chamados_abertos_por_tipo': chamados_abertos_por_tipo,
-        'chamado': chamados.first()
+        'chamado': chamados.first(),
+        'total_nao_atribuidos': total_nao_atribuidos
     }
     return render(request, 'chamados/painel_controle.html', context)
 
