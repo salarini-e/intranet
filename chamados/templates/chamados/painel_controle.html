@@ -193,10 +193,11 @@
 					        <div class="app-card-body p-3 p-lg-4">
 							    <div class="mb-3 d-flex">   
 							        <select class="form-select form-select-sm ms-auto d-inline-flex w-auto" id="period-select">
-									    <option value="1" selected>Hoje</option>
-									    <option value="2">Esta semana</option>
+									    <option value="1">Hoje</option>
+									    <option value="2"selected>Esta semana</option>
 									    <option value="3">Este mês</option>
 									    <option value="4">Este ano</option>
+									    <option value="5">Último ano</option>
 									</select>
 							    </div>
 						        <div class="chart-container">
@@ -527,7 +528,10 @@
 	var dados_abertos_um_mes = {{dados_abertos_um_mes|safe}}
 	var dados_fechados_um_mes = {{dados_fechados_um_mes|safe}}
 
-
+	// DADOS DE UM ANO	
+	var meses = {{meses|safe}}
+	var dados_abertos_um_ano = {{dados_abertos_um_ano|safe}}
+	var dados_fechados_um_ano = {{dados_fechados_um_ano|safe}}
 
 	var count_abertos = {{ count_abertos }};
 	var count_fechados = {{ count_fechados }};
@@ -540,20 +544,20 @@
 		type: 'line',
 
 		data: {
-			labels: hoje,
+			labels: uma_semana,
 
 			datasets: [{
 					label: 'Chamados Abertos',
 					fill: false,
 					backgroundColor: window.chartColors.green,
 					borderColor: window.chartColors.green,
-					data: dados_abertos_hoje
+					data: dados_abertos_uma_semana
 				}, {
 					label: 'Chamados Fechados',
 					fill: false,
 					backgroundColor: window.chartColors.gray,
 					borderColor: window.chartColors.gray,
-					data: dados_fechados_hoje
+					data: dados_fechados_uma_semana
 				}]
 		},
 		options: {
@@ -567,12 +571,13 @@
 			},
 
 			title: {
-				display: false,
-				text: 'Quantidade de Chamados',
+				display: true,
+				text: 'Chamados do período de uma semana'
+				
 			},
 			tooltips: {
-				mode: 'index',
-				intersect: false,
+				mode: 'nearest',
+				intersect: true,
 				titleMarginBottom: 10,
 				bodySpacing: 10,
 				xPadding: 16,
@@ -585,7 +590,9 @@
 
 				callbacks: {
 					label: function(tooltipItem, data) {
-						return tooltipItem.yLabel;
+						var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || '';
+						var dataPoint = tooltipItem.yLabel;
+						return datasetLabel + ': ' + (dataPoint !== undefined ? dataPoint : 0); 
 					}
 				},
 
@@ -602,7 +609,8 @@
 						color: window.chartColors.border,
 					},
 					scaleLabel: {
-						display: false,
+						display: true,
+						labelString: 'Dias da semana'
 					}
 				}],
 				yAxes: [{
@@ -612,7 +620,8 @@
 						color: window.chartColors.border,
 					},
 					scaleLabel: {
-						display: false,
+						display: true,
+						labelString: 'Total de Chamados'
 					},
 					ticks: {
 						beginAtZero: true,
@@ -627,22 +636,38 @@
 
 	// FUNÇÃO PARA ATUALIZAR O GRAFICO DE LINHA DE ACORDO COM A ESCOLHA
 	document.getElementById('period-select').addEventListener('change', function() {
-		
         var selectedValue = this.value;
-
         if (selectedValue == '1') {  // HOJE
-            myLine.data.labels = hoje;
-            myLine.data.datasets[0].data = dados_abertos_hoje;
-            myLine.data.datasets[1].data = dados_fechados_hoje;
-        } else if (selectedValue == '2') {  // Esta semana
-            myLine.data.labels = uma_semana;
-            myLine.data.datasets[0].data = dados_abertos_uma_semana;
-            myLine.data.datasets[1].data = dados_fechados_uma_semana;
-        } else if (selectedValue == '3') {  // Este mês
-            myLine.data.labels = um_mes_atras;
-            myLine.data.datasets[0].data = dados_abertos_um_mes;
-            myLine.data.datasets[1].data = dados_fechados_um_mes;
-        } 
+			myLine.data.labels = hoje;
+			myLine.data.datasets[0].data = dados_abertos_hoje;
+			myLine.data.datasets[1].data = dados_fechados_hoje;
+			myLine.options.title.text = 'Resumo de Chamados para Hoje';
+			myLine.options.scales.xAxes[0].scaleLabel.labelString = 'Horas do Dia';
+			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+		} else if (selectedValue == '2') {  // Esta semana
+			myLine.data.labels = uma_semana;
+			myLine.data.datasets[0].data = dados_abertos_uma_semana;
+			myLine.data.datasets[1].data = dados_fechados_uma_semana;
+			myLine.options.title.text = 'Chamados Registrados Esta Semana';
+			myLine.options.scales.xAxes[0].scaleLabel.labelString = 'Dias da Semana';
+			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+
+		} else if (selectedValue == '3') {  // Este mês
+			myLine.data.labels = um_mes_atras;
+			myLine.data.datasets[0].data = dados_abertos_um_mes;
+			myLine.data.datasets[1].data = dados_fechados_um_mes;
+			myLine.options.title.text = 'Chamados Registrados Este Mês';
+			myLine.options.scales.xAxes[0].scaleLabel.labelString = 'Semanas do Mês';
+			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+
+		} else if(selectedValue == '5') {  // Este ano
+			myLine.data.labels = meses;
+			myLine.data.datasets[0].data = dados_abertos_um_ano;
+			myLine.data.datasets[1].data = dados_fechados_um_ano;
+			myLine.options.title.text = 'Análise de Chamados ao Longo do Ano';
+			myLine.options.scales.xAxes[0].scaleLabel.labelString = 'Meses do Ano';
+			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+		}
 
         // Atualiza o gráfico com os novos dados
         myLine.update();
