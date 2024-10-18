@@ -17,6 +17,7 @@ from django.core.paginator import Paginator
 from autenticacao.functions import clear_tel
 import re
 from django.db.models import Count, Q
+from dateutil.relativedelta import relativedelta
 
 @login_required
 def index(request):
@@ -537,6 +538,58 @@ def tickets(request):
     return render(request, 'chamados/tickets.html', context)
 
 
+def dados_graficos(chamados, data_inicial, data_final, tempo):
+    labels=[]
+    dados_abertos =[]
+    dados_fechados = []
+    while data_inicial<= data_final:
+        if tempo == 'Hoje':
+            label = data_inicial.strftime('%d/%m/%y')
+            proximo_periodo = timedelta(days=1)
+        elif tempo == 'Uma-semana':
+            label = data_inicial.strftime('%d/%m/%y')
+            proximo_periodo = timedelta(days=1)
+        elif tempo == 'Um-mes':
+            label = data_inicial.strftime('%d/%m/%y')
+            proximo_periodo = timedelta(days=1)
+        elif tempo =='Este-ano':
+            label = data_inicial.strftime('%m/%y')
+            proximo_periodo = relativedelta(months=1)
+        elif tempo=='Um-ano':
+            label = data_inicial.strftime('%m/%y')
+            proximo_periodo = relativedelta(months=1)
+
+        if tempo =='Hoje':
+            for hour in range(0, 24, 2):
+                label= f'{hour:02d}:00'
+                labels.append(label)
+                
+                inicio_hora = data_inicial + timedelta(hours=hour)
+                fim_hora = inicio_hora + timedelta(hours=2)
+                
+                chamados_abertos_intervalo = chamados.filter(dt_inclusao__gte=inicio_hora, dt_inclusao__lt=fim_hora, status='0').count()
+                chamados_fechados_intervalo = chamados.filter(dt_inclusao__gte=inicio_hora, dt_inclusao__lt=fim_hora, status='3').count()
+                
+                dados_abertos.append(chamados_abertos_intervalo)
+                dados_fechados.append(chamados_fechados_intervalo)
+
+            dados_abertos.insert(0, chamados_abertos_intervalo) 
+            dados_fechados.insert(0, chamados_fechados_intervalo)
+        else:
+            chamados_periodo = chamados.filter(dt_inclusao__gte=data_inicial, dt_inclusao__lt=data_inicial + proximo_periodo)
+            chamados_abertos = chamados_periodo.filter(status='0').count()
+            chamados_fechados = chamados_periodo.filter(status='3').count()
+
+            labels.append(label)
+            dados_abertos.append(chamados_abertos)
+            dados_fechados.append(chamados_fechados)
+        
+        
+        
+        data_inicial += proximo_periodo
+
+    return labels, dados_abertos, dados_fechados
+
 @xframe_options_exempt
 @login_required
 def painel_controle(request):
@@ -587,127 +640,17 @@ def painel_controle(request):
     
 
     data_atual = datetime.now()
-    tres_meses_atras = data_atual - timedelta(days=90)
     um_mes_atras = data_atual - timedelta(days=30)
     uma_semana_atras = data_atual - timedelta(days=7)
     um_ano = data_atual - timedelta(days=365)
     inicio_do_ano = datetime(data_atual.year, 1, 1)
-    este_ano = data_atual - inicio_do_ano
+    esse_ano = inicio_do_ano
 
-    print('Data atual:', data_atual)
-    print('Início do ano:', inicio_do_ano)
-    print('Diferença em dias desde o início do ano:', este_ano.days)
-    # GRÁFICO PARA 1 MES
-    semanas_mes = []
-    dados_abertos_um_mes = []
-    dados_fechados_um_mes = []
-    while um_mes_atras <= data_atual:
-        semana_inicio_um_mes = um_mes_atras.strftime('%d/%m/%y')        
-        label_semana_um_mes = f'{semana_inicio_um_mes}'
-       
-        chamados_semana_um_mes = chamados.filter(dt_inclusao__gte=um_mes_atras, dt_inclusao__lt=um_mes_atras + timedelta(days=1))
-        
-        chamados_abertos_semana_um_mes = chamados_semana_um_mes.filter(status='0').count()
-        chamados_fechados_semana_um_mes = chamados_semana_um_mes.filter(status='3').count()
-
-        semanas_mes.append(label_semana_um_mes)
-       
-        dados_abertos_um_mes.append(chamados_abertos_semana_um_mes)
-        dados_fechados_um_mes.append(chamados_fechados_semana_um_mes)
-        um_mes_atras += timedelta(days=1)
-        
-    # GRÁFICO PARA 3 MESES
-    semanas = []
-    dados_abertos = []
-    dados_fechados = []
-
-
-    while tres_meses_atras < data_atual:
-        semana_inicio = tres_meses_atras.strftime('%d/%m/%y')        
-        label_semana = f'{semana_inicio}'
-       
-
-        chamados_semana = chamados.filter(dt_inclusao__gte=tres_meses_atras, dt_inclusao__lt=tres_meses_atras + timedelta(days=7))
-        
-        chamados_abertos_semana = chamados_semana.filter(status='0').count()
-        chamados_fechados_semana = chamados_semana.filter(status='3').count()
-
-        semanas.append(label_semana)
-       
-        dados_abertos.append(chamados_abertos_semana)
-        dados_fechados.append(chamados_fechados_semana)
-        tres_meses_atras += timedelta(days=7)
-    # GRÁFICO PARA UMA SEMANA
-    uma_semana = []
-    dados_abertos_uma_semana = []
-    dados_fechados_uma_semana = []
-    while uma_semana_atras < data_atual + timedelta(days=1):
-        uma_semana_inicio = uma_semana_atras.strftime('%d/%m/%y') 
-        label_uma_sema = f'{uma_semana_inicio}'
-
-        
-        chamados_uma_semana = chamados.filter(
-        dt_inclusao__gte=uma_semana_atras,
-        dt_inclusao__lt=uma_semana_atras + timedelta(days=1)
-    )
-
-        chamados_abertos_uma_semana = chamados_uma_semana.filter(status='0').count()
-        chamados_fechados_uma_semana = chamados_uma_semana.filter(status='3').count()
-
-        uma_semana.append(label_uma_sema)
-        dados_abertos_uma_semana.append(chamados_abertos_uma_semana)
-        dados_fechados_uma_semana.append(chamados_fechados_uma_semana)
-        uma_semana_atras += timedelta(days=1)
-
-    
-    hoje = []
-    dados_abertos_hoje = []
-    dados_fechados_hoje = []
-
-    inicio_hoje = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-    fim_hoje = datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999)
-
-    chamados_hoje = Chamado.objects.filter(dt_inclusao__gte=inicio_hoje, dt_inclusao__lte=fim_hoje)
-
-    chamados_abertos_hoje = chamados_hoje.filter(status='0').count()
-    chamados_fechados_hoje = chamados_hoje.filter(status='3').count()
-
-    for hour in range(0, 24, 2):
-        label_hora = f'{hour:02d}:00'
-        hoje.append(label_hora)
-        
-        inicio_hora = inicio_hoje + timedelta(hours=hour)
-        fim_hora = inicio_hora + timedelta(hours=2)
-        
-        chamados_abertos_intervalo = chamados_hoje.filter(dt_inclusao__gte=inicio_hora, dt_inclusao__lt=fim_hora, status='0').count()
-        chamados_fechados_intervalo = chamados_hoje.filter(dt_inclusao__gte=inicio_hora, dt_inclusao__lt=fim_hora, status='3').count()
-        
-        dados_abertos_hoje.append(chamados_abertos_intervalo)
-        dados_fechados_hoje.append(chamados_fechados_intervalo)
-
-    dados_abertos_hoje.insert(0, chamados_abertos_hoje) 
-    dados_fechados_hoje.insert(0, chamados_fechados_hoje)
-
-    # GRÁFICO PARA UM ANO ATRAS
-    meses_ano = []
-    dados_abertos_um_ano = []
-    dados_fechados_um_ano = []
-    while um_ano <= data_atual:
-        meses = um_ano.strftime('%d/%m/%y')        
-        label_semana_um_ano = f'{meses}'
-       
-        chamados_semana_um_ano = chamados.filter(dt_inclusao__gte=um_ano, dt_inclusao__lt=um_ano + timedelta(days=30))
-        
-        chamados_abertos_semana_um_ano = chamados_semana_um_ano.filter(status='0').count()
-        chamados_fechados_semana_um_ano = chamados_semana_um_ano.filter(status='3').count()
-        label_semana_um_ano.split("/")
-        label_semana_um_ano = label_semana_um_ano.split("/")[1]+'/'+label_semana_um_ano.split("/")[2]
-        print("AAAAAa",label_semana_um_ano)
-        meses_ano.append(label_semana_um_ano)
-       
-        dados_abertos_um_ano.append(chamados_abertos_semana_um_ano)
-        dados_fechados_um_ano.append(chamados_fechados_semana_um_ano)
-        um_ano += timedelta(days=30)
+    semanas_mes, dados_abertos_um_mes,dados_fechados_um_mes = dados_graficos(chamados, um_mes_atras, data_atual, "Um-mes")
+    uma_semana, dados_abertos_uma_semana, dados_fechados_uma_semana = dados_graficos(chamados, uma_semana_atras, data_atual, "Uma-semana")
+    hoje, dados_abertos_hoje, dados_fechados_hoje = dados_graficos(chamados,datetime.now().replace(hour=0, minute=0, second=0, microsecond=0), datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999), 'Hoje')
+    meses_ano, dados_abertos_um_ano, dados_fechados_um_ano = dados_graficos(chamados, um_ano, data_atual,'Um-ano' )
+    meses_esse_ano, dados_abertos_esse_ano, dados_fechados_esse_ano = dados_graficos(chamados,esse_ano, data_atual, "Este-ano" )
 
     context = {               
         'tipos': TipoChamado.objects.all(),
@@ -717,9 +660,6 @@ def painel_controle(request):
         'count_fechados': count_fechados,
         'count_finalizados': count_finalizados,
         'chamados_por_tipo': chamados_por_tipo,
-        'semanas': semanas,
-        'dados_abertos': dados_abertos,
-        'dados_fechados': dados_fechados,
         'dados_abertos_uma_semana': dados_abertos_uma_semana,
         'dados_fechados_uma_semana': dados_fechados_uma_semana,
         'uma_semana': uma_semana,
@@ -732,6 +672,9 @@ def painel_controle(request):
         'meses': meses_ano,
         'dados_abertos_um_ano': dados_abertos_um_ano,
         'dados_fechados_um_ano': dados_fechados_um_ano,
+        'meses_esse_ano': meses_esse_ano,
+        'dados_abertos_esse_ano': dados_abertos_esse_ano,
+        'dados_fechados_esse_ano': dados_fechados_esse_ano,
         'total_chamados': total_chamados,
         'chamados_abertos_30dias': chamados_abertos_30dias,
         'chamados_fechados_30dias': chamados_fechados_30dias,
