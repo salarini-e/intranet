@@ -259,7 +259,7 @@
 									</select>
 							    </div>
 						        <div class="chart-container">
-				                    <canvas id="canvas-linechart-impressora" ></canvas>
+				                    <canvas id="canvas-linechart-tipos-{{tipo.id}}" ></canvas>
 						        </div>
 					        </div>
 				        </div>
@@ -522,11 +522,136 @@
 	window.addEventListener('load', function(){
 		var lineChart = document.getElementById('canvas-linechart-chamados').getContext('2d');
 		window.myLine = new Chart(lineChart, lineChartConfig);
-		
+
 		var barChart = document.getElementById('canvas-barchart').getContext('2d');
 		window.myBar = new Chart(barChart, barChartConfig);
 		
+		// Seleciona todos os elementos canvas que têm um id que começa com 'canvas-linechart-'
+		const lineChartElements = document.querySelectorAll('canvas[id^="canvas-linechart-tipos-"]');
 
+		// Inicializa um array para armazenar as instâncias dos gráficos
+		window.myLines = []; 
+
+		// Itera sobre cada elemento canvas e cria um gráfico para cada um
+		lineChartElements.forEach(function(canvas) {
+			const lineChart = canvas.getContext('2d');
+			// Configuração específica para cada gráfico, baseada no id do canvas
+			const chartId = canvas.id; // Pega o id do canvas
+			let semanas, dados_abertos, dados_fechados;
+			const tipo = String(chartId).split('-')[3];
+
+			if (tipo === '1') {
+				semanas = {{semanas_mes_tipo_1|safe}};
+				dados_abertos = {{dados_abertos_mes_tipo_1|safe}};
+				dados_fechados = {{dados_fechados_mes_tipo_1|safe}};
+			} else if(tipo ==='2'){
+				semanas = {{semanas_mes_tipo_2|safe}};
+				dados_abertos = {{dados_abertos_mes_tipo_2|safe}};
+				dados_fechados = {{dados_fechados_mes_tipo_2|safe}};
+			}
+			else if(tipo ==='3'){
+				semanas = {{semanas_mes_tipo_3|safe}};
+				dados_abertos = {{dados_abertos_mes_tipo_3|safe}};
+				dados_fechados = {{dados_fechados_mes_tipo_3|safe}};
+			}
+			const lineChartConfigTipos = {
+				type: 'line', // Tipo do gráfico
+				data: {
+					labels: semanas, // Usando as semanas como labels
+					datasets: [{
+						label: 'Chamados Abertos',
+						fill: false,
+						backgroundColor: window.chartColors.green,
+						borderColor: window.chartColors.green,
+						data: dados_abertos, 
+
+					}, {
+						label: 'Chamados Fechados',
+						fill: false,
+						backgroundColor: window.chartColors.gray,
+						borderColor: window.chartColors.gray,
+						data: dados_fechados, // Usando os dados fechados
+					}]
+				},
+				options: {
+					responsive: true,	
+					aspectRatio: 1.5,
+
+					legend: {
+						display: true,
+						position: 'bottom',
+						align: 'end',
+					},
+
+					title: {
+						display: true,
+						text: 'Chamados do período de uma semana'
+						
+					},
+					tooltips: {
+						mode: 'nearest',
+						intersect: true,
+						titleMarginBottom: 10,
+						bodySpacing: 10,
+						xPadding: 16,
+						yPadding: 16,
+						borderColor: window.chartColors.border,
+						borderWidth: 1,
+						backgroundColor: '#fff',
+						bodyFontColor: window.chartColors.text,
+						titleFontColor: window.chartColors.text,
+
+						callbacks: {
+							label: function(tooltipItem, data) {
+								var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || '';
+								var dataPoint = tooltipItem.yLabel;
+								return datasetLabel + ': ' + (dataPoint !== undefined ? dataPoint : 0); 
+							}
+						},
+
+					},
+					hover: {
+						mode: 'nearest',
+						intersect: true
+					},
+					scales: {
+						xAxes: [{
+							display: true,
+							gridLines: {
+								drawBorder: false,
+								color: window.chartColors.border,
+							},
+							scaleLabel: {
+								display: true,
+								labelString: 'Dias da semana'
+							}
+						}],
+						yAxes: [{
+							display: true,
+							gridLines: {
+								drawBorder: false,
+								color: window.chartColors.border,
+							},
+							scaleLabel: {
+								display: true,
+								labelString: 'Total de Chamados'
+							},
+							ticks: {
+								beginAtZero: true,
+								userCallback: function(value, index, values) {
+									return value;
+								}
+							},
+						}]
+					}
+				}
+			};
+
+			new Chart(lineChart, lineChartConfigTipos);
+		
+			
+		
+	});	
 	});	
     'use strict';
 
@@ -568,7 +693,8 @@
 
 	// Dados para o gráfico de barras
 	var chamados_por_tipo = {{ chamados_por_tipo|safe }};
-
+	
+	
 	// LINE CHART TODOS OS CHAMADOS
 	var lineChartConfig = {
 		type: 'line',

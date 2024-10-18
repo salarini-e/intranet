@@ -590,6 +590,56 @@ def dados_graficos(chamados, data_inicial, data_final, tempo):
 
     return labels, dados_abertos, dados_fechados
 
+def dados_graficos_tipo(chamados, data_inicial, data_final, tempo, tipo):
+    labels=[]
+    dados_abertos =[]
+    dados_fechados = []
+    while data_inicial<= data_final:
+        if tempo == 'Hoje':
+            label = data_inicial.strftime('%d/%m/%y')
+            proximo_periodo = timedelta(days=1)
+        elif tempo == 'Uma-semana':
+            label = data_inicial.strftime('%d/%m/%y')
+            proximo_periodo = timedelta(days=1)
+        elif tempo == 'Um-mes':
+            label = data_inicial.strftime('%d/%m/%y')
+            proximo_periodo = timedelta(days=1)
+        elif tempo =='Este-ano':
+            label = data_inicial.strftime('%m/%y')
+            proximo_periodo = relativedelta(months=1)
+        elif tempo=='Um-ano':
+            label = data_inicial.strftime('%m/%y')
+            proximo_periodo = relativedelta(months=1)
+
+        if tempo =='Hoje':
+            for hour in range(0, 24, 2):
+                label= f'{hour:02d}:00'
+                labels.append(label)
+                
+                inicio_hora = data_inicial + timedelta(hours=hour)
+                fim_hora = inicio_hora + timedelta(hours=2)
+                
+                chamados_abertos_intervalo = chamados.filter(dt_inclusao__gte=inicio_hora, dt_inclusao__lt=fim_hora, status='0', tipo=tipo).count()
+                chamados_fechados_intervalo = chamados.filter(dt_inclusao__gte=inicio_hora, dt_inclusao__lt=fim_hora, status='3', tipo=tipo).count()
+                
+                dados_abertos.append(chamados_abertos_intervalo)
+                dados_fechados.append(chamados_fechados_intervalo)
+
+            dados_abertos.insert(0, chamados_abertos_intervalo) 
+            dados_fechados.insert(0, chamados_fechados_intervalo)
+        else:
+            chamados_periodo = chamados.filter(dt_inclusao__gte=data_inicial, dt_inclusao__lt=data_inicial + proximo_periodo, tipo=tipo)
+            chamados_abertos = chamados_periodo.filter(status='0').count()
+            chamados_fechados = chamados_periodo.filter(status='3').count()
+
+            labels.append(label)
+            dados_abertos.append(chamados_abertos)
+            dados_fechados.append(chamados_fechados)
+        
+        data_inicial += proximo_periodo
+
+    return labels, dados_abertos, dados_fechados
+
 @xframe_options_exempt
 @login_required
 def painel_controle(request):
@@ -639,6 +689,7 @@ def painel_controle(request):
     variacao_30_a_60_dias = abs(porcentagem_abertos_30dias - porcentagem_abertos_30_a_60_dias)
     
 
+    # DADOS PARA OS GRÁFICOS DE TODOS OS CHAMADOS
     data_atual = datetime.now()
     um_mes_atras = data_atual - timedelta(days=30)
     uma_semana_atras = data_atual - timedelta(days=7)
@@ -652,7 +703,21 @@ def painel_controle(request):
     meses_ano, dados_abertos_um_ano, dados_fechados_um_ano = dados_graficos(chamados, um_ano, data_atual,'Um-ano' )
     meses_esse_ano, dados_abertos_esse_ano, dados_fechados_esse_ano = dados_graficos(chamados,esse_ano, data_atual, "Este-ano" )
 
-    context = {               
+    semanas_mes_tipo_1, dados_abertos_mes_tipo_1, dados_fechados_mes_tipo_1 = dados_graficos_tipo(chamados, um_mes_atras, data_atual, "Um-mes", '1')
+    semanas_mes_tipo_2, dados_abertos_mes_tipo_2, dados_fechados_mes_tipo_2 = dados_graficos_tipo(chamados, um_mes_atras, data_atual, "Um-mes", '2')
+    semanas_mes_tipo_3, dados_abertos_mes_tipo_3, dados_fechados_mes_tipo_3 = dados_graficos_tipo(chamados, um_mes_atras, data_atual, "Um-mes", '3')
+    
+
+    context = {              
+        'semanas_mes_tipo_1': semanas_mes_tipo_1,
+        'dados_abertos_mes_tipo_1': dados_abertos_mes_tipo_1,
+        'dados_fechados_mes_tipo_1': dados_fechados_mes_tipo_1,
+        'semanas_mes_tipo_2': semanas_mes_tipo_2,
+        'dados_abertos_mes_tipo_2': dados_abertos_mes_tipo_2,
+        'dados_fechados_mes_tipo_2': dados_fechados_mes_tipo_2,
+        'semanas_mes_tipo_3': semanas_mes_tipo_3,
+        'dados_abertos_mes_tipo_3': dados_abertos_mes_tipo_3,
+        'dados_fechados_mes_tipo_3': dados_fechados_mes_tipo_3,
         'tipos': TipoChamado.objects.all(),
         'count_abertos': count_abertos,
         'count_em_atendimento': count_em_atendimento,
