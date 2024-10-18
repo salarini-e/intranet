@@ -526,20 +526,17 @@
 		var barChart = document.getElementById('canvas-barchart').getContext('2d');
 		window.myBar = new Chart(barChart, barChartConfig);
 		
-		// Seleciona todos os elementos canvas que têm um id que começa com 'canvas-linechart-'
 		const lineChartElements = document.querySelectorAll('canvas[id^="canvas-linechart-tipos-"]');
 
-		// Inicializa um array para armazenar as instâncias dos gráficos
 		window.myLines = []; 
 
-		// Itera sobre cada elemento canvas e cria um gráfico para cada um
 		lineChartElements.forEach(function(canvas) {
 			const lineChart = canvas.getContext('2d');
-			// Configuração específica para cada gráfico, baseada no id do canvas
-			const chartId = canvas.id; // Pega o id do canvas
+			const chartId = canvas.id;
 			let semanas, dados_abertos, dados_fechados;
 			const tipo = String(chartId).split('-')[3];
-
+			// FAZER UM FOR PARA PEGAR O TAMANHO DOS CHAMADOS DE FORMA COMPLETA E FAZER O IF DE FORMA DINAMICA
+			// FAZER UMA FUNÇÃO QUE CARREGA O GRÁFICO DE ACORDO COM O PERIODO SELECIONADO
 			if (tipo === '1') {
 				semanas = {{semanas_mes_tipo_1|safe}};
 				dados_abertos = {{dados_abertos_mes_tipo_1|safe}};
@@ -648,11 +645,8 @@
 			};
 
 			new Chart(lineChart, lineChartConfigTipos);
-		
-			
-		
-	});	
-	});	
+		});	
+		});	
     'use strict';
 
 	window.chartColors = {

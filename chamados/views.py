@@ -703,6 +703,7 @@ def painel_controle(request):
     meses_ano, dados_abertos_um_ano, dados_fechados_um_ano = dados_graficos(chamados, um_ano, data_atual,'Um-ano' )
     meses_esse_ano, dados_abertos_esse_ano, dados_fechados_esse_ano = dados_graficos(chamados,esse_ano, data_atual, "Este-ano" )
 
+    # FAZER UM FOR NOS TIPOS PARA GERAR TODOS OS TIPOS DA BASE DE DADOS DE FORMA DINÂMICA (enviar todos no contexto)
     semanas_mes_tipo_1, dados_abertos_mes_tipo_1, dados_fechados_mes_tipo_1 = dados_graficos_tipo(chamados, um_mes_atras, data_atual, "Um-mes", '1')
     semanas_mes_tipo_2, dados_abertos_mes_tipo_2, dados_fechados_mes_tipo_2 = dados_graficos_tipo(chamados, um_mes_atras, data_atual, "Um-mes", '2')
     semanas_mes_tipo_3, dados_abertos_mes_tipo_3, dados_fechados_mes_tipo_3 = dados_graficos_tipo(chamados, um_mes_atras, data_atual, "Um-mes", '3')
