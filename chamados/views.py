@@ -588,24 +588,89 @@ def painel_controle(request):
 
     data_atual = datetime.now()
     tres_meses_atras = data_atual - timedelta(days=90)
+    um_mes_atras = data_atual - timedelta(days=30)
+    uma_semana_atras = data_atual - timedelta(days=7)
 
+
+    # GRÁFICO PARA 1 MES
+    semanas_mes = []
+    dados_abertos_um_mes = []
+    dados_fechados_um_mes = []
+    while um_mes_atras <= data_atual:
+        semana_inicio_um_mes = um_mes_atras.strftime('%d/%m/%y')        
+        label_semana_um_mes = f'{semana_inicio_um_mes}'
+       
+        chamados_semana_um_mes = chamados.filter(dt_inclusao__gte=um_mes_atras, dt_inclusao__lt=um_mes_atras + timedelta(days=1))
+        
+        chamados_abertos_semana_um_mes = chamados_semana_um_mes.filter(status='0').count()
+        chamados_fechados_semana_um_mes = chamados_semana_um_mes.filter(status='3').count()
+
+        semanas_mes.append(label_semana_um_mes)
+       
+        dados_abertos_um_mes.append(chamados_abertos_semana_um_mes)
+        dados_fechados_um_mes.append(chamados_fechados_semana_um_mes)
+        um_mes_atras += timedelta(days=1)
+        
+    # GRÁFICO PARA 3 MESES
     semanas = []
     dados_abertos = []
     dados_fechados = []
 
+
     while tres_meses_atras < data_atual:
         semana_inicio = tres_meses_atras.strftime('%d/%m/%y')        
         label_semana = f'{semana_inicio}'
+       
 
         chamados_semana = chamados.filter(dt_inclusao__gte=tres_meses_atras, dt_inclusao__lt=tres_meses_atras + timedelta(days=7))
+        
         chamados_abertos_semana = chamados_semana.filter(status='0').count()
         chamados_fechados_semana = chamados_semana.filter(status='3').count()
 
         semanas.append(label_semana)
+       
         dados_abertos.append(chamados_abertos_semana)
         dados_fechados.append(chamados_fechados_semana)
-
         tres_meses_atras += timedelta(days=7)
+    # GRÁFICO PARA UMA SEMANA
+    uma_semana = []
+    dados_abertos_uma_semana = []
+    dados_fechados_uma_semana = []
+    while uma_semana_atras < data_atual + timedelta(days=1):
+        uma_semana_inicio = uma_semana_atras.strftime('%d/%m/%y') 
+        label_uma_sema = f'{uma_semana_inicio}'
+
+        
+        chamados_uma_semana = chamados.filter(
+        dt_inclusao__gte=uma_semana_atras,
+        dt_inclusao__lt=uma_semana_atras + timedelta(days=1)
+    )
+
+        chamados_abertos_uma_semana = chamados_uma_semana.filter(status='0').count()
+        chamados_fechados_uma_semana = chamados_uma_semana.filter(status='3').count()
+
+        uma_semana.append(label_uma_sema)
+        dados_abertos_uma_semana.append(chamados_abertos_uma_semana)
+        dados_fechados_uma_semana.append(chamados_fechados_uma_semana)
+        uma_semana_atras += timedelta(days=1)
+
+    
+    # GRÁFICO PARA HOJE
+    hoje = []
+    dados_abertos_hoje = []
+    dados_fechados_hoje = []
+
+    inicio_hoje = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    fim_hoje = datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999)
+    label_hoje= f'{datetime.now().strftime("%d/%m/%Y")}'
+    chamados_hoje = Chamado.objects.filter(dt_inclusao__gte=inicio_hoje, dt_inclusao__lte=fim_hoje) 
+    
+    chamados_abertos_hoje = chamados_hoje.filter(status='0').count()
+    chamados_fechados_hoje = chamados_hoje.filter(status='3').count()
+    hoje.append(label_hoje)
+    dados_abertos_hoje.append(chamados_abertos_hoje)
+    dados_fechados_hoje.append(chamados_fechados_hoje)
+
 
 
     context = {               
@@ -619,6 +684,15 @@ def painel_controle(request):
         'semanas': semanas,
         'dados_abertos': dados_abertos,
         'dados_fechados': dados_fechados,
+        'dados_abertos_uma_semana': dados_abertos_uma_semana,
+        'dados_fechados_uma_semana': dados_fechados_uma_semana,
+        'uma_semana': uma_semana,
+        'hoje': hoje,
+        'dados_abertos_hoje': dados_abertos_hoje,
+        'dados_fechados_hoje': dados_fechados_hoje,
+        'um_mes_atras': semanas_mes,
+        'dados_abertos_um_mes': dados_abertos_um_mes,
+        'dados_fechados_um_mes': dados_fechados_um_mes,
         'total_chamados': total_chamados,
         'chamados_abertos_30dias': chamados_abertos_30dias,
         'chamados_fechados_30dias': chamados_fechados_30dias,
