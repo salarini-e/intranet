@@ -56,13 +56,23 @@ class Arquivo_Texto(models.Model):
         return self.texto  
 
 
+from django.utils.deconstruct import deconstructible
+
+@deconstructible
+class PathAndRename:
+    def __init__(self, path):
+        self.path = path
+
+    def __call__(self, instance, filename):
+        # Normaliza o nome do arquivo
+        safe_name = filename.encode('ascii', 'ignore').decode('ascii')
+        return os.path.join(self.path, safe_name)
+    
 class Arquivo_PDF(models.Model):
     subtopico = models.ForeignKey(Subtopico, on_delete=models.DO_NOTHING, verbose_name='Subtópico Associado')
     texto = models.TextField(verbose_name='Título')
     arquivo_pdf = models.FileField(upload_to='pdfs/', verbose_name='Arquivo PDF')
 
-    def save_file(file):
-        safe_name = os.path.basename(file.name).encode('utf-8').decode('utf-8')
-        return super()._save(safe_name, file)
+
     def __str__(self):
         return self.texto
