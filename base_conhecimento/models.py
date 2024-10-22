@@ -1,5 +1,6 @@
 from django.db import models
 from autenticacao.models import User
+import os 
 
 # Create your models here.
 class Topico(models.Model):
@@ -60,5 +61,8 @@ class Arquivo_PDF(models.Model):
     texto = models.TextField(verbose_name='Título')
     arquivo_pdf = models.FileField(upload_to='pdfs/', verbose_name='Arquivo PDF')
 
+    def save_file(file):
+        safe_name = os.path.basename(file.name).encode('utf-8').decode('utf-8')
+        return super()._save(safe_name, file)
     def __str__(self):
         return self.texto
