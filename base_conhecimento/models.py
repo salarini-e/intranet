@@ -55,4 +55,10 @@ class Arquivo_Texto(models.Model):
         return self.texto  
 
 
+class Arquivo_PDF(models.Model):
+    subtopico = models.ForeignKey(Subtopico, on_delete=models.DO_NOTHING, verbose_name='Subtópico Associado')
+    texto = models.TextField(verbose_name='Título')
+    arquivo_pdf = models.FileField(upload_to='pdfs/', verbose_name='Arquivo PDF')
 
+    def __str__(self):
+        return self.texto

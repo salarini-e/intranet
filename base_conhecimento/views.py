@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Topico, Subtopico, Arquivo_GoogleDrive, Arquivo_Texto
+from .models import Topico, Subtopico, Arquivo_GoogleDrive, Arquivo_Texto, Arquivo_PDF
 from django.contrib.auth.decorators import login_required
 import requests
 from django.http import StreamingHttpResponse, HttpResponse
@@ -56,13 +56,20 @@ def display(request, topico_id, subtopico_id):
         if texto:
             # Substituir múltiplos espaços por uma quebra de linha
             texto_formatado = re.sub(r'\s{2,}', '<br><br>', texto.texto)
-            print("texto", texto_formatado)
             context = {
             'topico': topico,
             'subtopico': subtopico,
             'texto': texto_formatado,
         }
         return render(request, 'base_conhecimento/display_texto.html', context)
+    elif (tipo_subtopico=='pdf'):
+        pdf = Arquivo_PDF.objects.filter(subtopico=subtopico).first()
+        context = {
+                'topico': topico,
+                'subtopico': subtopico,
+                'pdf': pdf,
+        }
+        return render(request, 'base_conhecimento/display_pdf.html', context)
 
 def extract_video_url_from_iframe(iframe_html):
     """
