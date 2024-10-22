@@ -64,7 +64,6 @@ class PathAndRename:
         self.path = path
 
     def __call__(self, instance, filename):
-        # Normaliza o nome do arquivo
         safe_name = filename.encode('ascii', 'ignore').decode('ascii')
         return os.path.join(self.path, safe_name)
     

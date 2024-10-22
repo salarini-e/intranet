@@ -209,25 +209,22 @@
 					        <div class="app-card-header p-3">
 						        <div class="row justify-content-between align-items-center">
 							        <div class="col-auto">
-						                <h4 class="app-card-title">Por tipo </h4>
+						                <h4 class="app-card-title">Total de chamados por tipo </h4>
 							        </div>
 							        <div class="col-auto">
-								        <div class="card-header-action">
-									        <a href="charts.html">More charts</a>
-								        </div>
 							        </div>
 						        </div>
 					        </div>
 					        <div class="app-card-body p-3 p-lg-4">
-								comentar essa div
-							    <div class="mb-3 d-flex">   
+							    <!-- <div class="mb-3 d-flex">   
 							        <select class="form-select form-select-sm ms-auto d-inline-flex w-auto">
-									    <option value="1" selected>This week</option>
-									    <option value="2">Today</option>
-									    <option value="3">This Month</option>
-									    <option value="3">This Year</option>
+									    <option value="1">Hoje</option>
+									    <option value="2"selected>Uma semana</option>
+									    <option value="3">Um mês</option>
+									    <option value="4">Este ano</option>
+									    <option value="5">Um ano</option>
 									</select>
-							    </div>
+							    </div> -->
 						        <div class="chart-container">
 				                    <canvas id="canvas-barchart" ></canvas>
 						        </div>
@@ -236,7 +233,7 @@
 			        </div>
 			        
 			    </div>
-
+				{% if request.user.is_superuser %}
 				<div class="row g-4 mb-4">
 					{% for tipo in tipos %}
 			        <div class="col-12 col-lg-6">
@@ -266,6 +263,7 @@
 			        </div>
 			        {% endfor%}
 			    </div>
+				{% endif %}
 
 				<!-- FINAL DESCOMENTAR -->
 
@@ -546,45 +544,42 @@
 			function updateChart(tipo, selectedValue, chartInstance) {
 				let semanas, dados_abertos, dados_fechados;
 
-				if (selectedValue == '1') { //HOJE
+				if (selectedValue == '1') { // Hoje
 					semanas = dados_hoje_tipo[tipo].semanas;
 					dados_abertos = dados_hoje_tipo[tipo].dados_abertos; 
-					dados_fechados = dados_hoje_tipo[tipo].dados_fechados; 
+					dados_fechados = dados_hoje_tipo[tipo].dados_fechados;
 					chartInstance.options.title.text = 'Chamados registrados hoje';
-					chartInstance.options.scales.xAxes[0].scaleLabel.labelString = 'Horas do Dia';
-					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
-				} else if (selectedValue == '2') { // Uma semana
-					semanas = dados_uma_semana_atras_tipo_tipo[tipo].semanas;
+					chartInstance.options.scales.xAxes[0].scaleLabel.labelString = 'Horas do dia';
+					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Total de chamados';
+				} else if (selectedValue == '2') { // Última semana
+					semanas = dados_uma_semana_atras_tipo[tipo].semanas;
 					dados_abertos = dados_uma_semana_atras_tipo[tipo].dados_abertos;
 					dados_fechados = dados_uma_semana_atras_tipo[tipo].dados_fechados;
-					chartInstance.options.title.text = 'Chamados registrados em uma semana';
-					chartInstance.options.scales.xAxes[0].scaleLabel.labelString = 'Dias da Semana';
-					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
-				} else if(selectedValue =='3'){ //um mes atras
+					chartInstance.options.title.text = 'Chamados registrados na última semana';
+					chartInstance.options.scales.xAxes[0].scaleLabel.labelString = 'Dias da semana';
+					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Total de chamados';
+				} else if (selectedValue == '3') { // Último mês
 					semanas = dados_mes_tipo[tipo].semanas;
 					dados_abertos = dados_mes_tipo[tipo].dados_abertos;
 					dados_fechados = dados_mes_tipo[tipo].dados_fechados;
-					chartInstance.options.title.text = 'Chamados registrados em um mês';
+					chartInstance.options.title.text = 'Chamados registrados no último mês';
 					chartInstance.options.scales.xAxes[0].scaleLabel.labelString = 'Semanas do mês';
-					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
-				}
-				else if(selectedValue =='4'){ //este ano
+					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Total de chamados';
+				} else if (selectedValue == '4') { // Este ano
 					semanas = dados_este_ano_tipo[tipo].semanas;
 					dados_abertos = dados_este_ano_tipo[tipo].dados_abertos;
 					dados_fechados = dados_este_ano_tipo[tipo].dados_fechados;
-					chartInstance.options.title.text = 'Chamados registrados este ano';
-					chartInstance.options.scales.xAxes[0].scaleLabel.labelString = 'Meses deste ano';
-					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
-				}
-				else if(selectedValue =='5'){ //um ano
+					chartInstance.options.title.text = 'Chamados registrados neste ano';
+					chartInstance.options.scales.xAxes[0].scaleLabel.labelString = 'Meses do ano';
+					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Total de chamados';
+				} else if (selectedValue == '5') { // Último ano
 					semanas = dados_um_ano_tipo[tipo].semanas;
 					dados_abertos = dados_um_ano_tipo[tipo].dados_abertos;
 					dados_fechados = dados_um_ano_tipo[tipo].dados_fechados;
-					chartInstance.options.title.text = 'Chamados registrados em um ano';
+					chartInstance.options.title.text = 'Chamados ao longo de um ano';
 					chartInstance.options.scales.xAxes[0].scaleLabel.labelString = 'Meses do ano';
-					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Total de chamados';
 				}
-
 				// Atualiza os dados do gráfico
 				chartInstance.data.labels = semanas;
 				chartInstance.data.datasets[0].data = dados_abertos;
@@ -631,7 +626,7 @@
 
 					title: {
 						display: true,
-						text: 'Chamados Registrados Esta Semana'
+						text: 'Chamados registrados na última semana'
 						
 					},
 					tooltips: {
@@ -680,7 +675,7 @@
 							},
 							scaleLabel: {
 								display: true,
-								labelString: 'Número Total de Chamados'
+								labelString: 'Total de chamados'
 							},
 							ticks: {
 								beginAtZero: true,
@@ -781,7 +776,7 @@
 
 			title: {
 				display: true,
-				text: 'Chamados do período de uma semana'
+				text: 'Chamados registrados na última semana'
 				
 			},
 			tooltips: {
@@ -851,47 +846,47 @@
 			myLine.data.labels = hoje;
 			myLine.data.datasets[0].data = dados_abertos_hoje;
 			myLine.data.datasets[1].data = dados_fechados_hoje;
-			myLine.options.title.text = 'Resumo de Chamados para Hoje';
-			myLine.options.scales.xAxes[0].scaleLabel.labelString = 'Horas do Dia';
-			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+			myLine.options.title.text = 'Chamados registrados hoje';
+			myLine.options.scales.xAxes[0].scaleLabel.labelString = 'Horas do dia';
+			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Total de chamados';
 		} else if (selectedValue == '2') {  // Esta semana
 			myLine.data.labels = uma_semana;
 			myLine.data.datasets[0].data = dados_abertos_uma_semana;
 			myLine.data.datasets[1].data = dados_fechados_uma_semana;
-			myLine.options.title.text = 'Chamados Registrados Esta Semana';
+			myLine.options.title.text = 'Chamados registrados na última semana';
 			myLine.options.scales.xAxes[0].scaleLabel.labelString = 'Dias da Semana';
-			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Total de Chamados';
 
 		} else if (selectedValue == '3') {  // Este mês
 			myLine.data.labels = um_mes_atras;
 			myLine.data.datasets[0].data = dados_abertos_um_mes;
 			myLine.data.datasets[1].data = dados_fechados_um_mes;
-			myLine.options.title.text = 'Chamados Registrados Este Mês';
-			myLine.options.scales.xAxes[0].scaleLabel.labelString = 'Semanas do Mês';
-			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+			myLine.options.title.text = 'Chamados registrados no último mês';
+			myLine.options.scales.xAxes[0].scaleLabel.labelString = 'Semanas do mês';
+			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Total de Chamados';
 
 		}else if(selectedValue == '4') {  // Este ano
 			myLine.data.labels = meses_esse_ano;
 			myLine.data.datasets[0].data = dados_abertos_esse_ano;
 			myLine.data.datasets[1].data = dados_fechados_esse_ano;
-			myLine.options.title.text = 'Análise de Chamados ao Longo Deste Ano';
-			myLine.options.scales.xAxes[0].scaleLabel.labelString = 'Meses deste Ano';
-			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+			myLine.options.title.text = 'Chamados registrados neste ano';
+			myLine.options.scales.xAxes[0].scaleLabel.labelString = 'Meses do ano';
+			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Total de Chamados';
 		}
 		else if(selectedValue == '5') {  // Um ano
 			myLine.data.labels = meses;
 			myLine.data.datasets[0].data = dados_abertos_um_ano;
 			myLine.data.datasets[1].data = dados_fechados_um_ano;
-			myLine.options.title.text = 'Análise de Chamados ao Longo do Ano';
-			myLine.options.scales.xAxes[0].scaleLabel.labelString = 'Meses do Ano';
-			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+			myLine.options.title.text = 'Chamados ao longo de um ano';
+			myLine.options.scales.xAxes[0].scaleLabel.labelString = 'Meses do ano';
+			myLine.options.scales.yAxes[0].scaleLabel.labelString = 'Total de Chamados';
 		}
 
         // Atualiza o gráfico com os novos dados
         myLine.update();
     });
 
-	// Chart.js Bar Chart Example
+	// TOTAL DE CHAMADOS POR TIPO
 	var barChartData = {
 		labels: chamados_por_tipo.map(function(item) { return item.tipo; }),
 		datasets: [{
@@ -918,7 +913,7 @@
 
 			title: {
 				display: false,
-				text: 'Quantidade de Chamados por Tipo',
+				text: 'Total de chamados por tipo',
 			},
 			tooltips: {
 				mode: 'index',
