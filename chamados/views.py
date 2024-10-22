@@ -18,6 +18,7 @@ from autenticacao.functions import clear_tel
 import re
 from django.db.models import Count, Q
 from dateutil.relativedelta import relativedelta
+from collections import defaultdict
 
 @login_required
 def index(request):
@@ -673,6 +674,15 @@ def painel_controle(request):
         tipo.nome: chamados.filter(tipo=tipo, status='0').count() for tipo in tipos_chamados
     }
 
+    chamados_por_secretaria = defaultdict(list)
+    secretarias = Secretaria.objects.all()
+    for secretaria in secretarias:
+        chamados_secretaria = Chamado.objects.filter(setor__secretaria=secretaria)
+        tipos_chamados = TipoChamado.objects.all()
+        tipos_por_secretaria = [{'tipo': tipo.nome, 'quantidade': chamados_secretaria.filter(tipo=tipo).count()} for tipo in tipos_chamados]
+
+        chamados_por_secretaria[secretaria.nome] = tipos_por_secretaria
+
     # Chamados criados entre 30 e 60 dias atrás
     chamados_abertos_30_a_60_dias = chamados.filter(
         dt_inclusao__lt=datetime.now().replace(tzinfo=None) - timedelta(days=30),
@@ -792,7 +802,8 @@ def painel_controle(request):
         'variacao_30_a_60_dias': "{:.1f}".format(variacao_30_a_60_dias),
         'aumento_chamados_abertos_30_dias': aumento_chamados_abertos_30_dias,
         'total_nao_resolvidos':  total_nao_resolvidos,
-        'porcentagem_nao_resolvidos': "{:.1f}".format(porcentagem_nao_resolvidos)
+        'porcentagem_nao_resolvidos': "{:.1f}".format(porcentagem_nao_resolvidos),
+        'total_chamados_secretaria': chamados_por_secretaria
     }
     return render(request, 'chamados/painel_controle.html', context)
 
