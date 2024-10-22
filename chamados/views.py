@@ -706,8 +706,10 @@ def painel_controle(request):
     tipos = TipoChamado.objects.all()
 
     dados_mes_tipo = {}
-    dados_uma_semana_atras = {}
-    dados_hoje = {}
+    dados_uma_semana_atras_tipo = {}
+    dados_hoje_tipo = {}
+    dados_este_ano_tipo = {}
+    dados_um_ano_tipo = {}
     # Loop para processar cada tipo de chamado
     for tipo in tipos:
         tipo_id = str(tipo.id) 
@@ -718,6 +720,8 @@ def painel_controle(request):
         semanas_uma_semana_atras, dados_abertos_uma_semana_atras, dados_fechados_uma_semana_atras = dados_graficos_tipo(chamados, uma_semana_atras, data_atual, "Uma-semana", tipo_id)
         #hoje
         semanas_hoje, dados_abertos_hoje, dados_fechados_hoje = dados_graficos_tipo(chamados, datetime.now().replace(hour=0, minute=0, second=0, microsecond=0), datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999), "Hoje", tipo_id)
+        semanas_este_ano, dados_abertos_este_ano, dados_fechados_este_ano = dados_graficos_tipo(chamados,esse_ano , data_atual, "Este-ano", tipo_id)
+        semanas_um_ano, dados_abertos_um_ano, dados_fechados_um_ano = dados_graficos_tipo(chamados, um_ano , data_atual, "Este-ano", tipo_id)
 
         # Adiciona os dados ao dicionário
         dados_mes_tipo[tipo_id] = {
@@ -725,20 +729,32 @@ def painel_controle(request):
             'dados_abertos': dados_abertos,
             'dados_fechados': dados_fechados,
         }
-        dados_uma_semana_atras[tipo_id] = {
+        dados_uma_semana_atras_tipo[tipo_id] = {
             'semanas': semanas_uma_semana_atras,
             'dados_abertos': dados_abertos_uma_semana_atras,
             'dados_fechados': dados_fechados_uma_semana_atras,
         }
-        dados_hoje[tipo_id] = {
+        dados_hoje_tipo[tipo_id] = {
             'semanas': semanas_hoje,
             'dados_abertos': dados_abertos_hoje,
             'dados_fechados': dados_fechados_hoje,
         }
+        dados_este_ano_tipo[tipo_id] = {
+            'semanas': semanas_este_ano,
+            'dados_abertos': dados_abertos_este_ano,
+            'dados_fechados': dados_fechados_este_ano
+        }
+        dados_um_ano_tipo[tipo_id] = {
+            'semanas': semanas_um_ano,
+            'dados_abertos': dados_abertos_um_ano,
+            'dados_fechados': dados_fechados_um_ano
+        }
     context = {      
         'dados_mes_tipo': dados_mes_tipo,
-        'dados_uma_semana_atras': dados_uma_semana_atras,
-        'dados_hoje': dados_hoje,
+        'dados_uma_semana_atras_tipo': dados_uma_semana_atras_tipo,
+        'dados_hoje_tipo': dados_hoje_tipo,
+        'dados_este_ano_tipo': dados_este_ano_tipo,
+        'dados_um_ano_tipo': dados_um_ano_tipo,
         'tipos': tipos,
         'count_abertos': count_abertos,
         'count_em_atendimento': count_em_atendimento,

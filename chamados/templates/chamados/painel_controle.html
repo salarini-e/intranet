@@ -538,24 +538,52 @@
 			// FAZER UMA FUNÇÃO QUE CARREGA O GRÁFICO DE ACORDO COM O PERIODO SELECIONADO
 			// Obtenha os dados do Django como um objeto
 			const dados_mes_tipo = {{ dados_mes_tipo|safe }};
-			const dados_uma_semana_atras = {{ dados_uma_semana_atras|safe }};
-			const dados_hoje = {{ dados_hoje|safe }};
+			const dados_uma_semana_atras_tipo = {{ dados_uma_semana_atras_tipo|safe }};
+			const dados_hoje_tipo = {{ dados_hoje_tipo|safe }};
+			const dados_este_ano_tipo = {{dados_este_ano_tipo|safe}}
+			const dados_um_ano_tipo = {{dados_um_ano_tipo|safe}}
 
 			function updateChart(tipo, selectedValue, chartInstance) {
 				let semanas, dados_abertos, dados_fechados;
 
 				if (selectedValue == '1') { //HOJE
-					semanas = dados_hoje[tipo].semanas;
-					dados_abertos = dados_hoje[tipo].dados_abertos; 
-					dados_fechados = dados_hoje[tipo].dados_fechados; 
-					chartInstance.options.title.text = 'Resumo de Chamados para Hoje';
+					semanas = dados_hoje_tipo[tipo].semanas;
+					dados_abertos = dados_hoje_tipo[tipo].dados_abertos; 
+					dados_fechados = dados_hoje_tipo[tipo].dados_fechados; 
+					chartInstance.options.title.text = 'Chamados registrados hoje';
 					chartInstance.options.scales.xAxes[0].scaleLabel.labelString = 'Horas do Dia';
 					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
 				} else if (selectedValue == '2') { // Uma semana
-					semanas = dados_uma_semana_atras[tipo].semanas;
-					dados_abertos = dados_uma_semana_atras[tipo].dados_abertos;
-					dados_fechados = dados_uma_semana_atras[tipo].dados_fechados;
-				} 
+					semanas = dados_uma_semana_atras_tipo_tipo[tipo].semanas;
+					dados_abertos = dados_uma_semana_atras_tipo[tipo].dados_abertos;
+					dados_fechados = dados_uma_semana_atras_tipo[tipo].dados_fechados;
+					chartInstance.options.title.text = 'Chamados registrados em uma semana';
+					chartInstance.options.scales.xAxes[0].scaleLabel.labelString = 'Dias da Semana';
+					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+				} else if(selectedValue =='3'){ //um mes atras
+					semanas = dados_mes_tipo[tipo].semanas;
+					dados_abertos = dados_mes_tipo[tipo].dados_abertos;
+					dados_fechados = dados_mes_tipo[tipo].dados_fechados;
+					chartInstance.options.title.text = 'Chamados registrados em um mês';
+					chartInstance.options.scales.xAxes[0].scaleLabel.labelString = 'Semanas do mês';
+					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+				}
+				else if(selectedValue =='4'){ //este ano
+					semanas = dados_este_ano_tipo[tipo].semanas;
+					dados_abertos = dados_este_ano_tipo[tipo].dados_abertos;
+					dados_fechados = dados_este_ano_tipo[tipo].dados_fechados;
+					chartInstance.options.title.text = 'Chamados registrados este ano';
+					chartInstance.options.scales.xAxes[0].scaleLabel.labelString = 'Meses deste ano';
+					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+				}
+				else if(selectedValue =='5'){ //um ano
+					semanas = dados_um_ano_tipo[tipo].semanas;
+					dados_abertos = dados_um_ano_tipo[tipo].dados_abertos;
+					dados_fechados = dados_um_ano_tipo[tipo].dados_fechados;
+					chartInstance.options.title.text = 'Chamados registrados em um ano';
+					chartInstance.options.scales.xAxes[0].scaleLabel.labelString = 'Meses do ano';
+					chartInstance.options.scales.yAxes[0].scaleLabel.labelString = 'Número Total de Chamados';
+				}
 
 				// Atualiza os dados do gráfico
 				chartInstance.data.labels = semanas;
@@ -564,10 +592,10 @@
 				chartInstance.update();
 			}
 			// DADOS DO MÊS PELO TIPO
-			if (dados_uma_semana_atras[tipo]) {
-				semanas = dados_uma_semana_atras[tipo].semanas;
-				dados_abertos = dados_uma_semana_atras[tipo].dados_abertos; // Corrigido o nome da variável
-				dados_fechados = dados_uma_semana_atras[tipo].dados_fechados; // Corrigido o nome da variável
+			if (dados_uma_semana_atras_tipo[tipo]) {
+				semanas = dados_uma_semana_atras_tipo[tipo].semanas;
+				dados_abertos = dados_uma_semana_atras_tipo[tipo].dados_abertos; // Corrigido o nome da variável
+				dados_fechados = dados_uma_semana_atras_tipo[tipo].dados_fechados; // Corrigido o nome da variável
 			} else {
 				console.warn('Tipo não encontrado:', tipo);
 			}
@@ -603,7 +631,7 @@
 
 					title: {
 						display: true,
-						text: 'Chamados do período de uma semana'
+						text: 'Chamados Registrados Esta Semana'
 						
 					},
 					tooltips: {
@@ -652,7 +680,7 @@
 							},
 							scaleLabel: {
 								display: true,
-								labelString: 'Total de Chamados'
+								labelString: 'Número Total de Chamados'
 							},
 							ticks: {
 								beginAtZero: true,
