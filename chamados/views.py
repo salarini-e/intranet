@@ -703,23 +703,43 @@ def painel_controle(request):
     meses_ano, dados_abertos_um_ano, dados_fechados_um_ano = dados_graficos(chamados, um_ano, data_atual,'Um-ano' )
     meses_esse_ano, dados_abertos_esse_ano, dados_fechados_esse_ano = dados_graficos(chamados,esse_ano, data_atual, "Este-ano" )
 
-    # FAZER UM FOR NOS TIPOS PARA GERAR TODOS OS TIPOS DA BASE DE DADOS DE FORMA DINÂMICA (enviar todos no contexto)
-    semanas_mes_tipo_1, dados_abertos_mes_tipo_1, dados_fechados_mes_tipo_1 = dados_graficos_tipo(chamados, um_mes_atras, data_atual, "Um-mes", '1')
-    semanas_mes_tipo_2, dados_abertos_mes_tipo_2, dados_fechados_mes_tipo_2 = dados_graficos_tipo(chamados, um_mes_atras, data_atual, "Um-mes", '2')
-    semanas_mes_tipo_3, dados_abertos_mes_tipo_3, dados_fechados_mes_tipo_3 = dados_graficos_tipo(chamados, um_mes_atras, data_atual, "Um-mes", '3')
-    
+    tipos = TipoChamado.objects.all()
 
-    context = {              
-        'semanas_mes_tipo_1': semanas_mes_tipo_1,
-        'dados_abertos_mes_tipo_1': dados_abertos_mes_tipo_1,
-        'dados_fechados_mes_tipo_1': dados_fechados_mes_tipo_1,
-        'semanas_mes_tipo_2': semanas_mes_tipo_2,
-        'dados_abertos_mes_tipo_2': dados_abertos_mes_tipo_2,
-        'dados_fechados_mes_tipo_2': dados_fechados_mes_tipo_2,
-        'semanas_mes_tipo_3': semanas_mes_tipo_3,
-        'dados_abertos_mes_tipo_3': dados_abertos_mes_tipo_3,
-        'dados_fechados_mes_tipo_3': dados_fechados_mes_tipo_3,
-        'tipos': TipoChamado.objects.all(),
+    dados_mes_tipo = {}
+    dados_uma_semana_atras = {}
+    dados_hoje = {}
+    # Loop para processar cada tipo de chamado
+    for tipo in tipos:
+        tipo_id = str(tipo.id) 
+        # informacoes por tipo
+        # um mes atras
+        semanas, dados_abertos, dados_fechados = dados_graficos_tipo(chamados, um_mes_atras, data_atual, "Um-mes", tipo_id)
+        # uma semana atras
+        semanas_uma_semana_atras, dados_abertos_uma_semana_atras, dados_fechados_uma_semana_atras = dados_graficos_tipo(chamados, uma_semana_atras, data_atual, "Uma-semana", tipo_id)
+        #hoje
+        semanas_hoje, dados_abertos_hoje, dados_fechados_hoje = dados_graficos_tipo(chamados, datetime.now().replace(hour=0, minute=0, second=0, microsecond=0), datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999), "Hoje", tipo_id)
+
+        # Adiciona os dados ao dicionário
+        dados_mes_tipo[tipo_id] = {
+            'semanas': semanas,
+            'dados_abertos': dados_abertos,
+            'dados_fechados': dados_fechados,
+        }
+        dados_uma_semana_atras[tipo_id] = {
+            'semanas': semanas_uma_semana_atras,
+            'dados_abertos': dados_abertos_uma_semana_atras,
+            'dados_fechados': dados_fechados_uma_semana_atras,
+        }
+        dados_hoje[tipo_id] = {
+            'semanas': semanas_hoje,
+            'dados_abertos': dados_abertos_hoje,
+            'dados_fechados': dados_fechados_hoje,
+        }
+    context = {      
+        'dados_mes_tipo': dados_mes_tipo,
+        'dados_uma_semana_atras': dados_uma_semana_atras,
+        'dados_hoje': dados_hoje,
+        'tipos': tipos,
         'count_abertos': count_abertos,
         'count_em_atendimento': count_em_atendimento,
         'count_pendentes': count_pendentes,
