@@ -536,6 +536,7 @@
 			    </div> -->
 			  
 				<script src="/static/plugins/chart.js/chart.min.js"></script> 
+				<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script>
 	// Generate charts on load
 	window.addEventListener('load', function(){
@@ -764,8 +765,9 @@
 	var count_fechados = {{ count_fechados }};
 
 	// Dados para o gráfico de barras
-	var chamados_por_tipo = {{ chamados_por_tipo|safe }};
+	var chamados_abertos_por_tipo = {{ chamados_abertos_por_tipo|safe }};
 	var chamados_abertos_por_secretaria = {{chamados_abertos_por_secretaria|safe}}
+	var total_chamados_abertos = {{total_chamados_abertos|safe}}
 	
 	// LINE CHART TODOS OS CHAMADOS
 	var lineChartConfig = {
@@ -913,13 +915,13 @@
 	function updateDataSetBarChar(canvasId){
 		if (canvasId == "canvas-barchart"){
 			var barChartData = {
-				labels: chamados_por_tipo.map(function(item) { return item.tipo; }),
+				labels: Object.keys(chamados_abertos_por_tipo),
 				datasets: [{
-					label: 'Quantidade de chamados por tipo',
+					label: 'Quantidade de chamados por secretaria',
 					backgroundColor: window.chartColors.green,
 					borderColor: window.chartColors.green,
 					borderWidth: 1,
-					data: chamados_por_tipo.map(function(item) { return item.quantidade; })
+					data: Object.values(chamados_abertos_por_tipo)
 				}]
 			};
 			return barChartData;
@@ -939,20 +941,18 @@
 		}
 	}
 	
-	function setDataSetData(canvasId){
+	function setDataSetData(canvasId) {
 		var barChartConfig = {
 			type: 'bar',
 			data: updateDataSetBarChar(canvasId),
 			options: {
 				responsive: true,
 				aspectRatio: 1.5,
-
 				legend: {
 					display: true,
 					position: 'bottom',
 					align: 'end',
 				},
-
 				title: {
 					display: false,
 					text: 'Total de chamados por tipo',
@@ -969,13 +969,13 @@
 					backgroundColor: '#fff',
 					bodyFontColor: window.chartColors.text,
 					titleFontColor: window.chartColors.text,
-
 					callbacks: {
 						label: function(tooltipItem, data) {
-							return tooltipItem.yLabel;
+							var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || '';
+							var dataPoint = tooltipItem.yLabel;
+							return datasetLabel + ': ' + (dataPoint !== undefined ? dataPoint : 0);
 						}
 					},
-
 				},
 				hover: {
 					mode: 'nearest',
@@ -999,7 +999,8 @@
 							color: window.chartColors.border,
 						},
 						scaleLabel: {
-							display: false,
+							display: true,
+							labelString: 'Total de Chamados'
 						},
 						ticks: {
 							beginAtZero: true,
@@ -1009,13 +1010,32 @@
 						},
 					}]
 				}
-			}
+			},
+			plugins: {
+				afterDatasetsDraw: function (context, easing) {
+				var ctx = context.chart.ctx;
+				context.data.datasets.forEach(function (dataset) {
+					for (var i = 0; i < dataset.data.length; i++) {
+						if (dataset.data[i] != 0) {
+						var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+							var textY = model.y + (dataset.type == "line" ? -1 : 15); 
+							ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart.defaults.global.defaultFontFamily);
+							ctx.textAlign = 'center';
+							ctx.textBaseline = 'middle';
+							ctx.fillStyle = dataset.type == "line" ? "black" : "black";
+							ctx.save();
+							ctx.translate(model.x, textY-20);
+							// ctx.rotate(4.7);
+							ctx.fillText( Math.round(dataset.data[i]*100/total_chamados_abertos) + "%", 0, 0);
+							console.log(dataset.data[i])
+							ctx.restore();
+							}
+						}
+						});
+					}
+				}
 		};
 		return barChartConfig;
 	}
-		
-	
-	
-
 </script>
 {% endblock %}

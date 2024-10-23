@@ -647,6 +647,7 @@ def dados_graficos_tipo(chamados, data_inicial, data_final, tempo, tipo):
 def painel_controle(request):
     chamados = Chamado.objects.all()
     total_chamados = chamados.count()
+    total_chamados_abertos = chamados.filter(status='0').count()
     chamados_abertos_30dias = chamados.filter(dt_inclusao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30), status='0').count()
     chamados_fechados_30dias = chamados.filter(dt_execucao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30)).count()
     chamados_finalizados_30dias =  chamados.filter(dt_execucao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30), status = '4').count()
@@ -669,16 +670,29 @@ def painel_controle(request):
     #Calcular a porcentagem de abertos nos ultimos trinta dias em relação ao total
     # porcentagem_abertos_ultimos_trinta_dias =   (chamados_abertos_30dias / total_chamados * 100) if total_chamados > 0 else 0
     # Preparando dados para o gráfico de barras
-    chamados_por_tipo = [{'tipo': tipo.nome, 'quantidade': chamados.filter(tipo=tipo).count()} for tipo in tipos_chamados]
+    chamados_por_tipo = [{'tipo': tipo.nome, 'quantidade': chamados.filter(tipo=tipo, status='0').count()} for tipo in tipos_chamados]
     # Criando dicionário para armazenar quantidades de chamados abertos por tipo
     chamados_abertos_por_tipo = {
         tipo.nome: chamados.filter(tipo=tipo, status='0').count() for tipo in tipos_chamados
     }
     secretarias = Secretaria.objects.all()
-    chamados_abertos_por_secretaria = {
-        secretaria.nome: chamados.filter(setor__secretaria=secretaria, status='0').count() for secretaria in secretarias
-    }
-   
+    chamados_abertos_por_secretaria = {}
+
+    for chamado in chamados:
+        secretaria = chamado.secretaria
+        print("Secretaria:", secretaria)
+
+        if secretaria is not None and secretaria != "":
+            chamados_abertos_por_secretaria[secretaria.nome] = chamados.filter(secretaria=secretaria, status='0').count()
+        else:
+            if 'Sem secretaria definida' not in chamados_abertos_por_secretaria:
+                chamados_abertos_por_secretaria['Sem secretaria definida'] = 0
+            chamados_abertos_por_secretaria['Sem secretaria definida'] += 1
+
+    # Para incluir o total de chamados sem secretaria, faça uma consulta separada se necessário
+    chamados_abertos_por_secretaria['Sem secretaria definida'] = chamados.filter(secretaria=None, status='0').count()
+    
+    
     print("\n\n\n\nChamados abertos por tipo", chamados_abertos_por_tipo)
     print("Chamados pro secretaria", chamados_abertos_por_secretaria, '\n\n\n\n')
     # Chamados criados entre 30 e 60 dias atrás
@@ -801,7 +815,8 @@ def painel_controle(request):
         'aumento_chamados_abertos_30_dias': aumento_chamados_abertos_30_dias,
         'total_nao_resolvidos':  total_nao_resolvidos,
         'porcentagem_nao_resolvidos': "{:.1f}".format(porcentagem_nao_resolvidos),
-        'chamados_abertos_por_secretaria': chamados_abertos_por_secretaria
+        'chamados_abertos_por_secretaria': chamados_abertos_por_secretaria,
+        'total_chamados_abertos':total_chamados_abertos
     }
     return render(request, 'chamados/painel_controle.html', context)
 
