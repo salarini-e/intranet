@@ -543,10 +543,10 @@
 		window.myLine = new Chart(lineChart, lineChartConfig);
 
 		var barChart = document.getElementById('canvas-barchart').getContext('2d');
-		window.myBar = new Chart(barChart, barChartConfig);
+		window.myBar = new Chart(barChart, setDataSetData('canvas-barchart'));
 		
 		var barChartSecretaria = document.getElementById('canvas-barchart-secretaria').getContext('2d');
-		window.myBarSecretaria = new Chart(barChartSecretaria, barChartConfig);
+		window.myBarSecretaria = new Chart(barChartSecretaria, setDataSetData('canvas-barchart-secretaria'));
 		
 		const lineChartElements = document.querySelectorAll('canvas[id^="canvas-linechart-tipos-"]');
 
@@ -765,7 +765,7 @@
 
 	// Dados para o gráfico de barras
 	var chamados_por_tipo = {{ chamados_por_tipo|safe }};
-	
+	var chamados_abertos_por_secretaria = {{chamados_abertos_por_secretaria|safe}}
 	
 	// LINE CHART TODOS OS CHAMADOS
 	var lineChartConfig = {
@@ -909,90 +909,113 @@
         // Atualiza o gráfico com os novos dados
         myLine.update();
     });
+	
+	function updateDataSetBarChar(canvasId){
+		if (canvasId == "canvas-barchart"){
+			var barChartData = {
+				labels: chamados_por_tipo.map(function(item) { return item.tipo; }),
+				datasets: [{
+					label: 'Quantidade de chamados por tipo',
+					backgroundColor: window.chartColors.green,
+					borderColor: window.chartColors.green,
+					borderWidth: 1,
+					data: chamados_por_tipo.map(function(item) { return item.quantidade; })
+				}]
+			};
+			return barChartData;
+		}
+		else if(canvasId == "canvas-barchart-secretaria"){
+			var barChartData = {
+				labels: Object.keys(chamados_abertos_por_secretaria),
+				datasets: [{
+					label: 'Quantidade de chamados por secretaria',
+					backgroundColor: window.chartColors.green,
+					borderColor: window.chartColors.green,
+					borderWidth: 1,
+					data: Object.values(chamados_abertos_por_secretaria)
+				}]
+			};
+			return barChartData;
+		}
+	}
+	
+	function setDataSetData(canvasId){
+		var barChartConfig = {
+			type: 'bar',
+			data: updateDataSetBarChar(canvasId),
+			options: {
+				responsive: true,
+				aspectRatio: 1.5,
 
-	// TOTAL DE CHAMADOS POR TIPO
-	var barChartData = {
-		labels: chamados_por_tipo.map(function(item) { return item.tipo; }),
-		datasets: [{
-			label: 'Quantidade de Chamados por Tipo',
-			backgroundColor: window.chartColors.green,
-			borderColor: window.chartColors.green,
-			borderWidth: 1,
-			data: chamados_por_tipo.map(function(item) { return item.quantidade; })
-		}]
-	};
-
-	var barChartConfig = {
-		type: 'bar',
-		data: barChartData,
-		options: {
-			responsive: true,
-			aspectRatio: 1.5,
-
-			legend: {
-				display: true,
-				position: 'bottom',
-				align: 'end',
-			},
-
-			title: {
-				display: false,
-				text: 'Total de chamados por tipo',
-			},
-			tooltips: {
-				mode: 'index',
-				intersect: false,
-				titleMarginBottom: 10,
-				bodySpacing: 10,
-				xPadding: 16,
-				yPadding: 16,
-				borderColor: window.chartColors.border,
-				borderWidth: 1,
-				backgroundColor: '#fff',
-				bodyFontColor: window.chartColors.text,
-				titleFontColor: window.chartColors.text,
-
-				callbacks: {
-					label: function(tooltipItem, data) {
-						return tooltipItem.yLabel;
-					}
+				legend: {
+					display: true,
+					position: 'bottom',
+					align: 'end',
 				},
 
-			},
-			hover: {
-				mode: 'nearest',
-				intersect: true
-			},
-			scales: {
-				xAxes: [{
-					display: true,
-					gridLines: {
-						drawBorder: false,
-						color: window.chartColors.border,
-					},
-					scaleLabel: {
-						display: false,
-					}
-				}],
-				yAxes: [{
-					display: true,
-					gridLines: {
-						drawBorder: false,
-						color: window.chartColors.border,
-					},
-					scaleLabel: {
-						display: false,
-					},
-					ticks: {
-						beginAtZero: true,
-						userCallback: function(value, index, values) {
-							return value;
+				title: {
+					display: false,
+					text: 'Total de chamados por tipo',
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+					titleMarginBottom: 10,
+					bodySpacing: 10,
+					xPadding: 16,
+					yPadding: 16,
+					borderColor: window.chartColors.border,
+					borderWidth: 1,
+					backgroundColor: '#fff',
+					bodyFontColor: window.chartColors.text,
+					titleFontColor: window.chartColors.text,
+
+					callbacks: {
+						label: function(tooltipItem, data) {
+							return tooltipItem.yLabel;
 						}
 					},
-				}]
+
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+						gridLines: {
+							drawBorder: false,
+							color: window.chartColors.border,
+						},
+						scaleLabel: {
+							display: false,
+						}
+					}],
+					yAxes: [{
+						display: true,
+						gridLines: {
+							drawBorder: false,
+							color: window.chartColors.border,
+						},
+						scaleLabel: {
+							display: false,
+						},
+						ticks: {
+							beginAtZero: true,
+							userCallback: function(value, index, values) {
+								return value;
+							}
+						},
+					}]
+				}
 			}
-		}
-	};
+		};
+		return barChartConfig;
+	}
+		
+	
+	
 
 </script>
 {% endblock %}

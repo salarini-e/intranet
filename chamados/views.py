@@ -674,17 +674,13 @@ def painel_controle(request):
     chamados_abertos_por_tipo = {
         tipo.nome: chamados.filter(tipo=tipo, status='0').count() for tipo in tipos_chamados
     }
-
-    chamados_por_secretaria = defaultdict(list)
     secretarias = Secretaria.objects.all()
-    for secretaria in secretarias:
-        chamados_secretaria = Chamado.objects.filter(setor__secretaria=secretaria)
-        tipos_chamados = TipoChamado.objects.all()
-        tipos_por_secretaria = [{'tipo': tipo.nome, 'quantidade': chamados_secretaria.filter(tipo=tipo).count()} for tipo in tipos_chamados]
-
-        chamados_por_secretaria[secretaria.nome] = tipos_por_secretaria
+    chamados_abertos_por_secretaria = {
+        secretaria.nome: chamados.filter(setor__secretaria=secretaria, status='0').count() for secretaria in secretarias
+    }
+   
     print("\n\n\n\nChamados abertos por tipo", chamados_abertos_por_tipo)
-    print("Chamados pro secretaria", chamados_por_secretaria, '\n\n\n\n')
+    print("Chamados pro secretaria", chamados_abertos_por_secretaria, '\n\n\n\n')
     # Chamados criados entre 30 e 60 dias atrás
     chamados_abertos_30_a_60_dias = chamados.filter(
         dt_inclusao__lt=datetime.now().replace(tzinfo=None) - timedelta(days=30),
@@ -805,7 +801,7 @@ def painel_controle(request):
         'aumento_chamados_abertos_30_dias': aumento_chamados_abertos_30_dias,
         'total_nao_resolvidos':  total_nao_resolvidos,
         'porcentagem_nao_resolvidos': "{:.1f}".format(porcentagem_nao_resolvidos),
-        'total_chamados_secretaria': chamados_por_secretaria
+        'chamados_abertos_por_secretaria': chamados_abertos_por_secretaria
     }
     return render(request, 'chamados/painel_controle.html', context)
 
