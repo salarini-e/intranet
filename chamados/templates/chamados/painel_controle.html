@@ -671,7 +671,8 @@
 							label: function(tooltipItem, data) {
 								var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || '';
 								var dataPoint = tooltipItem.yLabel;
-								return datasetLabel + ': ' + (dataPoint !== undefined ? dataPoint : 0); 
+								var dataResultPercentage = (dataPoint*100)/total_chamados_abertos
+								return datasetLabel + ': ' + (dataPoint !== undefined ? dataPoint : 0) + " (" + (dataResultPercentage.toFixed(3)) + "%)"; 
 							}
 						},
 
@@ -821,8 +822,9 @@
 				callbacks: {
 					label: function(tooltipItem, data) {
 						var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || '';
-						var dataPoint = tooltipItem.yLabel;
-						return datasetLabel + ': ' + (dataPoint !== undefined ? dataPoint : 0); 
+						var dataPoint = tooltipItem.yLabel;	
+						var dataResultPercentage = (dataPoint*100)/total_chamados_abertos
+						return datasetLabel + ': ' + (dataPoint !== undefined ? dataPoint : 0) + " (" + (dataResultPercentage.toFixed(3)) + "%)"; 
 					}
 				},
 
@@ -1027,7 +1029,6 @@
 							ctx.translate(model.x, textY-20);
 							// ctx.rotate(4.7);
 							ctx.fillText( Math.round(dataset.data[i]*100/total_chamados_abertos) + "%", 0, 0);
-							console.log(dataset.data[i])
 							ctx.restore();
 							}
 						}

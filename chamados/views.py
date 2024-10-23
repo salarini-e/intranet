@@ -556,10 +556,10 @@ def dados_graficos(chamados, data_inicial, data_final, tempo):
             proximo_periodo = timedelta(days=1)
         elif tempo =='Este-ano':
             label = data_inicial.strftime('%m/%y')
-            proximo_periodo = relativedelta(months=1)
+            proximo_periodo = timedelta(days=30)
         elif tempo=='Um-ano':
             label = data_inicial.strftime('%m/%y')
-            proximo_periodo = relativedelta(months=1)
+            proximo_periodo = timedelta(days=30)
 
         if tempo =='Hoje':
             for hour in range(0, 24, 2):
@@ -585,9 +585,6 @@ def dados_graficos(chamados, data_inicial, data_final, tempo):
             labels.append(label)
             dados_abertos.append(chamados_abertos)
             dados_fechados.append(chamados_fechados)
-        
-        
-        
         data_inicial += proximo_periodo
 
     return labels, dados_abertos, dados_fechados
@@ -608,10 +605,10 @@ def dados_graficos_tipo(chamados, data_inicial, data_final, tempo, tipo):
             proximo_periodo = timedelta(days=1)
         elif tempo =='Este-ano':
             label = data_inicial.strftime('%m/%y')
-            proximo_periodo = relativedelta(months=1)
+            proximo_periodo = timedelta(days=30)
         elif tempo=='Um-ano':
             label = data_inicial.strftime('%m/%y')
-            proximo_periodo = relativedelta(months=1)
+            proximo_periodo = timedelta(days=30)
 
         if tempo =='Hoje':
             for hour in range(0, 24, 2):
@@ -683,7 +680,7 @@ def painel_controle(request):
         print("Secretaria:", secretaria)
 
         if secretaria is not None and secretaria != "":
-            chamados_abertos_por_secretaria[secretaria.nome] = chamados.filter(secretaria=secretaria, status='0').count()
+            chamados_abertos_por_secretaria[secretaria.sigla] = chamados.filter(secretaria=secretaria, status='0').count()
         else:
             if 'Sem secretaria definida' not in chamados_abertos_por_secretaria:
                 chamados_abertos_por_secretaria['Sem secretaria definida'] = 0
@@ -692,9 +689,6 @@ def painel_controle(request):
     # Para incluir o total de chamados sem secretaria, faça uma consulta separada se necessário
     chamados_abertos_por_secretaria['Sem secretaria definida'] = chamados.filter(secretaria=None, status='0').count()
     
-    
-    print("\n\n\n\nChamados abertos por tipo", chamados_abertos_por_tipo)
-    print("Chamados pro secretaria", chamados_abertos_por_secretaria, '\n\n\n\n')
     # Chamados criados entre 30 e 60 dias atrás
     chamados_abertos_30_a_60_dias = chamados.filter(
         dt_inclusao__lt=datetime.now().replace(tzinfo=None) - timedelta(days=30),
@@ -724,7 +718,7 @@ def painel_controle(request):
     hoje, dados_abertos_hoje, dados_fechados_hoje = dados_graficos(chamados,datetime.now().replace(hour=0, minute=0, second=0, microsecond=0), datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999), 'Hoje')
     meses_ano, dados_abertos_um_ano, dados_fechados_um_ano = dados_graficos(chamados, um_ano, data_atual,'Um-ano' )
     meses_esse_ano, dados_abertos_esse_ano, dados_fechados_esse_ano = dados_graficos(chamados,esse_ano, data_atual, "Este-ano" )
-
+    print('\n\n\n\n\n', meses_esse_ano, '\n\n\n\n\n')
     tipos = TipoChamado.objects.all()
 
     dados_mes_tipo = {}
@@ -737,40 +731,40 @@ def painel_controle(request):
         tipo_id = str(tipo.id) 
         # informacoes por tipo
         # um mes atras
-        semanas, dados_abertos, dados_fechados = dados_graficos_tipo(chamados, um_mes_atras, data_atual, "Um-mes", tipo_id)
+        semanas_tipo, dados_abertos_tipo, dados_fechados = dados_graficos_tipo(chamados, um_mes_atras, data_atual, "Um-mes", tipo_id)
         # uma semana atras
-        semanas_uma_semana_atras, dados_abertos_uma_semana_atras, dados_fechados_uma_semana_atras = dados_graficos_tipo(chamados, uma_semana_atras, data_atual, "Uma-semana", tipo_id)
+        semanas_tipo_uma_semana_atras, dados_abertos_tipo_uma_semana_atras, dados_fechados_uma_semana_atras = dados_graficos_tipo(chamados, uma_semana_atras, data_atual, "Uma-semana", tipo_id)
         #hoje
-        semanas_hoje, dados_abertos_hoje, dados_fechados_hoje = dados_graficos_tipo(chamados, datetime.now().replace(hour=0, minute=0, second=0, microsecond=0), datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999), "Hoje", tipo_id)
+        semanas_tipo_hoje, dados_abertos_tipo_hoje, dados_fechados_hoje = dados_graficos_tipo(chamados, datetime.now().replace(hour=0, minute=0, second=0, microsecond=0), datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999), "Hoje", tipo_id)
         # este ano
-        semanas_este_ano, dados_abertos_este_ano, dados_fechados_este_ano = dados_graficos_tipo(chamados,esse_ano , data_atual, "Este-ano", tipo_id)
+        semanas_tipo_este_ano, dados_abertos_tipo_este_ano, dados_fechados_este_ano = dados_graficos_tipo(chamados,esse_ano , data_atual, "Este-ano", tipo_id)
         # um ano atras ate hoje
-        semanas_um_ano, dados_abertos_um_ano, dados_fechados_um_ano = dados_graficos_tipo(chamados, um_ano , data_atual, "Este-ano", tipo_id)
+        semanas_tipo_um_ano, dados_abertos_tipo_um_ano, dados_fechados_um_ano = dados_graficos_tipo(chamados, um_ano , data_atual, "Este-ano", tipo_id)
 
         # Adiciona os dados ao dicionário
         dados_mes_tipo[tipo_id] = {
-            'semanas': semanas,
-            'dados_abertos': dados_abertos,
+            'semanas': semanas_tipo,
+            'dados_abertos': dados_abertos_tipo,
             'dados_fechados': dados_fechados,
         }
         dados_uma_semana_atras_tipo[tipo_id] = {
-            'semanas': semanas_uma_semana_atras,
-            'dados_abertos': dados_abertos_uma_semana_atras,
+            'semanas': semanas_tipo_uma_semana_atras,
+            'dados_abertos': dados_abertos_tipo_uma_semana_atras,
             'dados_fechados': dados_fechados_uma_semana_atras,
         }
         dados_hoje_tipo[tipo_id] = {
-            'semanas': semanas_hoje,
-            'dados_abertos': dados_abertos_hoje,
+            'semanas': semanas_tipo_hoje,
+            'dados_abertos': dados_abertos_tipo_hoje,
             'dados_fechados': dados_fechados_hoje,
         }
         dados_este_ano_tipo[tipo_id] = {
-            'semanas': semanas_este_ano,
-            'dados_abertos': dados_abertos_este_ano,
+            'semanas': semanas_tipo_este_ano,
+            'dados_abertos': dados_abertos_tipo_este_ano,
             'dados_fechados': dados_fechados_este_ano
         }
         dados_um_ano_tipo[tipo_id] = {
-            'semanas': semanas_um_ano,
-            'dados_abertos': dados_abertos_um_ano,
+            'semanas': semanas_tipo_um_ano,
+            'dados_abertos': dados_abertos_tipo_um_ano,
             'dados_fechados': dados_fechados_um_ano
         }
 
