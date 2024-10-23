@@ -283,19 +283,30 @@
 					        </div>
 				        </div>
 			        </div>
+					<div class="col-12 col-lg-6">
+				        <div class="app-card app-card-chart h-100 shadow-sm">
+					        <div class="app-card-header p-3">
+						        <div class="row justify-content-between align-items-center">
+							        <div class="col-auto">
+						                <h4 class="app-card-title">Total de atendimentos realizados </h4>
+							        </div>
+							        <div class="col-auto">
+							        </div>
+						        </div>
+					        </div>
+					        <div class="app-card-body p-3 p-lg-4">
+							   
+						        <div class="chart-container">
+				                    <canvas id="canvas-barchart-total-atendimentos-realizados" ></canvas>
+						        </div>
+					        </div>
+				        </div>
+					</div>
+			      
 			    </div>
 				{% endif %}
 
 				<!-- FINAL DESCOMENTAR -->
-
-
-
-
-
-
-
-
-				
 			    <!-- <div class="row g-4 mb-4">
 				    <div class="col-12 col-lg-6">
 				        <div class="app-card app-card-progress-list h-100 shadow-sm">
@@ -549,6 +560,9 @@
 		var barChartSecretaria = document.getElementById('canvas-barchart-secretaria').getContext('2d');
 		window.myBarSecretaria = new Chart(barChartSecretaria, setDataSetData('canvas-barchart-secretaria'));
 		
+		var barChartTotalAtendimentosRealizados = document.getElementById('canvas-barchart-total-atendimentos-realizados').getContext('2d');
+		window.myBarTotalAtendimentosRealizados = new Chart(barChartTotalAtendimentosRealizados, setDataSetData('canvas-barchart-total-atendimentos-realizados'));
+
 		const lineChartElements = document.querySelectorAll('canvas[id^="canvas-linechart-tipos-"]');
 
 		window.myLines = []; 
@@ -770,6 +784,8 @@
 	var chamados_abertos_por_secretaria = {{chamados_abertos_por_secretaria|safe}}
 	var total_chamados_abertos = {{total_chamados_abertos|safe}}
 	
+	var labels_atendimentos_realizados = {{labels_atendimentos_realizados|safe}}
+	var dados_abertos_atendimentos_realizados = {{dados_abertos_atendimentos_realizados|safe}}
 	// LINE CHART TODOS OS CHAMADOS
 	var lineChartConfig = {
 		type: 'line',
@@ -937,6 +953,19 @@
 					borderColor: window.chartColors.green,
 					borderWidth: 1,
 					data: Object.values(chamados_abertos_por_secretaria)
+				}]
+			};
+			return barChartData;
+		}
+		else if(canvasId =='canvas-barchart-total-atendimentos-realizados'){
+			var barChartData = {
+				labels: labels_atendimentos_realizados,
+				datasets: [{
+					label: 'Total de atendimentos realizados',
+					backgroundColor: window.chartColors.green,
+					borderColor: window.chartColors.green,
+					borderWidth: 1,
+					data: dados_abertos_atendimentos_realizados
 				}]
 			};
 			return barChartData;

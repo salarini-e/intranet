@@ -18,7 +18,10 @@ from autenticacao.functions import clear_tel
 import re
 from django.db.models import Count, Q
 from dateutil.relativedelta import relativedelta
-from collections import defaultdict
+import locale
+
+# Define a localidade para português (Brasil)
+locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
 
 @login_required
 def index(request):
@@ -555,10 +558,10 @@ def dados_graficos(chamados, data_inicial, data_final, tempo):
             label = data_inicial.strftime('%d/%m/%y')
             proximo_periodo = timedelta(days=1)
         elif tempo =='Este-ano':
-            label = data_inicial.strftime('%m/%y')
-            proximo_periodo = timedelta(days=30)
+            label = data_inicial.strftime('%b')
+            proximo_periodo = timedelta(days=31)
         elif tempo=='Um-ano':
-            label = data_inicial.strftime('%m/%y')
+            label = data_inicial.strftime('%b/%y')
             proximo_periodo = timedelta(days=30)
 
         if tempo =='Hoje':
@@ -604,10 +607,10 @@ def dados_graficos_tipo(chamados, data_inicial, data_final, tempo, tipo):
             label = data_inicial.strftime('%d/%m/%y')
             proximo_periodo = timedelta(days=1)
         elif tempo =='Este-ano':
-            label = data_inicial.strftime('%m/%y')
-            proximo_periodo = timedelta(days=30)
+            label = data_inicial.strftime('%b')
+            proximo_periodo = timedelta(days=31)
         elif tempo=='Um-ano':
-            label = data_inicial.strftime('%m/%y')
+            label = data_inicial.strftime('%b/%y')
             proximo_periodo = timedelta(days=30)
 
         if tempo =='Hoje':
@@ -677,14 +680,13 @@ def painel_controle(request):
 
     for chamado in chamados:
         secretaria = chamado.secretaria
-        print("Secretaria:", secretaria)
-
         if secretaria is not None and secretaria != "":
             chamados_abertos_por_secretaria[secretaria.sigla] = chamados.filter(secretaria=secretaria, status='0').count()
         else:
             if 'Sem secretaria definida' not in chamados_abertos_por_secretaria:
                 chamados_abertos_por_secretaria['Sem secretaria definida'] = 0
             chamados_abertos_por_secretaria['Sem secretaria definida'] += 1
+
 
     # Para incluir o total de chamados sem secretaria, faça uma consulta separada se necessário
     chamados_abertos_por_secretaria['Sem secretaria definida'] = chamados.filter(secretaria=None, status='0').count()
@@ -713,12 +715,41 @@ def painel_controle(request):
     inicio_do_ano = datetime(data_atual.year, 1, 1)
     esse_ano = inicio_do_ano
 
+    labels_atendimentos_realizados = []
+    dados_abertos_atendimentos_realizados = []
+    esse_ano_atendimentos = esse_ano
+    while esse_ano_atendimentos <= data_atual:
+        # Define o primeiro dia do mês e o primeiro dia do mês seguinte
+        proximo_mes = esse_ano_atendimentos + relativedelta(months=1)
+        
+        # Filtra os chamados do mês atual e com status diferente de 0
+        chamados_esse_ano = chamados.filter(
+            dt_inclusao__gte=esse_ano_atendimentos,
+            dt_inclusao__lt=proximo_mes
+        )
+        
+        # Conta os chamados com status diferente de '0'
+        chamados_atendidos_esse_ano = chamados_esse_ano.filter(~Q(status='0')).count()
+
+        # Só adiciona o mês se houver chamados atendidos
+        if chamados_atendidos_esse_ano > 0:
+            label_atendimento_realizado = esse_ano_atendimentos.strftime('%b')
+            labels_atendimentos_realizados.append(label_atendimento_realizado)
+            dados_abertos_atendimentos_realizados.append(chamados_atendidos_esse_ano)
+        else:
+            label_atendimento_realizado = esse_ano_atendimentos.strftime('%b')
+            labels_atendimentos_realizados.append(label_atendimento_realizado)
+            dados_abertos_atendimentos_realizados.append(0)
+
+        # Avança para o próximo mês
+        esse_ano_atendimentos = proximo_mes
+    
     semanas_mes, dados_abertos_um_mes,dados_fechados_um_mes = dados_graficos(chamados, um_mes_atras, data_atual, "Um-mes")
     uma_semana, dados_abertos_uma_semana, dados_fechados_uma_semana = dados_graficos(chamados, uma_semana_atras, data_atual, "Uma-semana")
     hoje, dados_abertos_hoje, dados_fechados_hoje = dados_graficos(chamados,datetime.now().replace(hour=0, minute=0, second=0, microsecond=0), datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999), 'Hoje')
     meses_ano, dados_abertos_um_ano, dados_fechados_um_ano = dados_graficos(chamados, um_ano, data_atual,'Um-ano' )
     meses_esse_ano, dados_abertos_esse_ano, dados_fechados_esse_ano = dados_graficos(chamados,esse_ano, data_atual, "Este-ano" )
-    print('\n\n\n\n\n', meses_esse_ano, '\n\n\n\n\n')
+    
     tipos = TipoChamado.objects.all()
 
     dados_mes_tipo = {}
@@ -739,7 +770,7 @@ def painel_controle(request):
         # este ano
         semanas_tipo_este_ano, dados_abertos_tipo_este_ano, dados_fechados_este_ano = dados_graficos_tipo(chamados,esse_ano , data_atual, "Este-ano", tipo_id)
         # um ano atras ate hoje
-        semanas_tipo_um_ano, dados_abertos_tipo_um_ano, dados_fechados_um_ano = dados_graficos_tipo(chamados, um_ano , data_atual, "Este-ano", tipo_id)
+        semanas_tipo_um_ano, dados_abertos_tipo_um_ano, dados_fechados_um_ano = dados_graficos_tipo(chamados, um_ano , data_atual, "Um-ano", tipo_id)
 
         # Adiciona os dados ao dicionário
         dados_mes_tipo[tipo_id] = {
@@ -767,7 +798,7 @@ def painel_controle(request):
             'dados_abertos': dados_abertos_tipo_um_ano,
             'dados_fechados': dados_fechados_um_ano
         }
-
+        print("\n\n\n\n\nlabels", dados_um_ano_tipo)
     context = {      
         'dados_mes_tipo': dados_mes_tipo,
         'dados_uma_semana_atras_tipo': dados_uma_semana_atras_tipo,
@@ -810,7 +841,9 @@ def painel_controle(request):
         'total_nao_resolvidos':  total_nao_resolvidos,
         'porcentagem_nao_resolvidos': "{:.1f}".format(porcentagem_nao_resolvidos),
         'chamados_abertos_por_secretaria': chamados_abertos_por_secretaria,
-        'total_chamados_abertos':total_chamados_abertos
+        'total_chamados_abertos':total_chamados_abertos,
+        'labels_atendimentos_realizados': labels_atendimentos_realizados,
+        'dados_abertos_atendimentos_realizados': dados_abertos_atendimentos_realizados
     }
     return render(request, 'chamados/painel_controle.html', context)
 
