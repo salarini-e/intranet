@@ -105,12 +105,12 @@ class CriarChamadoForm(forms.ModelForm):
     class Meta:
         model = Chamado
         fields = [
-            'requisitante', 'assunto', 'secretaria', 'setor', 
+            'requisitante', 'assunto', 'secretaria', 
             'endereco', 'telefone', 'tipo', 'descricao', 
             'user_inclusao', 'anexo'
         ]
         widgets = {                                    
-            'setor': forms.Select(attrs={'class': 'form-select'}),
+            # 'setor': forms.Select(attrs={'class': 'form-select'}),
             'secretaria': SecretariaWidget(attrs={'class': 'form-control mb-3', 'onchange': 'getSetores(this.value)', 'required': 'required'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control', 'onkeydown': 'mascara(this, itel)'}),
             'tipo': forms.HiddenInput(),

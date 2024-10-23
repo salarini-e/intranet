@@ -78,7 +78,8 @@ def criarChamado(request, sigla):
         tipo = TipoChamado.objects.get(sigla=sigla)
         initial_data = {
             'tipo': tipo,
-            'user_inclusao': servidor.id
+            'user_inclusao': servidor.id,
+            'setor_id': '-',
         }
     else:
         template_name = 'chamados/chamado-criar-servidor.html'
@@ -87,7 +88,7 @@ def criarChamado(request, sigla):
         telefone_formatado = itel(servidor.telefone)  # Formata o telefone
         initial_data = {
             'secretaria': servidor.setor.secretaria.id,
-            'setor': servidor.setor.id,
+            'setor': '-',
             'telefone': telefone_formatado,  # Usa o telefone formatado
             'tipo': tipo,
             'requisitante': servidor.id, 
@@ -682,7 +683,8 @@ def painel_controle(request):
         tipos_por_secretaria = [{'tipo': tipo.nome, 'quantidade': chamados_secretaria.filter(tipo=tipo).count()} for tipo in tipos_chamados]
 
         chamados_por_secretaria[secretaria.nome] = tipos_por_secretaria
-
+    print("\n\n\n\nChamados abertos por tipo", chamados_abertos_por_tipo)
+    print("Chamados pro secretaria", chamados_por_secretaria, '\n\n\n\n')
     # Chamados criados entre 30 e 60 dias atrás
     chamados_abertos_30_a_60_dias = chamados.filter(
         dt_inclusao__lt=datetime.now().replace(tzinfo=None) - timedelta(days=30),
