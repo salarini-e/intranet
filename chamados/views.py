@@ -905,13 +905,12 @@ def verificar_atualizacoes(request):
     last_check = request.GET.get('last_check')
 
     if last_check:
-        # Corrige o formato da string ISO
         last_check = last_check.replace(' ', '+')
         try:
             last_check = timezone.datetime.fromisoformat(last_check)
         except ValueError as e:
             print(f"Erro ao converter a data: {e}")
-            last_check = timezone.now() - timezone.timedelta(seconds=5)  # Fallback para 5 segundos atrás
+            last_check = timezone.now() - timezone.timedelta(seconds=5)
     else:
         last_check = timezone.now() - timezone.timedelta(seconds=5)
 

@@ -33,7 +33,7 @@
             <!-- Coluna de 9 colunas -->
             <div class="col-lg-12" id="cards-wrapper" >
                 <div id="indicativo-atualizacao" class="list-atualizacoes" onclick="recarregarPagina()" >
-                    <i class="fa-solid fa-rotate"></i>
+                    
                 </div>
                 {% if messages %}
 						<div class="alert alert-dismissible shadow-sm bg-success border-left-decoration" role="alert" id="createTicketAlert" style="margin-left: -0.75rem; margin-right: 0.75rem;">
@@ -732,43 +732,44 @@
         <!-- SCRIPT PARA VERIFICAR ATUALIZAÇÕES OU CRIAÇÃO DE NOVOS CHAMADOS -->
         <script>
             let lastCheck = new Date().toISOString();
-        
-            // Função para verificar atualizações
+            let totalNovosChamados = 0; 
+            let totalAtualizacoes = 0;  
+
             function verificarAtualizacoes() {
-                console.log("AOBA");
+                console.log("Verificando atualizações...");
                 fetch(`{% url 'chamados:verificar-atualizacoes' %}?last_check=${lastCheck}`)
                     .then(response => response.json())
                     .then(data => {
-                        lastCheck = data.last_check;  // Atualiza o last_check para a próxima chamada
-        
+                        lastCheck = data.last_check; 
+
                         const novosChamados = data.novos_chamados;
                         const atualizacoes = data.atualizacoes;
-        
-                        // Condição para exibir a notificação
-                        if (novosChamados > 0 || atualizacoes > 0) {
-                            const indicativoDiv = document.getElementById("indicativo-atualizacao");
-                            indicativoDiv.innerHTML = `
-                                ${novosChamados} | novo<br>
-                                ${atualizacoes} | atualizado
+
+                        // Acumula os valores
+                        totalNovosChamados += novosChamados;
+                        totalAtualizacoes += atualizacoes;
+
+                        const indicativoDiv = document.getElementById("indicativo-atualizacao");
+                        if (totalNovosChamados > 0 || totalAtualizacoes > 0) {
+                            indicativoDiv.innerHTML = `<i class="fa-solid fa-rotate"></i>
+                                ${totalNovosChamados} novos tickets | ${totalAtualizacoes} atualizações
                             `;
-                            indicativoDiv.style.display = 'flex';
-                        }
-                        else{
-                            const indicativoDiv = document.getElementById("indicativo-atualizacao");
-                            indicativoDiv.innerHTML += 1 ;
                             indicativoDiv.style.display = 'flex';
                         }
                     })
                     .catch(error => console.error("Erro ao verificar atualizações:", error));
             }
-        
+
             // Intervalo para verificar atualizações a cada 5 segundos
             setInterval(verificarAtualizacoes, 5000);
-        
+
             // Função para recarregar a página quando o usuário clica na div de notificação
             function recarregarPagina() {
+                totalNovosChamados = 0;
+                totalAtualizacoes = 0;
                 location.reload();
             }
+            document.getElementById("indicativo-atualizacao").addEventListener("click", recarregarPagina);
         </script>
         
         
