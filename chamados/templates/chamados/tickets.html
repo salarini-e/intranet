@@ -33,7 +33,6 @@
             <!-- Coluna de 9 colunas -->
             <div class="col-lg-12" id="cards-wrapper" >
                 <div id="indicativo-atualizacao" class="list-atualizacoes" onclick="recarregarPagina()" >
-                    
                 </div>
                 {% if messages %}
 						<div class="alert alert-dismissible shadow-sm bg-success border-left-decoration" role="alert" id="createTicketAlert" style="margin-left: -0.75rem; margin-right: 0.75rem;">
@@ -745,15 +744,30 @@
                         const novosChamados = data.novos_chamados;
                         const atualizacoes = data.atualizacoes;
 
-                        // Acumula os valores
                         totalNovosChamados += novosChamados;
                         totalAtualizacoes += atualizacoes;
 
                         const indicativoDiv = document.getElementById("indicativo-atualizacao");
                         if (totalNovosChamados > 0 || totalAtualizacoes > 0) {
-                            indicativoDiv.innerHTML = `<i class="fa-solid fa-rotate"></i>
-                                ${totalNovosChamados} novos tickets | ${totalAtualizacoes} atualizações
-                            `;
+                            let novosTicketsTexto;
+                            let atualizacoesTexto;
+
+                            // Define o texto para novos tickets
+                            if (totalNovosChamados === 1) {
+                                novosTicketsTexto = `<span class="novo-ticket"> <span class='total-novos-chamados'>${totalNovosChamados}</span> novo ticket</span>`;
+                            } else {
+                                novosTicketsTexto = `<span class="novo-ticket"> <span class='total-novos-chamados'>${totalNovosChamados}</span> novos tickets</span>`;
+                            }
+
+                            // Define o texto para atualizações
+                            if (totalAtualizacoes === 1) {
+                                atualizacoesTexto = `<span class="atualizacao"> <span class='total-atualizacoes'>${totalAtualizacoes}</span> atualização</span>`;
+                            } else {
+                                atualizacoesTexto = `<span class="atualizacao"> <span class='total-atualizacoes'>${totalAtualizacoes}</span> atualizações</span>`;
+                            }
+
+                            // Atualiza o conteúdo da div
+                            indicativoDiv.innerHTML = `<i class="fa-solid fa-rotate"></i> ${novosTicketsTexto} | ${atualizacoesTexto}`;
                             indicativoDiv.style.display = 'flex';
                         }
                     })

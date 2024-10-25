@@ -158,7 +158,42 @@
 						</div>
 					</div>
 				</div> -->
+				<div>
+					{% if messages %}
+						<div class="alert alert-dismissible shadow-sm bg-success border-left-decoration" style="margin-bottom: 0px !important; margin-top: 0px !important;" role="alert">
+							<div class="inner">
+								<div class="app-card-body px-3 px-lg-4">						    
+									<div class="row gx-5 gy-3">
+										<div class="col-12 col">
+											<div class="text-light" style="color: white;">
+											{% for message in messages %}
+											{{message}}
+											{% endfor %}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+				
+					{% endif %}
+					<div id="message" class="app-card alert alert-dismissible shadow-sm mb-4 bg-success border-left-decoration" role="alert">
+						<div class="inner">
+							<div class="app-card-body px-3 px-lg-4">						    
+								<div class="row gx-5 gy-3">
+									<div class="col-12 col-lg-9">							        
+										<p id="response-message" class="text-light"></p>
+									</div>
 
+								</div>
+								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+				
+				
 				
 				<!-- WRAPPER INFORMAÇÕES DO CHAMADO -->
 				<div class="content-chamado-messages-wrapper">
@@ -431,38 +466,7 @@
 						
 				</div>
 				
-				{% if messages %}
-						<div class="alert alert-dismissible shadow-sm bg-success border-left-decoration" role="alert">
-							<div class="inner">
-								<div class="app-card-body px-3 px-lg-4">						    
-									<div class="row gx-5 gy-3">
-										<div class="col-12 col">
-											<div class="text-light" style="color: white;">
-											{% for message in messages %}
-											{{message}}
-											{% endfor %}
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
 				
-				{% endif %}
-				 <div id="message" class="app-card alert alert-dismissible shadow-sm mb-4 bg-success border-left-decoration" role="alert">
-				    <div class="inner">
-					    <div class="app-card-body px-3 px-lg-4">						    
-						    <div class="row gx-5 gy-3">
-						        <div class="col-12 col-lg-9">							        
-							        <p id="response-message" class="text-light"></p>
-							    </div>
-
-						    </div>
-						    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-					    </div>
-					    
-				    </div>
-			    </div>
 				
 				<!-- <div class="row my-3">
 	                <div class="col col-md">

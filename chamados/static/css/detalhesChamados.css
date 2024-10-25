@@ -5,6 +5,7 @@
     justify-content: space-between;
     padding:  1.5rem;
     cursor: pointer;
+    margin-bottom: 15px;
 
 }
 .detalhes-chamados-wrapper{
@@ -131,7 +132,7 @@
 .content-chamado-messages-wrapper{
     width: 100%;
     background-color: white;
-    margin-top: 15px;
+    margin-top: 0px;
 }
 .content-chamado-messages-wrapper{
     display: flex;
