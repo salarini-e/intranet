@@ -318,7 +318,7 @@
 								</div>
 								
 								<div class="message-user-time">
-									<span>{{chamado.dt_inclusao|date:"d/m/y"}} {% if request.user == chamado.autor.user or request.user.is_superuser %}{{chamado.dt_inclusao|date:"H:i"}}{% endif %}</span>
+									<span class="time-send-message">{{chamado.dt_inclusao|date:"d/m/y"}} {% if request.user == chamado.autor.user or request.user.is_superuser %}{{chamado.dt_inclusao|date:"H:i"}}{% endif %}</span>
 								</div>
 							</div>
 							

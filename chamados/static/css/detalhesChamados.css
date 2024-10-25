@@ -205,6 +205,9 @@
     justify-content: center;
     margin-left: 10px;
 }
+.time-send-message{
+    text-align: end;
+}
 .message-user-nome{
     color: #2c5cc5;
     text-transform: uppercase;
