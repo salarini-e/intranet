@@ -145,6 +145,8 @@ def detalhes(request, hash):
             mensagem.user_inclusao = servidor
             mensagem.confidencial = request.POST.get('confidencial') == '1'
             mensagem.save()            
+            chamado.dt_atualizacao = timezone.now() 
+            chamado.save() 
             message.success(request, 'Mensagem enviada com sucesso!')
         # else:
         #     print(form.errors)
@@ -378,6 +380,7 @@ def api_mudar_status(request):
         try:
             chamado = Chamado.objects.get(hash=data['hash'])
             chamado.status = data['status']
+            chamado.dt_atualizacao = timezone.now()
             chamado.save()
             return JsonResponse({'status': 200, 'message': 'Status atualizado com sucesso!', 'display_status': chamado.get_status_display(), 'id': chamado.id})
         except:
@@ -396,6 +399,7 @@ def api_mudar_prioridade(request):
         try:            
             chamado = Chamado.objects.get(hash=data['hash'])
             chamado.prioridade = data['prioridade']
+            chamado.dt_atualizacao = timezone.now()
             chamado.save()
             return JsonResponse({'status': 200, 'message': 'Prioridade atualizada com sucesso!', 'display_prioridade': chamado.get_prioridade_display(), 'id': chamado.id})
         except Exception as E:
@@ -421,6 +425,7 @@ def api_mudar_atendente(request):
             
             # Atribuir a instância do atendente ao chamado
             chamado.profissional_designado = atendente
+            chamado.dt_atualizacao = timezone.now()
             chamado.save()
             print("Chamado id", chamado.id)
             return JsonResponse({
@@ -894,3 +899,27 @@ def ver_perfil(request,matricula):
         chamado = Chamado.objects.filter(requisitante = servidor).order_by('-dt_inclusao')
         context['chamado']= chamado
     return render(request, 'chamados/perfil.html', context)
+
+# VIEW PARA VERIFICAR ATUALIZAÇÃO OU CRIAÇÃO DOS CHAMADOS
+def verificar_atualizacoes(request):
+    last_check = request.GET.get('last_check')
+
+    if last_check:
+        # Corrige o formato da string ISO
+        last_check = last_check.replace(' ', '+')
+        try:
+            last_check = timezone.datetime.fromisoformat(last_check)
+        except ValueError as e:
+            print(f"Erro ao converter a data: {e}")
+            last_check = timezone.now() - timezone.timedelta(seconds=5)  # Fallback para 5 segundos atrás
+    else:
+        last_check = timezone.now() - timezone.timedelta(seconds=5)
+
+    novos_chamados = Chamado.objects.filter(dt_inclusao__gt=last_check).count()
+    atualizacoes = Chamado.objects.filter(dt_atualizacao__gt=last_check, dt_inclusao__lte=last_check).count()
+
+    return JsonResponse({
+        'novos_chamados': novos_chamados,
+        'atualizacoes': atualizacoes,
+        'last_check': timezone.now().isoformat()
+    })

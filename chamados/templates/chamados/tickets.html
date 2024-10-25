@@ -5,7 +5,9 @@
 <link rel="stylesheet" href="/static/css/tickets.css">
 {% endblock %}
 {% block main %}  
+    
     <div class="row g-3 mb-4 align-items-center justify-content-between">
+        
         <div class="col-auto">
             <h1 class="app-page-title tickets mb-0">Bem vindo aos tickets</h1>
         </div>
@@ -30,6 +32,9 @@
         <div class="row">
             <!-- Coluna de 9 colunas -->
             <div class="col-lg-12" id="cards-wrapper" >
+                <div id="indicativo-atualizacao" class="list-atualizacoes" onclick="recarregarPagina()" >
+                    <i class="fa-solid fa-rotate"></i>
+                </div>
                 {% if messages %}
 						<div class="alert alert-dismissible shadow-sm bg-success border-left-decoration" role="alert" id="createTicketAlert" style="margin-left: -0.75rem; margin-right: 0.75rem;">
 							<div class="inner">
@@ -442,6 +447,7 @@
         
         </div>
     </div>
+    
     <script src="/static/js/request.js"></script>				
     <script>
         function toggleStatusCheckBox(checkbox) {
@@ -722,5 +728,49 @@
     }
 
         </script>
+
+        <!-- SCRIPT PARA VERIFICAR ATUALIZAÇÕES OU CRIAÇÃO DE NOVOS CHAMADOS -->
+        <script>
+            let lastCheck = new Date().toISOString();
+        
+            // Função para verificar atualizações
+            function verificarAtualizacoes() {
+                console.log("AOBA");
+                fetch(`{% url 'chamados:verificar-atualizacoes' %}?last_check=${lastCheck}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        lastCheck = data.last_check;  // Atualiza o last_check para a próxima chamada
+        
+                        const novosChamados = data.novos_chamados;
+                        const atualizacoes = data.atualizacoes;
+        
+                        // Condição para exibir a notificação
+                        if (novosChamados > 0 || atualizacoes > 0) {
+                            const indicativoDiv = document.getElementById("indicativo-atualizacao");
+                            indicativoDiv.innerHTML = `
+                                ${novosChamados} | novo<br>
+                                ${atualizacoes} | atualizado
+                            `;
+                            indicativoDiv.style.display = 'flex';
+                        }
+                        else{
+                            const indicativoDiv = document.getElementById("indicativo-atualizacao");
+                            indicativoDiv.innerHTML += 1 ;
+                            indicativoDiv.style.display = 'flex';
+                        }
+                    })
+                    .catch(error => console.error("Erro ao verificar atualizações:", error));
+            }
+        
+            // Intervalo para verificar atualizações a cada 5 segundos
+            setInterval(verificarAtualizacoes, 5000);
+        
+            // Função para recarregar a página quando o usuário clica na div de notificação
+            function recarregarPagina() {
+                location.reload();
+            }
+        </script>
+        
+        
 
 {% endblock %}

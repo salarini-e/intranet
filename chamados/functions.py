@@ -134,18 +134,16 @@ def obter_chamados(request, filtros):
     servidor = Servidor.objects.get(user=request.user)
     atendente = Atendente.objects.filter(servidor=servidor).first()
     if atendente:
-        chamados = Chamado.objects.exclude(status__in=['3', '4']).order_by('-dt_inclusao')        
+        chamados = Chamado.objects.exclude(status__in=['3', '4']).order_by('-dt_atualizacao')        
         if filtros:
-            chamados = Chamado.objects.filter().order_by('-dt_inclusao')
+            chamados = Chamado.objects.filter().order_by('-dt_atualizacao')
             chamados = aplicar_filtros(chamados, filtros)
     
     else:
-        chamados = Chamado.objects.exclude(status__in=['3', '4']).filter(requisitante=servidor).order_by('-dt_inclusao')        
+        chamados = Chamado.objects.exclude(status__in=['3', '4']).filter(requisitante=servidor).order_by('-dt_atualizacao')        
         if filtros:
-            chamados = Chamado.objects.filter(requisitante=servidor).order_by('-dt_inclusao')
+            chamados = Chamado.objects.filter(requisitante=servidor).order_by('-dt_atualizacao')
             chamados = aplicar_filtros(chamados, filtros)
-    
-
     
     return chamados
 
@@ -386,7 +384,7 @@ def make_query_chamados(request):
             sql += f" AND dt_atualizacao >= '{tempo_limite_atualizacaoEm.strftime('%Y-%m-%d %H:%M:%S')}'"
 
     # print('SQL', sql)
-    sql += " ORDER BY dt_inclusao DESC"
+    sql += " ORDER BY dt_atualizacao DESC"
     return sql
  
 from django.db import connection, models
@@ -433,6 +431,6 @@ def filtrar_chamados(request):
         return queryset  
 
     else:
-        queryset = Chamado.objects.filter(requisitante__user=request.user).order_by('-dt_inclusao')
+        queryset = Chamado.objects.filter(requisitante__user=request.user).order_by('-dt_atualizacao')
     
     return queryset
