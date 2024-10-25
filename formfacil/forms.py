@@ -65,7 +65,6 @@ class CadastroELForm(forms.ModelForm):
 class FormCadastroAulasProcessoDigital(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Filtra apenas as turmas que estão ativas
         self.fields['turma_escolhida'].queryset = Opcao_Turmas.objects.filter(ativo=True)
     
     class Meta:
@@ -119,7 +118,6 @@ class CadastroAulasContadoresForm(forms.ModelForm):
 
     def clean_cpf(self):
         cpf = self.cleaned_data["cpf"].replace('.', '').replace('-', '').strip()
-        print("CPF processado:", cpf)  # Para depuração
         cpf = validate_cpf(cpf)
 
         if Cadastro_Aulas_Treinamento_Tributario_Contadores.objects.filter(cpf=cpf).exists():

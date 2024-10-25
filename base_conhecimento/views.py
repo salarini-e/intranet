@@ -16,10 +16,7 @@ def index(request):
 
 @login_required
 def subtopicos(request, topico_id):
-    # Obter o tópico selecionado ou retornar um erro 404 se não existir
     topico = get_object_or_404(Topico, id=topico_id, ativo=True)
-    
-    # Filtrar os subtopicos associados ao tópico selecionado
     subtopicos = Subtopico.objects.filter(topico_id=topico)
     
     context = {
@@ -30,16 +27,13 @@ def subtopicos(request, topico_id):
 
 @login_required
 def display(request, topico_id, subtopico_id):
-    # Obter o tópico e o subtopico selecionados ou retornar um erro 404 se não existirem
     topico = get_object_or_404(Topico, id=topico_id, ativo=True)
     subtopico = get_object_or_404(Subtopico, id=subtopico_id, topico=topico)
     
     tipo_subtopico = subtopico.tipo
 
     if(tipo_subtopico == 'ytb'):
-        # Filtrar o vídeo associado ao subtopico
         video = Arquivo_GoogleDrive.objects.filter(subtopico=subtopico).first()
-
         iframe_html = video.iframe
         download_url = extract_video_url_from_iframe(iframe_html)
 
@@ -54,7 +48,6 @@ def display(request, topico_id, subtopico_id):
         texto = Arquivo_Texto.objects.filter(subtopico=subtopico).first()
         
         if texto:
-            # Substituir múltiplos espaços por uma quebra de linha
             texto_formatado = re.sub(r'\s{2,}', '<br><br>', texto.texto)
             context = {
             'topico': topico,
@@ -71,6 +64,7 @@ def display(request, topico_id, subtopico_id):
         }
         return render(request, 'base_conhecimento/display_pdf.html', context)
 
+@login_required
 def extract_video_url_from_iframe(iframe_html):
     """
     Extrai a URL do vídeo do HTML do iframe e converte o link de preview
@@ -82,11 +76,11 @@ def extract_video_url_from_iframe(iframe_html):
         return convert_to_download_url(preview_url)
     return None
 
+@login_required
 def convert_to_download_url(preview_url):
     """
     Converte a URL de preview do Google Drive para um link de download direto.
     """
-    # Extraia o ID do arquivo do URL de preview
     file_id = re.search(r'/d/([^/]+)/', preview_url)
     if file_id:
         return f'https://drive.google.com/uc?export=download&id={file_id.group(1)}'

@@ -178,6 +178,7 @@ def get_servidores_from_site(request):
 
     return HttpResponse("Dados importados com sucesso!")
 
+
 def busca_servidor(matricula):
     url = f'https://novafriburgo-rj.portaltp.com.br/consultas/detalhes/servidor.aspx?id=1|7B86F9F1A3EA47148B5ED3C60BFA6E18|2024|06|{matricula}|01'
     print(url)
@@ -260,13 +261,9 @@ def api_get_servidor(request):
     #     matricula = matricula.lstrip('0')
     if matricula is not None and matricula!="000000":
         meta_servidor = Meta_Servidores.objects.filter(matricula=matricula)
-        print(meta_servidor)
         if meta_servidor.exists():
-            print("AAAAA")
             meta_servidor = meta_servidor.first()
         else:
-            print("BBBBB")
-
             meta_servidor = busca_servidor(matricula)
         try:
             servidor = meta_servidor

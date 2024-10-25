@@ -44,7 +44,6 @@ def index(request):
 
         tres_meses_atras += timedelta(days=7)
 
-
     context = {                
         'count_abertos': count_abertos,
         'count_em_atendimento': count_em_atendimento,

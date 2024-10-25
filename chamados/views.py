@@ -106,7 +106,7 @@ def criarChamado(request, sigla):
             chamado.user_inclusao = servidor
             
             # Salva o telefone sem formatação
-            chamado.telefone = clear_tel(form.cleaned_data['telefone'])  # Aplica clear_tel
+            chamado.telefone = clear_tel(form.cleaned_data['telefone'])
             
             chamado.save()
             chamado.gerar_hash()
@@ -128,8 +128,6 @@ def criarChamado(request, sigla):
     }
 
     return render(request, template_name, context)
-
-
 
 @login_required
 def detalhes(request, hash):
@@ -188,7 +186,6 @@ def detalhes(request, hash):
 
 @login_required
 def detalhes_imprimir(request, hash):
-    
     chamado = Chamado.objects.get(hash=hash)
     servidor = Servidor.objects.get(user=request.user)
     if request.method == 'POST':
@@ -280,6 +277,7 @@ def iniciar_atendimento(request, hash):
         message.error(request, mensagem)
             
     return redirect(pagina_anterior)
+
 @login_required
 def retomar_atendimento(request, hash):
     chamado = Chamado.objects.get(hash=hash)
@@ -295,7 +293,8 @@ def retomar_atendimento(request, hash):
         message.error(request, mensagem)
         
     return redirect('chamados:index')
-    return redirect('chamados:index')
+
+
 @login_required
 def pausar_atendimento(request, hash):
     chamado = Chamado.objects.get(hash=hash)
@@ -312,6 +311,7 @@ def pausar_atendimento(request, hash):
     if status == 400:
         message.error(request, mensagem)
     return redirect('chamados:motivo', hash=hash)
+
 @login_required
 def declarar_motivo_pausa(request, hash):
     chamado = Chamado.objects.get(hash=hash)
@@ -330,6 +330,7 @@ def declarar_motivo_pausa(request, hash):
                'submit_text': 'Enviar'
                }
     return render(request, 'chamados/generic_form.html', context)
+
 @login_required
 def finalizar_atendimento(request, hash):
     chamado = Chamado.objects.get(hash=hash)
@@ -427,11 +428,11 @@ def api_mudar_atendente(request):
             chamado.profissional_designado = atendente
             chamado.dt_atualizacao = timezone.now()
             chamado.save()
-            print("Chamado id", chamado.id)
+            # print("Chamado id", chamado.id)
             return JsonResponse({
                 'status': 200,
                 'message': 'Atendente atualizado com sucesso!',
-                'display_atendente':  chamado.profissional_designado.nome_servidor,  # Exibir o nome do atendente no retorno
+                'display_atendente':  chamado.profissional_designado.nome_servidor,
                 'id': chamado.id
             })
         except Exception as E:
@@ -500,14 +501,12 @@ def tickets(request):
 
     if request.GET.get('nao_resolvidos') == 'True':
         chamados = [chamado for chamado in chamados if chamado.status != '4']
-        print("Total chamados nao resolvidos: ", len(chamados), "\n\n\n")
-        print("Chamados:", chamados)
 
     # PARTE PARA LISTAR OS TICKETS NA ABA DE TICKETS NÃO RESOLVIDOS DO PAINEL DE CONTROLE
     status = request.GET.get('status')
     tipo = request.GET.get('tipo')
     profissional_designado = request.GET.get('profissional_designado')
-     # CONDIÇÃO PARA O PAINEL DE CONTROLE (LISTAR OS TICKETS DE ACORDO COM O TIPO, STATUS, PROFISSIONAL DESIGINADO) -> TICKETS NÃO RESOLVIDOS
+    # CONDIÇÃO PARA O PAINEL DE CONTROLE (LISTAR OS TICKETS DE ACORDO COM O TIPO, STATUS, PROFISSIONAL DESIGINADO) -> TICKETS NÃO RESOLVIDOS
     if tipo:
         if status:
             chamados = [chamado for chamado in chamados if chamado.tipo_id == int(tipo) and chamado.status == str(status)]
@@ -657,11 +656,9 @@ def painel_controle(request):
     chamados_fechados_30dias = chamados.filter(dt_execucao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30)).count()
     # chamados_finalizados_30dias =  chamados.filter(dt_execucao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30), status = '4').count()
     chamados_finalizados_30dias =  chamados.filter(dt_atualizacao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30), status = '4').count()
-    print("\n\n\n\n\nChamados finalizados 30 dias", chamados_finalizados_30dias, '\n\n\n\n\n\n')
     media_diaria = total_chamados / 30
     data_atual = datetime.now()
     tipos_chamados = TipoChamado.objects.all()
-
     tres_meses_atras = data_atual - timedelta(days=90)
     count_abertos = chamados.filter(status='0').count()
     count_em_atendimento = chamados.filter(status='1').count()
@@ -670,6 +667,7 @@ def painel_controle(request):
     count_finalizados = chamados.filter(status='4').count()
     total_nao_resolvidos = total_chamados - count_finalizados
     total_nao_atribuidos = chamados.filter(profissional_designado__isnull=True).count()
+
     # Calcular a porcentagem de não atribuídos
     porcentagem_nao_atribuidos = (total_nao_atribuidos / total_chamados * 100) if total_chamados > 0 else 0
     # Calcular a porcentagem de não resolvidos
@@ -805,6 +803,7 @@ def painel_controle(request):
             'dados_abertos': dados_abertos_tipo_um_ano,
             'dados_fechados': dados_fechados_um_ano
         }
+
     context = {      
         'dados_mes_tipo': dados_mes_tipo,
         'dados_uma_semana_atras_tipo': dados_uma_semana_atras_tipo,
@@ -861,24 +860,23 @@ def ver_detalhes_tickets_nao_resolvidos(request):
             pendente=Count('chamado', filter=Q(chamado__status='2')),
         )
         .annotate(total=Count('chamado'))
-        .values('id','nome')  # Aqui você está selecionando o nome do tipo
+        .values('id','nome') 
         .annotate(aberto=Count('chamado', filter=Q(chamado__status='0')),
                   pendente=Count('chamado', filter=Q(chamado__status='2')),
-                  total=Count('chamado'))  # Total de chamados por tipo
-        .order_by('nome')  # Ordena pela coluna nome do TipoChamado
+                  total=Count('chamado')) 
+        .order_by('nome') 
     )
      # Consulta para profissionais designados
     chamados_profissionais = (
         Atendente.objects.annotate(
             aberto=Count('profissional_designado_chamados', filter=Q(profissional_designado_chamados__status='0')),
             pendente=Count('profissional_designado_chamados', filter=Q(profissional_designado_chamados__status='2')),
-            total=Count('profissional_designado_chamados')  # Total de chamados por profissional
+            total=Count('profissional_designado_chamados')
         )
-        .values('id', 'nome_servidor', 'aberto', 'pendente', 'total')  # Seleciona id, nome e contagens
-        .order_by('nome_servidor')  # Ordena pela coluna nome do Profissional
+        .values('id', 'nome_servidor', 'aberto', 'pendente', 'total')
+        .order_by('nome_servidor')
     )
 
-    
     context = {
         'chamados_grupos': chamados_grupos,
         'chamados_profissionais': chamados_profissionais
@@ -889,7 +887,6 @@ def ver_detalhes_tickets_nao_resolvidos(request):
 @login_required
 def ver_perfil(request,matricula):
     is_atendente = Atendente.objects.filter(servidor=Servidor.objects.get(user=request.user)).exists(),
-
     servidor= get_object_or_404(Servidor, matricula=matricula)
 
     context = {
@@ -902,6 +899,7 @@ def ver_perfil(request,matricula):
     return render(request, 'chamados/perfil.html', context)
 
 # VIEW PARA VERIFICAR ATUALIZAÇÃO OU CRIAÇÃO DOS CHAMADOS
+@login_required
 def verificar_atualizacoes(request):
     last_check = request.GET.get('last_check')
 

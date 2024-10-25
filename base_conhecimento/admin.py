@@ -25,26 +25,24 @@ class Arquivo_GoogleDriveAdmin(admin.ModelAdmin):
     list_filter = ('subtopico',)
 
 class ArquivoTextoAdmin(admin.ModelAdmin):
-    list_display = ('subtopico', 'texto')  # Campos a serem exibidos na lista de registros
-    search_fields = ('subtopico__nome', 'texto')  # Permite pesquisa pelos campos especificados
-    list_filter = ('subtopico',)  # Filtros na barra lateral
-    ordering = ('subtopico',)  # Ordenação padrão
-
-# Registrar o modelo e a configuração no admin
+    list_display = ('subtopico', 'texto') 
+    search_fields = ('subtopico__nome', 'texto')
+    list_filter = ('subtopico',)
+    ordering = ('subtopico',) 
 admin.site.register(Arquivo_Texto, ArquivoTextoAdmin)
 
 @admin.register(Arquivo_PDF)
 class ArquivoPDFAdmin(admin.ModelAdmin):
-    list_display = ('texto', 'subtopico', 'arquivo_pdf')  # Campos a serem exibidos na lista
-    search_fields = ('texto',)  # Permite buscar pelo texto
-    list_filter = ('subtopico',)  # Permite filtrar por subtópico
-    ordering = ('-id',)  # Ordena por ID de forma decrescente
+    list_display = ('texto', 'subtopico', 'arquivo_pdf')
+    search_fields = ('texto',) 
+    list_filter = ('subtopico',)
+    ordering = ('-id',)
 
     def has_add_permission(self, request):
-        return True  # Permite adicionar novos arquivos
+        return True 
 
     def has_change_permission(self, request, obj=None):
-        return True  # Permite editar arquivos
+        return True
 
     def has_delete_permission(self, request, obj=None):
-        return True  # Permite deletar arquivos
+        return True

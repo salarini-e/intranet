@@ -208,7 +208,7 @@ def verificar_chamados_atrasados():
     return chamados_atrasados_data_agendada.exists(), chamados_atrasados_trinta_dias.exists()
 
 def carregar_novos_filtros(request):
-    print(request.POST)
+    # print(request.POST)
     agentes = request.POST['agentes']
     status = request.POST['status']
     tiposChamados = request.POST['tiposChamados']

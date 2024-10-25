@@ -504,9 +504,7 @@
             let hiddenInput = document.getElementById(id_input);
 
             valoresAgentes = hiddenInput.value
-            console.log(valoresAgentes)
             valoresAgentes = valoresAgentes.replace(value+';', '')
-            console.log(valoresAgentes)
             if (optionElement) {
                 container.removeChild(optionElement);
                 hiddenInput.value = valoresAgentes
@@ -622,11 +620,6 @@
             }
         });
 
-        // Verifica no console o resultado final
-        console.log(dados);
-        
-        // Aqui você pode enviar o `dados` para o servidor ou utilizá-lo conforme necessário
-        // Exemplo: enviar via AJAX, etc.
     }
     
     function mudar_status_select(id, display_status){
@@ -737,7 +730,7 @@
             let totalAtualizacoes = 0;  
 
             function verificarAtualizacoes() {
-                console.log("Verificando atualizações...");
+                
                 fetch(`{% url 'chamados:verificar-atualizacoes' %}?last_check=${lastCheck}`)
                     .then(response => response.json())
                     .then(data => {

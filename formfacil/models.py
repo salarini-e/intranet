@@ -89,16 +89,11 @@ class Opcao_Turmas(models.Model):
     def save(self, *args, **kwargs):
         hoje = datetime.now()
         dia_do_mes = int(self.dia_do_mes)
-        
-        # Imprime o dia atual e o dia do mês da turma no terminal
-        print(f"Data atual: {hoje.strftime('%Y-%m-%d')}, Dia do mês da turma: {dia_do_mes}")
-        
-        # Verifica se o mês atual é maior que o mês da turma ou se é o mesmo mês mas o dia atual já passou
         if (hoje.month > hoje.month or
             (hoje.month == hoje.month and hoje.day > dia_do_mes)):
             self.ativo = False
         else:
-            self.ativo = True  # Caso contrário, a turma é ativa
+            self.ativo = True 
         
         super().save(*args, **kwargs)
 
@@ -114,9 +109,6 @@ class Cadastro_Aulas_Processo_Digital(models.Model):
     def __str__(self):
         return f'{self.matricula} - {self.nome}'     
     
-     
-    
-
 class Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas(models.Model):
     nome = models.CharField(max_length=150, verbose_name='Nome Completo')
     cpf=models.CharField(max_length=14, verbose_name='CPF', unique=True, null=True)
