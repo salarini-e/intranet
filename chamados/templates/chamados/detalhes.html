@@ -380,12 +380,12 @@
 								</div>
 								<div class="messages-nome-time-wrapper">
 									<div class="messages-nome-time">
-										{% if mensagem.autor != 'Atendente' and not request.user.is_superuser %}
+										{% if mensagem.autor == 'Atendente' or request.user.is_superuser %}
+											<a><span class="message-user-nome">Atendente</span></a>
+										{% else %}
 											<a href="{% url 'chamados:ver-perfil' mensagem.user_inclusao.matricula %}" target="_blank">
 												<span class="message-user-nome">{{ mensagem.user_inclusao }}</span>
 											</a>
-										{% else %}
-											<a><span class="message-user-nome">Atendente</span></a>
 										{% endif %}
 										<span class="message-user-haxtime">{{mensagem.status_andamento_mensagem}}</span>
 									</div>
