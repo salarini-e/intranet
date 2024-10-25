@@ -655,7 +655,9 @@ def painel_controle(request):
     total_chamados_abertos = chamados.filter(status='0').count()
     chamados_abertos_30dias = chamados.filter(dt_inclusao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30), status='0').count()
     chamados_fechados_30dias = chamados.filter(dt_execucao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30)).count()
-    chamados_finalizados_30dias =  chamados.filter(dt_execucao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30), status = '4').count()
+    # chamados_finalizados_30dias =  chamados.filter(dt_execucao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30), status = '4').count()
+    chamados_finalizados_30dias =  chamados.filter(dt_atualizacao__gte=datetime.now().replace(tzinfo=None) - timedelta(days=30), status = '4').count()
+    print("\n\n\n\n\nChamados finalizados 30 dias", chamados_finalizados_30dias, '\n\n\n\n\n\n')
     media_diaria = total_chamados / 30
     data_atual = datetime.now()
     tipos_chamados = TipoChamado.objects.all()
@@ -803,7 +805,6 @@ def painel_controle(request):
             'dados_abertos': dados_abertos_tipo_um_ano,
             'dados_fechados': dados_fechados_um_ano
         }
-        print("\n\n\n\n\nlabels", dados_um_ano_tipo)
     context = {      
         'dados_mes_tipo': dados_mes_tipo,
         'dados_uma_semana_atras_tipo': dados_uma_semana_atras_tipo,
