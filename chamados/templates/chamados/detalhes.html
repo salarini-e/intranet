@@ -368,7 +368,7 @@
 						<div class="first-message-user-wrapper">
 							<div class="first-message-user-header">
 								<div class="perfil-image">
-									{% if mensagem.autor != 'Atendente' and not request.user.is_superuser %}
+									{% if mensagem.autor == 'Atendente' or request.user.is_superuser %}
 										<img src="{% static 'images/users/atendenteAvatar.png' %}" alt="Avatar padrão" class="img-avatar">
 									{% else %}
 										{% if mensagem.user_inclusao.avatar %}
@@ -380,7 +380,7 @@
 								</div>
 								<div class="messages-nome-time-wrapper">
 									<div class="messages-nome-time">
-										{% if mensagem.autor != 'Atendente' %}
+										{% if mensagem.autor != 'Atendente' and not request.user.is_superuser %}
 											<a href="{% url 'chamados:ver-perfil' mensagem.user_inclusao.matricula %}" target="_blank">
 												<span class="message-user-nome">{{ mensagem.user_inclusao }}</span>
 											</a>
