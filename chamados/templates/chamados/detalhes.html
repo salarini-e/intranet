@@ -368,8 +368,10 @@
 						<div class="first-message-user-wrapper">
 							<div class="first-message-user-header">
 								<div class="perfil-image">
+									{% if mensagem.user_inclusao != chamado.requisitante%}
 									{% if mensagem.autor == 'Atendente' or request.user.is_superuser %}
 										<img src="{% static 'images/users/atendenteAvatar.png' %}" alt="Avatar padrão" class="img-avatar">
+									{% endif %}
 									{% else %}
 										{% if mensagem.user_inclusao.avatar %}
 											<img src="{{ mensagem.user_inclusao.avatar.url }}" alt="{{ mensagem.user_inclusao.nome }}" class="img-avatar">
@@ -380,8 +382,10 @@
 								</div>
 								<div class="messages-nome-time-wrapper">
 									<div class="messages-nome-time">
+										{% if mensagem.user_inclusao != chamado.requisitante%}
 										{% if mensagem.autor == 'Atendente' or request.user.is_superuser %}
 											<a><span class="message-user-nome">Atendente</span></a>
+										{% endif %}
 										{% else %}
 											<a href="{% url 'chamados:ver-perfil' mensagem.user_inclusao.matricula %}" target="_blank">
 												<span class="message-user-nome">{{ mensagem.user_inclusao }}</span>
