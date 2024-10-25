@@ -30,9 +30,11 @@
     width: 100%;
     height: 2px;
     background-color: #c9c9c9;
+    margin-top: -15px;
 }
 .detalhes-contato-arrows-sep.show {
     opacity: 1;
+   
 }
 .detalhes-contato-title{
     display: flex;
@@ -67,6 +69,8 @@
 .detalhes-contato.show, .detalhes-chamado.show {
     max-height: 1000px;
     opacity: 1;
+    margin-bottom: 15px;
+    margin-top: -15px;
 }
 
 .detalhe-contato-menu-wrapper{
