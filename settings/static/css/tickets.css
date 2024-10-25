@@ -71,15 +71,14 @@
 }
 
 .chamados-tickets-infos-chamado-text-assunto.validade-ticket{
-    padding: 2px;
     border-radius: 5px;
-    width: 50px;
     text-align: center;
+    width: 50px;
     color: #007958;
     border: 1px solid #b4e5d9;
     background-color: #e0f5f0;
     margin-bottom: 5px;
-    padding: 0 10px;
+    padding: 2px 10px;
 }
 
 .respondido-cliente{
@@ -207,7 +206,44 @@
 }
 
 
-
+.list-atualizacoes{
+    display: none;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    padding: 7px;
+    margin: 0 auto;
+    color: black;
+    position: relative;
+    z-index: 10000;
+    font-size: 16px;
+    border-radius: 50px;
+    margin-top: -35px;
+    box-shadow: 0 2px 16px 0 rgba(18,52,77,.16);
+    border: 1px solid #cfd7df;
+    background: linear-gradient(180deg,#fff 2.56%,#f3f5f7 95.75%);
+    max-width: 330px;
+    transform: translateY(21px);
+}
+.fa-rotate{
+    color: white !important;
+    width: 16px !important;
+    height: 16px !important;
+    background-color: #2c5cc5;
+    border-radius: 50%;
+    padding: 8px;
+    margin: 0 8px;
+}
+.novo-ticket, .atualizacao{
+    margin-right: 12px;
+}
+.atualizacao{
+    margin-left: 12px;
+}
+.total-novos-chamados,.total-atualizacoes{
+    font-weight: bold;
+    margin-right: 2px;
+}
 @media(max-width:768px){
     #offcanvasScrolling {
         position: fixed; /* Permite que a sidebar flutue sobre o conteúdo */
@@ -232,6 +268,13 @@
     }
     .chamados-tickets-infos{
         padding-left: 1.5rem;
+    }
+    .list-atualizacoes{
+        margin-left: -0.75rem;
+        margin-top: 0px;
+        left: 50%;
+        transform: translate(-50%,0px);
+        margin-bottom: 15px;
     }
 }
 
