@@ -205,6 +205,7 @@
                     </div>
                 {% endfor %}
                 {% if chamados %}
+                {% if chamados.paginator.num_pages > 1 %}
                 <ul class="pagination justify-content-center" style="margin-left: -0.75rem !important;margin-right: 0.75rem !important; margin-top: 1.5rem;">
                     <!-- Botão de 'Previous' -->
                     {% if chamados.has_previous %}
@@ -237,6 +238,7 @@
                         </li>
                     {% endif %}
                 </ul>
+                {% endif %}
                 {% endif %}
             </div>
             
