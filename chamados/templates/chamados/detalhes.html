@@ -348,7 +348,7 @@
 											<span class="message-user-haxtime">{{mensagem.status_andamento_mensagem }}</span>
 										</div>
 										<div class="message-user-time">
-											<span>{{ mensagem.dt_inclusao|date:"d/m/y"}} {{ mensagem.dt_inclusao|date:"H:i" }}</span>
+											<span class="time-send-message">{{ mensagem.dt_inclusao|date:"d/m/y"}} {{ mensagem.dt_inclusao|date:"H:i" }}</span>
 										</div>
 									</div>
 								</div>
@@ -390,7 +390,7 @@
 										<span class="message-user-haxtime">{{mensagem.status_andamento_mensagem}}</span>
 									</div>
 									<div class="message-user-time">
-										<span>{{ mensagem.dt_inclusao|date:"d/m/y" }} {% if request.user == mensagem.autor.user or request.user.is_superuser %}{{ mensagem.dt_inclusao|date:"H:i" }}{% endif %}</span>
+										<span class="time-send-message">{{ mensagem.dt_inclusao|date:"d/m/y" }} {% if request.user == mensagem.autor.user or request.user.is_superuser %}{{ mensagem.dt_inclusao|date:"H:i" }}{% endif %}</span>
 									</div>
 								</div>
 							</div>
