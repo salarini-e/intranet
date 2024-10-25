@@ -368,7 +368,7 @@
 						<div class="first-message-user-wrapper">
 							<div class="first-message-user-header">
 								<div class="perfil-image">
-									{% if mensagem.autor == 'Atendente' %}
+									{% if mensagem.autor != 'Atendente' and not request.user.is_superuser %}
 										<img src="{% static 'images/users/atendenteAvatar.png' %}" alt="Avatar padrão" class="img-avatar">
 									{% else %}
 										{% if mensagem.user_inclusao.avatar %}
