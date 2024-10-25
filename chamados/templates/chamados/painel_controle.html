@@ -553,15 +553,16 @@
 	window.addEventListener('load', function(){
 		var lineChart = document.getElementById('canvas-linechart-chamados').getContext('2d');
 		window.myLine = new Chart(lineChart, lineChartConfig);
-
+		// 'abertos' para calcular a porcentagem em relacao aos chamados que estão abertos
+		// 'total' para calcular a porcentagem em relacao a todos os chamados da base de dados, independentemente do status
 		var barChart = document.getElementById('canvas-barchart').getContext('2d');
-		window.myBar = new Chart(barChart, setDataSetData('canvas-barchart'));
+		window.myBar = new Chart(barChart, setDataSetData('canvas-barchart', 'abertos'));
 		
 		var barChartSecretaria = document.getElementById('canvas-barchart-secretaria').getContext('2d');
-		window.myBarSecretaria = new Chart(barChartSecretaria, setDataSetData('canvas-barchart-secretaria'));
+		window.myBarSecretaria = new Chart(barChartSecretaria, setDataSetData('canvas-barchart-secretaria', 'abertos'));
 		
 		var barChartTotalAtendimentosRealizados = document.getElementById('canvas-barchart-total-atendimentos-realizados').getContext('2d');
-		window.myBarTotalAtendimentosRealizados = new Chart(barChartTotalAtendimentosRealizados, setDataSetData('canvas-barchart-total-atendimentos-realizados'));
+		window.myBarTotalAtendimentosRealizados = new Chart(barChartTotalAtendimentosRealizados, setDataSetData('canvas-barchart-total-atendimentos-realizados','total'));
 
 		const lineChartElements = document.querySelectorAll('canvas[id^="canvas-linechart-tipos-"]');
 
@@ -972,7 +973,14 @@
 		}
 	}
 	
-	function setDataSetData(canvasId) {
+	function setDataSetData(canvasId, tipoTotalChamados) {
+		if(tipoTotalChamados=='abertos'){
+			var total_chamados = {{total_chamados_abertos|safe}};
+		}
+		else if(tipoTotalChamados=='total'){
+			var total_chamados = {{total_chamados|safe}};
+
+		}
 		var barChartConfig = {
 			type: 'bar',
 			data: updateDataSetBarChar(canvasId),
@@ -1057,7 +1065,7 @@
 							ctx.save();
 							ctx.translate(model.x, textY-20);
 							// ctx.rotate(4.7);
-							ctx.fillText( Math.round(dataset.data[i]*100/total_chamados_abertos) + "%", 0, 0);
+							ctx.fillText( Math.round(dataset.data[i]*100/total_chamados) + "%", 0, 0);
 							ctx.restore();
 							}
 						}
