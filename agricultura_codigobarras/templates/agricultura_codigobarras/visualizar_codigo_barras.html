@@ -1,17 +1,19 @@
 {% extends 'template.html' %}
 {% block baseconhecimento %}active{% endblock %}
-{% block main %}  
-
+{% block main %} 
 <div class="row g-3 mb-4 align-items-center justify-content-between">
     <div class="row g-3 mb-4 align-items-center justify-content-between">
         <div class="col-auto">
-            <h1 class="app-page-title mb-0">Cadastrar equipamento</h1>
+            <h1 class="app-page-title mb-0">Equipamento {{equipamento.get_codigo}}</h1>
         </div>
         <div class="col-auto">
              <div class="page-utilities">
                 <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
                     <div class="col-auto">
                         <div class="table-search-form row gx-1 align-items-center">                                        					           
+                            <div class="col-auto">
+                                <a href="{% url 'agricultura_codigobarras:imprimir' hash=equipamento.codigo_barra%}" target="_blank" class="btn app-btn-primary"><i class="fa-solid fa-print me-2"></i>Imprimir</a>
+                            </div>
                             <div class="col-auto">
                                 <a href="{% url 'agricultura_codigobarras:index' %}" class="my-auto btn app-btn-secondary" ><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
                             </div>
@@ -25,11 +27,18 @@
     </div>
     
 </div>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn app-btn-primary" style="width: 100%;">Salvar</button>
-</form>
 
+<div class="row">
+    <div class="col d-flex flex-column">
+        <div class="m-auto">
+            
+            <p><strong>Descrição:</strong> {{ equipamento.descricao }}</p>
+            <p><strong>Número do Convênio:</strong> {{ equipamento.numero_convenio }}</p>
+            <p><strong>Código de Barras:</strong> {{ equipamento.codigo_barra }}</p>
 
+            <h3>Código de Barras:</h3>
+            <img src="data:image/png;base64,{{ barcode_base64 }}" alt="Código de Barras">    
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -22,6 +22,10 @@ class Equipamento(models.Model):
         # Segundo salvamento com o código de barras
         super().save(*args, **kwargs)
         
+    def get_codigo(self):
+        return str(self.id).zfill(6)
 
     def __str__(self):
-        return f"{self.descricao} - Convênio: {self.numero_convenio} - Código de Barras: {self.codigo_barra}"
+        codigo = self.get_codigo() if self.id else "ID ainda não gerado"
+        return f"{self.descricao} - Convênio: {self.numero_convenio} - Código de Barras: {self.codigo_barra} - id: {codigo}"
+    

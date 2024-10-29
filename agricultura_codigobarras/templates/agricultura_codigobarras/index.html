@@ -1,2 +1,82 @@
-<a href="/agricultura/cadastrar-equipamento/">Cadastrar</a>
-<a href="/agricultura/ler-codigo-de-barras/">Ler código de barra</a>
+{% extends 'template.html' %}
+{% block baseconhecimento %}active{% endblock %}
+{% block main%}
+
+<style>
+    .links-wrapper{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+    .a{
+        text-decoration: none;
+    }
+   
+</style>
+<div class="row g-3 mb-4 align-items-center justify-content-between">
+    <div class="row g-3 mb-4 align-items-center justify-content-between">
+        <div class="col-auto">
+            <h1 class="app-page-title mb-0">Agricultura</h1>
+        </div>
+        <div class="col-auto">
+             <div class="page-utilities">
+                <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+                    <div class="col-auto">
+                        <div class="table-search-form row gx-1 align-items-center">                                        					           
+                            <div class="col-auto">
+                                <a href="/" class="my-auto btn app-btn-secondary" ><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>		
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<div class="links-wrapper">
+    <a href="/agricultura/cadastrar-equipamento/" class="btn app-btn-primary" style="margin-bottom: 15px; width: 100%; max-width: 300px;"> <i class="fa-solid fa-plus me-1" style="font-size: 16px;"></i>Cadastrar equipamento</a>
+    <a href="/agricultura/ler-codigo-de-barras/" class="btn app-btn-primary" style="width: 100%; max-width: 300px;"><i class="fa-solid fa-barcode me-1" style="font-size: 16px;"></i>Ler código de barra</a>
+</div>
+
+<div class="tab-content" id="orders-table-tab-content">
+    <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
+        <div class="app-card app-card-orders-table shadow-sm mb-5">
+            <div class="app-card-body">
+                <div class="table-responsive">
+                    <table class="table app-table-hover mb-0 text-left">
+                        <thead>
+                            <tr>
+                                <th class="cel">Código</th>
+                                <th class="cel">Nome</th>
+                                <th class="cell"></th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for equipamento in equipamentos %}
+                            <tr data-key="{{topico.palavras_chave}}">
+                                <td class="cell">{{equipamento.get_codigo}}</td>
+                                <td class="cell" style="color: rgb(43, 43, 43);">{{equipamento.descricao}}</td>
+                                <td class="cell d-flex">
+                                    <a href="{% url 'agricultura_codigobarras:visualizar-equipamento-hash' hash=equipamento.id %}" class="ms-auto me-1 	my-auto btn app-btn-secondary"> 
+                                        <i class="fa-regular fa-eye"></i>
+                                        Visualizar</a>
+                                </td>
+                                                                                    
+                            </tr>					
+                            {% endfor %}								
+                        </tbody>
+                    </table>
+                </div><!--//table-responsive-->
+               
+            </div><!--//app-card-body-->		
+        </div><!--//app-card-->											
+    </div><!--//tab-pane-->			        			        
+</div><!--//tab-content-->
+
+{% endblock %}
