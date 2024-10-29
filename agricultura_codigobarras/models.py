@@ -5,7 +5,9 @@ from django.utils.crypto import get_random_string
 class User_Agricultura(models.Model):
     servidor = models.OneToOneField(Servidor, on_delete=models.CASCADE)
     autoriazado = models.BooleanField(default=True)
-
+    def __str__(self):
+       
+        return f"Servidor - {self.servidor}"
 class Equipamento(models.Model):
     descricao = models.CharField(max_length=255, verbose_name="Descrição do Equipamento")
     numero_convenio = models.CharField(max_length=50, unique=True, verbose_name="Número do Convênio")

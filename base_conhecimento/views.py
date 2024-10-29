@@ -3,6 +3,7 @@ from .models import Topico, Subtopico, Arquivo_GoogleDrive, Arquivo_Texto, Arqui
 from django.contrib.auth.decorators import login_required
 import requests
 from django.http import StreamingHttpResponse, HttpResponse
+
 import re
 
 # Create your views here.

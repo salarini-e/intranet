@@ -1,19 +1,34 @@
 from django.shortcuts import render, redirect
-from .models import Equipamento
+from .models import Equipamento, User_Agricultura
 from .forms import EquipamentoForm
 from barcode import Code128
 from barcode.writer import ImageWriter
 from io import BytesIO
 import base64
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 
 @login_required
 def index(request):
-    equipamentos = Equipamento.objects.all()
-    context = {
-        'equipamentos': equipamentos,
-    }
-    return render(request, 'agricultura_codigobarras/index.html', context)
+    # Verifique se o usuário é um superusuário
+    if request.user.is_superuser:
+        equipamentos = Equipamento.objects.all()
+        context = {
+            'equipamentos': equipamentos,
+        }
+        return render(request, 'agricultura_codigobarras/index.html', context)
+
+    # Verifique se o usuário tem um objeto User_Agricultura associado
+    try:
+        user_agricultura = User_Agricultura.objects.get(servidor__user=request.user)
+        equipamentos = Equipamento.objects.all()  # Ou qualquer lógica específica para usuários User_Agricultura
+        context = {
+            'equipamentos': equipamentos,
+        }
+        return render(request, 'agricultura_codigobarras/index.html', context)
+    except User_Agricultura.DoesNotExist:
+        return HttpResponseForbidden("Você não tem permissão para acessar esta página.")
+
 
 def ler_codido(request):
     if request.method == 'POST':
