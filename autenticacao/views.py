@@ -107,6 +107,8 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
+        if len(username)==5:
+            username = '0'+username
         try:
             pessoa=Pessoa.objects.get(cpf=username)    
             user = authenticate(request, username=pessoa.email, password=password)
