@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from .models import Topico, Subtopico, Arquivo_GoogleDrive, Arquivo_Texto, Arquivo_PDF
 from django.contrib.auth.decorators import login_required
 import requests
@@ -25,8 +25,10 @@ def subtopicos(request, topico_id):
     }
     return render(request, 'base_conhecimento/subtopicos.html', context)
 
+
 @login_required
 def display(request, topico_id, subtopico_id):
+    print('\n\n\ntipo',type(request))
     topico = get_object_or_404(Topico, id=topico_id, ativo=True)
     subtopico = get_object_or_404(Subtopico, id=subtopico_id, topico=topico)
     
@@ -64,7 +66,6 @@ def display(request, topico_id, subtopico_id):
         }
         return render(request, 'base_conhecimento/display_pdf.html', context)
 
-@login_required
 def extract_video_url_from_iframe(iframe_html):
     """
     Extrai a URL do vídeo do HTML do iframe e converte o link de preview
@@ -76,7 +77,6 @@ def extract_video_url_from_iframe(iframe_html):
         return convert_to_download_url(preview_url)
     return None
 
-@login_required
 def convert_to_download_url(preview_url):
     """
     Converte a URL de preview do Google Drive para um link de download direto.
