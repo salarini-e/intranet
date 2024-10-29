@@ -1,0 +1,18 @@
+{% extends 'template.html' %}
+{% block baseconhecimento %}active{% endblock %}
+{% block main %}  
+<div class="row">
+    <div class="col d-flex flex-column">
+        <h2 class="mb-4">Equipamento Cadastrado com Sucesso!</h2>
+        <div class="m-auto">
+            
+            <p><strong>Descrição:</strong> {{ equipamento.descricao }}</p>
+            <p><strong>Número do Convênio:</strong> {{ equipamento.numero_convenio }}</p>
+            <p><strong>Código de Barras:</strong> {{ equipamento.codigo_barra }}</p>
+
+            <h3>Código de Barras:</h3>
+            <img src="data:image/png;base64,{{ barcode_base64 }}" alt="Código de Barras">    
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'template.html' %}
+{% block baseconhecimento %}active{% endblock %}
+{% block main %}  
+
+<h2>Cadastrar Equipamento</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvar</button>
+</form>
+
+{% endblock %}

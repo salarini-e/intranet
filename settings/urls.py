@@ -14,5 +14,6 @@ urlpatterns = [
     path('base-conhecimento/', include('base_conhecimento.urls')),
     path('chamados/', include('chamados.urls')),
     path("select2/", include("django_select2.urls")),
-]
+    path('agricultura/', include('agricultura_codigobarras.urls')),
+]   
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

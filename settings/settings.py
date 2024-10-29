@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     'softwares',
     'chamados',
     'base_conhecimento',
+    'agricultura_codigobarras',
 ]
 
 MIDDLEWARE = [

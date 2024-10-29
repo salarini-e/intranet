@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <title>PMNF - Form Fácil</title>
+    
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="description" content="Portal - Bootstrap 5 Admin Dashboard Template For Developers">
+    <meta name="author" content="Xiaoying Riley at 3rd Wave Media">    
+    <link rel="shortcut icon" href="/static/favicon.ico"> 
+    
+    <!-- FontAwesome JS-->
+    <script defer src="/static/plugins/fontawesome/js/all.min.js"></script>
+    
+    <!-- App CSS -->  
+    <link id="theme-style" rel="stylesheet" href="/static/css/template-intranet.css">
+
+</head> 
+
+<body class="app">   	
+    <header class="app-header fixed-top">	   	            
+        <div class="app-header-inner">  
+	        <div class="container-fluid py-2">
+		        <div class="app-header-content"> 
+		            <div class="row justify-content-between align-items-center">
+			        				    
+		            <div class="search-mobile-trigger d-sm-none col">
+			            <img class="logo-icon me-3" style="height: 25px;" src="/static/brasao.ico" alt="logo"><span class="logo-text text-uppercase">Prefeitura Municipal de Nova Friburgo</span>
+			        </div><!--//col-->
+		            <div class="app-search-box col">						
+		                <img class="logo-icon me-3" style="height: 25px;" src="/static/brasao.ico" alt="logo"><span class="logo-text text-uppercase">Prefeitura Municipal de Nova Friburgo</span>
+		            </div><!--//app-search-box-->
+		            
+		            <!-- <div class="app-utilities col-auto" style="padding-right: 20px;">
+			            <a href="/login">
+							Login
+						</a>
+			           
+		            </div>+ -->
+		        </div><!--//row-->
+	            </div><!--//app-header-content-->
+	        </div><!--//container-fluid-->
+        </div><!--//app-header-inner-->
+        
+    </header><!--//app-header-->
+    
+    <div class="app-wrapper">	    
+	    <div class="w-100 app-content pt-3 p-md-3 p-lg-4">
+		    <div class="container-xl">
+			    <div class="position-relative mb-3">
+				    <div class="row g-3 justify-content-between">
+					    <div class="col-auto">
+					        <h1 class="app-page-title mb-0">Ler código de barras</h1>
+					    </div>
+					  
+				    </div>
+			    </div>
+			    
+                <div class="app-card app-card-notification shadow-sm mb-4 w-100">
+				    <div class="app-card-header px-4 py-3 w-100">
+				        <div class="row g-3 align-items-center d-flex">
+					        <div class="col-2 col-lg-auto text-center text-lg-start">						        
+				                <img style="width: 48px;"  src="/static/brasao.ico" alt="">
+					        </div><!--//col-->
+					        <div class="col-10 text-center text-lg-start d-flex">
+			
+                                        <div class="m-auto">
+                                            <form method="post">
+                                            {% csrf_token %}
+                                            <p><strong>Código:</strong></p>
+                                            <input type="text" name="codigo" class="form-control">            
+                                            <button type="submit" class="btn app-btn-primary" >Enviar</button>
+                                            </form>
+                                        </div>
+                            
+                                
+					        </div><!--//col-->
+				        </div><!--//row-->
+				    </div><!--//app-card-header-->
+				    		    
+				</div><!--//app-card-->
+				
+																																			
+			    
+		    </div><!--//container-fluid-->
+	    </div><!--//app-content-->
+	    
+	    <footer class="app-footer">
+		    <div class="container text-center py-3">
+		         <!--/* This template is free as long as you keep the footer attribution link. If you'd like to use the template without the attribution link, you can buy the commercial license via our website: themes.3rdwavemedia.com Thank you for your support. :) */-->
+            <small class="copyright">© Subsecretaria de Tecnologia da Informação e Comunicação - 2024</small>
+		       
+		    </div>
+	    </footer><!--//app-footer-->
+	    
+    </div><!--//app-wrapper-->    					
+
+ 
+    <!-- Javascript -->          
+    <script src="/static/plugins/popper.min.js"></script>
+    <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>  
+    
+    <!-- Page Specific JS -->
+    <!-- <script src="/static/js/app.js"></script> s -->
+    <style>
+    .app-wrapper {
+        margin-left: 0px !important;
+    }
+    .app-header-inner {
+        margin-left: 0px !important;
+    }
+	label {
+    font-weight: bold;
+	}
+	label {
+    margin-bottom: 0.5rem;
+	font-size: 13pt;
+	}
+	input, textarea {
+		margin-bottom: 1rem;
+	}
+	textarea{
+		height: 200px;
+	}
+	textarea.form-control {
+    min-height: 100px !important;
+	}
+	.app-header {
+    height: auto;
+	}
+	.errorlist{
+		padding: 0px;
+	}
+	.errorlist li{
+		list-style: none;
+		color: red;
+		font-size: 10pt;
+	}
+	
+    </style>
+	<script>
+		function icpf(v){
+			v=v.replace(/\D/g,"")                    //Remove tudo o que nao e digito
+			v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+			v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+													//de novo (para o segundo bloco de numeros)
+			v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hifen entre o terceiro e o quarto digitos
+			return v
+		}
+		function itel(v) {
+			v = v.replace(/\D/g, ""); // Remove tudo o que não é dígito
+
+			// Coloca parênteses em volta dos dois primeiros dígitos (DDD)
+			v = v.replace(/^(\d{2})(\d)/g, "($1) $2"); 
+			
+			if (v.length === 14) { // Formato DDD + 9 dígitos (celular)
+				v = v.replace(/(\d{5})(\d)/, "$1-$2"); // Coloca hífen entre o 5º e 6º dígitos
+				
+			} else { // Formato DDD + 8 dígitos (fixo)
+				v = v.replace(/(\d{4})(\d)/, "$1-$2"); // Coloca hífen entre o 4º e 5º dígitos
+			} 
+			
+			return v;
+		}
+		function mascara(o,f){
+			v_obj=o
+			v_fun=f
+			setTimeout("execmascara()",1)
+		}
+		function execmascara(){
+                v_obj.value=v_fun(v_obj.value)
+            }	
+	</script>
+</body>
+</html> 
