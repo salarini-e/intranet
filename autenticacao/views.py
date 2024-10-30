@@ -107,7 +107,7 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        if len(username)==5:
+        if len(username)==5 and username.isdigit():
             username = '0'+username
         try:
             pessoa=Pessoa.objects.get(cpf=username)    
@@ -115,7 +115,7 @@ def login_view(request):
         except:            
             user = None
         if user == None:
-            if len(username)==5:
+            if len(username)==5 and username.isdigit():
                 user = authenticate(request, username='0'+username, password=password)
             else:
                 user = authenticate(request, username=username, password=password)
