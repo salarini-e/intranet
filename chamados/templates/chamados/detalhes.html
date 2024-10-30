@@ -69,6 +69,7 @@
 					</div>  
 					<div class="detalhes-contato-arrows" >
 						<a class="detalhes-contato-arrow-link" >
+							<span class="me-2">Detalhes</span>
 							<i class="fa-solid fa-chevron-down detalhes-contato-arrow-link-down" id="arrow-down"></i>
 							<!-- <i class="fa-solid fa-arrow-down detalhes-contato-arrow-link-down" id="arrow-down"></i> -->
 							<!-- <i class="fa-solid fa-arrow-up detalhes-contato-arrow-link-up" id="arrow-up" style="display: none;"></i> -->
@@ -342,7 +343,7 @@
 									<div class="messages-nome-time-wrapper">
 										<div class="messages-nome-time">
 											<div>
-												<span class="message-user-nome">Atendente</span>
+												<span class="message-user-nome">{{mensagem.user_inclusao}}</span>
 												<span class="message-user-mensagem-confidencial">Mensagem interna</span>
 											</div>
 											<span class="message-user-haxtime">{{mensagem.status_andamento_mensagem }}</span>
@@ -382,15 +383,24 @@
 								</div>
 								<div class="messages-nome-time-wrapper">
 									<div class="messages-nome-time">
-										{% if mensagem.user_inclusao != chamado.requisitante%}
-										{% if mensagem.autor == 'Atendente' or request.user.is_superuser %}
-											<a><span class="message-user-nome">Atendente</span></a>
-										{% endif %}
-										{% else %}
+										{% if mensagem.user_inclusao != chamado.requisitante %}
+										{% if request.user.is_superuser or is_atendente %}
+											<!-- Superusuário ou atendente vê o nome do atendente -->
 											<a href="{% url 'chamados:ver-perfil' mensagem.user_inclusao.matricula %}" target="_blank">
 												<span class="message-user-nome">{{ mensagem.user_inclusao }}</span>
 											</a>
+										{% else %}
+											<!-- Outros usuários veem apenas "Atendente" -->
+											{% if mensagem.autor == 'Atendente' %}
+												<a><span class="message-user-nome">Atendente</span></a>
+											{% endif %}
 										{% endif %}
+									{% else %}
+										<!-- Se o usuário de inclusão da mensagem for o requisitante -->
+										<a href="{% url 'chamados:ver-perfil' mensagem.user_inclusao.matricula %}" target="_blank">
+											<span class="message-user-nome">{{ mensagem.user_inclusao }}</span>
+										</a>
+									{% endif %}
 										<span class="message-user-haxtime">{{mensagem.status_andamento_mensagem}}</span>
 									</div>
 									<div class="message-user-time">
