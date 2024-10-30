@@ -75,9 +75,9 @@ class Chamado(models.Model):
 
     STATUS_CHOICES = (
         ('0', 'Aberto'),
-        ('1', 'Em atendimento'),
+        # ('1', 'Em atendimento'),
         ('2', 'Pendente'),        
-        ('3', 'Fechado'),
+        # ('3', 'Fechado'),
         ('4', 'Finalizado'),
     )
 
