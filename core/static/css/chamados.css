@@ -109,3 +109,43 @@
     background-color: #c9c9c9;
     color: black;
 }
+	/* Animação de cor para notificações novas */
+    @keyframes fadeInNew {
+        0% {
+            background-color: #f8f9fa; /* cor inicial */
+        }
+        50% {
+            background-color: #f0ad4e; /* cor de destaque */
+        }
+        100% {
+            background-color: #f8f9fa; /* cor final */
+        }
+    }
+    
+    .item.new {
+        animation: fadeInNew 1s ease-in-out infinite;
+        transition: background-color 0.3s ease;
+    }
+    
+    /* Animação de pulsação no ícone */
+    @keyframes iconPulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.2);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+    
+    .icon-badge.new-notification {
+        animation: iconPulse 1s ease-in-out infinite;
+    }
+    
+    /* Animação de transição de estado quando a notificação é lida */
+    .item.lida {
+        background-color: #e9ecef; /* cor de fundo para lidas */
+    }
+        

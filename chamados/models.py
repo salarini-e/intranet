@@ -175,7 +175,12 @@ class Chamado(models.Model):
             '3': 'status-fechado',
             '4': 'status-finalizado',
         }
-        return status_classes[self.status]
+        print(self.descricao)
+        print(self.status)
+        try:
+            return status_classes[self.status]
+        except:
+            pass
         
     def is_novo(self):
         # Remove o timezone de dt_inclusao e dt_atual

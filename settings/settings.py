@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'chamados',
     'base_conhecimento',
     'agricultura_codigobarras',
+    'notificacoes',
 ]
 
 MIDDLEWARE = [

@@ -24,6 +24,23 @@ import locale
 locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
 
 @login_required
+def pagina_inicial(request):
+    if Atendente.objects.filter(servidor__user=request.user).exists() or request.user.is_superuser:
+        if request.user.is_superuser:
+            return redirect('chamados:tickets')
+        elif Atendente.objects.get(servidor__user=request.user).nivel=='0':
+            return redirect('chamados:criar_chamado_escolher')            
+        return redirect('chamados:tickets')
+    return redirect('chamados:criar_chamado_escolher')
+
+@login_required
+def criarChamadoEscolher(request):    
+    context = {
+               'tipos': TipoChamado.objects.all(),
+               }
+    return render(request, 'chamados/criar-chamado-escolher.html', context)
+
+@login_required
 def index(request):
     filtros = obter_filtros(request)
     filtrado = verificar_filtrado(request, filtros)

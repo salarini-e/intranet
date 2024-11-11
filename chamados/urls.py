@@ -6,9 +6,10 @@ from . import views
 
 app_name = 'chamados'
 urlpatterns = [
-    path('', views.painel_controle, name='index'),   
+    path('', views.pagina_inicial, name='index'),   
     path("detalhesTicketsNaoResolvidos/", views.ver_detalhes_tickets_nao_resolvidos, name="detalhesTicketsNaoResolvidos"),    
     path('zerar-filtros/', views.zerar_filtros, name='zerar_filtros'),
+    path('criar-chamado/', views.criarChamadoEscolher, name='criar_chamado_escolher'),
     path('criar-chamado/<sigla>/', views.criarChamado, name='criar'),
     path('<hash>/detalhes/', views.detalhes, name='detalhes'),    
     path('<hash>/detalhes/att/', views.attChamado, name='attChamado'),    
@@ -29,6 +30,7 @@ urlpatterns = [
     path('api/mudar/atendente/', views.api_mudar_atendente, name='api_atendente'),
     path('api/setor/', views.api_criar_setor, name='api_criar_setor'),
     path('api/servidor/', views.api_criar_servidor, name='api_criar_servidor'),
+    
     path('tickets/', views.tickets, name ='tickets'),
     path('verificar-atualizacoes/', views.verificar_atualizacoes, name='verificar-atualizacoes'),
 ]

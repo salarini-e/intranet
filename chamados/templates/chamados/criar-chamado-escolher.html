@@ -1,0 +1,40 @@
+{% extends 'template_chamados.html' %}
+
+{% block chamados %}active{% endblock %}
+{% block main %}   		    
+				<style>
+					#message{
+						display: none;
+					}
+					#response-message{
+						font-weight: bold;
+						color: white;
+					}
+					.bg-gray{
+						background-color: rgba(128, 128, 128, 0.281) !important;
+					}
+					.alert-success {
+						background-color: rgb(0, 128, 0);
+					}
+					.alert-danger {
+						background-color: rgb(173, 12, 12);
+					}
+				</style>
+			    <div class="row g-3 mb-4 align-items-center justify-content-between">
+				    <div class="col-auto">
+			            <h1 class="app-page-title mb-0">Criar chamado</h1>
+				    </div>				   
+			    </div>
+				
+				<div class="row px-2 mb-3">
+					<div class="col" style="border: 1px solid rgb(0, 0, 0); background-color: white; border-radius: 5px; color: rgb(0, 0, 0);">
+						<p><i><strong>Escolha o tipo de chamado:</strong></i></p>				
+								{% for tipo in tipos %}							
+								<a class="btn btn-secondary w-100 mb-2" href="{% url 'chamados:criar' tipo.sigla %}">
+									{{tipo.nome}}
+								</a>
+								{% endfor %}
+					</div>
+				</div>
+				
+{% endblock %}
