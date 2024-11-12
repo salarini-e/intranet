@@ -88,6 +88,7 @@
                                                 </span>
                                                 </a>
                                             <div class="solution-infos-wrapper">
+                                                <span style="display: flex;">
                                                 <i class="fa-solid fa-globe" style="width: 10px;"></i>
                                                 <a href="{% url 'chamados:ver-perfil' chamado.requisitante.matricula %}" class="tickets-user-link" target="_blank">
                                                     <span class="chamados-tickets-infos-chamado-text-requisitante">{{ chamado.requisitante }}
@@ -115,7 +116,7 @@
                                                        type="button" 
                                                        data-bs-toggle="dropdown" 
                                                        aria-expanded="false" 
-                                                       style="text-decoration: none; color: black;"
+                                                       style="text-decoration: none; color: black; font-size:0.8rem"
                                                        data-bs-toggle="tooltip" 
                                                        data-bs-placement="left" 
                                                        title="Prioridade">
@@ -129,7 +130,7 @@
                                                 </div>
                                             </span>
                                            
-                                            <span class="prioridade">
+                                            <span class="prioridade text-line">
                                                 
                                                 <!-- Dropdown para Atendente -->
                                                 <div class="dropdown d-inline">
@@ -139,7 +140,7 @@
                                                        type="button" 
                                                        data-bs-toggle="dropdown" 
                                                        aria-expanded="false" 
-                                                       style="text-decoration: none; color: black;"
+                                                       style="text-decoration: none; color: black; font-size:0.8rem"
                                                        data-bs-toggle="tooltip" 
                                                        data-bs-placement="left" 
                                                        title="Atendente">
@@ -160,14 +161,14 @@
                                             </span>
                                             
                                             <!-- Dropdown para Status -->
-                                            <span class="prioridade">
+                                            <span class="prioridade text-line">
                                                 <span id="indicadorStatus-{{chamado.id}}" class="prioridade-indicador {{ chamado.get_status_class }}"></span>
                                                 <div class="dropdown">
                                                     <a class="dropdown-toggle" 
                                                        type="button" 
                                                        data-bs-toggle="dropdown" 
                                                        aria-expanded="false" 
-                                                       style="text-decoration: none; color: black;"
+                                                       style="text-decoration: none; color: black; font-size:0.8rem"
                                                        data-bs-toggle="tooltip" 
                                                        data-bs-placement="left" 
                                                        title="Status"
