@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 import hashlib
 from django.utils import timezone
 from datetime import datetime, timedelta
+from django.urls import reverse
+from notificacoes.models import Notificacao
 
 
 
@@ -112,17 +114,15 @@ class Chamado(models.Model):
 
     def __str__(self):
         return self.n_protocolo
-    
+
     def gerar_hash(self):
-        
         if not self.hash:            
             hash_obj = hashlib.sha256()
             hash_obj.update(str(self.id).encode('utf-8'))
             self.hash = hash_obj.hexdigest()            
             self.save()
     
-    def gerar_protocolo(self):  
-
+    def gerar_protocolo(self): 
         if not self.n_protocolo:
             prefixo = self.tipo.sigla  
             id_formatado = str(self.id).zfill(6)          
@@ -315,6 +315,32 @@ class Chamado(models.Model):
             ano = data_inclusao.year  # Obter ano
 
         return f'<span class="timeline-label">{dia_semana}, {dia} {mes}, {ano}</span>'
+    
+    def gerar_notificacoes(self):
+        # Notificação para o requisitante
+        notificacao_requisitante = Notificacao(
+            user=self.requisitante,
+            icone='fa-solid fa-bell',
+            msg=f'Novo chamado: <b>{self.n_protocolo}</b>',
+            link=reverse('chamados:detalhes', kwargs={'hash': self.hash}),
+            data=timezone.now()
+        )
+        notificacao_requisitante.save()
+
+        # Notificação para o profissional designado
+        if self.profissional_designado:
+            if hasattr(self.profissional_designado, 'servidor'):
+                profissional = self.profissional_designado.servidor
+                notificacao_profissional = Notificacao(
+                    user=profissional,
+                    icone='fa-solid fa-user-tie',
+                    msg=f'Você foi designado para o chamado: <b>{self.n_protocolo}</b>',
+                    link=reverse('chamados:detalhes', kwargs={'hash': self.hash}),
+                    data=timezone.now()
+                )
+                notificacao_profissional.save()
+            else:
+                raise ValueError('Erro ao designar o profissional.')
         
 class Pausas_Execucao_do_Chamado(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')

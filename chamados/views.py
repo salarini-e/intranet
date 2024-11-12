@@ -92,7 +92,12 @@ def criarChamado(request, sigla):
             v = re.sub(r'(\d{4})(\d)', r'\1-\2', v)  # Coloca hífen entre o 4º e 5º dígitos
 
         return v
-    if request.user.is_superuser:
+    try:
+        servidor = Servidor.objects.get(user=request.user)
+    except Servidor.DoesNotExist:
+        servidor = None
+    is_atendente = Atendente.objects.filter(servidor=servidor).exists() if servidor else False
+    if request.user.is_superuser or is_atendente:
         template_name = 'chamados/chamado-criar-ti.html'
         servidor = Servidor.objects.get(user=request.user)
         tipo = TipoChamado.objects.get(sigla=sigla)
@@ -121,9 +126,9 @@ def criarChamado(request, sigla):
         if form.is_valid():
             chamado = form.save(commit=False)
             chamado.user_inclusao = servidor
-            
-            # Salva o telefone sem formatação
+
             chamado.telefone = clear_tel(form.cleaned_data['telefone'])
+            chamado.profissional_designado = form.cleaned_data.get('profissional_designado')
             
             chamado.save()
             chamado.gerar_hash()
@@ -133,7 +138,14 @@ def criarChamado(request, sigla):
             mensagem, status = Email_Chamado(chamado).chamado_criado()
             if status == 400:
                 message.error(request, mensagem)
+
+            try:
+                chamado.gerar_notificacoes()
+            except ValueError as e:
+                message.error(request, str(e))
             return redirect('chamados:tickets')
+        
+
     else:
         form = CriarChamadoForm(initial=initial_data, user=request.user)
 
