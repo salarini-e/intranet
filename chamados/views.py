@@ -172,6 +172,7 @@ def detalhes(request, hash):
             mensagem.user_inclusao = servidor
             mensagem.confidencial = request.POST.get('confidencial') == '1'
             mensagem.save()            
+            mensagem.notificar_nova_mensagem()
             chamado.dt_atualizacao = timezone.now() 
             chamado.save() 
             message.success(request, 'Mensagem enviada com sucesso!')
@@ -412,6 +413,7 @@ def api_mudar_status(request):
             chamado.status = data['status']
             chamado.dt_atualizacao = timezone.now()
             chamado.save()
+            chamado.notificar_status_alterado()
             return JsonResponse({'status': 200, 'message': 'Status atualizado com sucesso!', 'display_status': chamado.get_status_display(), 'id': chamado.id})
         except:
             return JsonResponse({'status': 400, 'message': 'Erro ao atualizar status!'})
@@ -457,6 +459,7 @@ def api_mudar_atendente(request):
             chamado.profissional_designado = atendente
             chamado.dt_atualizacao = timezone.now()
             chamado.save()
+            chamado.notificar_profissional_designado_alterado()
             # print("Chamado id", chamado.id)
             return JsonResponse({
                 'status': 200,

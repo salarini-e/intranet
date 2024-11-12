@@ -288,6 +288,7 @@ class Chamado(models.Model):
             return f"Atualizado {self.__processTime(delta)}"
 
         return "Sem ações recentes"
+    
     # PARTE PARA TIMELIME
     def get_formatted_inclusao(self):
         dt_inclusao_naive = self.dt_inclusao.replace(tzinfo=None)
@@ -334,13 +335,52 @@ class Chamado(models.Model):
                 notificacao_profissional = Notificacao(
                     user=profissional,
                     icone='fa-solid fa-user-tie',
-                    msg=f'Você foi designado para o chamado: <b>{self.n_protocolo}</b>',
+                    msg=f'Você foi designado para o chamado <b>{self.n_protocolo}</b>',
                     link=reverse('chamados:detalhes', kwargs={'hash': self.hash}),
                     data=timezone.now()
                 )
                 notificacao_profissional.save()
             else:
                 raise ValueError('Erro ao designar o profissional.')
+            
+    def notificar_profissional_designado_alterado(self):
+        if self.profissional_designado and hasattr(self.profissional_designado, 'servidor'):
+            profissional = self.profissional_designado.servidor
+            notificacao_profissional = Notificacao(
+                user=profissional,
+                icone='fa-solid fa-user-tie',
+                msg=f'Você foi designado para o chamado <b>{self.n_protocolo}</b> ',
+                link=reverse('chamados:detalhes', kwargs={'hash': self.hash}),
+                data=timezone.now()
+            )
+            notificacao_profissional.save()
+    def notificar_status_alterado(self):
+        if self.status == '4':
+            msg = f'O chamado {self.n_protocolo} foi finalizado'
+            icone = 'fa-solid fa-check-circle'
+        else:
+            msg = f'O status do chamado {self.n_protocolo} foi alterado para <b>{self.get_status_display()}</b>'
+            icone = 'fa-solid fa-bell'
+
+        notificacao_requisitante = Notificacao(
+            user=self.requisitante,
+            icone=icone,
+            msg=msg,
+            link=reverse('chamados:detalhes', kwargs={'hash': self.hash}),
+            data=timezone.now()
+        )
+        notificacao_requisitante.save()
+
+        if self.profissional_designado and hasattr(self.profissional_designado, 'servidor'):
+            profissional = self.profissional_designado.servidor
+            notificacao_profissional = Notificacao(
+                user=profissional,
+                icone=icone,
+                msg=msg,
+                link=reverse('chamados:detalhes', kwargs={'hash': self.hash}),
+                data=timezone.now()
+            )
+            notificacao_profissional.save()
         
 class Pausas_Execucao_do_Chamado(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')
@@ -356,6 +396,7 @@ class Pausas_Execucao_do_Chamado(models.Model):
         
     def __str__(self):
         return f"Pausa do Chamado {self.chamado.n_protocolo} - {self.dt_inicio} até {self.dt_fim if self.dt_fim else 'em andamento'}"
+    
 class Mensagem(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')    
     mensagem = models.TextField(verbose_name='Mensagem')
@@ -404,6 +445,30 @@ class Mensagem(models.Model):
     def status_andamento_mensagem(self):
         result = self.getCreateTime()
         return result
+
+    def notificar_nova_mensagem(self):
+        if isinstance(self.user_inclusao, Atendente) or self.user_inclusao.user.is_superuser: 
+            # A mensagem foi enviada por um atendente ou superusuário, notificar o requisitante
+            requisitante = self.chamado.requisitante  # O requisitante já é um objeto do tipo Servidor
+            msg = f'O chamado <b>{self.chamado.n_protocolo}</b> tem uma nova mensagem do atendente!'
+            icone = "fa-solid fa-user"
+        else:
+            # A mensagem foi enviada pelo requisitante, notificar o profissional designado
+            profissional_designado = self.chamado.profissional_designado
+            if profissional_designado:  # Verifique se há um profissional designado
+                profissional_servidor = profissional_designado.servidor  # Assumindo que o profissional tem um campo 'servidor'
+                msg = f'O chamado <b>{self.chamado.n_protocolo}</b> tem uma nova mensagem do usuário!'
+                icone = "fa-solid fa-comments"
+
+        # Criação da notificação
+        link = reverse('chamados:detalhes', kwargs={'hash': self.chamado.hash})
+        Notificacao.objects.create(
+            user=requisitante,  # Sempre notificar o requisitante
+            icone=icone,
+            msg=msg,
+            link=link,
+            cadastrado_por=self.user_inclusao,  # Quem cadastrou a notificação
+        )
 
     class Meta:
         verbose_name = 'Mensagem'
