@@ -69,15 +69,23 @@ class CriarChamadoForm(forms.ModelForm):
         self.user = kwargs.pop('user', None) 
         super(CriarChamadoForm, self).__init__(*args, **kwargs)
         
-        if self.user and self.user.is_superuser:
+        if self.user and (self.user.is_superuser or hasattr(self.user, 'atendente')):
             self.fields['prioridade'] = forms.ChoiceField(
                 choices=Chamado.PRIORIDADE_CHOICES,
                 widget=forms.Select(attrs={'class': 'form-select'}),
                 label='Prioridade') 
+            
+            
             self.fields['requisitante'] = forms.ModelChoiceField(
                 queryset=Servidor.objects.all(),
                 widget=RequisitanteWidget(attrs={'class': 'form-select', 'required': 'required'}),
                 label='Nome do Servidor'
+            )
+
+            self.fields['profissional_designado'] = forms.ModelChoiceField(
+                queryset=Atendente.objects.filter(ativo=True),
+                widget=forms.Select(attrs={'class': 'form-select'}),
+                label='Profissional Designado'
             )
 
         else:
