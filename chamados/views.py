@@ -567,12 +567,16 @@ def tickets(request):
     if 'page' in current_query:
         del current_query['page']  # Remover o parâmetro 'page'
 
+    status_choices = Chamado.STATUS_CHOICES
+    prioridade_choices = Chamado.PRIORIDADE_CHOICES
     context = {
         'tipos': tipos_chamados,
         'chamados': page_obj,
         'secretarias': secretarias,
         'atendentes': atendentes,
         'tipos_chamados': tipos_chamados,
+        'status_choices': status_choices,
+        'prioridade_choices': prioridade_choices,
         'current_query': current_query.urlencode() 
     }
 

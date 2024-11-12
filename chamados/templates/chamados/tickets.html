@@ -291,7 +291,7 @@
                                 <input type="hidden" name="status" id="id_status" {% if request.session.status %}value='{% for status in request.session.status %}{{status.id}};{% endfor %}'{% endif %}>
                                 <select id="statusSelect" class="select-input form-select" aria-label="Select Status" data-id="id_status">
                                     <option value="" class="options-filter"></option>
-                                    {% for status in chamados.0.STATUS_CHOICES %}
+                                    {% for status in status_choices%}
                                     <option value="{{status.0}}" class="options-filter" {% if status.0|stringformat:"s" in status_selecionados %}selected{% endif %}>
                                         {{status.1}}
                                     </option>
@@ -335,7 +335,7 @@
                                 <input type="hidden" name="prioridade" id="id_prioridade" {% if request.session.prioridade %}value='{% for prioridade in request.session.prioridade %}{{prioridade.id}};{% endfor %}'{% endif %}>
                                 <select id="PrioridadeSelect" class="select-input form-select" aria-label="Select Prioridade" data-id="id_prioridade">
                                     <option value="" class="options-filter"></option>
-                                    {% for prioridade in chamados.0.PRIORIDADE_CHOICES %}
+                                    {% for prioridade in prioridade_choices %}
                                     <option value="{{prioridade.0}}" class="options-filter">{{prioridade.1}}</option>
                                     {% endfor %}
                                 </select>
