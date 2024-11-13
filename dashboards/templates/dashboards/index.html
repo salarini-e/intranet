@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/css/reset.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+</head>
+<body class="container-fluid bg-dark text-secondary">
+    <h1>Dashboard de Atendimentos de Chamados</h1>
+
+    <section id="graficos" class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="grafico-container">
+                        {{ grafico_total|safe }}
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="grafico-container">
+                        {{ grafico_secretaria|safe }}
+                    </div>
+                </div>
+                <!-- <div class="col-lg-4">
+                    <div class="grafico-container">
+                        opa
+                    </div>
+                </div> -->
+            </div>
+            <div class="row pt-4">
+                <div class="col-lg-3">
+                    {{ grafico_percentual|safe }}
+                </div>
+                <div class="col">
+                    {{ grafico_evolucao |safe }}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        #graficos {
+            margin-top: 20px;
+        }
+        
+        
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var elements = document.querySelectorAll(".plotly-graph-div.js-plotly-plot");
+            elements.forEach(function(element) {
+            element.style.height = "auto";
+            });
+        });
+    </script>
+</body>
+</html>
