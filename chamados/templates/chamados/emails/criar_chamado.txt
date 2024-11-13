@@ -6,18 +6,13 @@ Seu chamado foi criado com sucesso! Seguem os detalhes completos para sua refer�
 Protocolo: {{chamado.n_protocolo}}
 Título do Chamado: {{chamado.assunto}}
 Data da Criação: {{chamado.dt_inclusao}}
-Secretaria: {{chamado.setor.secretaria.nome}}
-Setor: {{chamado.setor.nome}}
+Secretaria: {{chamado.secretaria.nome}}
 Status: {{chamado.get_status_display}}
-Prioridade: {{chamado.get_prioridade_display}}
-Período de preferência: {% for periodo in chamado.periodo_preferencial.all %}{{ periodo }}{% if not forloop.last %}/{% endif %}{% endfor %}		
 Descrição do Problema/Solicitação:
 {{chamado.descricao}}
 
-{% if chamado.anexo %}
-Anexos:
-{{chamado.anexo.url}}
-{% endif %}
+Link para seu chamado:
+https://intranet.novafriburgo.rj.gov.br/chamados/{{chamado.hash}}/detalhes/
 
 Email gerado automaticamente pelo sistema {{site_name}}.
 
