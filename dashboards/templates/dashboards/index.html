@@ -23,14 +23,14 @@
                         <span class="text-success  me-2">
                             <i class="fa-solid fa-ticket"></i>
                         </span>
-                        2286
+                        {{total}}
                     </span>
                 </div>
                 <div class="ms-5 text-center">
                     Total de chamados resolvidos
                     <br>
                     <span class="text-success me-2"><i class="fa-solid fa-arrow-trend-up"></i></span>
-                    <span>2240</span>
+                    <span>{{total_resolvidos}}</span>
                 </div>
                 
             </div>
@@ -48,35 +48,39 @@
     <section id="graficos" class="row">
         <div class="col" style="height: 100%;">
             <div class="row">
-                <div class="col-4">
+                <div class="col">
                     <canvas id="graficoAtendimentos"></canvas>
                 </div>                
-                <div class="col-4">                    
+                <div class="col">                    
                     <canvas id="graficoChamadosSecretaria"></canvas>
                 </div>
-                <div class="col-4">                    
+                <div class="col">                    
                     <canvas id="graficoEvolucaoAtendimentos"></canvas>                    
 
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <canvas class="m-auto" id="graficoEvolucaoComputadores"></canvas>
+                    <canvas id="graficoEvolucaoComputadores"></canvas>
                 </div>
                 <div class="col d-flex">
-                    <canvas class="m-auto" id="graficoEvolucaoChamados"></canvas>
+                    <canvas id="graficoEvolucaoChamados"></canvas>
 
                 </div>
                 <div class="col d-flex">                    
-                    <canvas class="m-auto" id="graficoEvolucaoImpressora"></canvas>
+                    <canvas id="graficoEvolucaoImpressora"></canvas>
                 </div>                                
                 <div class="col">
-                    <canvas class="m-auto" id="graficoEvolucaoSistemas"></canvas>
+                    <canvas id="graficoEvolucaoSistemas"></canvas>
                 </div>
                 <div class="col">
-                    <canvas class="m-auto" id="graficoEvolucaoTelefonia"></canvas>
+                    <canvas id="graficoEvolucaoTelefonia"></canvas>
                 </div>                
-            </div>            
+            </div>     
+            <div class="row" style="height: auto;">
+                <div class="col">
+                </div>
+            </div>       
         </div>
     </section>
     
@@ -158,9 +162,9 @@
             margin: 0 20px 0 0;
             width: 40px;
         }
-        .col, .col-3, .col-4, .col-8{
+        /* .col, .col-3, .col-4, .col-8{
             border: 1px solid white;
-        }
+        } */
         html, body {
             height: 100%;
             background-color: black;

@@ -54,8 +54,6 @@ def dados_percentual_chamados_por_servico():
 
 
 def dados_evolucao_chamados_generic(value):
-    print('AAAAAAAAAAAHHHHHHHHHH!!!!!!!!')
-    print(value)
     chamados = (
         Chamado.objects.filter(tipo__nome=value)
         .annotate(mes=TruncMonth("dt_inclusao"))
@@ -73,7 +71,6 @@ def dados_evolucao_chamados_generic(value):
         print(chamado)
         dados["labels"].append(chamado["mes"].strftime("%b %Y"))
         dados["values"].append(chamado["total"])
-    print('informacoes', chamados)
     return dados
 
 def dados_evolucao_chamados_internet():

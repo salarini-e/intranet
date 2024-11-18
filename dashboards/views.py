@@ -8,7 +8,8 @@ def index(request):
     # grafico_total = graf_total_atendimentos_realizados()
 
     context = {
-        # 'grafico_total': grafico_total,
+        'total': Chamado.objects.all().count(),
+        'total_resolvidos': Chamado.objects.filter(status='4').count(),
         # 'grafico_percentual': graf_percentual_chamados_por_servico(),
         # 'grafico_evolucao': graf_evolucao_chamados_por_tipo(),
         # 'grafico_secretaria': graf_percentual_chamados_por_secretaria()
