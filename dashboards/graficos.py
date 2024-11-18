@@ -130,7 +130,7 @@ def dados_evolucao_atendimentos():
 
 def dados_chamados_por_secretaria():
     chamados = (
-        Chamado.objects.values("secretaria__apelido")  # Agrupar pelos nomes das secretarias
+        Chamado.objects.values("secretaria__nome")  # Agrupar pelos nomes das secretarias
         .annotate(total=Count("id"))  # Contar os chamados por secretaria
         .order_by("-total")  # Ordenar por número de chamados em ordem decrescente
     )
@@ -141,7 +141,7 @@ def dados_chamados_por_secretaria():
     }
 
     for chamado in chamados:
-        dados["labels"].append(chamado["secretaria__apelido"])  # Nome da secretaria
+        dados["labels"].append(chamado["secretaria__nome"])  # Nome da secretaria
         dados["values"].append(chamado["total"])  # Total de chamados
 
     return dados
