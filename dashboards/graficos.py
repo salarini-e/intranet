@@ -7,6 +7,7 @@ from django.db.models import Count
 from django.utils import timezone
 from django.db.models.functions import TruncDate
 from django.db.models.functions import TruncMonth
+from django.db import connection
 
 def dados_total_atendimentos_realizados():
     meses = [calendar.month_name[i] for i in range(1, 13)]
@@ -54,23 +55,31 @@ def dados_percentual_chamados_por_servico():
 
 
 def dados_evolucao_chamados_generic(value):
-    chamados = (
-        Chamado.objects.filter(tipo__nome=value)
-        .annotate(mes=TruncMonth("dt_inclusao"))
-        .values("mes")
-        .annotate(total=Count("id"))
-        .order_by("mes")
-    )
+
+
+    query = """
+        SELECT DATE_FORMAT(dt_inclusao, '%%Y-%%m-01') AS mes, COUNT(id) AS total
+        FROM chamados_chamado
+        WHERE tipo_id = (
+            SELECT id FROM chamados_tipochamado WHERE nome = %s
+        )
+        GROUP BY mes
+        ORDER BY mes;
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, [value])
+        resultados = cursor.fetchall()
 
     dados = {
         "labels": [],
         "values": []
     }
 
-    for chamado in chamados:
-        print(chamado)
-        dados["labels"].append(chamado["mes"].strftime("%b %Y"))
-        dados["values"].append(chamado["total"])
+    for mes, total in resultados:
+        dados["labels"].append(mes)  # `mes` já está em formato de string
+        dados["values"].append(total)
+
     return dados
 
 def dados_evolucao_chamados_internet():
@@ -130,7 +139,7 @@ def dados_evolucao_atendimentos():
 
 def dados_chamados_por_secretaria():
     chamados = (
-        Chamado.objects.values("secretaria__nome")  # Agrupar pelos nomes das secretarias
+        Chamado.objects.values("secretaria__apelido")  # Agrupar pelos nomes das secretarias
         .annotate(total=Count("id"))  # Contar os chamados por secretaria
         .order_by("-total")  # Ordenar por número de chamados em ordem decrescente
     )
@@ -141,7 +150,7 @@ def dados_chamados_por_secretaria():
     }
 
     for chamado in chamados:
-        dados["labels"].append(chamado["secretaria__nome"])  # Nome da secretaria
+        dados["labels"].append(chamado["secretaria__apelido"])  # Nome da secretaria
         dados["values"].append(chamado["total"])  # Total de chamados
 
     return dados
