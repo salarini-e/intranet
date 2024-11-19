@@ -83,7 +83,7 @@ class Chamado(models.Model):
         ('4', 'Finalizado'),
     )
 
-    setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, verbose_name='Para qual setor é o chamado?', null=True)
+    setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, verbose_name='Para qual setor é o chamado?', null=True, blank=True)
     secretaria = models.ForeignKey(Secretaria, on_delete=models.SET_NULL, verbose_name='Para qual setor é o chamado?', null=True)
     telefone=models.CharField(max_length=15, verbose_name='Qual telefone para contato?')
     requisitante = models.ForeignKey(Servidor, verbose_name='Nome do servidor', null=True, on_delete=models.SET_NULL)
@@ -95,14 +95,14 @@ class Chamado(models.Model):
     descricao = models.TextField(default='', verbose_name='Descrição do problema')
     periodo_preferencial = models.ManyToManyField(PeriodoPreferencial, verbose_name='Escolha o período que você pode ser atendido')
     dt_agendamento = models.DateTimeField(verbose_name='Data agendada para o atendimento', null=True, blank=True)
-    atendente = models.ForeignKey(Atendente, on_delete=models.SET_NULL, verbose_name='Atendente', null=True,related_name="chamados_atendente")
+    atendente = models.ForeignKey(Atendente, on_delete=models.SET_NULL, verbose_name='Atendente', null=True,related_name="chamados_atendente", blank=True)
     profissional_designado = models.ForeignKey(Atendente, on_delete=models.SET_NULL, verbose_name='Profissional designado', null=True, related_name="profissional_designado_chamados")
     dt_inclusao = models.DateTimeField(auto_now_add=True, verbose_name='Data de inclusão')
     user_inclusao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, null=True, verbose_name='Usuário que cadastrou', related_name="user_inclusao_chamados")
     dt_atualizacao = models.DateTimeField(auto_now=True, verbose_name='Data de ultima atualização', null=True)
-    user_atualizacao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Usuário da ultima atualização', null=True, related_name="user_atualizacao_chamados")
-    dt_inicio_execucao = models.DateTimeField(verbose_name='Data do inicio da execução do chamado', null=True)
-    dt_execucao = models.DateTimeField(verbose_name='Data o fim da execução do chamado', null=True)
+    user_atualizacao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Usuário da ultima atualização', null=True, related_name="user_atualizacao_chamados", blank=True)
+    dt_inicio_execucao = models.DateTimeField(verbose_name='Data do inicio da execução do chamado', null=True, blank=True)
+    dt_execucao = models.DateTimeField(verbose_name='Data o fim da execução do chamado', null=True, blank=True)
     dt_fechamento = models.DateTimeField(verbose_name='Data do fechamaneto do chamado', null=True)
     n_protocolo = models.CharField(max_length=14, verbose_name='Número de protocolo', null=True)
     anexo = models.FileField(upload_to='chamados/anexos/', default=None, verbose_name='Possui alguma foto ou print do problema? Caso sim, anexe-a abaixo.', null=True, blank=True)
@@ -119,7 +119,7 @@ class Chamado(models.Model):
         if self.status == '4' and not self.dt_fechamento:
             self.dt_fechamento = timezone.now()
         super().save(*args, **kwargs)
-        
+
     def gerar_hash(self):
         if not self.hash:            
             hash_obj = hashlib.sha256()
