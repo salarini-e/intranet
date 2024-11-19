@@ -103,7 +103,7 @@ def dados_evolucao_atendimentos():
 
     atendimentos = (
         Chamado.objects.filter(dt_execucao__gte=data_limite)
-        .annotate(dia=TruncDate('dt_execucao'))  # Truncando para o dia
+        .annotate(dia=TruncDate('dt_fechamento'))  # Truncando para o dia
         .values('dia', 'atendente__nome_servidor')  # Agrupando por data e atendente
         .annotate(total=Count('id'))  # Contando o número de atendimentos por dia
         .order_by('dia')  # Ordenando por data
