@@ -8,6 +8,10 @@ from django.utils import timezone
 from django.db.models.functions import TruncDate
 from django.db.models.functions import TruncMonth
 from django.db import connection
+from django.utils.timezone import now
+from collections import defaultdict
+from django.db.models import Count
+from datetime import timedelta
 
 def dados_total_atendimentos_realizados():
     meses = [calendar.month_name[i] for i in range(1, 13)]
@@ -97,40 +101,55 @@ def dados_evolucao_chamados_impressora():
 def dados_evolucao_chamados_telefonia():
     return dados_evolucao_chamados_generic('Telefonia')
 
+
+
 def dados_evolucao_atendimentos():
     # Definindo a data limite para os últimos 30 dias
-    data_limite = timezone.now() - timezone.timedelta(days=30)
+    data_limite = now() - timedelta(days=30)
 
-    atendimentos = (
-        Chamado.objects.filter(dt_execucao__gte=data_limite)
-        .annotate(dia=TruncDate('dt_fechamento'))  # Truncando para o dia
-        .values('dia', 'atendente__nome_servidor')  # Agrupando por data e atendente
-        .annotate(total=Count('id'))  # Contando o número de atendimentos por dia
-        .order_by('dia')  # Ordenando por data
-    )
+    # Query SQL ajustada para usar profissional_designado
+    query = """
+        SELECT 
+            DATE(chamado.dt_fechamento) AS dia,
+            atendente.nome_servidor AS atendente,
+            COUNT(chamado.id) AS total
+        FROM chamados_chamado AS chamado
+        LEFT JOIN chamados_atendente AS atendente
+            ON chamado.profissional_designado_id = atendente.id
+        WHERE chamado.dt_fechamento >= %s AND chamado.dt_fechamento IS NOT NULL
+        GROUP BY dia, atendente
+        ORDER BY dia;
+    """
 
+    # Executar a query no banco de dados
+    with connection.cursor() as cursor:
+        cursor.execute(query, [data_limite])
+        results = cursor.fetchall()
+
+    # Estrutura para os dados
     dados = {
-        "labels": [],  # Datas
-        "datasets": []  # Atendentes
+        "labels": [],
+        "datasets": []
     }
 
-    # Organizar os dados
-    atendentes = set()  # Para armazenar os atendentes
-    for atendimento in atendimentos:
-        dados["labels"].append(atendimento["dia"].strftime("%d %b"))
-        atendentes.add(atendimento["atendente__nome_servidor"])
+    atendente_data = defaultdict(lambda: defaultdict(int))
+    dias_set = set()
 
-    # Para cada atendente, criar um dataset com os dados
-    for atendente in atendentes:
+    # Processar os resultados da query
+    for dia, atendente, total in results:
+        dia_str = dia.strftime("%d %b")
+        dias_set.add(dia_str)
+        atendente_data[atendente or "Não definido"][dia_str] = total
+
+    # Ordenar as datas
+    dados["labels"] = sorted(dias_set)
+
+    # Criar os datasets
+    for atendente, dia_totais in atendente_data.items():
         dataset = {
             "label": atendente,
-            "data": []
+            "data": [dia_totais.get(dia, 0) for dia in dados["labels"]]
         }
-        for atendimento in atendimentos:
-            if atendimento["atendente__nome_servidor"] == atendente:
-                dataset["data"].append(atendimento["total"])
-            else:
-                dataset["data"].append(0)  # Caso o atendente não tenha atendido naquele dia
         dados["datasets"].append(dataset)
 
     return dados

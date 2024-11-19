@@ -17,6 +17,7 @@ def index(request):
     context = {
         'total': total,
         'total_resolvidos': total_resolvidos,
+        'total_pendentes': total - total_resolvidos,
         'eficiencia': str(int((total_resolvidos/(total))*100))+'%',
         # 'grafico_percentual': graf_percentual_chamados_por_servico(),
         # 'grafico_evolucao': graf_evolucao_chamados_por_tipo(),

@@ -18,10 +18,10 @@
             <div class="m-auto">
 
             </div>
-            <div id="alertas" class="m-auto">
+            <div id="alertas" class="ms-auto my-auto">
                 <span class="m-auto">Nenhum alerta no momento.</span>
             </div>
-            <div class="my-auto ms-auto">
+            <div class="my-auto ms-4">
                 <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
                     <i class="fa-solid fa-eye me-2"></i>Monitor de serviços
                 </button>            
@@ -87,15 +87,55 @@
             </div>
             <div class="col" style="height: 100%;">         
                 <div class="row">
-                    <div class="col">
+                    <div class="col-6">
                         <canvas id="graficoEvolucaoAtendimentos"></canvas>                    
                     </div>
-                    <div class="col">
-                        
+                    <div class="col-4">                        
+                    <table class="table text-white table-borderless">
+                        <thead>
+                            <tr>
+                                <th style="font-weight: bold;" colspan="2" scope="col">Informações gerais</th>                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Abertos</td>
+                                <td style="font-weight: bold;">{{abertos}}</td>
+                            </tr>
+                            <tr>
+                                <td>Pendentes</td>
+                                <td style="font-weight: bold;">{{pendentes}}</td>
+                            </tr>                            
+                        </tbody>
+                    </table>
+                    <table class="table text-white table-borderless">
+                        <thead>
+                            <tr>
+                                <th style="font-weight: bold;" colspan="2" scope="col">Informações do dia</th>                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Abertos</td>
+                                <td style="font-weight: bold;">{{abertos}}1</td>
+                            </tr>
+                            <tr>
+                                <td>Pendentes</td>
+                                <td style="font-weight: bold;">{{pendentes}}</td>
+                            </tr>                            
+                        </tbody>
+                    </table>
+                    </div>
+
+                    <div class="col-2 d-flex flex-column" style="color: black;">
+                        Totais
+                        <canvas id="donutChart"></canvas>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
+                        <canvas id="lineChart"></canvas>
+
                     </div>
                     <div class="col">
                         <canvas id="graficoEvolucaoComputadores"></canvas>
@@ -444,8 +484,8 @@
                     backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
                     borderWidth: 2,
                     tension: 0.4, // Suavizar a linha
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#007bff',
+                    pointBackgroundColor: 'green',
+                    pointBorderColor: 'green',
                     pointRadius: 5,
                     pointHoverRadius: 7
                 }]
@@ -495,21 +535,26 @@
         .then(response => response.json())
         .then(data => {
             const ctx = document.getElementById('graficoEvolucaoAtendimentos').getContext('2d');
+            const cores = [
+            '#007bff', '#28a745', '#dc3545', '#ffc107', '#17a2b8', '#6f42c1',
+            '#fd7e14', '#e83e8c', '#20c997', '#6610f2'
+            ];
             new Chart(ctx, {
                 type: 'line', // Gráfico de linha
                 data: {
                     labels: data.labels, // Datas
-                    datasets: data.datasets.map(atendente => ({
+                    datasets: data.datasets.map((atendente, index) => ({
                         label: atendente.label,
                         data: atendente.data,
-                        borderColor: '#007bff', // Cor da linha
-                        backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
-                        borderWidth: 2,
+                        borderColor: cores[index % cores.length], // Cor da linha
+                        backgroundColor: `${cores[index % cores.length]}`, // Cor do preenchimento (33 = transparência)
+                    
+                        // borderWidth: 1,
                         tension: 0.4, // Suavizar a linha
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#007bff',
-                        pointRadius: 5,
-                        pointHoverRadius: 7
+                        // pointBackgroundColor: '#fff',
+                        // pointBorderColor: cores[index % cores.length],
+                        // pointRadius: 5,
+                        // pointHoverRadius: 7
                     }))
                 },
                 options: {
@@ -521,7 +566,15 @@
                             color: '#FFFFFF'
                         },
                         legend: {
-                            display: true // Exibe a legenda
+                            display: true, // Exibe a legenda
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: {
+                                        size: 10, // Tamanho do ícone
+                                        color: '#fff'
+                                    }
+                            }
                         },
                         tooltip: {
                             callbacks: {
@@ -564,12 +617,12 @@
                 datasets: [{
                     label: 'Impressora',
                     data: data.values, // Valores
-                    borderColor: '#007bff', // Cor da linha
+                    borderColor: 'blue', // Cor da linha
                     backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
                     borderWidth: 2,
                     tension: 0.4, // Suavizar a linha
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#007bff',
+                    pointBackgroundColor: 'purple',
+                    pointBorderColor: 'purple',
                     pointRadius: 5,
                     pointHoverRadius: 7
                 }]
@@ -626,12 +679,12 @@
                 datasets: [{
                     label: 'Computadores',
                     data: data.values, // Valores
-                    borderColor: '#007bff', // Cor da linha
-                    backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
+                    borderColor: 'red', // Cor da linha
+                    backgroundColor: 'red', // Cor do preenchimento
                     borderWidth: 2,
                     tension: 0.4, // Suavizar a linha
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#007bff',
+                    // pointBackgroundColor: '#fff',
+                    pointBorderColor: 'red',
                     pointRadius: 5,
                     pointHoverRadius: 7
                 }]
@@ -692,8 +745,8 @@
                     backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
                     borderWidth: 2,
                     tension: 0.4, // Suavizar a linha
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#007bff',
+                    pointBackgroundColor: 'orange',
+                    pointBorderColor: 'orange',
                     pointRadius: 5,
                     pointHoverRadius: 7
                 }]
@@ -754,8 +807,8 @@
                     backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
                     borderWidth: 2,
                     tension: 0.4, // Suavizar a linha
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#007bff',
+                    pointBackgroundColor: 'blue',
+                    pointBorderColor: 'blue',
                     pointRadius: 5,
                     pointHoverRadius: 7
                 }]
@@ -858,6 +911,103 @@
                 }
             });
         });
+
+        function donutChart(value1, value2){
+            // Dados do gráfico
+        const data = {
+            labels: ['Concluídos', 'Pendentes'], // Legendas para os valores
+            datasets: [{
+                label: 'Status dos Chamados',
+                data: [value1, value2], // Valores de exemplo
+                backgroundColor: ['#4CAF50', '#F44336'], // Cores dos segmentos
+                hoverOffset: 1
+            }]
+        };
+
+        // Configuração do gráfico
+        const config = {
+            type: 'doughnut',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top', // Posição da legenda
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                const label = tooltipItem.label || '';
+                                const value = tooltipItem.raw || 0;
+                                return `${label}: ${value}`;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Renderização do gráfico
+        const ctx = document.getElementById('donutChart').getContext('2d');
+        const donutChart = new Chart(ctx, config);
+        }
+
+        function gerarNumerosAleatorios(quantidade, max) {
+            const numeros = [];
+            for (let i = 0; i < quantidade; i++) {
+                numeros.push(Math.floor(Math.random() * max));
+            }
+            return numeros;
+        }
+
+        function graficoDeLinha(){
+            
+        // Dados para o gráfico
+        const labels = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho'];
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: 'Chamados Resolvidos',
+                data: gerarNumerosAleatorios(labels.length, 100),
+                borderColor: '#4CAF50',
+                backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                fill: true,
+                tension: 0.3, // Curvatura das linhas
+            }, {
+                label: 'Chamados Abertos',
+                data: gerarNumerosAleatorios(labels.length, 100),
+                borderColor: '#F44336',
+                backgroundColor: 'rgba(244, 67, 54, 0.2)',
+                fill: true,
+                tension: 0.3, // Curvatura das linhas
+            }]
+        };
+
+        // Configuração do gráfico
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        // Renderizar o gráfico
+        const ctx = document.getElementById('lineChart').getContext('2d');
+        const lineChart = new Chart(ctx, config);
+        }
+        donutChart({{total}}, {{total_pendentes}});
+        graficoDeLinha();
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
