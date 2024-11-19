@@ -365,7 +365,7 @@ def declarar_motivo_pausa(request, hash):
 def finalizar_atendimento(request, hash):
     chamado = Chamado.objects.get(hash=hash)
     chamado.dt_execucao = timezone.now()
-    chamado.status = '3'
+    chamado.status = '4'
     chamado.save()
     message.success(request, f'Atendimento finalizado ao chamado {chamado.n_protocolo}!')
     mensagem, status = Email_Chamado(chamado).notificar_solicitante('Seu chamado foi finalizado!')

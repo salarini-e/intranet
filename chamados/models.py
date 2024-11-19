@@ -115,6 +115,11 @@ class Chamado(models.Model):
     def __str__(self):
         return self.n_protocolo
 
+    def save(self, *args, **kwargs):
+        if self.status == '4' and not self.dt_fechamento:
+            self.dt_fechamento = timezone.now()
+        super().save(*args, **kwargs)
+        
     def gerar_hash(self):
         if not self.hash:            
             hash_obj = hashlib.sha256()
@@ -151,11 +156,11 @@ class Chamado(models.Model):
         pausas = Pausas_Execucao_do_Chamado.objects.filter(chamado=self)
         if pausas.exists():
             if pausas.last().dt_fim:
-                print(1)
+                # print(1)
                 return False
-            print(2)
+            # print(2)
             return True
-        print(3)
+        # print(3)
         return False
 
     def get_prioridade_class(self):
@@ -175,8 +180,8 @@ class Chamado(models.Model):
             '3': 'status-fechado',
             '4': 'status-finalizado',
         }
-        print(self.descricao)
-        print(self.status)
+        # print(self.descricao)
+        # print(self.status)
         try:
             return status_classes[self.status]
         except:
