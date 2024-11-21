@@ -59,7 +59,14 @@
                             </div>
                             <div class="col">
                                 <div class="row">
-                                    <div class="col-lg-8 col-sm-11 chamados-tickets-infos-chamado">
+                                    <div class="col-lg-1 d-flex col-sm-11">
+                                        {% if chamado.requisitante.avatar %}
+                                        <img src="{{chamado.requisitante.avatar.url}}" alt="avatar">
+                                        {% else %}
+                                        <img class="m-auto img-fluid" style="max-width: 70px;" src="/static/images/users/atendenteAvatar.png" alt="avatar">
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-lg-7 col-sm-11 chamados-tickets-infos-chamado">
                                         <div class="chamados-tickets-infos-chamado-text">
                                             {% if chamado.is_novo %}
                                             {% if chamado.respondido_pelo_cliente %}
@@ -70,7 +77,7 @@
                                                 {% endif %}
                                             </div>
                                             {% else %}
-                                            <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket">Novo</span>
+                                            <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket">  Novo</span>
                                             {% endif %}
                                             {% else %}
                                             {% if chamado.respondido_pelo_cliente %}
