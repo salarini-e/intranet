@@ -8,13 +8,16 @@
     <link rel="stylesheet" href="/static/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+<script>
+    let periodo = 'dia';
+</script>
 <body class="container-fluid df-elx flex-column">
     <header class="row">
         <div class="col d-flex p-3">
                 <div class="my-auto logo">
                     <img src="https://intranet.novafriburgo.rj.gov.br/static/brasao.ico" alt="">
                 </div>
-                <h1 class="my-auto">Indicadores chamados</h1>
+                <h1 class="my-auto">Indicadores chamados</h1>               
             <div class="m-auto">
 
             </div>
@@ -24,7 +27,63 @@
             <div class="my-auto ms-4">
                 <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
                     <i class="fa-solid fa-eye me-2"></i>Monitor de serviços
-                </button>            
+                </button>     
+                <button class="btn btn-dark my-auto ms-lg-1" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="background-color: rgba(0, 0, 0, 0.733);">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content bg-dark">
+                        <div class="modal-header bg-dark border-0">
+                        <h1 class="modal-title fs-5 bg-dark" id="exampleModalLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="px-5 modal-body bg-dark">
+                            
+                            <div class="row">
+                                <div class="col d-flex flex-column">
+                                    <p>Período dos gráficos</p>
+                                    <div class="d-flex">
+                                        <div>
+                                            <input type="radio" name="periodo" id="dia" value="dia" onclick="mudarPeriodo(this)">
+                                            <label for="dia">Dia</label>
+                                        </div>
+                                        <div class="mx-3">
+                                            <input type="radio" name="periodo" id="mes" value="mes" onclick="mudarPeriodo(this)">
+                                            <label for="mes">Mês</label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" name="periodo" id="ano" value="ano" onclick="mudarPeriodo(this)">
+                                            <label for="ano">Ano</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col d-flex flex-column">
+                                    Grafíco atendentes
+                                    <div class="mt-3">
+                                        <div class="container">
+                                            <div class="d-flex justify-content-center align-items-center">
+                                              <p class="me-3 my-auto">Grafíco de linha</p>
+                                              <div class="form-check my-auto form-switch">
+                                                <input class="form-check-input" type="checkbox" id="switchToggle" onchange="alterarValor()">
+                                              </div>
+                                              <p class="ms-3 my-auto">Grafíco de barra</p>
+                                            </div>
+                                          </div>    
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer border-0 bg-dark">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success" onclick="gerarGraficos(periodo)" data-bs-dismiss="modal">Aplicar alterações</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>       
             </div>
         </div>
     </header>
@@ -90,46 +149,49 @@
                     <div class="col-6">
                         <canvas id="graficoEvolucaoAtendimentos"></canvas>                    
                     </div>
-                    <div class="col-4">                        
-                    <table class="table text-white table-borderless">
+                    <div class="col-4 d-flex">                        
+                    <table class="table text-white table-borderless m-auto">
                         <thead>
                             <tr>
-                                <th style="font-weight: bold;" colspan="2" scope="col">Informações gerais</th>                                
+                                <th style="font-weight: bold;" colspan="2" scope="col">Informações</th>                                
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Abertos</td>
-                                <td style="font-weight: bold;">{{abertos}}</td>
+                                <td>Chamados em aberto</td>
+                                <td id="chamadosAbertos" style="font-weight: bold;">{{chamados_abertos}}</td>
                             </tr>
                             <tr>
-                                <td>Pendentes</td>
-                                <td style="font-weight: bold;">{{pendentes}}</td>
+                                <td>Chamados pendentes</td>
+                                <td id="chamadosPendentes" style="font-weight: bold;">{{chamados_pendentes}}</td>
                             </tr>                            
-                        </tbody>
-                    </table>
-                    <table class="table text-white table-borderless">
-                        <thead>
                             <tr>
-                                <th style="font-weight: bold;" colspan="2" scope="col">Informações do dia</th>                                
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Abertos</td>
-                                <td style="font-weight: bold;">{{abertos}}1</td>
+                                <td>Chamados criados hoje</td>
+                                <td id="chamadosHoje" style="font-weight: bold;">{{chamados_criados_hoje}}</td>
                             </tr>
                             <tr>
-                                <td>Pendentes</td>
-                                <td style="font-weight: bold;">{{pendentes}}</td>
-                            </tr>                            
+                                <td>Média diária</td>
+                                <td id="mediaDiaria" style="font-weight: bold;">{{media_diaria}}</td>
+                            </tr>
+                            <tr>
+                                <td>Chamados criados esse mês</td>
+                                <td id="chamadosMes" style="font-weight: bold;">{{chamados_criados_mes}}</td>
+                            </tr>
+                            <tr>
+                                <td>Média mensal</td>
+                                <td id="mediaMensal" style="font-weight: bold;">{{media_mensal}}</td>
+                            </tr>
+
+                            
                         </tbody>
                     </table>
                     </div>
 
                     <div class="col-2 d-flex flex-column" style="color: black;">
-                        Totais
+                        <span class="m-auto">
+                            Totais
                         <canvas id="donutChart"></canvas>
+                        </span>
                     </div>
                 </div>
                 <div class="row">
@@ -253,6 +315,9 @@
     </div>
     </div>
     <style>
+        tr, td{
+            line-height: 14pt;
+        }
         canvas{
             width: 100%;
         }
@@ -392,146 +457,136 @@
             background-color: #6c757d; /* Cor padrão (neutra) */
         }
 
+        tbody tr:nth-child(odd) {   
+            background-color: #1b1b1b; /* Cor de fundo para linhas ímpares */
+        }
+        /* Estilizando o switch */
+        .form-check-input {
+        background-color: #000;  /* Fundo preto */
+        border-color: #ccc; /* Cor da borda do switch */
+        position: relative;
+        }
+
+        /* A bolinha do switch, que será branca */
+        .form-check-input::before {
+        background-color: #fff; /* Bolinha branca */
+        border-radius: 50%; /* Fazendo a bolinha redonda */
+        content: ''; /* Garantindo que a bolinha apareça */
+        position: absolute;
+        top: 2px; /* Ajuste a posição para alinhar a bolinha corretamente */
+        left: 3px; /* Ajuste a posição para alinhar a bolinha corretamente */
+        width: 8px; /* Tamanho da bolinha */
+        height: 8px; /* Tamanho da bolinha */
+        transition: 0.3s; /* Suaviza a transição da bolinha */
+        }
+
+        /* Quando o switch estiver ligado, mudamos a posição da bolinha */
+        .form-check-input:checked {
+        background-color: #000; /* Mantenha o fundo preto */
+        }
+
+        /* Estilizando a bolinha quando estiver no estado "ligado" */
+        .form-check-input:checked::before {
+        left: 16px; /* A bolinha se move para a direita quando ligado */
+        }
+
        /* #offcanvasRight{
             background-color: rgb(32, 32, 32);
         } */
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+    
+        
+    function gerarTotalAtendimentos() {
         fetch('{% url 'dashboards:get-dados-atendimento' %}') // Modifique para sua rota real
-            .then(response => response.json())
-            .then(data => {
-                const ctx = document.getElementById('graficoAtendimentos').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar', // Tipo do gráfico
-                    data: data,
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: { position: 'top' },
-                            title: { display: true, text: 'Total de Atendimentos de Chamados por Mês', color: '#FFFFFF' }
-                        },
-                        scales: {
-                            x: { title: { display: true, text: 'Mês', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } },
-                            y: { title: { display: true, text: 'Total de Chamados', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } }
-                        }
-                    }
-                });
-            });
-    //         fetch('{% url "dashboards:get-dados-servicos" %}')
-    // .then(response => response.json())
-    // .then(data => {
-    //     const ctx = document.getElementById('graficoServicos').getContext('2d');
-    //     new Chart(ctx, {
-    //         type: 'bar', // Alterado para barra (ou outro estilo semelhante)
-    //         data: {
-    //             labels: data.labels, // Obtém os labels da API
-    //             datasets: [{
-    //                 label: 'Percentual de Chamados por Tipo de Serviço',
-    //                 data: data.values, // Obtém os valores da API
-    //                 backgroundColor: data.colors, // Obtém as cores personalizadas da API
-    //                 borderColor: data.colors.map(color => color.replace('FF', 'AA')), // Borda mais clara
-    //                 borderWidth: 1
-    //             }]
-    //         },
-    //         options: {
-    //             responsive: true,
-    //             plugins: {
-    //                 title: {
-    //                     display: true,
-    //                     text: 'Percentual de Chamados por Serviço',
-    //                     color: '#FFFFFF'
-    //                 },
-    //                 legend: {
-    //                     display: false // Remove a legenda para seguir o estilo do gráfico anterior
-    //                 }
-    //             },
-    //             scales: {
-    //                 x: {
-    //                     ticks: { color: '#FFFFFF' }, // Cor dos rótulos no eixo X
-    //                     title: {
-    //                         display: true,
-    //                         text: 'Tipos de Serviço',
-    //                         color: '#FFFFFF'
-    //                     }
-    //                 },
-    //                 y: {
-    //                     ticks: { color: '#FFFFFF' }, // Cor dos rótulos no eixo Y
-    //                     title: {
-    //                         display: true,
-    //                         text: 'Percentual (%)',
-    //                         color: '#FFFFFF'
-    //                     },
-    //                     beginAtZero: true
-    //                 }
-    //             }
-    //         }
-    //     });
-    // })
-    // .catch(error => console.error('Erro ao carregar dados do gráfico:', error));
-    fetch('{% url "dashboards:get-dados-internet" %}')
-    .then(response => response.json())
-    .then(data => {
-        const ctx = document.getElementById('graficoEvolucaoChamados').getContext('2d');
-        new Chart(ctx, {
-            type: 'line', // Gráfico de linha
-            data: {
-                labels: data.labels, // Meses
-                datasets: [{
-                    label: 'Internet',
-                    data: data.values, // Valores
-                    borderColor: '#007bff', // Cor da linha
-                    backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
-                    borderWidth: 2,
-                    tension: 0.4, // Suavizar a linha
-                    pointBackgroundColor: 'green',
-                    pointBorderColor: 'green',
-                    pointRadius: 5,
-                    pointHoverRadius: 7
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Internet',
-                         color: '#FFFFFF'
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('graficoAtendimentos').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar', // Tipo do gráfico
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: { display: true, text: 'Total de Atendimentos de Chamados por Mês', color: '#FFFFFF' }
                     },
-                    legend: {
-                        display: false // Desativa a legenda
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `Total: ${context.raw}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: { color: '#FFFFFF' },
-                        title: {
-                            display: true,
-                            text: 'Mês',
-                             color: '#FFFFFF'
-                        }
-                    },
-                    y: {
-                        ticks: { color: '#FFFFFF' },
-                        title: {
-                            display: true,
-                            text: 'Número de Chamados',
-                             color: '#FFFFFF'
-                        },
-                        beginAtZero: true
+                    scales: {
+                        x: { title: { display: true, text: 'Mês', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } },
+                        y: { title: { display: true, text: 'Total de Chamados', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } }
                     }
                 }
-            }
+            });
         });
-    });
-    fetch('{% url "dashboards:get-dados-evolucao-atendimentos" %}')
+    }
+    function gerarInternet(periodo){        
+        fetch('{% url "dashboards:get-dados-internet" %}?periodo='+periodo)
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('graficoEvolucaoChamados').getContext('2d');
+            new Chart(ctx, {
+                type: 'line', // Gráfico de linha
+                data: {
+                    labels: data.labels, // Meses
+                    datasets: [{
+                        label: 'Internet',
+                        data: data.values, // Valores
+                        borderColor: '#007bff', // Cor da linha
+                        backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
+                        borderWidth: 2,
+                        tension: 0.4, // Suavizar a linha
+                        pointBackgroundColor: 'green',
+                        pointBorderColor: 'green',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Internet',
+                            color: '#FFFFFF'
+                        },
+                        legend: {
+                            display: false // Desativa a legenda
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Total: ${context.raw}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#FFFFFF' },
+                            title: {
+                                display: false,
+                                text: 'Mês',
+                                color: '#FFFFFF'
+                            }
+                        },
+                        y: {
+                            ticks: { color: '#FFFFFF' },
+                            title: {
+                                display: true,
+                                text: 'Número de Chamados',
+                                color: '#FFFFFF'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    function gerarEvolucaoAtendimentos(){
+        fetch('{% url "dashboards:get-dados-evolucao-atendimentos" %}')
         .then(response => response.json())
         .then(data => {
             const ctx = document.getElementById('graficoEvolucaoAtendimentos').getContext('2d');
@@ -606,255 +661,266 @@
                 }
             });
         });
-        fetch('{% url "dashboards:get-dados-impressora" %}')
-    .then(response => response.json())
-    .then(data => {
-        const ctx = document.getElementById('graficoEvolucaoImpressora').getContext('2d');
-        new Chart(ctx, {
-            type: 'line', // Gráfico de linha
-            data: {
-                labels: data.labels, // Meses
-                datasets: [{
-                    label: 'Impressora',
-                    data: data.values, // Valores
-                    borderColor: 'blue', // Cor da linha
-                    backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
-                    borderWidth: 2,
-                    tension: 0.4, // Suavizar a linha
-                    pointBackgroundColor: 'purple',
-                    pointBorderColor: 'purple',
-                    pointRadius: 5,
-                    pointHoverRadius: 7
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Impressora',
-                         color: '#FFFFFF'
-                    },
-                    legend: {
-                        display: false // Desativa a legenda
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `Total: ${context.raw}`;
+    }
+    function gerarImpressora(periodo){
+        fetch('{% url "dashboards:get-dados-impressora" %}?periodo='+periodo)
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('graficoEvolucaoImpressora').getContext('2d');
+            new Chart(ctx, {
+                type: 'line', // Gráfico de linha
+                data: {
+                    labels: data.labels, // Meses
+                    datasets: [{
+                        label: 'Impressora',
+                        data: data.values, // Valores
+                        borderColor: 'blue', // Cor da linha
+                        backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
+                        borderWidth: 2,
+                        tension: 0.4, // Suavizar a linha
+                        pointBackgroundColor: 'purple',
+                        pointBorderColor: 'purple',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Impressora',
+                            color: '#FFFFFF'
+                        },
+                        legend: {
+                            display: false // Desativa a legenda
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Total: ${context.raw}`;
+                                }
                             }
                         }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: { color: '#FFFFFF' },
-                        title: {
-                            display: true,
-                            text: 'Mês',
-                             color: '#FFFFFF'
-                        }
                     },
-                    y: {
-                        ticks: { color: '#FFFFFF' },
-                        title: {
-                            display: true,
-                            text: 'Número de Chamados',
-                             color: '#FFFFFF'
+                    scales: {
+                        x: {
+                            ticks: { color: '#FFFFFF' },
+                            title: {
+                                display: false,
+                                text: 'Mês',
+                                color: '#FFFFFF'
+                            }
                         },
-                        beginAtZero: true
+                        y: {
+                            ticks: { color: '#FFFFFF' },
+                            title: {
+                                display: true,
+                                text: 'Número de Chamados',
+                                color: '#FFFFFF'
+                            },
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
+            });
         });
-    });
-    fetch('{% url "dashboards:get-dados-computadores" %}')
-    .then(response => response.json())
-    .then(data => {
-        const ctx = document.getElementById('graficoEvolucaoComputadores').getContext('2d');
-        new Chart(ctx, {
-            type: 'line', // Gráfico de linha
-            data: {
-                labels: data.labels, // Meses
-                datasets: [{
-                    label: 'Computadores',
-                    data: data.values, // Valores
-                    borderColor: 'red', // Cor da linha
-                    backgroundColor: 'red', // Cor do preenchimento
-                    borderWidth: 2,
-                    tension: 0.4, // Suavizar a linha
-                    // pointBackgroundColor: '#fff',
-                    pointBorderColor: 'red',
-                    pointRadius: 5,
-                    pointHoverRadius: 7
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Computadores',
-                         color: '#FFFFFF'
-                    },
-                    legend: {
-                        display: false // Desativa a legenda
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `Total: ${context.raw}`;
+    }
+     
+    function gerarComputadores(periodo){
+        fetch('{% url "dashboards:get-dados-computadores" %}?periodo='+periodo)
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('graficoEvolucaoComputadores').getContext('2d');
+            new Chart(ctx, {
+                type: 'line', // Gráfico de linha
+                data: {
+                    labels: data.labels, // Meses
+                    datasets: [{
+                        label: 'Computadores',
+                        data: data.values, // Valores
+                        borderColor: 'red', // Cor da linha
+                        backgroundColor: 'red', // Cor do preenchimento
+                        borderWidth: 2,
+                        tension: 0.4, // Suavizar a linha
+                        // pointBackgroundColor: '#fff',
+                        pointBorderColor: 'red',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Computadores',
+                            color: '#FFFFFF'
+                        },
+                        legend: {
+                            display: false // Desativa a legenda
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Total: ${context.raw}`;
+                                }
                             }
                         }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: { color: '#FFFFFF' },
-                        title: {
-                            display: true,
-                            text: 'Mês',
-                             color: '#FFFFFF'
-                        }
                     },
-                    y: {
-                        ticks: { color: '#FFFFFF' },
-                        title: {
-                            display: true,
-                            text: 'Número de Chamados',
-                             color: '#FFFFFF'
+                    scales: {
+                        x: {
+                            ticks: { color: '#FFFFFF' },
+                            title: {
+                                display: false,
+                                text: 'Mês',
+                                color: '#FFFFFF'
+                            }
                         },
-                        beginAtZero: true
+                        y: {
+                            ticks: { color: '#FFFFFF' },
+                            title: {
+                                display: true,
+                                text: 'Número de Chamados',
+                                color: '#FFFFFF'
+                            },
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
+            });
         });
-    });
-    fetch('{% url "dashboards:get-dados-sistemas" %}')
-    .then(response => response.json())
-    .then(data => {
-        const ctx = document.getElementById('graficoEvolucaoSistemas').getContext('2d');
-        new Chart(ctx, {
-            type: 'line', // Gráfico de linha
-            data: {
-                labels: data.labels, // Meses
-                datasets: [{
-                    label: 'Sistemas',
-                    data: data.values, // Valores
-                    borderColor: '#007bff', // Cor da linha
-                    backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
-                    borderWidth: 2,
-                    tension: 0.4, // Suavizar a linha
-                    pointBackgroundColor: 'orange',
-                    pointBorderColor: 'orange',
-                    pointRadius: 5,
-                    pointHoverRadius: 7
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Sistemas',
-                         color: '#FFFFFF'
-                    },
-                    legend: {
-                        display: false // Desativa a legenda
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `Total: ${context.raw}`;
+    }
+    function gerarSistemas(periodo){
+        fetch('{% url "dashboards:get-dados-sistemas" %}?periodo='+periodo)
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('graficoEvolucaoSistemas').getContext('2d');
+            new Chart(ctx, {
+                type: 'line', // Gráfico de linha
+                data: {
+                    labels: data.labels, // Meses
+                    datasets: [{
+                        label: 'Sistemas EL',
+                        data: data.values, // Valores
+                        borderColor: '#007bff', // Cor da linha
+                        backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
+                        borderWidth: 2,
+                        tension: 0.4, // Suavizar a linha
+                        pointBackgroundColor: 'orange',
+                        pointBorderColor: 'orange',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Sistemas EL',
+                            color: '#FFFFFF'
+                        },
+                        legend: {
+                            display: false // Desativa a legenda
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Total: ${context.raw}`;
+                                }
                             }
                         }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: { color: '#FFFFFF' },
-                        title: {
-                            display: true,
-                            text: 'Mês',
-                             color: '#FFFFFF'
-                        }
                     },
-                    y: {
-                        ticks: { color: '#FFFFFF' },
-                        title: {
-                            display: true,
-                            text: 'Número de Chamados',
-                             color: '#FFFFFF'
+                    scales: {
+                        x: {
+                            ticks: { color: '#FFFFFF' },
+                            title: {
+                                display: false,
+                                text: 'Mês',
+                                color: '#FFFFFF'
+                            }
                         },
-                        beginAtZero: true
+                        y: {
+                            ticks: { color: '#FFFFFF' },
+                            title: {
+                                display: true,
+                                text: 'Número de Chamados',
+                                color: '#FFFFFF'
+                            },
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
+            });
         });
-    });
-    fetch('{% url "dashboards:get-dados-telefonia" %}')
-    .then(response => response.json())
-    .then(data => {
-        const ctx = document.getElementById('graficoEvolucaoTelefonia').getContext('2d');
-        new Chart(ctx, {
-            type: 'line', // Gráfico de linha
-            data: {
-                labels: data.labels, // Meses
-                datasets: [{
-                    label: 'Telefonia',
-                    data: data.values, // Valores
-                    borderColor: '#007bff', // Cor da linha
-                    backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
-                    borderWidth: 2,
-                    tension: 0.4, // Suavizar a linha
-                    pointBackgroundColor: 'blue',
-                    pointBorderColor: 'blue',
-                    pointRadius: 5,
-                    pointHoverRadius: 7
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Telefonia',
-                         color: '#FFFFFF'
-                    },
-                    legend: {
-                        display: false // Desativa a legenda
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `Total: ${context.raw}`;
+    }
+    function gerarTelefonia(periodo){
+        fetch('{% url "dashboards:get-dados-telefonia" %}?periodo='+periodo)
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('graficoEvolucaoTelefonia').getContext('2d');
+            new Chart(ctx, {
+                type: 'line', // Gráfico de linha
+                data: {
+                    labels: data.labels, // Meses
+                    datasets: [{
+                        label: 'Telefonia',
+                        data: data.values, // Valores
+                        borderColor: '#007bff', // Cor da linha
+                        backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
+                        borderWidth: 2,
+                        tension: 0.4, // Suavizar a linha
+                        pointBackgroundColor: 'blue',
+                        pointBorderColor: 'blue',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Telefonia',
+                            color: '#FFFFFF'
+                        },
+                        legend: {
+                            display: false // Desativa a legenda
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Total: ${context.raw}`;
+                                }
                             }
                         }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: { color: '#FFFFFF' },
-                        title: {
-                            display: true,
-                            text: 'Mês',
-                             color: '#FFFFFF'
-                        }
                     },
-                    y: {
-                        ticks: { color: '#FFFFFF' },
-                        title: {
-                            display: true,
-                            text: 'Número de Chamados',
-                             color: '#FFFFFF'
+                    scales: {
+                        x: {
+                            ticks: { color: '#FFFFFF' },
+                            title: {
+                                display: false,
+                                text: 'Mês',
+                                color: '#FFFFFF'
+                            }
                         },
-                        beginAtZero: true
+                        y: {
+                            ticks: { color: '#FFFFFF' },
+                            title: {
+                                display: true,
+                                text: 'Número de Chamados',
+                                color: '#FFFFFF'
+                            },
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
+            });
         });
-    });
-    fetch('{% url "dashboards:get-dados-chamados-secretaria" %}')
+    }
+    function gerarSecretaria(periodo){
+        fetch('{% url "dashboards:get-dados-chamados-secretaria" %}?periodo='+periodo)
         .then(response => response.json())
         .then(data => {
             const ctx = document.getElementById('graficoChamadosSecretaria').getContext('2d');
@@ -911,9 +977,10 @@
                 }
             });
         });
+    }
 
-        function donutChart(value1, value2){
-            // Dados do gráfico
+    function donutChart(value1, value2){
+        // Dados do gráfico
         const data = {
             labels: ['Concluídos', 'Pendentes'], // Legendas para os valores
             datasets: [{
@@ -950,17 +1017,17 @@
         // Renderização do gráfico
         const ctx = document.getElementById('donutChart').getContext('2d');
         const donutChart = new Chart(ctx, config);
-        }
+    }
 
-        function gerarNumerosAleatorios(quantidade, max) {
-            const numeros = [];
-            for (let i = 0; i < quantidade; i++) {
-                numeros.push(Math.floor(Math.random() * max));
-            }
-            return numeros;
+    function gerarNumerosAleatorios(quantidade, max) {
+        const numeros = [];
+        for (let i = 0; i < quantidade; i++) {
+            numeros.push(Math.floor(Math.random() * max));
         }
+        return numeros;
+    }
 
-        function graficoDeLinha(){
+    function graficoDeLinha(){
             
         // Dados para o gráfico
         const labels = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho'];
@@ -1005,9 +1072,79 @@
         // Renderizar o gráfico
         const ctx = document.getElementById('lineChart').getContext('2d');
         const lineChart = new Chart(ctx, config);
+    }
+    function getValoresTabela() {
+        fetch('{% url 'dashboards:get-valores-tabela' %}', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao obter dados da API');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Atualizando os valores da tabela
+            document.getElementById('chamadosAbertos').textContent = data.chamados_abertos;
+            document.getElementById('chamadosPendentes').textContent = data.chamados_pendentes;
+            document.getElementById('chamadosHoje').textContent = data.chamados_criados_hoje;
+            document.getElementById('mediaDiaria').textContent = data.media_diaria;
+            document.getElementById('chamadosMes').textContent = data.chamados_criados_mes;
+            document.getElementById('mediaMensal').textContent = data.media_mensal;
+        })
+        .catch(error => {
+            console.error('Erro ao atualizar tabela:', error);
+        });
+    }
+    function destruirGrafico(canvasId) {
+        const chartElement = Chart.getChart(canvasId); // Obtém o gráfico existente pelo ID do canvas
+        if (chartElement) {
+            chartElement.destroy(); // Se o gráfico existir, destrói ele
         }
-        donutChart({{total}}, {{total_pendentes}});
-        graficoDeLinha();
+    }
+    function gerarGraficos(periodo){
+        destruirGrafico('graficoEvolucaoChamados');
+        destruirGrafico('graficoEvolucaoAtendimentos');
+        destruirGrafico('graficoEvolucaoComputadores');
+        destruirGrafico('graficoEvolucaoImpressora');
+        destruirGrafico('graficoEvolucaoSistemas');
+        destruirGrafico('graficoChamadosSecretaria');
+        destruirGrafico('graficoEvolucaoTelefonia');
+        destruirGrafico('graficoAtendimentos');
+        gerarTotalAtendimentos()
+        gerarEvolucaoAtendimentos()
+        gerarInternet(periodo)
+        gerarComputadores(periodo)
+        gerarImpressora(periodo)
+        gerarSistemas(periodo)
+        gerarSecretaria()
+        gerarTelefonia(periodo)
+        getValoresTabela() 
+    }
+    function mudarPeriodo(e){
+        periodo = e.value        
+    }
+    gerarGraficos(periodo)
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            destruirGrafico('graficoEvolucaoChamados');
+            destruirGrafico('graficoEvolucaoAtendimentos');
+            destruirGrafico('graficoEvolucaoComputadores');
+            destruirGrafico('graficoEvolucaoImpressora');
+            destruirGrafico('graficoEvolucaoSistemas');
+            destruirGrafico('graficoChamadosSecretaria');
+            destruirGrafico('graficoEvolucaoTelefonia');
+            destruirGrafico('graficoAtendimentos');
+
+            gerarGraficos(periodo)
+        }, 30000); 
+    });
+
+    donutChart({{total}}, {{total_pendentes}});
+    graficoDeLinha();
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 

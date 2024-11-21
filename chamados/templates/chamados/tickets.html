@@ -64,13 +64,13 @@
                                             {% if chamado.is_novo %}
                                             {% if chamado.respondido_pelo_cliente %}
                                             <div>
-                                                <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket"> Novo</span>
+                                                <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket">Novo</span>
                                                 {% if request.user.is_superuser or is_atendente%}
                                                 <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket respondido-cliente"> Respondido pelo cliente</span>
                                                 {% endif %}
                                             </div>
                                             {% else %}
-                                            <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket"> Novo</span>
+                                            <span class="chamados-tickets-infos-chamado-text-assunto validade-ticket">Novo</span>
                                             {% endif %}
                                             {% else %}
                                             {% if chamado.respondido_pelo_cliente %}

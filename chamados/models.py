@@ -8,7 +8,9 @@ from datetime import datetime, timedelta
 from django.urls import reverse
 from notificacoes.models import Notificacao
 
-
+from django.db import connection
+from datetime import datetime, timedelta
+from django.utils.timezone import localtime, now
 
 class TipoChamado(models.Model):
     nome = models.CharField(max_length=164, verbose_name='Nome')
@@ -114,6 +116,106 @@ class Chamado(models.Model):
 
     def __str__(self):
         return self.n_protocolo
+
+    def calcular_media_diaria():
+        """
+        Calcula a média diária de chamados criados nos últimos 31 dias usando uma query SQL.
+
+        :return: A média diária de chamados criados.
+        """
+        hoje = datetime.now()
+        data_inicio = hoje - timedelta(days=31)
+
+        query = """
+            SELECT DATE(dt_inclusao) AS dia, COUNT(*) AS total
+            FROM chamados_chamado
+            WHERE dt_inclusao BETWEEN %s AND %s
+            GROUP BY dia
+            ORDER BY dia;
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, [data_inicio, hoje])
+            resultados = cursor.fetchall()
+
+        # Calcula o total de chamados
+        total_chamados = sum(total for _, total in resultados)
+
+        # Número de dias fixo (31 dias)
+        numero_de_dias = 31
+
+        # Retorna a média diária
+        media  = total_chamados / numero_de_dias if total_chamados > 0 else 0
+        return f'{media:.1f}'
+    
+    def calcular_media_mensal():
+        """
+        Calcula a média mensal de chamados criados nos últimos 12 meses usando uma query SQL.
+
+        :return: A média mensal de chamados criados.
+        """
+        hoje = datetime.now()
+        data_inicio = hoje - timedelta(days=365)  # Últimos 12 meses
+
+        query = """
+            SELECT DATE_FORMAT(dt_inclusao, '%%Y-%%m') AS mes, COUNT(*) AS total
+            FROM chamados_chamado
+            WHERE dt_inclusao BETWEEN %s AND %s
+            GROUP BY mes
+            ORDER BY mes;
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, [data_inicio, hoje])
+            resultados = cursor.fetchall()
+
+        # Calcula o total de chamados
+        total_chamados = sum(total for _, total in resultados)
+
+        # Número de meses (fixo: 12 meses)
+        numero_de_meses = 12
+
+        # Retorna a média mensal
+        media = total_chamados / numero_de_meses if total_chamados > 0 else 0 
+        return f'{media:.1f}'
+    
+    def chamados_criados_hoje():
+        """
+        Retorna o total de chamados criados hoje usando uma query SQL raw.
+        """
+        hoje = localtime(now()).date()
+        
+        query = """
+            SELECT COUNT(*) 
+            FROM chamados_chamado 
+            WHERE DATE(dt_inclusao) = %s;
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, [hoje])
+            resultado = cursor.fetchone()
+        
+        return resultado[0] if resultado else 0
+
+    def chamados_criados_mes():
+        """
+        Retorna o total de chamados criados no mês atual usando uma query SQL raw.
+        """
+        hoje = localtime(now())
+        mes_atual = hoje.month
+        ano_atual = hoje.year
+
+        query = """
+            SELECT COUNT(*)
+            FROM chamados_chamado
+            WHERE MONTH(dt_inclusao) = %s AND YEAR(dt_inclusao) = %s;
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, [mes_atual, ano_atual])
+            resultado = cursor.fetchone()
+
+        return resultado[0] if resultado else 0
 
     def save(self, *args, **kwargs):
         if self.status == '4' and not self.dt_fechamento:

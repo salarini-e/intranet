@@ -12,6 +12,7 @@ from django.utils.timezone import now
 from collections import defaultdict
 from django.db.models import Count
 from datetime import timedelta
+import calendar
 
 def dados_total_atendimentos_realizados():
     meses = [calendar.month_name[i] for i in range(1, 13)]
@@ -58,17 +59,61 @@ def dados_percentual_chamados_por_servico():
     return dados
 
 
-def dados_evolucao_chamados_generic(value):
+# def dados_evolucao_chamados_generic(value):
 
 
-    query = """
-        SELECT DATE_FORMAT(dt_inclusao, '%%Y-%%m-01') AS mes, COUNT(id) AS total
+#     query = """
+#         SELECT DATE_FORMAT(dt_inclusao, '%%Y-%%m-01') AS mes, COUNT(id) AS total
+#         FROM chamados_chamado
+#         WHERE tipo_id = (
+#             SELECT id FROM chamados_tipochamado WHERE nome = %s
+#         )
+#         GROUP BY mes
+#         ORDER BY mes;
+#     """
+
+#     with connection.cursor() as cursor:
+#         cursor.execute(query, [value])
+#         resultados = cursor.fetchall()
+
+#     dados = {
+#         "labels": [],
+#         "values": []
+#     }
+
+#     for mes, total in resultados:
+#         dados["labels"].append(mes)  # `mes` já está em formato de string
+#         dados["values"].append(total)
+
+#     return dados
+
+def dados_evolucao_chamados_generic(value, periodo):    
+    print(periodo)
+    """
+    Gera dados de evolução de chamados agrupados por dia, semana ou mês.
+
+    :param value: O nome do tipo de chamado a ser filtrado.
+    :param periodo: O período de agrupamento ('dia', 'semana', 'mes').
+    :return: Um dicionário com labels e valores.
+    """
+    # Definindo o formato de agrupamento com base no período
+    if periodo == 'dia':
+        agrupamento = "DATE_FORMAT(dt_inclusao, '%%Y-%%m-%%d')"  # Agrupamento diário
+    elif periodo == 'semana':
+        agrupamento = "DATE_FORMAT(dt_inclusao, '%%Y-%%u')"  # Agrupamento semanal (ano-semana)
+    elif periodo == 'mes':
+        agrupamento = "DATE_FORMAT(dt_inclusao, '%%Y-%%m')"  # Agrupamento mensal
+    else:
+        raise ValueError("Período inválido. Use 'dia', 'semana' ou 'mes'.")
+
+    query = f"""
+        SELECT {agrupamento} AS periodo, COUNT(id) AS total
         FROM chamados_chamado
         WHERE tipo_id = (
             SELECT id FROM chamados_tipochamado WHERE nome = %s
         )
-        GROUP BY mes
-        ORDER BY mes;
+        GROUP BY periodo
+        ORDER BY periodo;
     """
 
     with connection.cursor() as cursor:
@@ -80,26 +125,36 @@ def dados_evolucao_chamados_generic(value):
         "values": []
     }
 
-    for mes, total in resultados:
-        dados["labels"].append(mes)  # `mes` já está em formato de string
+    for periodo_, total in resultados:
+        if periodo == 'mes':
+            ano, mes = periodo_.split("-")
+            nome_mes = calendar.month_name[int(mes)] 
+            dados["labels"].append(f"{nome_mes}")  
+        elif periodo == 'dia':
+            # Formatando a data no formato "dd/mm/yyyy"
+            ano, mes, dia = periodo_.split("-")
+            data_formatada = f"{int(dia):02d}/{int(mes):02d}/{ano}"
+            dados["labels"].append(data_formatada)
+        else:
+            dados["labels"].append(periodo_)  # `periodo` já está em formato de string
         dados["values"].append(total)
 
     return dados
 
-def dados_evolucao_chamados_internet():
-    return dados_evolucao_chamados_generic('Internet')
+def dados_evolucao_chamados_internet(periodo):
+    return dados_evolucao_chamados_generic('Internet', periodo)
 
-def dados_evolucao_chamados_computadores():
-    return dados_evolucao_chamados_generic('Computador')
+def dados_evolucao_chamados_computadores(periodo):
+    return dados_evolucao_chamados_generic('Computador', periodo)
 
-def dados_evolucao_chamados_sistemas():
-    return dados_evolucao_chamados_generic('Sistemas - E&L')
+def dados_evolucao_chamados_sistemas(periodo):
+    return dados_evolucao_chamados_generic('Sistemas - E&L', periodo)
 
-def dados_evolucao_chamados_impressora():
-    return dados_evolucao_chamados_generic('Impressora')
+def dados_evolucao_chamados_impressora(periodo):
+    return dados_evolucao_chamados_generic('Impressora', periodo)
 
-def dados_evolucao_chamados_telefonia():
-    return dados_evolucao_chamados_generic('Telefonia')
+def dados_evolucao_chamados_telefonia(periodo):
+    return dados_evolucao_chamados_generic('Telefonia', periodo)
 
 
 
