@@ -61,9 +61,9 @@
                                 <div class="row">
                                     <div class="col-lg-1 d-flex col-sm-11">
                                         {% if chamado.requisitante.avatar %}
-                                        <img class="m-auto img-fluid" style="max-width: 70px; max-height: 70px; border-radius: 50%;" src="{{chamado.requisitante.avatar.url}}" alt="avatar">
+                                        <img class="m-auto" style="width: 70px; height: 70px; border-radius: 50%;" src="{{chamado.requisitante.avatar.url}}" alt="avatar">
                                         {% else %}
-                                        <img class="m-auto img-fluid" style="max-width: 70px;" src="/static/images/users/atendenteAvatar.png" alt="avatar">
+                                        <img class="m-auto" style="width: 70px; height: 70px;" src="/static/images/users/atendenteAvatar.png" alt="avatar">
                                         {% endif %}
                                     </div>
                                     <div class="col-lg-7 col-sm-11 chamados-tickets-infos-chamado">
