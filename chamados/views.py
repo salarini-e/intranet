@@ -61,7 +61,7 @@ def index(request):
         'filtrado': filtrado,
         'filtros': obter_opcoes_filtros(),
         'chamados': paginacao,
-        'atendente': atendente,
+        'atendente': atendente,        
         'chamados_atrasados': {
                                 'exists': any([chamados_atrasados_data_agendada, chamados_atrasados_data_agendada]),
                                 'trintadias': chamados_atrasados_trinta_dias, 
