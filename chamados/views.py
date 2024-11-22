@@ -26,13 +26,15 @@ locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
 
 @login_required
 def pagina_inicial(request):
-    if Atendente.objects.filter(servidor__user=request.user).exists() or request.user.is_superuser:
-        if request.user.is_superuser:
+    atendentes = Atendente.objects.filter(servidor__user=request.user)
+    if atendentes.exists():
+        atendente = atendentes.first()
+        if atendente.nivel in ['1', '2']:
             return redirect('chamados:tickets')
-        elif Atendente.objects.get(servidor__user=request.user).nivel=='0':
+        elif atendente.nivel=='0':
             return redirect('chamados:criar_chamado_escolher')            
         return redirect('chamados:tickets')
-    return redirect('chamados:criar_chamado_escolher')
+    return redirect('core:index')
 
 @login_required
 def criarChamadoEscolher(request):    
