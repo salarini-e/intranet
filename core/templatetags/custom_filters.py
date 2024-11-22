@@ -110,16 +110,21 @@ def acesso_adm_or_helpdesk(chamado_id, user):
     try:
         servidor = Servidor.objects.get(user=user)
         atendentes = Atendente.objects.filter(servidor=servidor)
-        chamado = Chamado.objects.get(id=chamado_id)
-        
-        if atendentes:
-            atendente = atendentes.first()
             
+        if atendentes:
+            atendente = atendentes.first()            
             if atendente.nivel in ['0', '2']:
                 return True
-            elif atendente == chamado.profissional_designado:
-                return True
+            
     except (Servidor.DoesNotExist, Chamado.DoesNotExist):
         return False
+    
+    try:
+        chamado = Chamado.objects.get(id=chamado_id)
+        if chamado:
+                if atendente == chamado.profissional_designado:
+                    return True
+    except Chamado.DoesNotExist:
+            return False
     
     return False

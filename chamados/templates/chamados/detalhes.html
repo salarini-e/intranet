@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="/static/css/detalhesChamados.css">
 {% endblock %}
 {% block main %}   		    
+{% load custom_filters %}
 				<style>
 					#message{
 						display: none;
@@ -263,7 +264,7 @@
 								<div class="dropdown atendente-indicador select-atendente-detalhes " id="indicadorAtendente-{{chamado.id}}">
 									{% if request.user.is_superuser or is_atendente %}
 									<span class="user-icon-detalhes"><i class="fa-solid fa-user user-i"></i></span>
-									<a id="selectAtendente-{{chamado.id}}" class="dropdown-toggle badge py-0 select-atendente-detalhes" 
+									<a id="selectAtendente-{{chamado.id}}" class="{% if chamado.id|acesso_adm_or_helpdesk:request.user %}dropdown-toggle{% endif %} badge py-0 select-atendente-detalhes" 
 									   type="button" 
 									   data-bs-toggle="dropdown" 
 									   aria-expanded="false" 
@@ -279,6 +280,7 @@
 										{% endif %}
 									   </span>
 									</a>
+									{% if chamado.id|acesso_adm_or_helpdesk:request.user %}
 									<ul class="dropdown-menu atendente-detalhes-ul">
 										{% for atendente in atendentes %}
                                             <li>
@@ -286,6 +288,7 @@
                                             </li>
                                         {% endfor %}
 									</ul>
+									{% endif %}
 									{% endif %}
 								</div>
 							</div>

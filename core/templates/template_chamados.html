@@ -166,6 +166,7 @@
 							</a>
 					</li> -->
 					<!-- {% endif %} -->
+					 {% if 0|acesso_adm_or_helpdesk:request.user %}
 					<div class="sidebar-chamados-item" type="button" 
 						data-bs-toggle="dropdown" 
 						aria-expanded="false" 
@@ -177,6 +178,7 @@
 						<i class="fa-solid fa-plus icon-sidebar-chamados"></i>
 						</button>
 					</div>
+					{% endif %}
 				</nav>
 
 		       
