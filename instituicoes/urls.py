@@ -5,6 +5,7 @@ from . import views
 app_name='ins'
 urlpatterns = [
     path('', views.index, name='index'),
+    path('<id>/servidores/', views.servidores_por_secretaria, name='servidores_por_secretaria'),
     path('criar-secretaria/', views.criar_secretaria, name='criar_secretaria'),
     path('<id>/editar-secretaria/', views.editar_secretaria, name='editar_secretaria'),
 

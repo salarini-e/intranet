@@ -37,7 +37,7 @@
         </div>
         <div class="perfil-infos">
                 <span class="perfil-infos-nome-text">{{usuario.nome}}</span>
-                <a class="perfil-infos-secretaria-link" href="">
+                <a class="perfil-infos-secretaria-link" href="{% url 'ins:servidores_por_secretaria' usuario.setor.secretaria.id %}">
                     <span class="perfil-infos-secretaria-text">{{usuario.setor.secretaria}}</span>
                 </a>
         </div>

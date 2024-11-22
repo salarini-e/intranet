@@ -26,6 +26,26 @@ def index(request):
     }
     return render(request, 'instituicoes/index.html', context)
 
+import traceback
+
+@login_required
+def servidores_por_secretaria(request, id):
+    try:
+        secretaria = Secretaria.objects.get(id=id)  
+        servidores = Servidor.objects.filter(setor__secretaria=secretaria).order_by('nome')
+        print(secretaria)
+        context = {
+            'secretaria': secretaria,
+            'servidores': servidores,            
+        }
+        return render(request, 'instituicoes/servidores_por_secretaria.html', context)
+    except Exception as e:
+        print(f"Erro na função servidores_por_secretaria: {e}")
+        traceback.print_exc()  # Exibe o traceback completo no console
+        return redirect('core:index')
+    
+    
+
 @login_required
 def api(request):
     return JsonResponse({'status': 200})
