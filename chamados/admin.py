@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
-from .models import TipoChamado, Atendente, Chamado, Mensagem, OSInternet, OSImpressora, OSSistemas, PeriodoPreferencial, Pausas_Execucao_do_Chamado
+from .models import TipoChamado, Atendente, Chamado, Mensagem, OSInternet, OSImpressora, OSSistemas, PeriodoPreferencial, Pausas_Execucao_do_Chamado, Historico_Designados
 
 @admin.register(TipoChamado)
 class TipoChamadoAdmin(admin.ModelAdmin):

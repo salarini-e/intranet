@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.views.decorators.clickjacking import xframe_options_exempt
 from datetime import datetime, timedelta
 from django.shortcuts import get_object_or_404
-from .models import TipoChamado, Secretaria, Setor, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem, OSTelefonia, PeriodoPreferencial, Pausas_Execucao_do_Chamado
+from .models import (TipoChamado, Secretaria, Setor, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem, OSTelefonia, 
+                     PeriodoPreferencial, Pausas_Execucao_do_Chamado, Historico_Designados)
 from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm, ServidorForm,
                     MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm, CriarSetorForm, Form_Agendar_Atendimento,
                     Form_Motivo_Pausa)
@@ -460,6 +461,11 @@ def api_mudar_atendente(request):
             chamado.dt_atualizacao = timezone.now()
             chamado.save()
             chamado.notificar_profissional_designado_alterado()
+            Historico_Designados.objects.create(
+                chamado=chamado,
+                atendente=atendente,
+                user_inclusao=request.user
+            )
             # print("Chamado id", chamado.id)
             return JsonResponse({
                 'status': 200,

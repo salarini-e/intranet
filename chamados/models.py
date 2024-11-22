@@ -218,6 +218,7 @@ class Chamado(models.Model):
         return resultado[0] if resultado else 0
 
     def save(self, *args, **kwargs):
+
         if self.status == '4' and not self.dt_fechamento:
             self.dt_fechamento = timezone.now()
         super().save(*args, **kwargs)
@@ -613,3 +614,13 @@ class OSTelefonia(models.Model):
     class Meta:
         verbose_name = 'Ordem de Serviço - Telefonia'
         verbose_name_plural = 'Ordens de Serviço - Telefonia'
+
+class Historico_Designados(models.Model):
+    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')
+    atendente = models.ForeignKey(Atendente, on_delete=models.SET_NULL, verbose_name='Atendente', null=True)
+    user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True)
+    dt_designacao = models.DateTimeField(auto_now_add=True, verbose_name='Data de designação')
+
+    class Meta:
+        verbose_name = 'Histórico de designados'
+        verbose_name_plural = 'Histórico de designados'
