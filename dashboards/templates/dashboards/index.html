@@ -49,14 +49,14 @@
                                             <input type="radio" name="periodo" id="dia" value="dia" onclick="mudarPeriodo(this)">
                                             <label for="dia">Dia</label>
                                         </div>
+                                        <div>
+                                            <input type="radio" name="periodo" id="semana" value="semana" onclick="mudarPeriodo(this)">
+                                            <label for="ano">Semana</label>
+                                        </div>
                                         <div class="mx-3">
                                             <input type="radio" name="periodo" id="mes" value="mes" onclick="mudarPeriodo(this)">
                                             <label for="mes">Mês</label>
-                                        </div>
-                                        <div>
-                                            <input type="radio" name="periodo" id="ano" value="ano" onclick="mudarPeriodo(this)">
-                                            <label for="ano">Ano</label>
-                                        </div>
+                                        </div>                                        
                                     </div>
                                 </div>
                                 <div class="col d-flex flex-column">
@@ -134,7 +134,7 @@
                 </div>
                 <div class="row">
                     <div class="col pt-5">
-                            <canvas style="height: 40vh;" id="graficoChamadosSecretaria"></canvas>
+                            <canvas id="graficoChamadosSecretaria"></canvas>
                     </div>                    
                 </div>
                 <div class="row">
@@ -156,7 +156,7 @@
 
                     </div> -->
                     <div class="col-6">
-                        <canvas style="height: 35vh;" id="graficoEvolucaoAtendimentos"></canvas>                    
+                        <canvas id="graficoEvolucaoAtendimentos"></canvas>                    
                     </div>
                     <div class="col d-flex">                        
                         <table class="table text-white table-borderless m-auto">
@@ -199,7 +199,7 @@
 
                     
                 </div>
-                <div class="row">             
+                <div class="row" id="graficosTipo">             
                     <div class="col">
                         <canvas style="height: 25vh;" id="graficoEvolucaoComputadores"></canvas>
                     </div>
@@ -210,7 +210,7 @@
                         <canvas style="height: 25vh;" id="graficoEvolucaoImpressora"></canvas>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" id="graficosTipo2">
                     
                     <div class="col">
                         <canvas style="height: 25vh;" id="graficoEvolucaoSistemas"></canvas>
@@ -402,7 +402,7 @@
         
         #indicadornumerico .text-indicador{
             color: white;
-            font-size: 1.7vh; /* Tamanho do texto */
+            font-size: 1.5vh; /* Tamanho do texto */
             font-weight: bold;
         }
         #indicadornumerico span{
@@ -506,6 +506,15 @@
        /* #offcanvasRight{
             background-color: rgb(32, 32, 32);
         } */
+        #graficoChamadosSecretaria{
+            height: 40vh;
+        }
+        #graficoEvolucaoAtendimentos{
+            height: 45vh;
+        }
+        #graficosTipo, graficosTipo2{
+            height: 25vh;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
