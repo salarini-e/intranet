@@ -81,6 +81,12 @@ def zerar_filtros(request):
 
 @login_required
 def criarChamado(request, sigla):
+    atendentes = Atendente.objects.filter(servidor__user=request.user, ativo=True)
+    if atendentes.exists():
+        atendente = atendentes.first()
+        if atendente.nivel == '1':
+            return redirect('chamados:tickets')
+
     def itel(v):
         # Remove todos os caracteres que não são dígitos
         v = re.sub(r'\D', '', v)
