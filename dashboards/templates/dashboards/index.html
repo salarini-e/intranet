@@ -540,7 +540,7 @@
                         title: { display: true, text: 'Total de Atendimentos de Chamados por Mês', color: '#FFFFFF' }
                     },
                     scales: {
-                        x: { title: { display: true, text: 'Mês', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } },
+                        x: { title: { display: false, text: 'Mês', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } },
                         y: { title: { display: false, text: 'Total de Chamados', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } }
                     }
                 }
@@ -559,13 +559,13 @@
                     datasets: [{
                         label: 'Internet',
                         data: data.values, // Valores
-                        borderColor: '#007bff', // Cor da linha
+                        borderColor: 'orange', // Cor da linha
                         backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
                         borderWidth: 2,
-                        tension: 0.4, // Suavizar a linha
-                        pointBackgroundColor: 'green',
-                        pointBorderColor: 'green',
-                        pointRadius: 5,
+                        tension: 0, // Suavizar a linha
+                        pointBackgroundColor: 'orange',
+                        pointBorderColor: 'orange',
+                        pointRadius: 1.5,
                         pointHoverRadius: 7
                     }]
                 },
@@ -632,10 +632,10 @@
                         backgroundColor: `${cores[index % cores.length]}`, // Cor do preenchimento (33 = transparência)
                     
                         // borderWidth: 1,
-                        tension: 0.4, // Suavizar a linha
+                        tension: 0, // Suavizar a linha
                         // pointBackgroundColor: '#fff',
                         // pointBorderColor: cores[index % cores.length],
-                        // pointRadius: 5,
+                        // pointRadius: 1.5,
                         // pointHoverRadius: 7
                     }))
                 },
@@ -767,13 +767,13 @@
                     datasets: [{
                         label: 'Impressora',
                         data: data.values, // Valores
-                        borderColor: 'blue', // Cor da linha
+                        borderColor: 'purple', // Cor da linha
                         backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
                         borderWidth: 2,
-                        tension: 0.4, // Suavizar a linha
+                        tension: 0, // Suavizar a linha
                         pointBackgroundColor: 'purple',
                         pointBorderColor: 'purple',
-                        pointRadius: 5,
+                        pointRadius: 1.5,
                         pointHoverRadius: 7
                     }]
                 },
@@ -832,13 +832,13 @@
                     datasets: [{
                         label: 'Computadores',
                         data: data.values, // Valores
-                        borderColor: 'red', // Cor da linha
-                        backgroundColor: 'red', // Cor do preenchimento
+                        borderColor: 'green', // Cor da linha
+                        backgroundColor: 'green', // Cor do preenchimento
                         borderWidth: 2,
-                        tension: 0.4, // Suavizar a linha
+                        tension: 0, // Suavizar a linha
                         // pointBackgroundColor: '#fff',
-                        pointBorderColor: 'red',
-                        pointRadius: 5,
+                        pointBorderColor: 'green',
+                        pointRadius: 1.5,
                         pointHoverRadius: 7
                     }]
                 },
@@ -896,13 +896,13 @@
                     datasets: [{
                         label: 'Sistemas EL',
                         data: data.values, // Valores
-                        borderColor: '#007bff', // Cor da linha
+                        borderColor: 'yellow', // Cor da linha
                         backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
                         borderWidth: 2,
-                        tension: 0.4, // Suavizar a linha
-                        pointBackgroundColor: 'orange',
-                        pointBorderColor: 'orange',
-                        pointRadius: 5,
+                        tension: 0, // Suavizar a linha
+                        pointBackgroundColor: 'yellow',
+                        pointBorderColor: 'yellow',
+                        pointRadius: 1.5,
                         pointHoverRadius: 7
                     }]
                 },
@@ -960,13 +960,13 @@
                     datasets: [{
                         label: 'Telefonia',
                         data: data.values, // Valores
-                        borderColor: '#007bff', // Cor da linha
+                        borderColor: 'blue', // Cor da linha
                         backgroundColor: 'rgba(0, 123, 255, 0.2)', // Cor do preenchimento
                         borderWidth: 2,
-                        tension: 0.4, // Suavizar a linha
+                        tension: 0, // Suavizar a linha
                         pointBackgroundColor: 'blue',
                         pointBorderColor: 'blue',
-                        pointRadius: 5,
+                        pointRadius: 1.5,
                         pointHoverRadius: 7
                     }]
                 },
@@ -1132,14 +1132,14 @@
                 borderColor: '#4CAF50',
                 backgroundColor: 'rgba(76, 175, 80, 0.2)',
                 fill: true,
-                tension: 0.3, // Curvatura das linhas
+                tension: 0, // Curvatura das linhas
             }, {
                 label: 'Chamados Abertos',
                 data: gerarNumerosAleatorios(labels.length, 100),
                 borderColor: '#F44336',
                 backgroundColor: 'rgba(244, 67, 54, 0.2)',
                 fill: true,
-                tension: 0.3, // Curvatura das linhas
+                tension: 0, // Curvatura das linhas
             }]
         };
 
@@ -1198,7 +1198,7 @@
             chartElement.destroy(); // Se o gráfico existir, destrói ele
         }
     }
-    let graficoAtendentes = 'linha'
+    let graficoAtendentes = 'bar'
     function gerarGraficos(periodo){
         destruirGrafico('graficoEvolucaoChamados');
         destruirGrafico('graficoEvolucaoComputadores');
