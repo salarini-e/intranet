@@ -13,11 +13,11 @@
 </script>
 <body class="container-fluid df-elx flex-column">
     <header class="row">
-        <div class="col d-flex p-3">
+        <div class="col d-flex px-3">
                 <div class="my-auto logo">
                     <img src="https://intranet.novafriburgo.rj.gov.br/static/brasao.ico" alt="">
                 </div>
-                <h1 class="my-auto">Indicadores chamados</h1>               
+                <h1 class="my-auto">Indicadores TIC</h1>               
             <div class="m-auto">
 
             </div>
@@ -25,7 +25,7 @@
                 <span class="m-auto">Nenhum alerta no momento.</span>
             </div>
             <div class="my-auto ms-4">
-                <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                <button id="menu" class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
                     <i class="fa-solid fa-eye me-2"></i>Monitor de serviços
                 </button>     
                 <button class="btn btn-dark my-auto ms-lg-1" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -134,7 +134,7 @@
                 </div>
                 <div class="row">
                     <div class="col pt-5">
-                            <canvas width="100%" id="graficoChamadosSecretaria"></canvas>
+                            <canvas style="height: 40vh;" id="graficoChamadosSecretaria"></canvas>
                     </div>                    
                 </div>
                 <div class="row">
@@ -146,75 +146,80 @@
             </div>
             <div class="col" style="height: 100%;">         
                 <div class="row">
-                    <div class="col-6">
-                        <canvas id="graficoEvolucaoAtendimentos"></canvas>                    
-                    </div>
-                    <div class="col-4 d-flex">                        
-                    <table class="table text-white table-borderless m-auto">
-                        <thead>
-                            <tr>
-                                <th style="font-weight: bold;" colspan="2" scope="col">Informações</th>                                
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Chamados em aberto</td>
-                                <td id="chamadosAbertos" style="font-weight: bold;">{{chamados_abertos}}</td>
-                            </tr>
-                            <tr>
-                                <td>Chamados pendentes</td>
-                                <td id="chamadosPendentes" style="font-weight: bold;">{{chamados_pendentes}}</td>
-                            </tr>                            
-                            <tr>
-                                <td>Chamados criados hoje</td>
-                                <td id="chamadosHoje" style="font-weight: bold;">{{chamados_criados_hoje}}</td>
-                            </tr>
-                            <tr>
-                                <td>Média diária</td>
-                                <td id="mediaDiaria" style="font-weight: bold;">{{media_diaria}}</td>
-                            </tr>
-                            <tr>
-                                <td>Chamados criados esse mês</td>
-                                <td id="chamadosMes" style="font-weight: bold;">{{chamados_criados_mes}}</td>
-                            </tr>
-                            <tr>
-                                <td>Média mensal</td>
-                                <td id="mediaMensal" style="font-weight: bold;">{{media_mensal}}</td>
-                            </tr>
-
-                            
-                        </tbody>
-                    </table>
-                    </div>
-
-                    <div class="col-2 d-flex flex-column" style="color: black;">
+                    <!-- <div class="col-2 d-flex flex-column" style="color: black;">
                         <span class="m-auto">
                             Totais
-                        <canvas id="donutChart"></canvas>
                         </span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <canvas id="lineChart"></canvas>
+                    </div> -->
+                    <!-- <div class="col-3">
+                        <canvas id="donutChart"></canvas>
 
+                    </div> -->
+                    <div class="col-6">
+                        <canvas style="height: 35vh;" id="graficoEvolucaoAtendimentos"></canvas>                    
+                    </div>
+                    <div class="col d-flex">                        
+                        <table class="table text-white table-borderless m-auto">
+                            <thead>
+                                <tr>
+                                    <th style="font-weight: bold;" colspan="2" scope="col">Informações</th>                                
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Chamados em aberto</td>
+                                    <td id="chamadosAbertos" style="font-weight: bold;">{{chamados_abertos}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Chamados pendentes</td>
+                                    <td id="chamadosPendentes" style="font-weight: bold;">{{chamados_pendentes}}</td>
+                                </tr>                            
+                                <tr>
+                                    <td>Chamados criados hoje</td>
+                                    <td id="chamadosHoje" style="font-weight: bold;">{{chamados_criados_hoje}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Média diária</td>
+                                    <td id="mediaDiaria" style="font-weight: bold;">{{media_diaria}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Chamados criados esse mês</td>
+                                    <td id="chamadosMes" style="font-weight: bold;">{{chamados_criados_mes}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Média mensal</td>
+                                    <td id="mediaMensal" style="font-weight: bold;">{{media_mensal}}</td>
+                                </tr>
+    
+                                
+                            </tbody>
+                        </table>
+                        </div>
+                    
+
+                    
+                </div>
+                <div class="row">             
+                    <div class="col">
+                        <canvas style="height: 25vh;" id="graficoEvolucaoComputadores"></canvas>
                     </div>
                     <div class="col">
-                        <canvas id="graficoEvolucaoComputadores"></canvas>
+                        <canvas style="height: 25vh;" id="graficoEvolucaoChamados"></canvas>
                     </div>
                     <div class="col">
-                        <canvas id="graficoEvolucaoChamados"></canvas>
+                        <canvas style="height: 25vh;" id="graficoEvolucaoImpressora"></canvas>
                     </div>
                 </div>
                 <div class="row">
+                    
                     <div class="col">
-                        <canvas id="graficoEvolucaoImpressora"></canvas>
+                        <canvas style="height: 25vh;" id="graficoEvolucaoSistemas"></canvas>
                     </div>
                     <div class="col">
-                        <canvas id="graficoEvolucaoSistemas"></canvas>
+                        <canvas style="height: 25vh;" id="graficoEvolucaoTelefonia"></canvas>
                     </div>
                     <div class="col">
-                        <canvas id="graficoEvolucaoTelefonia"></canvas>
+                        
                     </div>
                 </div>
             </div>
@@ -326,7 +331,7 @@
             display: flex;
             background-color: white;
             color: black;
-            padding: 8px 30px;
+            padding: 1vh 30px;
             border-radius: 30px;
             text-align: center;
         }
@@ -334,10 +339,12 @@
             color: blue;
             font-weight: bold;
         }
-
+        header .btn{
+            height: auto;
+            /* padding: 1vh; */
+        }
         .logo{
             margin: 0 20px 0 0;
-            width: 40px;
         }
         /* .col, .col-3, .col-4, .col-8{
             border: 1px solid white;
@@ -364,21 +371,23 @@
             color: #ffffff; /* Texto branco */
             border-bottom: 2px solid #343a40; /* Linha de separação */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra discreta */
+            height: 7vh;
         }
 
         header .logo img {
-            height: 50px; /* Tamanho ajustado do brasão */
+            /* height: 50px;  */
+            height: 5vh;
             margin-right: 15px; /* Espaço entre o brasão e o título */
         }
 
         header h1{
-            font-size: 1.5rem; /* Tamanho do título */
+            font-size: 3vh; /* Tamanho do título */
             margin: 0;
             font-weight: bold;
         }
 
         header .d-flex > div {
-            font-size: 0.9rem; /* Texto menor nos totais */
+            font-size: 1.6vh; /* Texto menor nos totais */
         }
 
         header .btn {
@@ -393,7 +402,7 @@
         
         #indicadornumerico .text-indicador{
             color: white;
-            font-size: 1.1rem; /* Tamanho do texto */
+            font-size: 1.7vh; /* Tamanho do texto */
             font-weight: bold;
         }
         #indicadornumerico span{
@@ -460,6 +469,10 @@
         tbody tr:nth-child(odd) {   
             background-color: #1b1b1b; /* Cor de fundo para linhas ímpares */
         }
+        table, tr, td, th{
+            font-size: 1.8vh;
+            line-height: 10pt;
+        }
         /* Estilizando o switch */
         .form-check-input {
         background-color: #000;  /* Fundo preto */
@@ -514,7 +527,7 @@
                     },
                     scales: {
                         x: { title: { display: true, text: 'Mês', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } },
-                        y: { title: { display: true, text: 'Total de Chamados', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } }
+                        y: { title: { display: false, text: 'Total de Chamados', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } }
                     }
                 }
             });
@@ -573,7 +586,7 @@
                         y: {
                             ticks: { color: '#FFFFFF' },
                             title: {
-                                display: true,
+                                display: false,
                                 text: 'Número de Chamados',
                                 color: '#FFFFFF'
                             },
@@ -626,8 +639,8 @@
                                 usePointStyle: true,
                                 pointStyle: 'circle',
                                 font: {
-                                        size: 10, // Tamanho do ícone
-                                        color: '#fff'
+                                        size: 6.5, // Tamanho do ícone
+                                        color: 'white'
                                     }
                             }
                         },
@@ -651,7 +664,7 @@
                         y: {
                             ticks: { color: '#FFFFFF' },
                             title: {
-                                display: true,
+                                display: false,
                                 text: 'Número de Atendimentos',
                                 color: '#FFFFFF'
                             },
@@ -715,7 +728,7 @@
                         y: {
                             ticks: { color: '#FFFFFF' },
                             title: {
-                                display: true,
+                                display: false,
                                 text: 'Número de Chamados',
                                 color: '#FFFFFF'
                             },
@@ -780,7 +793,7 @@
                         y: {
                             ticks: { color: '#FFFFFF' },
                             title: {
-                                display: true,
+                                display: false,
                                 text: 'Número de Chamados',
                                 color: '#FFFFFF'
                             },
@@ -844,11 +857,11 @@
                         y: {
                             ticks: { color: '#FFFFFF' },
                             title: {
-                                display: true,
+                                display: false,
                                 text: 'Número de Chamados',
                                 color: '#FFFFFF'
                             },
-                            beginAtZero: true
+                            beginAtZero: false
                         }
                     }
                 }
@@ -908,7 +921,7 @@
                         y: {
                             ticks: { color: '#FFFFFF' },
                             title: {
-                                display: true,
+                                display: false,
                                 text: 'Número de Chamados',
                                 color: '#FFFFFF'
                             },
@@ -967,7 +980,7 @@
                         y: {
                             ticks: { color: '#FFFFFF' },
                             title: {
-                                display: true,
+                                display: false,
                                 text: 'Número de Chamados',
                                 color: '#FFFFFF'
                             },
@@ -1144,7 +1157,7 @@
     });
 
     donutChart({{total}}, {{total_pendentes}});
-    graficoDeLinha();
+    // graficoDeLinha();
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 

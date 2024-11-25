@@ -202,7 +202,7 @@ def dados_evolucao_atendimentos():
     # Criar os datasets
     for atendente, dia_totais in atendente_data.items():
         dataset = {
-            "label": atendente,
+            "label": atendente.split()[0],  # Usar apenas o primeiro nome
             "data": [dia_totais.get(dia, 0) for dia in dados["labels"]]
         }
         dados["datasets"].append(dataset)
