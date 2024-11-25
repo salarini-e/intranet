@@ -389,7 +389,7 @@ def make_query_chamados(request):
  
 from django.db import connection, models
 def filtrar_chamados(request):
-    if request.user.is_superuser:
+    if request.user.is_superuser or Atendente.objects.filter(servidor__user=request.user, ativo=True).exists():
         sql = make_query_chamados(request)
 
         with connection.cursor() as cursor:
