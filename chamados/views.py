@@ -585,7 +585,8 @@ def tickets(request):
         'tipos_chamados': tipos_chamados,
         'status_choices': status_choices,
         'prioridade_choices': prioridade_choices,
-        'current_query': current_query.urlencode() 
+        'current_query': current_query.urlencode(),
+        'is_atendente': Atendente.objects.filter(servidor__user=request.user, ativo=True).exists()
     }
 
     return render(request, 'chamados/tickets.html', context)
