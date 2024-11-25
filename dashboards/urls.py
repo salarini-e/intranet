@@ -8,6 +8,7 @@ urlpatterns = [
    path('api/get-dados-servicos/', views.api_graf_tipo_servico, name='get-dados-servicos'),
    path('api/get-dados-internet/', views.api_graf_evolucao_chamados, name='get-dados-internet'),
    path('api/graf-evolucao-atendimentos/', views.api_graf_evolucao_atendimentos, name='get-dados-evolucao-atendimentos'),
+   path('api/get-total-atendimentos-por-atendente/', views.api_total_atendimentos_por_atendente, name='get-total-atendimentos-por-atendente'),
    path('api/get-dados-impressora/', views.api_graf_evolucao_chamados_impressora, name='get-dados-impressora'),
    path('api/get-dados-computadores/', views.api_graf_evolucao_chamados_computadores, name='get-dados-computadores'),
    path('api/get-dados-sistemas/', views.api_graf_evolucao_chamados_sistemas, name='get-dados-sistemas'),

@@ -108,6 +108,12 @@ def api_graf_evolucao_atendimentos(request):
 
 @login_required
 @staff_member_required
+def api_total_atendimentos_por_atendente(request):
+    data = dados_total_atendimentos_por_atendente()
+    return JsonResponse(data)
+
+@login_required
+@staff_member_required
 def api_graf_chamados_secretaria(request):
     data = dados_chamados_por_secretaria()
     return JsonResponse(data)

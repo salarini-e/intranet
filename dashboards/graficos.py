@@ -209,6 +209,37 @@ def dados_evolucao_atendimentos():
 
     return dados
 
+def dados_total_atendimentos_por_atendente():
+    # Query para agregar o total de atendimentos por atendente
+    query = """
+        SELECT 
+            atendente.nome_servidor AS atendente,
+            COUNT(chamado.id) AS total
+        FROM chamados_chamado AS chamado
+        LEFT JOIN chamados_atendente AS atendente
+            ON chamado.profissional_designado_id = atendente.id
+        WHERE chamado.dt_fechamento IS NOT NULL
+        GROUP BY atendente
+        ORDER BY total DESC;
+    """
+
+    # Executar a query no banco de dados
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+    # Estruturar os dados
+    dados = {
+        "labels": [],
+        "totals": []
+    }
+
+    for atendente, total in results:
+        dados["labels"].append(atendente.split()[0] or "Não definido")
+        dados["totals"].append(total)
+
+    return dados
+
 
 
 def dados_chamados_por_secretaria():

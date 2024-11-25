@@ -66,7 +66,7 @@
                                             <div class="d-flex justify-content-center align-items-center">
                                               <p class="me-3 my-auto">Grafíco de linha</p>
                                               <div class="form-check my-auto form-switch">
-                                                <input class="form-check-input" type="checkbox" id="switchToggle" onchange="alterarValor()">
+                                                <input class="form-check-input" type="checkbox" id="switchToggle" onclick="alterarValor(this)">
                                               </div>
                                               <p class="ms-3 my-auto">Grafíco de barra</p>
                                             </div>
@@ -79,7 +79,7 @@
                         </div>
                         <div class="modal-footer border-0 bg-dark">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-success" onclick="gerarGraficos(periodo)" data-bs-dismiss="modal">Aplicar alterações</button>
+                        <button type="button" class="btn btn-success" onclick="gerarGraficos(periodo, graficoAtendentes)" data-bs-dismiss="modal">Aplicar alterações</button>
                         </div>
                     </div>
                     </div>
@@ -157,6 +157,8 @@
                     </div> -->
                     <div class="col-6">
                         <canvas id="graficoEvolucaoAtendimentos"></canvas>                    
+                        <canvas style="display: none;" id="graficoAtendimentosPorAtendente"></canvas>
+
                     </div>
                     <div class="col d-flex">                        
                         <table class="table text-white table-borderless m-auto">
@@ -512,8 +514,11 @@
         #graficoEvolucaoAtendimentos{
             height: 45vh;
         }
-        #graficosTipo, graficosTipo2{
-            height: 25vh;
+        #graficoAtendimentosPorAtendente{
+            height: 40vh;
+        }
+        #graficosTipo, #graficosTipo2{
+            height: 25vh !important;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -685,6 +690,71 @@
             });
         });
     }
+    function gerarGraficoAtendimentosPorAtendente() {
+    fetch('{% url "dashboards:get-total-atendimentos-por-atendente" %}')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('graficoAtendimentosPorAtendente').getContext('2d');
+            const cores = [
+                '#007bff', '#28a745', '#dc3545', '#ffc107', '#17a2b8', '#6f42c1',
+                '#fd7e14', '#e83e8c', '#20c997', '#6610f2', '#343a40'
+            ];
+            
+            new Chart(ctx, {
+                type: 'bar', // Gráfico de barras
+                data: {
+                    labels: data.labels, // Atendentes
+                    datasets: [{
+                        label: 'Total de Atendimentos',
+                        data: data.totals, // Totais
+                        backgroundColor: cores, // Cor de fundo das barras
+                        borderColor: cores.map(cor => cor), // Cor da borda das barras
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Total de Atendimentos por Atendente',
+                            color: '#FFFFFF'
+                        },
+                        legend: {
+                            display: false // Não exibe legenda
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Total: ${context.raw}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#FFFFFF' },
+                            title: {
+                                display: true,
+                                text: 'Atendentes',
+                                color: '#FFFFFF'
+                            }
+                        },
+                        y: {
+                            ticks: { color: '#FFFFFF' },
+                            title: {
+                                display: true,
+                                text: 'Total de Atendimentos',
+                                color: '#FFFFFF'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    }
+
     function gerarImpressora(periodo){
         fetch('{% url "dashboards:get-dados-impressora" %}?periodo='+periodo)
         .then(response => response.json())
@@ -1128,9 +1198,9 @@
             chartElement.destroy(); // Se o gráfico existir, destrói ele
         }
     }
+    let graficoAtendentes = 'linha'
     function gerarGraficos(periodo){
         destruirGrafico('graficoEvolucaoChamados');
-        destruirGrafico('graficoEvolucaoAtendimentos');
         destruirGrafico('graficoEvolucaoComputadores');
         destruirGrafico('graficoEvolucaoImpressora');
         destruirGrafico('graficoEvolucaoSistemas');
@@ -1138,7 +1208,19 @@
         destruirGrafico('graficoEvolucaoTelefonia');
         destruirGrafico('graficoAtendimentos');
         gerarTotalAtendimentos()
-        gerarEvolucaoAtendimentos()
+        if (graficoAtendentes == 'linha' ){
+            destruirGrafico('graficoEvolucaoAtendimentos');
+            destruirGrafico('graficoAtendimentosPorAtendente');
+            gerarEvolucaoAtendimentos()
+            document.getElementById('graficoEvolucaoAtendimentos').style.display = 'block'
+            document.getElementById('graficoAtendimentosPorAtendente').style.display = 'none'
+        } else {
+            destruirGrafico('graficoAtendimentosPorAtendente');
+            destruirGrafico('graficoEvolucaoAtendimentos');
+            gerarGraficoAtendimentosPorAtendente()
+            document.getElementById('graficoEvolucaoAtendimentos').style.display = 'none'
+            document.getElementById('graficoAtendimentosPorAtendente').style.display = 'block'
+        }        
         gerarInternet(periodo)
         gerarComputadores(periodo)
         gerarImpressora(periodo)
@@ -1150,7 +1232,7 @@
     function mudarPeriodo(e){
         periodo = e.value        
     }
-    gerarGraficos(periodo)
+    gerarGraficos(periodo, graficoAtendentes)
     document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
             destruirGrafico('graficoEvolucaoChamados');
@@ -1162,9 +1244,18 @@
             destruirGrafico('graficoEvolucaoTelefonia');
             destruirGrafico('graficoAtendimentos');
 
-            gerarGraficos(periodo)
+            gerarGraficos(periodo, graficoAtendentes)
         }, 30000); 
     });
+    function alterarValor(){
+        if(graficoAtendentes == 'linha'){
+            graficoAtendentes = 'bar'
+        } else {
+            graficoAtendentes = 'linha'
+        }
+        console.log(graficoAtendentes)
+        
+    }
 
     donutChart({{total}}, {{total_pendentes}});
     // graficoDeLinha();
