@@ -34,7 +34,7 @@ def pagina_inicial(request):
         elif atendente.nivel=='0':
             return redirect('chamados:criar_chamado_escolher')            
         return redirect('chamados:tickets')
-    return redirect('core:index')
+    return redirect('chamados:criar_chamado_escolher')
 
 @login_required
 def criarChamadoEscolher(request):    
