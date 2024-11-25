@@ -412,7 +412,7 @@ def api_criar_setor(request):
 @login_required
 def api_mudar_status(request):
     servidor = Servidor.objects.filter(user=request.user).last()
-    if request.user.is_superuser or servidor in Atendente.objects.all():
+    if request.user.is_superuser or Atendente.objects.filter(servidor=servidor).exists():
         pass
     else:
         return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
@@ -432,7 +432,7 @@ def api_mudar_status(request):
 @login_required
 def api_mudar_prioridade(request):
     servidor = Servidor.objects.filter(user=request.user).last()
-    if request.user.is_superuser or servidor in Atendente.objects.all():
+    if request.user.is_superuser or Atendente.objects.filter(servidor=servidor).exists():
         pass
     else:
         return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
@@ -452,7 +452,7 @@ def api_mudar_prioridade(request):
 @login_required
 def api_mudar_atendente(request):
     servidor = Servidor.objects.filter(user=request.user).last()
-    if request.user.is_superuser or servidor in Atendente.objects.all():
+    if request.user.is_superuser or Atendente.objects.filter(servidor=servidor).exists():
         pass
     else:
         return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
