@@ -101,11 +101,12 @@ def criarChamado(request, sigla):
             v = re.sub(r'(\d{4})(\d)', r'\1-\2', v)  # Coloca hífen entre o 4º e 5º dígitos
 
         return v
-    try:
-        servidor = Servidor.objects.get(user=request.user)
-    except Servidor.DoesNotExist:
-        servidor = None
-    is_atendente = Atendente.objects.filter(servidor=servidor).exists() if servidor else False
+    # try:
+    #     servidor = Servidor.objects.get(user=request.user)
+    # except Servidor.DoesNotExist:
+    #     servidor = None
+    is_atendente = Atendente.objects.filter(servidor__user=request.user, ativo = True).exists() 
+
     if request.user.is_superuser or is_atendente:
         template_name = 'chamados/chamado-criar-ti.html'
         servidor = Servidor.objects.get(user=request.user)
