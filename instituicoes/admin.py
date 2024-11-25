@@ -12,12 +12,14 @@ class SetorAdmin(admin.ModelAdmin):
     list_display = ('nome', 'apelido', 'sigla', 'cep', 'bairro', 'endereco', 'secretaria', 'dt_inclusao', 'user_inclusao')
     list_filter = ('dt_inclusao', 'user_inclusao', 'secretaria')
     search_fields = ('nome', 'apelido', 'sigla')
+    autocomplete_fields = ('secretaria',)
 
 @admin.register(Servidor)
 class ServidorAdmin(admin.ModelAdmin):
     list_display = ('nome', 'cpf', 'dt_nascimento', 'matricula', 'telefone', 'email', 'setor', 'dt_inclusao', 'user_inclusao', 'ativo')
     list_filter = ('dt_inclusao', 'user_inclusao', 'ativo', 'setor')
     search_fields = ('nome', 'cpf', 'matricula', 'telefone', 'email')
+    autocomplete_fields = ('user', 'user_inclusao', 'setor')
 
 @admin.register(Meta_Servidores)
 class MetaServidoresAdmin(admin.ModelAdmin):

@@ -15,6 +15,8 @@ class AtendenteAdmin(admin.ModelAdmin):
     list_display = ('servidor', 'nome_servidor', 'dt_inclusao', 'user_inclusao', 'ativo')
     list_filter = ('dt_inclusao', 'user_inclusao', 'ativo')
     search_fields = ('servidor__nome', 'nome_servidor')
+    autocomplete_fields = ('servidor', 'user_inclusao')
+
 
 @admin.register(Chamado)
 class ChamadoAdmin(admin.ModelAdmin):

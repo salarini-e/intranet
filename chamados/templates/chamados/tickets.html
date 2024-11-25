@@ -14,7 +14,7 @@
         </div>
         {% if request.user.is_superuser or is_atendente%}
             <div class="col-auto top-buttons-background">
-                    <a href="{% url 'chamados:index' %}" class="my-auto btn app-btn-secondary"><i class="fa-solid fa-rotate-left me-2"></i>Voltar</a>
+                    <a href="{% url 'chamados:index' %}" class="my-auto btn app-btn-secondary"><i class="fa-solid fa-rotate-left"></i></a>
             
                 <button class="my-auto btn p-4 py-2" id="mButtonFilters" 
                         data-bs-toggle="offcanvas" 

@@ -26,7 +26,7 @@ locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
 
 @login_required
 def pagina_inicial(request):
-    atendentes = Atendente.objects.filter(servidor__user=request.user)
+    atendentes = Atendente.objects.filter(servidor__user=request.user, ativo=True)
     if atendentes.exists():
         atendente = atendentes.first()
         if atendente.nivel in ['1', '2']:
