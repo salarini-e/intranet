@@ -531,7 +531,7 @@
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: { position: 'top' },
+                        legend: { position: 'top', labels: {color: '#FFFFFF'} },
                         title: { display: true, text: 'Total de Atendimentos de Chamados por Mês', color: '#FFFFFF' }
                     },
                     scales: {
@@ -647,9 +647,10 @@
                             labels: {
                                 usePointStyle: true,
                                 pointStyle: 'circle',
+                                color: '#ffffff',                             
                                 font: {
                                         size: 6.5, // Tamanho do ícone
-                                        color: 'white'
+                                        weight: 'bold',                                        
                                     }
                             }
                         },
