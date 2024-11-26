@@ -522,6 +522,8 @@
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
     <script>
     
         
@@ -537,13 +539,22 @@
                     responsive: true,
                     plugins: {
                         legend: { position: 'top', labels: {color: '#FFFFFF'} },
-                        title: { display: true, text: 'Total de Atendimentos de Chamados por Mês', color: '#FFFFFF' }
+                        title: { display: true, text: 'Total de Atendimentos de Chamados por Mês', color: '#FFFFFF' },
+                        datalabels: {
+                            anchor: 'end', // Define a posição do texto
+                            align: 'top',  // Alinha o texto no topo
+                            color: 'white', // Cor do texto
+                            font: {
+                                weight: 'bold'
+                            }
+                        },
                     },
                     scales: {
                         x: { title: { display: false, text: 'Mês', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } },
                         y: { title: { display: false, text: 'Total de Chamados', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } }
                     }
-                }
+                },
+                plugins: [ChartDataLabels]
             });
         });
     }
@@ -647,6 +658,7 @@
                             text: 'Evolução de Atendimentos por Atendente nos Últimos 30 Dias',
                             color: '#FFFFFF'
                         },
+                        
                         legend: {
                             display: true, // Exibe a legenda
                             labels: {
@@ -686,7 +698,7 @@
                             beginAtZero: true
                         }
                     }
-                }
+                },                
             });
         });
     }
@@ -720,6 +732,14 @@
                             text: 'Total de Atendimentos por Atendente',
                             color: '#FFFFFF'
                         },
+                        datalabels: {
+                            anchor: 'end', // Define a posição do texto
+                            align: 'top',  // Alinha o texto no topo
+                            color: 'white', // Cor do texto
+                            font: {
+                                weight: 'bold'
+                            }
+                        },
                         legend: {
                             display: false // Não exibe legenda
                         },
@@ -750,7 +770,8 @@
                             beginAtZero: true
                         }
                     }
-                }
+                },
+                plugins: [ChartDataLabels]
             });
         });
     }
@@ -1012,8 +1033,75 @@
             });
         });
     }
-    function gerarSecretaria(periodo){
-        fetch('{% url "dashboards:get-dados-chamados-secretaria" %}?periodo='+periodo)
+    // function gerarSecretaria(periodo){
+    //     fetch('{% url "dashboards:get-dados-chamados-secretaria" %}?periodo='+periodo)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         const ctx = document.getElementById('graficoChamadosSecretaria').getContext('2d');
+    //         new Chart(ctx, {
+    //             type: 'bar', // Gráfico de barra
+    //             data: {
+    //                 labels: data.labels, // Nomes das secretarias
+    //                 datasets: [{
+    //                     label: 'Total de Chamados',
+    //                     data: data.values, // Totais por secretaria
+    //                     backgroundColor: 'rgba(0, 123, 255, 0.5)', // Cor das barras
+    //                     borderColor: '#007bff', // Cor da borda das barras
+    //                     borderWidth: 1
+    //                 }]
+    //             },
+    //             options: {
+    //                 responsive: true,
+    //                 plugins: {
+    //                     datalabels: {
+    //                         anchor: 'end',   // Define a posição do texto
+    //                         align: 'top',    // Alinha o texto no topo
+    //                         color: 'black',  // Cor do texto
+    //                         font: {
+    //                         weight: 'bold'
+    //                     },
+    //                     title: {
+    //                         display: true,
+    //                         text: 'Chamados por Secretaria',
+    //                         color: '#FFFFFF'                            
+    //                     },
+    //                     legend: {
+    //                         display: false // Desativa a legenda
+    //                     },
+    //                     tooltip: {
+    //                         callbacks: {
+    //                             label: function(context) {
+    //                                 return `Total: ${context.raw}`;
+    //                             }
+    //                         }
+    //                     }
+    //                 },
+    //                 scales: {
+    //                     x: {
+    //                         ticks: { color: '#FFFFFF' },
+    //                         title: {
+    //                             display: true,
+    //                             text: 'Secretarias',
+    //                             color: '#FFFFFF'
+    //                         }
+    //                     },
+    //                     y: {
+    //                         ticks: { color: '#FFFFFF' },
+    //                         title: {
+    //                             display: false,
+    //                             text: 'Número de Chamados',
+    //                             color: '#FFFFFF'
+    //                         },
+    //                         beginAtZero: true
+    //                     }
+    //                 }
+    //             },
+    //             plugins: [ChartDataLabels]
+    //         });
+    //     });
+    // }
+    function gerarSecretaria(periodo) {
+    fetch('{% url "dashboards:get-dados-chamados-secretaria" %}?periodo=' + periodo)
         .then(response => response.json())
         .then(data => {
             const ctx = document.getElementById('graficoChamadosSecretaria').getContext('2d');
@@ -1032,6 +1120,14 @@
                 options: {
                     responsive: true,
                     plugins: {
+                        datalabels: {
+                            anchor: 'end', // Define a posição do texto
+                            align: 'top',  // Alinha o texto no topo
+                            color: 'white', // Cor do texto
+                            font: {
+                                weight: 'bold'
+                            }
+                        },
                         title: {
                             display: true,
                             text: 'Chamados por Secretaria',
@@ -1067,10 +1163,11 @@
                             beginAtZero: true
                         }
                     }
-                }
+                },
+                plugins: [ChartDataLabels] // Ativa o plugin DataLabels
             });
         });
-    }
+}
 
     function donutChart(value1, value2){
         // Dados do gráfico
@@ -1257,7 +1354,7 @@
         
     }
 
-    donutChart({{total}}, {{total_pendentes}});
+    // donutChart({{total}}, {{total_pendentes}});
     // graficoDeLinha();
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
