@@ -14,8 +14,14 @@
         </div>
         {% if request.user.is_superuser or is_atendente%}
             <div class="col-auto top-buttons-background">
-                    <a href="{% url 'chamados:index' %}" class="my-auto btn app-btn-secondary"><i class="fa-solid fa-rotate-left"></i></a>
-            
+                {% if is_atendente %}
+                <a href="{% url 'chamados:ordernarPorNaoFechados' %}" class="my-auto btn app-btn-secondary {% if request.session.ordenacao %}text-success{% endif %}" data-bs-toggle="tooltip" data-bs-title="Ordenar {% if not request.session.ordenacao %}por chamados não fechados{% else %}normal{% endif %}">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </a>
+                {% endif %}
+                <a href="{% url 'chamados:tickets' %}" class="my-auto btn app-btn-secondary" data-bs-toggle="tooltip" data-bs-title="Atualizar página">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </a>            
                 <button class="my-auto btn p-4 py-2" id="mButtonFilters" 
                         data-bs-toggle="offcanvas" 
                         data-bs-target="#offcanvasScrolling" 

@@ -397,7 +397,10 @@ def filtrar_chamados(request):
             results = cursor.fetchall()
 
             queryset = []
-            for row in results:
+            fechados =[]
+
+            for row in results:                
+
                 data = {
                     'id': row[0],
                     'telefone': row[1],
@@ -424,8 +427,15 @@ def filtrar_chamados(request):
                     'endereco': row[22]
                 }
                 chamado = Chamado(**data)
-                queryset.append(chamado)
+                
+                if row[4] == '4' and request.session['ordenacao']:
+                    fechados.append(chamado)
+                else:
+                    queryset.append(chamado)
             queryset = sorted(queryset, key=lambda x: (x.dt_atualizacao if x.dt_atualizacao else x.dt_inclusao), reverse=True)
+            if request.session['ordenacao']:
+                fechados = sorted(fechados, key=lambda x: (x.dt_atualizacao if x.dt_atualizacao else x.dt_inclusao), reverse=True)
+                queryset.extend(fechados)
             # print("chamado:", queryset, '\n')
         
         return queryset  

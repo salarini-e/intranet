@@ -37,6 +37,15 @@ def pagina_inicial(request):
     return redirect('chamados:criar_chamado_escolher')
 
 @login_required
+def ordenarPorNaoFechados(request):
+    if 'ordenacao' in request.session:
+        if request.session['ordenacao'] == True:
+            request.session['ordenacao'] = False
+        else:
+            request.session['ordenacao'] = True
+    return redirect('chamados:tickets')
+
+@login_required
 def criarChamadoEscolher(request):    
     context = {
                'tipos': TipoChamado.objects.all(),
@@ -531,6 +540,9 @@ from .functions import carregar_novos_filtros, filtrar_chamados
 
 @login_required
 def tickets(request):
+    if not 'ordenacao' in request.session:
+        request.session['ordenacao'] = False
+
     if request.method == 'POST':
         carregar_novos_filtros(request)
 

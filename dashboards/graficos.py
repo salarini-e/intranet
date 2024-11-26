@@ -133,7 +133,7 @@ def dados_evolucao_chamados_generic(value, periodo):
         elif periodo == 'dia':
             # Formatando a data no formato "dd/mm/yyyy"
             ano, mes, dia = periodo_.split("-")
-            data_formatada = f"{int(dia):02d}/{int(mes):02d}/{ano}"
+            data_formatada = f"{int(dia):02d}/{int(mes):02d}"
             dados["labels"].append(data_formatada)
         else:
             dados["labels"].append(periodo_)  # `periodo` já está em formato de string

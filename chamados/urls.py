@@ -33,5 +33,6 @@ urlpatterns = [
     path('api/servidor/', views.api_criar_servidor, name='api_criar_servidor'),
     
     path('tickets/', views.tickets, name ='tickets'),
+    path('tickets/ordernar/', views.ordenarPorNaoFechados, name ='ordernarPorNaoFechados'),
     path('verificar-atualizacoes/', views.verificar_atualizacoes, name='verificar-atualizacoes'),
 ]

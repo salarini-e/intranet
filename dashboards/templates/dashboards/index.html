@@ -17,7 +17,7 @@
                 <div class="my-auto logo">
                     <img src="https://intranet.novafriburgo.rj.gov.br/static/brasao.ico" alt="">
                 </div>
-                <h1 class="my-auto">Indicadores TIC</h1>               
+                <h1 class="my-auto">Prefeitura de Nova Friburgo - Indicadores TIC </h1>               
             <div class="m-auto">
 
             </div>
@@ -89,86 +89,53 @@
     </header>
     <main class="container-fluid m-auto pb-4">
         <section id="graficos" class="row">
-            <div class="col-4 d-flex flex-column" style="height: 100%;">
-               
-                <div class="row">
-                    <div class="col">
-                            <canvas id="graficoChamadosSecretaria"></canvas>
-                    </div>                    
-                </div>
-                <div class="row">
-                    <div class="col pt-3">
-                        <canvas id="graficoAtendimentos"></canvas>
-
-                    </div>                    
-                </div>                
-            </div>
-            
-            <div class="col d-flex flex-column pb-3" style="height: 100%;">         
-                <div class="row">
-                    <!-- <div class="col-2 d-flex flex-column" style="color: black;">
-                        <span class="m-auto">
-                            Totais
-                        </span>
-                    </div> -->
-                    <!-- <div class="col-3">
-                        <canvas id="donutChart"></canvas>
-
-                    </div> -->
-                    <div class="col-6">
-                        <canvas id="graficoEvolucaoAtendimentos"></canvas>                    
-                        <canvas style="display: none;" id="graficoAtendimentosPorAtendente"></canvas>
-
-                    </div>                    
-                    <div class="col d-flex flex-column">   
-                        <div class="row mt-auto mx-auto">
-                            <div class="col">
-                                <div id="indicadornumerico" class="d-flex text-center justify-content-around">
-                                    <div>
-                                        <span class="text-indicador" style="background-color: darkblue; padding: 0 20px;">
-                                            Total de chamados
-                                        </span>
-                                        <br>
-                                        <span>
-                                            <span class="me-2" style="color: purple;">
-                                                <i class="fa-solid fa-arrow-trend-up"></i>
-                                            </span>
-                                            {{total}}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <span class="text-indicador" style="background-color: darkblue; padding: 0 20px;">
-                                            Total resolvidos
-                                        </span>
-                                        <br>
-                                        <span>
-                                            <span class="text-success me-2">
-                                                <i class="fa-solid fa-arrow-trend-up"></i>
-                                            </span>
-                                            {{total_resolvidos}}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <span class="text-indicador" style="background-color: darkblue; padding: 0 20px;">
-                                            Taxa de eficência
-                                        </span>
-                                        <br>
-                                        <span>
-                                            <span class="text-success me-2">
-                                                <i class="fa-solid fa-arrow-trend-up"></i>
-                                            </span>
-                                            {{eficiencia}}
-                                        </span>
-                                    </div>
-                                </div>
+            <div class="col-4 d-flex flex-column pb-3" style="height: 100%;">
+                <div class="row mx-auto">
+                    <div class="col d-flex flex-column">
+                        <div id="indicadornumerico" class="d-flex text-center justify-content-around">
+                            <div>
+                                <span class="text-indicador" style="background-color: darkblue; padding: 0 20px;">
+                                    Total de chamados
+                                </span>
+                                <br>
+                                <span>
+                                    <span class="me-2" style="color: purple;">
+                                        <i class="fa-solid fa-arrow-trend-up"></i>
+                                    </span>
+                                    {{total}}
+                                </span>
                             </div>
-                        </div>                     
-                        <table style="width: 80%;" class="mt-5 table text-white table-borderless mb-auto mx-auto">
-                            <thead>
+                            <div>
+                                <span class="text-indicador" style="background-color: darkblue; padding: 0 20px;">
+                                    Total resolvidos
+                                </span>
+                                <br>
+                                <span>
+                                    <span class="text-success me-2">
+                                        <i class="fa-solid fa-arrow-trend-up"></i>
+                                    </span>
+                                    {{total_resolvidos}}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="text-indicador" style="background-color: darkblue; padding: 0 20px;">
+                                    Taxa de eficência
+                                </span>
+                                <br>
+                                <span>
+                                    <span class="text-success me-2">
+                                        <i class="fa-solid fa-arrow-trend-up"></i>
+                                    </span>
+                                    {{eficiencia}}
+                                </span>
+                            </div>
+                        </div>
+                        <table style="width: 80%;" class="mt-3 table text-white table-borderless mb-auto mx-auto">
+                            <!-- <thead>
                                 <tr>
                                     <th style="font-weight: bold;" colspan="2" scope="col">Informações</th>                                
                                 </tr>
-                            </thead>
+                            </thead> -->
                             <tbody>
                                 <tr>
                                     <td>Chamados em aberto</td>
@@ -198,7 +165,42 @@
                                 
                             </tbody>
                         </table>
+                    </div>
+                </div>    
+                <div class="row mt-auto">
+                    <div class="col">
+                            <canvas id="graficoChamadosSecretaria"></canvas>
+                    </div>                    
+                </div>
+                <div class="row">
+                    <div class="col pt-3">
+                        <canvas id="graficoAtendimentos"></canvas>
+
+                    </div>                    
+                </div>                
+            </div>
+            
+            <div class="col d-flex flex-column pb-3" style="height: 100%;">         
+                <div class="row">
+                    <!-- <div class="col-2 d-flex flex-column" style="color: black;">
+                        <span class="m-auto">
+                            Totais
+                        </span>
+                    </div> -->
+                    <!-- <div class="col-3">
+                        
+
+                    </div> -->
+                    <div class="col-6">
+                        <canvas id="graficoEvolucaoAtendimentos"></canvas>                    
+                        <canvas style="display: none;" id="graficoAtendimentosPorAtendente"></canvas>
+
+                    </div>                    
+                    <div class="col d-flex flex-column">   
+                                         
+                        <canvas class="p-4" id="donutChart"></canvas>
                     </div>        
+                    <div class="col"></div>
                 </div>
                 <div class="row my-auto pt-3" id="graficosTipo">             
                     <div class="col">
@@ -220,7 +222,7 @@
                         <canvas style="height: 25vh;" id="graficoEvolucaoTelefonia"></canvas>
                     </div>
                     <div class="col">
-                        <canvas style="height: 25vh;"></canvas>
+                        
                         
                     </div>
                 </div>
@@ -371,7 +373,7 @@
             /* padding: 1vh; */
         }
         .logo{
-            margin: 0 20px 0 0;
+            margin: 0 0px 0 0;
         }
         /* .col, .col-3, .col-4, .col-8{
             border: 1px solid white;
@@ -398,7 +400,7 @@
             color: #ffffff; /* Texto branco */
             border-bottom: 2px solid #343a40; /* Linha de separação */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra discreta */
-            height: 7vh;
+            height: 10vh !important;
         }
 
         header .logo img {
@@ -535,11 +537,11 @@
         } */
         #graficoChamadosSecretaria{
             width: 100%;
-            height: 42vh !important;
+            /* height: 42vh !important; */
         }
         #graficoAtendimentos{
             width: 100%;
-            height: 41.5vh !important;
+            /* height: 41.5vh !important; */
         }
         #graficoEvolucaoAtendimentos{
             width: 100%;
@@ -552,6 +554,11 @@
         #graficosTipo canvas, #graficosTipo2 canvas{
             width: 100% !important;
             height: 25vh !important;
+        }
+        #donutChart{
+            width: 100% !important;
+            height: 100% !important;
+            border: none;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1248,6 +1255,7 @@
                 plugins: {
                     legend: {
                         position: 'top', // Posição da legenda
+                        color: 'white',
                     },
                     tooltip: {
                         callbacks: {
@@ -1412,7 +1420,7 @@
         
     }
 
-    // donutChart({{total}}, {{total_pendentes}});
+    donutChart({{total}}, {{total_pendentes}});
     // graficoDeLinha();
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
