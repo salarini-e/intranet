@@ -128,7 +128,7 @@
 							{% if form_ext %}
 							{{form_ext}}
 							{% endif %}
-							<button class="btn app-btn-primary mt-3">
+							<button id="enviar" class="btn app-btn-primary mt-3" onclick="evitarDeEnviarDuasVezes()">
 								Enviar
 							</button>
 						</form>
@@ -139,6 +139,10 @@
 				
 				
 				<script>
+					function evitarDeEnviarDuasVezes(){
+						document.getElementById('enviar').disabled = true;
+						document.getElementById('enviar').innerHTML = 'Enviando...';
+					}
 					// function paraQuem(valor){
 					// 	if (valor == 'outro'){
 					// 		document.querySelector('#id_secretaria').value = '';
