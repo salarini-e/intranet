@@ -14,7 +14,7 @@
         </div>
         {% if request.user.is_superuser or is_atendente%}
         <div class="col-auto col top-buttons-background">
-            {% is_atendente %}
+            {% if is_atendente %}
             <button id="btnMenuAcoes" class="btn app-btn-secondary" onclick="toggleMenuAcoes()">
                 <i class="fa-solid fa-rectangle-list"></i>
             </button>            
