@@ -68,9 +68,13 @@
 				</div>
 
 				<script>
-					function evitarDeEnviarDuasVezes(){
+					function evitarDeEnviarDuasVezes(){											
 						document.getElementById('enviar').disabled = true;
 						document.getElementById('enviar').innerHTML = 'Enviando...';
+						setTimeout(function() {
+							document.getElementById('enviar').disabled = false;
+							document.getElementById('enviar').innerHTML = 'Enviar';
+						}, 10000);					
 					}
 					function montarSelect(data){
 						if (typeof data === "string") {							

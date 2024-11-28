@@ -93,7 +93,7 @@
 							</div>
 							<div id="novosetor">							
 								{{form_setor}}							
-								<button onclick="criarNovoSetor()" class="btn app-btn-primary mt-3">
+								<button onclick="criarNovoSetor(this)" class="btn app-btn-primary mt-3">
 									Criar setor
 								</button>
 							</div>
@@ -122,7 +122,7 @@
 				</div>
 				<div id="div-form-chamado" class="app-card app-card-orders-table shadow-sm mb-5" style="display: block;">
 				    <div class="app-card-body py-4 px-5">
-						<form method="POST" enctype="multipart/form-data">
+						<form id="formulario" method="POST" enctype="multipart/form-data">
 							{% csrf_token %}
 							{{form}}
 							{% if form_ext %}
@@ -139,9 +139,15 @@
 				
 				
 				<script>
-					function evitarDeEnviarDuasVezes(){
+					function evitarDeEnviarDuasVezes(e){											
 						document.getElementById('enviar').disabled = true;
 						document.getElementById('enviar').innerHTML = 'Enviando...';
+						document.getElementById('formulario').submit();
+						setTimeout(function() {
+							document.getElementById('enviar').disabled = false;
+							document.getElementById('enviar').innerHTML = 'Enviar';
+						}, 5000);
+						
 					}
 					// function paraQuem(valor){
 					// 	if (valor == 'outro'){
