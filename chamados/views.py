@@ -20,6 +20,8 @@ import re
 from django.db.models import Count, Q
 from dateutil.relativedelta import relativedelta
 import locale
+from django.views.decorators.http import require_POST
+
 
 # Define a localidade para português (Brasil)
 locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
@@ -986,42 +988,57 @@ def verificar_atualizacoes(request):
         'last_check': timezone.now().isoformat()
     })
 
-def mesclarChamados(request):
-    if request.method == 'POST':
-        
-            ids = request.POST.getlist('chamados')[0].split(',')
-            print(ids)
-            chamados_mesclados = Chamado.objects.filter(id__in=ids).order_by('dt_inclusao')
 
-            chamado_resultante = Chamado.objects.create(                
-                                                
-                setor = chamados_mesclados.first().setor,
-                secretaria=chamados_mesclados.first().secretaria,                                
-                telefone = chamados_mesclados.first().telefone,
-                requisitante = chamados_mesclados.first().requisitante,
-                endereco = chamados_mesclados.first().endereco,
-                tipo=chamados_mesclados.first().tipo,
-                assunto = chamados_mesclados.first().assunto,
-                prioridade = chamados_mesclados.first().prioridade,
-                status = '0',
-                descricao = chamados_mesclados.first().descricao,
-                profissional_designado = chamados_mesclados.first().profissional_designado,
-                user_inclusao=Servidor.objects.get(user=request.user),
-                anexo = chamados_mesclados.first().anexo,                
-            )
-            chamado_resultante.gerar_hash()
-            chamado_resultante.gerar_protocolo()
+@login_required
+@require_POST
+def mesclar_chamados(request):
+    try:
+        atendente = Atendente.objects.get(servidor__user=request.user, ativo=True)
+        if atendente.nivel not in [0, 1]:
+            return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
+    except Atendente.DoesNotExist:
+        return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
 
-            for chamado in chamados_mesclados:
-                mensagens = Mensagem.objects.filter(chamado=chamado)
-                for mensagem in mensagens:
-                    mensagem.chamado = chamado_resultante
-                    mensagem.save()
-                chamado.mesclado = True
-                chamado.status = '5'
-                chamado.save()
-                
-            chamado_resultante.dt_atualizacao = timezone.now()
-            chamado_resultante.save()
-            return JsonResponse({'status': 200, 'message': 'Chamados mesclados com sucesso!'})
-    return JsonResponse({'status': 400, 'message': 'Erro ao mesclar os chamados!'})
+    ids = request.POST.getlist('chamados')
+    if not ids:
+        return JsonResponse({'status': 400, 'message': 'Nenhum chamado fornecido!'})
+
+    ids = ids[0].split(',')
+    chamados_mesclados = Chamado.objects.filter(id__in=ids).order_by('dt_inclusao')
+
+    if not chamados_mesclados.exists():
+        return JsonResponse({'status': 404, 'message': 'Chamados não encontrados!'})
+
+    try:
+        primeiro_chamado = chamados_mesclados.first()
+        chamado_resultante = Chamado.objects.create(
+            setor=primeiro_chamado.setor,
+            secretaria=primeiro_chamado.secretaria,
+            telefone=primeiro_chamado.telefone,
+            requisitante=primeiro_chamado.requisitante,
+            endereco=primeiro_chamado.endereco,
+            tipo=primeiro_chamado.tipo,
+            assunto=primeiro_chamado.assunto,
+            prioridade=primeiro_chamado.prioridade,
+            status='0',
+            descricao=primeiro_chamado.descricao,
+            profissional_designado=primeiro_chamado.profissional_designado,
+            user_inclusao=Servidor.objects.get(user=request.user),
+            anexo=primeiro_chamado.anexo,
+        )
+        chamado_resultante.gerar_hash()
+        chamado_resultante.gerar_protocolo()
+
+        for chamado in chamados_mesclados:
+            Mensagem.objects.filter(chamado=chamado).update(chamado=chamado_resultante)
+            chamado.mesclado = True
+            chamado.status = '5'
+            chamado.save()
+
+        chamado_resultante.dt_atualizacao = timezone.now()
+        chamado_resultante.save()
+
+        return JsonResponse({'status': 200, 'message': 'Chamados mesclados com sucesso!'})
+
+    except Exception as e:
+        return JsonResponse({'status': 500, 'message': f'Erro interno: {str(e)}'})
