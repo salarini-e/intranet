@@ -14,10 +14,10 @@
         </div>
         {% if request.user.is_superuser or is_atendente%}
         <div class="col-auto col top-buttons-background">
+            {% is_atendente %}
             <button id="btnMenuAcoes" class="btn app-btn-secondary" onclick="toggleMenuAcoes()">
                 <i class="fa-solid fa-rectangle-list"></i>
-            </button>
-            {% if is_atendente %}
+            </button>            
             <a href="{% url 'chamados:ordernarPorNaoFechados' %}" class="my-auto btn app-btn-secondary {% if request.session.ordenacao %}text-success{% endif %}" data-bs-toggle="tooltip" data-bs-title="Ordenar {% if not request.session.ordenacao %}por chamados não fechados{% else %}normal{% endif %}">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
             </a>
@@ -35,6 +35,7 @@
         </div>
         {% endif %}
     </div>
+    {% if is_atendente %}
     <div id="menuAcoes" class="row hidden">
         <div class="col pb-3 d-flex" style="padding-right: 265px;">
             <select onchange="realizarAcao()" name="acoes" id="acoes" class="form-select me-2 my-auto">
@@ -43,6 +44,7 @@
             </select>           
         </div>
     </div>
+    {% endif %}
     <!-- CARDS -->
     <div class="container">
         
