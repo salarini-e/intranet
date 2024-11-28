@@ -36,7 +36,7 @@
         {% endif %}
     </div>
     {% if is_atendente %}
-    <div id="menuAcoes" class="row hidden">
+    <div id="menuAcoes" class="row hiddenAction">
         <div class="col pb-3 d-flex" style="padding-right: 265px;">
             <select onchange="realizarAcao()" name="acoes" id="acoes" class="form-select me-2 my-auto">
                 <option value="" selected disabled>Selecione uma ação</option>                
@@ -479,13 +479,13 @@
         </div>
     </div>
     <style>
-    .hidden {
+    .hiddenAction {
         max-height: 0;
         overflow: hidden;
         transition: max-height 0.5s ease-out;
     }
 
-    .show {
+    .showAction {
         max-height: 500px; /* Defina um valor maior que a altura máxima do conteúdo */
         overflow: hidden;
         transition: max-height 0.5s ease-in;
@@ -831,7 +831,7 @@
             function toggleMenuAcoes(){
                 div = document.getElementById('menuAcoes');
                 btn = document.getElementById('btnMenuAcoes');
-                div.classList.toggle('show');
+                div.classList.toggle('showAction');
                 div.classList.toggle('hidden');
                 btn.classList.toggle('text-success');
 
