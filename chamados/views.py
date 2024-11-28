@@ -985,3 +985,43 @@ def verificar_atualizacoes(request):
         'atualizacoes': atualizacoes,
         'last_check': timezone.now().isoformat()
     })
+
+def mesclarChamados(request):
+    if request.method == 'POST':
+        
+            ids = request.POST.getlist('chamados')[0].split(',')
+            print(ids)
+            chamados_mesclados = Chamado.objects.filter(id__in=ids).order_by('dt_inclusao')
+
+            chamado_resultante = Chamado.objects.create(                
+                                                
+                setor = chamados_mesclados.first().setor,
+                secretaria=chamados_mesclados.first().secretaria,                                
+                telefone = chamados_mesclados.first().telefone,
+                requisitante = chamados_mesclados.first().requisitante,
+                endereco = chamados_mesclados.first().endereco,
+                tipo=chamados_mesclados.first().tipo,
+                assunto = chamados_mesclados.first().assunto,
+                prioridade = chamados_mesclados.first().prioridade,
+                status = '0',
+                descricao = chamados_mesclados.first().descricao,
+                profissional_designado = chamados_mesclados.first().profissional_designado,
+                user_inclusao=Servidor.objects.get(user=request.user),
+                anexo = chamados_mesclados.first().anexo,                
+            )
+            chamado_resultante.gerar_hash()
+            chamado_resultante.gerar_protocolo()
+
+            for chamado in chamados_mesclados:
+                mensagens = Mensagem.objects.filter(chamado=chamado)
+                for mensagem in mensagens:
+                    mensagem.chamado = chamado_resultante
+                    mensagem.save()
+                chamado.mesclado = True
+                chamado.status = '5'
+                chamado.save()
+                
+            chamado_resultante.dt_atualizacao = timezone.now()
+            chamado_resultante.save()
+            return JsonResponse({'status': 200, 'message': 'Chamados mesclados com sucesso!'})
+    return JsonResponse({'status': 400, 'message': 'Erro ao mesclar os chamados!'})

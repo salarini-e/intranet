@@ -10,29 +10,39 @@
     <div class="row g-3 mb-4 align-items-center justify-content-between">
         
         <div class="col-auto">
-            <h1 class="app-page-title tickets mb-0">Bem vindo aos tickets</h1>
+            <h1 class="app-page-title tickets mb-0">Bem vindo aos tickets</h1>          
         </div>
         {% if request.user.is_superuser or is_atendente%}
-            <div class="col-auto top-buttons-background">
-                {% if is_atendente %}
-                <a href="{% url 'chamados:ordernarPorNaoFechados' %}" class="my-auto btn app-btn-secondary {% if request.session.ordenacao %}text-success{% endif %}" data-bs-toggle="tooltip" data-bs-title="Ordenar {% if not request.session.ordenacao %}por chamados não fechados{% else %}normal{% endif %}">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                </a>
-                {% endif %}
-                <a href="{% url 'chamados:tickets' %}" class="my-auto btn app-btn-secondary" data-bs-toggle="tooltip" data-bs-title="Atualizar página">
-                    <i class="fa-solid fa-rotate-left"></i>
-                </a>            
-                <button class="my-auto btn p-4 py-2" id="mButtonFilters" 
-                        data-bs-toggle="offcanvas" 
-                        data-bs-target="#offcanvasScrolling" 
-                        onclick="toggleMenuFilters()"
-                        >
-                    <i class="fa-solid fa-angle-left"></i><i class="fa-solid fa-filter mx-2"></i>Filtros
-                </button>
-            </div>
+        <div class="col-auto col top-buttons-background">
+            <button id="btnMenuAcoes" class="btn app-btn-secondary" onclick="toggleMenuAcoes()">
+                <i class="fa-solid fa-rectangle-list"></i>
+            </button>
+            {% if is_atendente %}
+            <a href="{% url 'chamados:ordernarPorNaoFechados' %}" class="my-auto btn app-btn-secondary {% if request.session.ordenacao %}text-success{% endif %}" data-bs-toggle="tooltip" data-bs-title="Ordenar {% if not request.session.ordenacao %}por chamados não fechados{% else %}normal{% endif %}">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </a>
+            {% endif %}
+            <a href="{% url 'chamados:tickets' %}" class="my-auto btn app-btn-secondary" data-bs-toggle="tooltip" data-bs-title="Atualizar página">
+                <i class="fa-solid fa-rotate-left"></i>
+            </a>            
+            <button class="my-auto btn p-4 py-2" id="mButtonFilters" 
+                    data-bs-toggle="offcanvas" 
+                    data-bs-target="#offcanvasScrolling" 
+                    onclick="toggleMenuFilters()"
+                    >
+                <i class="fa-solid fa-angle-left"></i><i class="fa-solid fa-filter mx-2"></i>Filtros
+            </button>
+        </div>
         {% endif %}
     </div>
-    
+    <div id="menuAcoes" class="row hidden">
+        <div class="col pb-3 d-flex" style="padding-right: 265px;">
+            <select onchange="realizarAcao()" name="acoes" id="acoes" class="form-select me-2 my-auto">
+                <option value="" selected disabled>Selecione uma ação</option>                
+                <option value="mesclar">Mesclar chamados</option>                
+            </select>           
+        </div>
+    </div>
     <!-- CARDS -->
     <div class="container">
         
@@ -59,7 +69,7 @@
 						</div>
 	            {% endif %}
                 {% for chamado in chamados %}
-                    <div id="chamado-{{chamado.id}}" class="row ticket-chamado-background{% if chamado.status == '4' %} card-status-finalizado{% endif %}">
+                    <div id="chamado-{{chamado.id}}" class="row ticket-chamado-background{% if chamado.status == '4' or chamado.status == '5' %} card-status-finalizado{% endif %}">
                         <div class="row">
                             <div class="col-1 m-auto checkbox-container">
                                 <input type="checkbox" class="checkbox-tickets" onchange="toggleStatusCheckBox(this)">
@@ -98,7 +108,8 @@
 
                                             <a href="{% url 'chamados:detalhes' chamado.hash %}">
                                                 <span class="chamados-tickets-infos-chamado-text-assunto">
-                                                    {{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}
+                                                    
+                                                    {{chamado.se_mesclado}} {{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}
                                                 </span>
                                                 </a>
                                             <div class="solution-infos-wrapper">
@@ -465,7 +476,20 @@
         
         </div>
     </div>
-    
+    <style>
+    .hidden {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-out;
+    }
+
+    .show {
+        max-height: 500px; /* Defina um valor maior que a altura máxima do conteúdo */
+        overflow: hidden;
+        transition: max-height 0.5s ease-in;
+    }
+
+    </style>
     <script src="/static/js/request.js"></script>				
     <script>
         function toggleStatusCheckBox(checkbox) {
@@ -794,6 +818,60 @@
                 totalNovosChamados = 0;
                 totalAtualizacoes = 0;
                 location.reload();
+            }
+            function confirmarAcao(){
+                if (confirm('Deseja realmente excluir este chamado?')) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            function toggleMenuAcoes(){
+                div = document.getElementById('menuAcoes');
+                btn = document.getElementById('btnMenuAcoes');
+                div.classList.toggle('show');
+                div.classList.toggle('hidden');
+                btn.classList.toggle('text-success');
+
+
+            }
+            function mesclarChamados(selectedIds){
+                        var url = "{% url 'chamados:mesclar' %}"; 
+                        formData = new FormData();
+                        formData.append('chamados', selectedIds);
+                        formData.append('csrfmiddlewaretoken', '{{csrf_token}}');
+                        postRequest(url, formData)
+                            .then(response => {
+                                if (response.status == 200){
+                                    alert(response.message +" (" + response.status+")")
+                                    location.reload();
+                                }else{
+                                    alert(response.message +" (" + response.status+")")
+                                }                                   
+                            })
+                            .catch(error => {
+                                alert('Erro ao mesclar chamados. Tente novamente mais tarde.')
+                                console.error(error)
+                            });				
+            }
+            function realizarAcao(){
+                valor = confirmarAcao();
+                console.log(valor)
+                document.getElementById("acoes").selectedIndex = 0;
+
+                if (valor){
+                    const checkboxes = document.querySelectorAll('.checkbox-tickets:checked');
+                    const selectedIds = Array.from(checkboxes).map(checkbox => checkbox.closest('.row.ticket-chamado-background').id.replace('chamado-', ''));
+                    
+                    if (selectedIds.length < 2) {
+                        alert('Selecione pelo menos um chamado para realizar a ação.');
+                        return;
+                    }
+                    mesclarChamados(selectedIds);
+
+                    
+                }
+
             }
             document.getElementById("indicativo-atualizacao").addEventListener("click", recarregarPagina);
         </script>

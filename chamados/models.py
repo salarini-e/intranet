@@ -83,6 +83,7 @@ class Chamado(models.Model):
         ('2', 'Pendente'),        
         # ('3', 'Fechado'),
         ('4', 'Finalizado'),
+        ('5', 'Cancelado')
     )
 
     setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, verbose_name='Para qual setor é o chamado?', null=True, blank=True)
@@ -109,6 +110,8 @@ class Chamado(models.Model):
     n_protocolo = models.CharField(max_length=14, verbose_name='Número de protocolo', null=True)
     anexo = models.FileField(upload_to='chamados/anexos/', default=None, verbose_name='Possui alguma foto ou print do problema? Caso sim, anexe-a abaixo.', null=True, blank=True)
     hash=models.CharField(max_length=64)
+    mesclado = models.BooleanField(default=False, verbose_name='Chamado mesclado')
+    motivo_cancelamento = models.TextField(verbose_name='Motivo do cancelamento', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Chamado'
@@ -117,6 +120,14 @@ class Chamado(models.Model):
     def __str__(self):
         return self.n_protocolo
 
+    def se_mesclado(self):
+        print(self.mesclado)
+        if self.mesclado:
+            historico_mesclagem = Historico_Mesclagem.objects.filter(chamado_mesclado=self)
+            chamado = historico_mesclagem.chamado_resultante
+            return f'{self.chamado.n_protocolo} <i class="fa-solid fa-code-merge me-2"></i>'
+        else:
+            return ''
     def calcular_media_diaria():
         """
         Calcula a média diária de chamados criados nos últimos 31 dias usando uma query SQL.
@@ -624,3 +635,13 @@ class Historico_Designados(models.Model):
     class Meta:
         verbose_name = 'Histórico de designados'
         verbose_name_plural = 'Histórico de designados'
+
+class Historico_Mesclagem(models.Model):
+    chamado_resultante = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado resultante da mesclagem', related_name='chamado_resultante')
+    chamados_mesclados = models.ManyToManyField(Chamado, verbose_name='Chamados mesclados', related_name='chamados_mesclados')
+    user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True)
+    dt_mesclagem = models.DateTimeField(auto_now_add=True, verbose_name='Data de mesclagem')
+
+    class Meta:
+        verbose_name = 'Histórico de mesclagem'
+        verbose_name_plural = 'Histórico de mesclagens'
