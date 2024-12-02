@@ -208,46 +208,36 @@ def verificar_chamados_atrasados():
     return chamados_atrasados_data_agendada.exists(), chamados_atrasados_trinta_dias.exists()
 
 def carregar_novos_filtros(request):
-    
+    # print(request.POST)
     agentes = request.POST['agentes']
     status = request.POST['status']
-    # secretarias = request.POST['secretarias']
     tiposChamados = request.POST['tiposChamados']
     prioridade = request.POST['prioridade']
     criadoEm = request.POST['criadoEm']
     fechadoEm = request.POST['fechadoEm']
     agendadoPara = request.POST['agendadoPara']
     atualizacaoEm = request.POST['atualizacaoEm']
+
+
     agentesLista = agentes.split(';')
-    # secretariasLista = secretarias.split(';')
     statusLista = status.split(';')
     tiposChamadosLista = tiposChamados.split(';')
     prioridadeLista = prioridade.split(';')
     agentesLista.pop()
-    # secretariasLista.pop()
     statusLista.pop()
     tiposChamadosLista.pop()
     prioridadeLista.pop()
 
     agentes = []
-    # secretarias = []
     status =[]
     tiposChamados = []
     prioridades = []
-    # print(secretariasLista)
+
     request.session['agentes']=None
     for id_agente in agentesLista:
         agente = Atendente.objects.get(id=id_agente)
         agentes.append({'id': agente.id, 'nome': agente.nome_servidor})
     
-    # request.session['secretarias']=None
-    # for id_secretaria in7 secretariasLista:        
-    #     secretaria = Secretaria.objects.get(id=id_secretaria)
-    #     secretarias.append({'id': secretaria.id, 'apelido': secretaria.apelido})
-      
-    
-    
-
     request.session['status']=None
     status_choices = dict(Chamado.STATUS_CHOICES)
     for id_status in statusLista:
@@ -266,7 +256,6 @@ def carregar_novos_filtros(request):
             prioridades.append({'id': id_prioridade, 'nome': prioridades_choices[id_prioridade]})
 
     request.session['agentes'] = agentes
-    # request.session['secretarias'] = secretarias
     request.session['status'] = status
     request.session['tiposChamados'] = tiposChamados
     request.session['prioridade'] = prioridades
@@ -275,7 +264,6 @@ def carregar_novos_filtros(request):
     request.session['fechadoEm'] = fechadoEm
     request.session['agendadoPara'] = agendadoPara
     request.session['atualizacaoEm'] = atualizacaoEm
-    
     # else:
     #     try:
     #         agentes = request.session.get('agentes', '')
@@ -341,14 +329,6 @@ def make_query_chamados(request):
         if str_id_agentes:
             sql += f" AND profissional_designado_id IN ({str_id_agentes[:-1]})"
 
-    # if 'secretarias' in request.session and request.session['secretarias'] is not None:
-    #     str_id_secretarias = ''
-    #     for secretaria in request.session['secretarias']:
-    #         str_id_secretarias += str(secretaria['id']) + ','
-
-    #     if str_id_secretarias:
-    #         sql += f" AND secretaria_id IN ({str_id_secretarias})"
-
     # CONCATENAR CASO TENHA STATUS SELECIONADO
     if 'status' in request.session and request.session['status'] is not None:
         str_id_status = ''
@@ -411,7 +391,7 @@ from django.db import connection, models
 def filtrar_chamados(request):
     if request.user.is_superuser or Atendente.objects.filter(servidor__user=request.user, ativo=True).exists():
         sql = make_query_chamados(request)
-        # print(sql)
+
         with connection.cursor() as cursor:
             cursor.execute(sql)
             results = cursor.fetchall()
@@ -419,8 +399,8 @@ def filtrar_chamados(request):
             queryset = []
             fechados =[]
 
-            for row in results[0:2]:                
-                # print(row)    
+            for row in results:                
+
                 data = {
                     'id': row[0],
                     'telefone': row[1],
@@ -444,8 +424,7 @@ def filtrar_chamados(request):
                     'tipo_id': row[19],
                     'dt_inicio_execucao': row[20],
                     'dt_agendamento': row[21],
-                    'endereco': row[22],
-                    # 'secretaria_id': row[23]
+                    'endereco': row[22]
                 }
                 chamado = Chamado(**data)
                 
@@ -465,4 +444,3 @@ def filtrar_chamados(request):
         queryset = Chamado.objects.filter(requisitante__user=request.user).order_by('-dt_atualizacao')
     
     return queryset
-

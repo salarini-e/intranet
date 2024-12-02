@@ -554,7 +554,7 @@ def tickets(request):
     if request.GET.get('profissional_designado__isnull') == 'True':
         # Filtra apenas os chamados onde o profissional designado é None
         chamados = [chamado for chamado in chamados if chamado.profissional_designado is None]
-    
+
     # Filtro para os últimos 30 dias
     if request.GET.get('ultimos_30_dias') == 'True':
         data_limite = timezone.now().replace(tzinfo=None) - timedelta(days=30)
