@@ -94,7 +94,7 @@
                     <div class="col d-flex flex-column">
                         <div id="indicadornumerico" class="d-flex text-center justify-content-around">
                             <div>
-                                <span class="text-indicador" style="background-color: darkblue; padding: 0 20px;">
+                                <span class="text-indicador" style="background-color: darkblue;">
                                     Total de chamados
                                 </span>
                                 <br>
@@ -105,8 +105,8 @@
                                     {{total}}
                                 </span>
                             </div>
-                            <div>
-                                <span class="text-indicador" style="background-color: darkblue; padding: 0 20px;">
+                            <div class="mx-2">
+                                <span class="text-indicador" style="background-color: darkblue;">
                                     Total resolvidos
                                 </span>
                                 <br>
@@ -117,8 +117,8 @@
                                     {{total_resolvidos}}
                                 </span>
                             </div>
-                            <div>
-                                <span class="text-indicador" style="background-color: darkblue; padding: 0 20px;">
+                            <div class="p-0">
+                                <span class="text-indicador" style="background-color: darkblue;">
                                     Taxa de eficência
                                 </span>
                                 <br>
@@ -130,41 +130,7 @@
                                 </span>
                             </div>
                         </div>
-                        <table style="width: 80%;" class="mt-3 table text-white table-borderless mb-auto mx-auto">
-                            <!-- <thead>
-                                <tr>
-                                    <th style="font-weight: bold;" colspan="2" scope="col">Informações</th>                                
-                                </tr>
-                            </thead> -->
-                            <tbody>
-                                <tr>
-                                    <td>Chamados em aberto</td>
-                                    <td id="chamadosAbertos" style="font-weight: bold;">{{chamados_abertos}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Chamados pendentes</td>
-                                    <td id="chamadosPendentes" style="font-weight: bold;">{{chamados_pendentes}}</td>
-                                </tr>                            
-                                <tr>
-                                    <td>Chamados criados hoje</td>
-                                    <td id="chamadosHoje" style="font-weight: bold;">{{chamados_criados_hoje}}</td>
-                                </tr>
-                                <!-- <tr>
-                                    <td>Média diária</td>
-                                    <td id="mediaDiaria" style="font-weight: bold;">{{media_diaria}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Chamados criados esse mês</td>
-                                    <td id="chamadosMes" style="font-weight: bold;">{{chamados_criados_mes}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Média mensal</td>
-                                    <td id="mediaMensal" style="font-weight: bold;">{{media_mensal}}</td>
-                                </tr>
-     -->
-                                
-                            </tbody>
-                        </table>
+                        
                     </div>
                 </div>    
                 <div class="row mt-auto">
@@ -200,7 +166,43 @@
                                          
                         <canvas class="p-4" id="donutChart"></canvas>
                     </div>        
-                    <div class="col"></div>
+                    <div class="col">
+                        <table style="width: 80%;" class="mt-3 table text-white table-borderless mb-auto mx-auto">
+                            <!-- <thead>
+                                <tr>
+                                    <th style="font-weight: bold;" colspan="2" scope="col">Informações</th>                                
+                                </tr>
+                            </thead> -->
+                            <tbody>
+                                <tr>
+                                    <td>Aberto</td>
+                                    <td id="chamadosAbertos" style="font-weight: bold;">{{chamados_abertos}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Pendentes</td>
+                                    <td id="chamadosPendentes" style="font-weight: bold;">{{chamados_pendentes}}</td>
+                                </tr>                            
+                                <tr>
+                                    <td>Criados hoje</td>
+                                    <td id="chamadosHoje" style="font-weight: bold;">{{chamados_criados_hoje}}</td>
+                                </tr>
+                                <!-- <tr>
+                                    <td>Média diária</td>
+                                    <td id="mediaDiaria" style="font-weight: bold;">{{media_diaria}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Chamados criados esse mês</td>
+                                    <td id="chamadosMes" style="font-weight: bold;">{{chamados_criados_mes}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Média mensal</td>
+                                    <td id="mediaMensal" style="font-weight: bold;">{{media_mensal}}</td>
+                                </tr>
+     -->
+                                
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="row my-auto pt-3" id="graficosTipo">             
                     <div class="col">
@@ -431,11 +433,11 @@
         
         #indicadornumerico .text-indicador{
             color: white;
-            font-size: 1.5vh; /* Tamanho do texto */
+            font-size: 0.55rem; /* Tamanho do texto */
             font-weight: bold;
         }
         #indicadornumerico span{
-            font-size: 1.5rem; /* Tamanho do número */
+            padding: 0 5px;
             font-weight: bold;
         }
         .offcanvas.bg-dark {
@@ -578,10 +580,10 @@
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: { position: 'top', labels: {color: '#FFFFFF'} },
+                        legend: { position: 'top', labels: {color: '#FFFFFF', font: {size: 6}} },
                         title: { display: true, text: 'Total de Atendimentos de Chamados por Mês', color: '#FFFFFF',
                         font: {
-                                size: 16
+                                size: 10
                             }
                          },
                         datalabels: {
@@ -589,13 +591,14 @@
                             align: 'top',  // Alinha o texto no topo
                             color: 'white', // Cor do texto
                             font: {
-                                weight: 'bold'
+                                weight: 'bold',
+                                size: 7
                             }
                         },
                     },
                     scales: {
-                        x: { title: { display: false, text: 'Mês', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } },
-                        y: { title: { display: false, text: 'Total de Chamados', color: '#FFFFFF' }, ticks: { color: '#FFFFFF' } }
+                        x: { title: { display: false, text: 'Mês', color: '#FFFFFF', font: {size: 8} }, ticks: { color: '#FFFFFF' , font: {size: 5}} },
+                        y: { title: { display: false, text: 'Total de Chamados', color: '#FFFFFF' }, ticks: { color: '#FFFFFF', font: {size: 5} } }
                     }
                 },
                 plugins: [ChartDataLabels]
@@ -632,7 +635,7 @@
                             text: 'Internet',
                             color: '#FFFFFF',
                             font: {
-                                size: 16
+                                size: 8
                             }
                         },
                         legend: {
@@ -648,7 +651,7 @@
                     },
                     scales: {
                         x: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF', font: {size: 5} },
                             title: {
                                 display: false,
                                 text: 'Mês',
@@ -656,7 +659,7 @@
                             }
                         },
                         y: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF', font: {size: 5} },
                             title: {
                                 display: false,
                                 text: 'Número de Chamados',
@@ -703,7 +706,10 @@
                         title: {
                             display: true,
                             text: 'Evolução de Atendimentos por Atendente nos Últimos 30 Dias',
-                            color: '#FFFFFF'
+                            color: '#FFFFFF',
+                            font: {
+                                size: 8
+                            }
                         },
                         
                         legend: {
@@ -728,7 +734,7 @@
                     },
                     scales: {
                         x: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF', font: {size: 5} },
                             title: {
                                 display: true,
                                 text: 'Data',
@@ -736,7 +742,7 @@
                             }
                         },
                         y: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF', font: {size: 5} },
                             title: {
                                 display: false,
                                 text: 'Número de Atendimentos',
@@ -779,7 +785,7 @@
                             text: 'Total de Atendimentos por Atendente',
                             color: '#FFFFFF',
                             font: {
-                                size: 16
+                                size: 10
                             }
                         },
                         datalabels: {
@@ -787,7 +793,8 @@
                             align: 'top',  // Alinha o texto no topo
                             color: 'white', // Cor do texto
                             font: {
-                                weight: 'bold'
+                                weight: 'bold',
+                                size: 6
                             }
                         },
                         legend: {
@@ -803,7 +810,7 @@
                     },
                     scales: {
                         x: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF', font: {size: 4} },
                             title: {
                                 display: false,
                                 text: 'Atendentes',
@@ -811,7 +818,7 @@
                             }
                         },
                         y: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF', font: {size: 6} },
                             title: {
                                 display: false,
                                 text: 'Total de Atendimentos',
@@ -856,7 +863,7 @@
                             text: 'Impressora',
                             color: '#FFFFFF',
                             font: {
-                                size: 16
+                                size: 8
                             }
                         },
                         legend: {
@@ -872,7 +879,7 @@
                     },
                     scales: {
                         x: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF', font: {size: 5} },
                             title: {
                                 display: false,
                                 text: 'Mês',
@@ -880,7 +887,7 @@
                             }
                         },
                         y: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF', font: {size: 5} },
                             title: {
                                 display: false,
                                 text: 'Número de Chamados',
@@ -924,7 +931,7 @@
                             text: 'Computadores',
                             color: '#FFFFFF',
                             font: {
-                                size: 16
+                                size: 8
                             }
                         },
                         legend: {
@@ -940,7 +947,7 @@
                     },
                     scales: {
                         x: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF', font: {size: 5} },
                             title: {
                                 display: false,
                                 text: 'Mês',
@@ -948,7 +955,7 @@
                             }
                         },
                         y: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF', font: {size: 5} },
                             title: {
                                 display: false,
                                 text: 'Número de Chamados',
@@ -991,7 +998,7 @@
                             text: 'Sistemas EL',
                             color: '#FFFFFF',
                             font: {
-                                size: 16
+                                size: 8
                             }
                         },
                         legend: {
@@ -1007,7 +1014,7 @@
                     },
                     scales: {
                         x: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF',font: {size: 5} },
                             title: {
                                 display: false,
                                 text: 'Mês',
@@ -1015,7 +1022,7 @@
                             }
                         },
                         y: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF',font: {size: 5} },
                             title: {
                                 display: false,
                                 text: 'Número de Chamados',
@@ -1058,7 +1065,7 @@
                             text: 'Telefonia',
                             color: '#FFFFFF',
                             font: {
-                                size: 16
+                                size: 8
                             }
                         },
                         legend: {
@@ -1074,7 +1081,7 @@
                     },
                     scales: {
                         x: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF',font: {size: 5} },
                             title: {
                                 display: false,
                                 text: 'Mês',
@@ -1082,7 +1089,7 @@
                             }
                         },
                         y: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF',font: {size: 5} },
                             title: {
                                 display: false,
                                 text: 'Número de Chamados',
@@ -1187,7 +1194,8 @@
                             align: 'top',  // Alinha o texto no topo
                             color: 'white', // Cor do texto
                             font: {
-                                weight: 'bold'
+                                weight: 'bold',
+                                size: 6
                             }
                         },
                         title: {
@@ -1195,7 +1203,7 @@
                             text: 'Chamados por Secretaria',
                             color: '#FFFFFF',
                             font: {
-                                size: 16
+                                size: 8
                             }
                         },
                         legend: {
@@ -1211,15 +1219,15 @@
                     },
                     scales: {
                         x: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF', font: {size: 5} },
                             title: {
-                                display: true,
+                                display: false,
                                 text: 'Secretarias',
                                 color: '#FFFFFF'
                             }
                         },
                         y: {
-                            ticks: { color: '#FFFFFF' },
+                            ticks: { color: '#FFFFFF', font: {size: 5} },
                             title: {
                                 display: false,
                                 text: 'Número de Chamados',

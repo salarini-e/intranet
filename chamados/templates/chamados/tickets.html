@@ -289,7 +289,7 @@
                     <div class="col">
                         {% csrf_token %}	
                         <!-- AGENTES -->
-                        <div class="container mt-3" id="container-agentes">
+                        <div class="container" id="container-agentes">
                             <span class="filter-title-itens">Agentes incluem</span>
                             <div class="multi-select-input form-select" id="multiSelectInputAgentes">
                                 {% if request.session.agentes %}
@@ -303,6 +303,26 @@
                                     {% for atendente in atendentes %}
                                     <option value="{{ atendente.id }}" class="options-filter" {% if atendente.id|stringformat:"s" in agentes_selecionados %}selected{% endif %}>
                                         {{ atendente.nome_servidor }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>	
+                        <!-- SECRETARIAS -->
+                        <div class="container mt-3" id="container-secretaria">
+                            <span class="filter-title-itens">Secretaria incluem</span>
+                            <div class="multi-select-input form-select" id="multiSelectInputSecretarias">
+                                {% if request.session.secretarias %}
+                                {% for secretaria in  request.session.secretarias %}
+                                <div class="selected-option id_secretariasOptions" data-value="{{secretaria.id}}">{{secretaria.apelido}} <button onclick="removeOption('{{secretaria.id}}', 'multiSelectInputSecretarias', 'id_secretaria')">×</button></div>
+                                {% endfor %}
+                                {% endif %}
+                                <input class="input-hidden-values" type="hidden" name="secretarias" id="id_secretarias" {% if request.session.secretaria %}value='{% for secretaria in  request.session.secretarias %}{{secretaria.id}};{%endfor%}'{% endif %}>
+                                <select id="secretariasSelect" class="select-input form-select" aria-label="Select Secretarias" data-id="id_secretarias">
+                                    <option value="" class="options-filter"></option>
+                                    {% for secretaria in secretarias %}
+                                    <option value="{{ secretaria.id }}" class="options-filter" {% if secretaria.id|stringformat:"s" in secretarias_selecionados %}selected{% endif %}>
+                                        {{ secretaria.apelido }}
                                     </option>
                                     {% endfor %}
                                 </select>
@@ -463,6 +483,19 @@
                                 </select>
                             </div>
                         </div> 
+                        <!-- <div class="container mt-3">
+                            <p class="mb-0 pb-0"><strong>Período</strong></p>
+
+                            <span class="filter-title-itens">Inicial</span>
+                            <div class="multi-select-input">
+                            <input class="form-control" type="date" name="" id="">
+                            </div>
+                            <span class="filter-title-itens">Final</span>
+                            <div class="multi-select-input">
+                            <input class="form-control" type="date" name="" id="">
+                            </div>
+                            
+                        </div>  -->
                             <div class="container">
                                 <button class="filter-button btn app-btn-primary"  type="submit"><i class="fa-solid fa-filter me-2"></i>Aplicar</button> 
                                 <button class="filter-button btn app-btn-secondary"  type="button" onclick="clearInputs()"><i class="fa-solid fa-filter-circle-xmark me-2"></i>Limpar filtros</button> 
@@ -574,9 +607,9 @@
     addSelectedOption('statusSelect', 'multiSelectInputStatus','id_status');
     addSelectedOption('tiposChamadosSelect', 'multiSelectInputTiposChamados', 'id_tiposChamados');
     addSelectedOption('PrioridadeSelect', 'multiSelectInputPrioridade', 'id_prioridade');
-
+    addSelectedOption('secretariasSelect', 'multiSelectInputSecretarias', 'id_secretarias');
     function clearInputs(){
-        ids = ['agentes', 'status', 'tiposChamados', 'prioridade']
+        ids = ['agentes', 'status', 'tiposChamados', 'prioridade', 'secretarias']
         ids_selects = ['criadoEm', 'fechadoEm', 'agendadoPara','atualizacaoEm']
         // parte para limpar os selects multiplos
         ids.forEach(id => {

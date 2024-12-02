@@ -13670,8 +13670,8 @@ button.close:focus {
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, .1);
     border-bottom: 1px solid #e7e9ed;
     height: 56px;
-    /* background: #fff */
-    background: var(--bs-body-bg);
+    background: #00528A;
+    /* background: var(--bs-body-bg); */
 }
 
 .app-header-inner {
@@ -13764,7 +13764,7 @@ button.close:focus {
 }
 
 .app-utility-item .icon-badge.icon-badge {
-    background: #ec776c;
+    background: #0f6102;
     border: 2px solid #fff
 }
 
@@ -14178,6 +14178,7 @@ button.close:focus {
     height: 100%;
     width: 100%;
     background: #f5f6fe;
+    /* background-color: #43ff1918; */
     padding-top: 56px;
     overflow-x: hidden
 }

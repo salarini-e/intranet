@@ -68,13 +68,15 @@
 				</div>
 
 				<script>
-					function evitarDeEnviarDuasVezes(){											
+					function evitarDeEnviarDuasVezes(e){											
 						document.getElementById('enviar').disabled = true;
 						document.getElementById('enviar').innerHTML = 'Enviando...';
+						document.getElementById('formulario').submit();
 						setTimeout(function() {
 							document.getElementById('enviar').disabled = false;
 							document.getElementById('enviar').innerHTML = 'Enviar';
-						}, 10000);					
+						}, 5000);
+						
 					}
 					function montarSelect(data){
 						if (typeof data === "string") {							

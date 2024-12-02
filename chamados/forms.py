@@ -69,7 +69,7 @@ class CriarChamadoForm(forms.ModelForm):
         self.user = kwargs.pop('user', None) 
         super(CriarChamadoForm, self).__init__(*args, **kwargs)
         
-        if self.user and (Atendente.objects.filter(servidor__user=self.user, ativo=True, nivel__in = ['0','2']).exists() or hasattr(self.user, 'atendente')):
+        if self.user and (Atendente.objects.filter(servidor__user=self.user, ativo=True, nivel__in = ['0','2']).exists( ) or hasattr(self.user, 'atendente')):
             self.fields['prioridade'] = forms.ChoiceField(
                 choices=Chamado.PRIORIDADE_CHOICES,
                 widget=forms.Select(attrs={'class': 'form-select'}),

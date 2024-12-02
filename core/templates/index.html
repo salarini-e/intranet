@@ -1,30 +1,243 @@
 {% extends 'template.html' %}
 {% block visao %}active{% endblock %}
 {% block main %}   
-			    <h1 class="app-page-title">Visão Geral</h1>
-			    
+			    <!-- <h1 class="app-page-title">Bem vindo, servidor!</h1>			     -->
 			    <div class="app-card alert alert-dismissible shadow-sm mb-4 border-left-decoration" role="alert">
 				    <div class="inner">
 					    <div class="app-card-body p-3 p-lg-4">
 						    <h3 class="mb-3">Bem-vindo, servidor!</h3>
 						    <div class="row gx-5 gy-3">
-						        <div class="col-12 col-lg-9">
-							        
+						        <div class="col-12 col-lg-9">							        
 							        <div>Nossa intranet é a ferramenta essencial para colaboração e eficiência no serviço público. Aqui, os servidores encontram recursos e informações para melhor desempenho de suas funções.</div>
-							    </div>
-							    <!-- <div class="col-12 col-lg-3">
-								    <a class="btn app-btn-primary" href="https://themes.3rdwavemedia.com/bootstrap-templates/admin-dashboard/portal-free-bootstrap-admin-dashboard-template-for-developers/"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-file-earmark-arrow-down me-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M4 0h5.5v1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h1V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2z"/>
-                                    <path d="M9.5 3V0L14 4.5h-3A1.5 1.5 0 0 1 9.5 3z"/>
-                                    <path fill-rule="evenodd" d="M8 6a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 10.293V6.5A.5.5 0 0 1 8 6z"/>
-                                    </svg>Free Download</a>
-							    </div> -->
+							    </div>							    
 						    </div>
 						    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					    </div>
 					    
 				    </div>
 			    </div>
+				{% if request.user.is_superuser %}
+				<div class="carousel mb-5">
+					<div class="carousel-track">
+					  <!-- Slide 1 -->
+					  <div class="carousel-slide">
+						<div class="slide-content">
+						 <!-- <img src="https://desenvolve.novafriburgo.rj.gov.br/static/images/paisagem-banner.png" alt=""> -->
+							<img src="/static/images/natal-teste.png" alt="">
+
+						</div>
+					  </div>
+					  <!-- Slide 2 -->
+					  <div class="carousel-slide">
+						<div class="slide-content">
+						  <h1>SALA DO EMPREENDEDOR</h1>
+						  <p>Tire suas dúvidas e saiba mais sobre:</p>
+						  
+						  <p>Contato: <strong>(22) 2525-9151</strong></p>
+						</div>
+					  </div>
+					  <!-- Slide 3 -->
+					  <div class="carousel-slide">
+						<div class="slide-content">
+						  <h1>PROGRAMA DE DESENVOLVIMENTO DE ESTÁGIO</h1>
+						  <p>Descubra como participar e construir seu futuro profissional!</p>
+						</div>
+					  </div>
+					</div>
+					<button class="carousel-button prev" aria-label="Anterior">
+						<i class="fa-solid fa-chevron-left"></i>
+					</button>
+					<button class="carousel-button next" aria-label="Próximo">
+						<i class="fa-solid fa-chevron-right"></i>
+					</button>
+				  </div>
+				  <style>
+					.carousel {
+					position: relative;
+					overflow: hidden;
+					width: 100%;
+					/* max-width: 900px; */
+					/* margin: 2rem auto; */
+					border-radius: 6px;
+					box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+					}
+
+					.carousel-track {
+					display: flex;
+					transition: transform 0.5s ease-in-out;
+					}
+
+					.carousel-slide {
+					min-width: 100%;
+					background-color: #ffffff;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					/* padding: 20px; */
+					box-sizing: border-box;
+					}
+
+					.slide-content {
+					text-align: center;
+					}
+
+					.slide-content h1 {
+					font-size: 1.8rem;
+					color: #2a2a2a;
+					}
+
+					.slide-content p {
+					font-size: 1rem;
+					color: #555;
+					}
+
+					button:hover {
+					background-color: #0056b3;
+					}
+
+					.carousel-button {
+					position: absolute;
+					top: 50%;
+					transform: translateY(-50%);
+					background-color: rgba(0, 0, 0, 0.5);
+					color: white;
+					border: none;
+					border-radius: 50%;
+					width: 40px;
+					height: 40px;
+					cursor: pointer;
+					z-index: 10;
+					}
+
+					.carousel-button.prev {
+					left: 10px;
+					}
+
+					.carousel-button.next {
+					right: 10px;
+					}
+
+					.carousel-button:hover {
+					background-color: rgba(0, 0, 0, 0.8);
+					}
+					#mainNoticias .app-card{
+						border-radius: 20px;
+						padding: 2px;
+					}
+					#mainNoticias img{
+						border-radius: 18px;
+					}
+					.text-justify{
+						text-align: justify;
+					}
+				  </style>
+				  <script>
+					const track = document.querySelector('.carousel-track');
+					const slides = Array.from(track.children);
+					const nextButton = document.querySelector('.carousel-button.next');
+					const prevButton = document.querySelector('.carousel-button.prev');
+					let currentSlideIndex = 0;
+
+					function updateCarousel() {
+					const slideWidth = slides[0].getBoundingClientRect().width;
+					track.style.transform = `translateX(-${currentSlideIndex * slideWidth}px)`;
+					}
+
+					// Função para ir ao próximo slide
+					function goToNextSlide() {
+					currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+					updateCarousel();
+					}
+
+					// Função para ir ao slide anterior
+					function goToPrevSlide() {
+					currentSlideIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+					updateCarousel();
+					}
+
+					// Eventos de clique nos botões
+					nextButton.addEventListener('click', goToNextSlide);
+					prevButton.addEventListener('click', goToPrevSlide);
+
+					// Alterne automaticamente o slide a cada 10 segundos
+					const autoSlide = setInterval(goToNextSlide, 10000);
+
+					// Pausar o carrossel ao passar o mouse sobre ele
+					track.addEventListener('mouseover', () => clearInterval(autoSlide));
+
+					// Reiniciar o carrossel ao tirar o mouse
+					track.addEventListener('mouseleave', () => {
+					clearInterval(autoSlide);
+					setInterval(goToNextSlide, 10000);
+					});
+
+					// Atualizar ao redimensionar a janela
+					window.addEventListener('resize', updateCarousel);
+
+
+				  </script>
+				<div id="mainNoticias" class="mt-5 row g-4 mb-4 app-card mx-1">
+				    <div class="col-12 col-lg-6">
+				        <div class="px-5 py-3 h-100">
+							<h1>Lorem ipsum dolor sit amet </h1>
+							<p class="text-justify">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor, sunt rerum omnis excepturi recusandae iste quia minus veniam, eligendi, nulla distinctio doloribus quam beatae possimus voluptatum cumque totam praesentium quod?</p>
+							<p class="text-justify">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quibusdam quae accusamus nihil nisi vel! Cum odit doloribus tenetur, inventore consequuntur libero esse quos consequatur doloremque suscipit, rerum sunt, maxime numquam.</p>
+							<button class="btn btn-primary text-white">
+								Lorem ipsum
+							</button>
+				        </div>
+			        </div>					
+					<div class="col">
+						<div class="row">
+							<div class="col">
+								<div class="app-card app-card-progress-list h-100 shadow-sm">
+									<img src="https://s2-g1.glbimg.com/pqIz_TQOeaSoUKaCR1FoveNc3kE=/4x0:566x316/1080x608/smart/filters:max_age(3600)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2024/E/s/azYeJZTCuty5syabKW7w/fotojet-2024-11-10t112641.847.jpg" class="img-fluid" alt="">
+								</div>
+							</div>
+							<div class="col">
+								<div class="app-card app-card-progress-list h-100 shadow-sm">
+									<img src="https://s2-g1.glbimg.com/h3RLAojQbUgS85CeWOTCbIrvF8U=/0x0:5332x2999/1080x608/smart/filters:max_age(3600)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2024/e/r/5rdAUoT3AEaYcEinMYLg/emerson-vieira-cpkpj-u9eum-unsplash.jpg" class="img-fluid" alt="">
+								</div>
+							</div>
+						</div>
+						<div class="row mt-2">
+							<div class="col">
+								<div class="app-card app-card-progress-list h-100 shadow-sm">
+									<img src="https://s2-g1.glbimg.com/UpgAb-rqpmGgxYN9Hb9lLwUrwo0=/0x412:5824x3688/540x304/smart/filters:max_age(3600)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2024/B/y/PVu5dfTkK7x51XxdJw9Q/000-36nq4vx.jpg" alt="" class="img-fluid">
+								</div>
+							</div>
+							<div class="col">
+								<div class="app-card app-card-progress-list h-100 shadow-sm">
+									<img src="https://s2-g1.glbimg.com/al2KXlXGUp1ZMrlzbG17RXU3WTU=/0x0:3840x2160/540x304/smart/filters:max_age(3600)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2024/d/l/qso4r7QlGLVSYvqF12IQ/libertadores.jpeg" alt="" class="img-fluid">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row pt-4">
+						<div class="col d-flex">
+							<img src="/static/images/teste3.png" class="m-auto img-fluid" alt="">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col d-flex">
+							<img src="/static/images/teste3.png" class="m-auto img-fluid" alt="">
+						</div>
+					</div>
+					<!-- <div class="row">
+						<div class="col d-flex">
+							<img src="/static/images/teste2.png" class="m-auto img-fluid" alt="">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col">
+							<img src="/static/images/teste.png" class="img-fluid" alt="">
+						</div>
+					</div>
+				</div> -->
+				<button class="m-auto btn btn-primary">
+					ver mais
+				</button>
+				{% endif %}
                 <!-- <div class="row g-4 mb-4">
                     <div class="col">
                         <iframe src="https://stats.uptimerobot.com/GEM1QCB9XE" frameborder="0"></iframe>

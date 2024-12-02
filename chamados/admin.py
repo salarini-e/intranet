@@ -52,3 +52,4 @@ class PausasExecucaoChamadoAdmin(admin.ModelAdmin):
     list_display = ('id', 'chamado', 'dt_inicio', 'dt_fim', 'user_inclusao', 'user_fim')
     list_filter = ('dt_inicio', 'dt_fim')
     search_fields = ('chamado__n_protocolo',)
+
