@@ -240,7 +240,7 @@ def carregar_novos_filtros(request):
         agente = Atendente.objects.get(id=id_agente)
         agentes.append({'id': agente.id, 'nome': agente.nome_servidor})
     
-    request.session['secretarias']=None
+    # request.session['secretarias']=None
     # for id_secretaria in7 secretariasLista:        
     #     secretaria = Secretaria.objects.get(id=id_secretaria)
     #     secretarias.append({'id': secretaria.id, 'apelido': secretaria.apelido})
@@ -420,7 +420,7 @@ def filtrar_chamados(request):
             fechados =[]
 
             for row in results[0:2]:                
-                # print(row)
+                # print(row)    
                 data = {
                     'id': row[0],
                     'telefone': row[1],
