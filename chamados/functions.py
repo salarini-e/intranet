@@ -211,7 +211,7 @@ def carregar_novos_filtros(request):
     
     agentes = request.POST['agentes']
     status = request.POST['status']
-    secretarias = request.POST['secretarias']
+    # secretarias = request.POST['secretarias']
     tiposChamados = request.POST['tiposChamados']
     prioridade = request.POST['prioridade']
     criadoEm = request.POST['criadoEm']
@@ -219,31 +219,31 @@ def carregar_novos_filtros(request):
     agendadoPara = request.POST['agendadoPara']
     atualizacaoEm = request.POST['atualizacaoEm']
     agentesLista = agentes.split(';')
-    secretariasLista = secretarias.split(';')
+    # secretariasLista = secretarias.split(';')
     statusLista = status.split(';')
     tiposChamadosLista = tiposChamados.split(';')
     prioridadeLista = prioridade.split(';')
     agentesLista.pop()
-    secretariasLista.pop()
+    # secretariasLista.pop()
     statusLista.pop()
     tiposChamadosLista.pop()
     prioridadeLista.pop()
 
     agentes = []
-    secretarias = []
+    # secretarias = []
     status =[]
     tiposChamados = []
     prioridades = []
-    print(secretariasLista)
+    # print(secretariasLista)
     request.session['agentes']=None
     for id_agente in agentesLista:
         agente = Atendente.objects.get(id=id_agente)
         agentes.append({'id': agente.id, 'nome': agente.nome_servidor})
     
     request.session['secretarias']=None
-    for id_secretaria in secretariasLista:        
-        secretaria = Secretaria.objects.get(id=id_secretaria)
-        secretarias.append({'id': secretaria.id, 'apelido': secretaria.apelido})
+    # for id_secretaria in7 secretariasLista:        
+    #     secretaria = Secretaria.objects.get(id=id_secretaria)
+    #     secretarias.append({'id': secretaria.id, 'apelido': secretaria.apelido})
       
     
     
@@ -266,7 +266,7 @@ def carregar_novos_filtros(request):
             prioridades.append({'id': id_prioridade, 'nome': prioridades_choices[id_prioridade]})
 
     request.session['agentes'] = agentes
-    request.session['secretarias'] = secretarias
+    # request.session['secretarias'] = secretarias
     request.session['status'] = status
     request.session['tiposChamados'] = tiposChamados
     request.session['prioridade'] = prioridades
@@ -341,13 +341,13 @@ def make_query_chamados(request):
         if str_id_agentes:
             sql += f" AND profissional_designado_id IN ({str_id_agentes[:-1]})"
 
-    if 'secretarias' in request.session and request.session['secretarias'] is not None:
-        str_id_secretarias = ''
-        for secretaria in request.session['secretarias']:
-            str_id_secretarias += str(secretaria['id']) + ','
+    # if 'secretarias' in request.session and request.session['secretarias'] is not None:
+    #     str_id_secretarias = ''
+    #     for secretaria in request.session['secretarias']:
+    #         str_id_secretarias += str(secretaria['id']) + ','
 
-        if str_id_secretarias:
-            sql += f" AND secretaria_id IN ({str_id_secretarias})"
+    #     if str_id_secretarias:
+    #         sql += f" AND secretaria_id IN ({str_id_secretarias})"
 
     # CONCATENAR CASO TENHA STATUS SELECIONADO
     if 'status' in request.session and request.session['status'] is not None:
@@ -411,7 +411,7 @@ from django.db import connection, models
 def filtrar_chamados(request):
     if request.user.is_superuser or Atendente.objects.filter(servidor__user=request.user, ativo=True).exists():
         sql = make_query_chamados(request)
-        print(sql)
+        # print(sql)
         with connection.cursor() as cursor:
             cursor.execute(sql)
             results = cursor.fetchall()
@@ -420,7 +420,7 @@ def filtrar_chamados(request):
             fechados =[]
 
             for row in results[0:2]:                
-                print(row)
+                # print(row)
                 data = {
                     'id': row[0],
                     'telefone': row[1],
@@ -445,7 +445,7 @@ def filtrar_chamados(request):
                     'dt_inicio_execucao': row[20],
                     'dt_agendamento': row[21],
                     'endereco': row[22],
-                    'secretaria_id': row[23]
+                    # 'secretaria_id': row[23]
                 }
                 chamado = Chamado(**data)
                 

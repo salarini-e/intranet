@@ -309,7 +309,7 @@
                             </div>
                         </div>	
                         <!-- SECRETARIAS -->
-                        <div class="container mt-3" id="container-secretaria">
+                        <!-- <div class="container mt-3" id="container-secretaria">
                             <span class="filter-title-itens">Secretaria incluem</span>
                             <div class="multi-select-input form-select" id="multiSelectInputSecretarias">
                                 {% if request.session.secretarias %}
@@ -327,7 +327,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                        </div>	
+                        </div>	 -->
                         <!-- STATUS -->
                         <div class="container mt-3" id="container-status">
                             <span class="filter-title-itens">Status incluem</span>
@@ -607,9 +607,9 @@
     addSelectedOption('statusSelect', 'multiSelectInputStatus','id_status');
     addSelectedOption('tiposChamadosSelect', 'multiSelectInputTiposChamados', 'id_tiposChamados');
     addSelectedOption('PrioridadeSelect', 'multiSelectInputPrioridade', 'id_prioridade');
-    addSelectedOption('secretariasSelect', 'multiSelectInputSecretarias', 'id_secretarias');
+    // addSelectedOption('secretariasSelect', 'multiSelectInputSecretarias', 'id_secretarias');
     function clearInputs(){
-        ids = ['agentes', 'status', 'tiposChamados', 'prioridade', 'secretarias']
+        ids = ['agentes', 'status', 'tiposChamados', 'prioridade']
         ids_selects = ['criadoEm', 'fechadoEm', 'agendadoPara','atualizacaoEm']
         // parte para limpar os selects multiplos
         ids.forEach(id => {
