@@ -360,22 +360,37 @@ def make_query_chamados(request):
         if str_id_prioridade:
             sql += f" AND prioridade IN ({str_id_prioridade[:-1]})"
 
+    # if 'criadoEm' in request.session and request.session['criadoEm'] is not None:
+    #     tempo_limite_criadoEm = calcular_tempo_criacao(request.session['criadoEm'])
+    #     if tempo_limite_criadoEm!='':
+    #         sql += f" AND dt_inclusao >= '{tempo_limite_criadoEm.strftime('%Y-%m-%d %H:%M:%S')}'"
+
+    # if 'fechadoEm' in request.session and request.session['fechadoEm'] is not None:
+    #     tempo_limite_fechadoEm = calcular_tempo_criacao(request.session['fechadoEm'])
+    #     if tempo_limite_fechadoEm!='':
+    #         sql += " AND dt_fechamento IS NOT NULL"
+    #         sql += f" AND dt_fechamento >= '{tempo_limite_fechadoEm.strftime('%Y-%m-%d %H:%M:%S')}'"
+
     if 'criadoEm' in request.session and request.session['criadoEm'] is not None:
-        tempo_limite_criadoEm = calcular_tempo_criacao(request.session['criadoEm'])
+        # tempo_limite_criadoEm = calcular_tempo_criacao(request.session['criadoEm'])
+        tempo_limite_criadoEm = request.session['criadoEm']
         if tempo_limite_criadoEm!='':
-            sql += f" AND dt_inclusao >= '{tempo_limite_criadoEm.strftime('%Y-%m-%d %H:%M:%S')}'"
+            sql += f" AND dt_inclusao >= '{tempo_limite_criadoEm} 00:00:00'"
 
     if 'fechadoEm' in request.session and request.session['fechadoEm'] is not None:
-        tempo_limite_fechadoEm = calcular_tempo_criacao(request.session['fechadoEm'])
+        # tempo_limite_fechadoEm = calcular_tempo_criacao(request.session['fechadoEm'])
+        tempo_limite_fechadoEm = request.session['fechadoEm']
         if tempo_limite_fechadoEm!='':
-            sql += " AND dt_fechamento IS NOT NULL"
-            sql += f" AND dt_fechamento >= '{tempo_limite_fechadoEm.strftime('%Y-%m-%d %H:%M:%S')}'"
+            # sql += " AND dt_fechamento IS NOT NULL"
+            sql += f" AND dt_inclusao <= '{tempo_limite_fechadoEm} 23:59:59'"
+
 
     if 'agendadoPara' in request.session and request.session['agendadoPara'] is not None:
-        tempo_limite_agendadoPara = calcular_tempo_criacao(request.session['agendadoPara'])
+        # tempo_limite_agendadoPara = calcular_tempo_criacao(request.session['agendadoPara'])
+        tempo_limite_agendadoPara = request.session['agendadoPara']
         if tempo_limite_agendadoPara!='':
-            sql += " AND dt_agendamento IS NOT NULL"
-            sql += f" AND dt_agendamento >= '{tempo_limite_agendadoPara.strftime('%Y-%m-%d %H:%M:%S')}'"
+            sql += " AND secretaria_id IS NOT NULL"
+            sql += f" AND secretaria_id = '{request.session['agendadoPara']}'"
 
     if 'atualizacaoEm' in request.session and request.session['atualizacaoEm'] is not None:
         tempo_limite_atualizacaoEm = calcular_tempo_criacao(request.session['atualizacaoEm'])

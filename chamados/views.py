@@ -601,7 +601,7 @@ def tickets(request):
     context = {
         'tipos': tipos_chamados,
         'chamados': page_obj,
-        'secretarias': secretarias,
+        'secretarias': secretarias.order_by('apelido'),
         'atendentes': atendentes,
         'tipos_chamados': tipos_chamados,
         'status_choices': status_choices,

@@ -125,6 +125,9 @@ def login_view(request):
         
         if not result['success']:
             messages.error(request, 'Por favor, confirme que você não é um robô.')
+            context = {
+                'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,
+            }
             return render(request, 'adm/login.html', context)
         
         username = request.POST['username']
@@ -166,7 +169,7 @@ def login_view(request):
             context = {
                 'error': True,
                 'msg': msg,
-                'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,                
+                'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,
             }
     else:
         context = {
