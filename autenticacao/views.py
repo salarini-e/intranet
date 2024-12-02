@@ -306,6 +306,26 @@ def cadastro_user(request):
        
 
     if request.method == "POST":
+
+         #  Abaixo recebemos a validação da API do Google do reCAPTCHA
+        ''' Begin reCAPTCHA validation '''
+        recaptcha_response = request.POST.get('h-captcha-response')
+        data = {
+            'secret': hCAPTCHA_PRIVATE_KEY,
+            'response': recaptcha_response
+        }
+        r = requests.post('https://hcaptcha.com/siteverify', data=data)
+        result = r.json()
+        ''' End reCAPTCHA validation '''
+        # result={'success': True}
+        
+        if not result['success']:
+            messages.error(request, 'Por favor, confirme que você não é um robô.')
+            context = {
+                'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,
+            }
+            return render(request, 'adm/cadastro.html', context)
+        
         """
         'csrfmiddlewaretoken': ['MD2KkFbCaaV1X8jUHnC4xOmKjuSuQqpJDR2y4u6v6Ig2dKWeBLL3lh4yE2auEm3O'], 
         'matricula': ['63508'], 
@@ -376,7 +396,7 @@ def cadastro_user(request):
             # else:                
             #     messages.error(request, 'As senhas digitadas não se coincidem')
     context = {
-        
+        'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,
     }    
     return render(request, 'adm/cadastro.html', context)
 

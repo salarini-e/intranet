@@ -16,6 +16,7 @@
     <!-- CUSTOM CSS -->
     <link rel="stylesheet" href="{% static '/css/template.css' %}">
     <link rel="stylesheet" href="{% static '/css/login.css' %}">    
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </head>
 <body class="container-fluid">
 <div class="row">
@@ -66,7 +67,9 @@
                     <input type="checkbox" name="consentimento" class="form-check-input" id="id_consentimento">
                     <label class="form-check-label" for="id_consentimento">Eu concordo com os termos e condições e autorizo o uso dos meus dados pessoais conforme a <a href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Política de Privacidade</a>.</label>
                 </div>
-               
+                <div class="form-row d-flex flex-column mt-4">                                  
+                    <div class="h-captcha m-auto" data-sitekey="{{hCAPTCHA}}"></div>                               
+                </div>
                 <button id="cadastrar" type="submit" class="btn btn-primary w-100 mb-3 mt-3">CADASTRAR-SE</button>
                 
                 <a href="/login">
