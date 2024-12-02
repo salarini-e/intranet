@@ -48,6 +48,9 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
 from instituicoes.models import Secretaria, Setor, Servidor
+from settings.settings import hCAPTCHA_PRIVATE_KEY, hCAPTCHA_PUBLIC_KEY
+import requests
+
 def conta(request):
     if request.method == 'POST':
         servidor = Servidor.objects.get(user=request.user)
@@ -104,7 +107,26 @@ def login_view(request):
     context = {}
     if request.user.is_authenticated:
         return redirect('/')
+    
+
     if request.method == 'POST':
+
+        #  Abaixo recebemos a validação da API do Google do reCAPTCHA
+        ''' Begin reCAPTCHA validation '''
+        recaptcha_response = request.POST.get('h-captcha-response')
+        data = {
+            'secret': hCAPTCHA_PRIVATE_KEY,
+            'response': recaptcha_response
+        }
+        r = requests.post('https://hcaptcha.com/siteverify', data=data)
+        result = r.json()
+        ''' End reCAPTCHA validation '''
+        # result={'success': True}
+        
+        if not result['success']:
+            messages.error(request, 'Por favor, confirme que você não é um robô.')
+            return render(request, 'adm/login.html', context)
+        
         username = request.POST['username']
         password = request.POST['password']
         if len(username)==5 and username.isdigit():
@@ -143,8 +165,13 @@ def login_view(request):
             
             context = {
                 'error': True,
-                'msg': msg
+                'msg': msg,
+                'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,                
             }
+    else:
+        context = {
+            'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,
+        }   
     return render(request, 'adm/login.html', context)
 
 def passwd_reset(request):

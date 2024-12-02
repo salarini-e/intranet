@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="{% static '/css/template.css' %}">
     <link rel="stylesheet" href="{% static '/css/login.css' %}">    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </head>
 <body class="container-fluid">
 <div class="row">
@@ -68,6 +69,9 @@
                   <input type="checkbox" class="form-check-input" id="exampleCheck1">
                   <label class="form-check-label" for="exampleCheck1">Check me out</label>
                 </div> --> 
+                <div class="form-row d-flex flex-column">                                  
+                    <div class="h-captcha m-auto" data-sitekey="{{hCAPTCHA}}"></div>                               
+                </div>
                 <button type="submit" class="btn btn-primary w-100 mb-3">Entrar</button>
                 
                 <a href="{% url 'autenticacao:cadastrar_usuario' %}">
@@ -78,7 +82,8 @@
                 <br>                        
                 <a href="{% url 'autenticacao:passwd_reset' %}">
                     <small>Esqueci minha senha</small>
-                </a>                
+                </a> 
+                               
             </form>
         </div>
     </div>
