@@ -27,28 +27,26 @@
 			    </div>	
 				<div class="row px-2 mb-3">
 					<div class="col p-5" style="border: 1px solid rgba(0, 0, 0, 0); background-color: white; border-radius: 5px; color: rgb(0, 0, 0);">
-						{% if request.user.is_superuser %}
 						<div class="row">						    
-						    <div class="col-12 col-lg-12">							        
-								<h5 class="mb-3">Lorem ipsum dolor sit amet</h5>
-								<p class="text-justify">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa suscipit dicta saepe esse voluptate nam aliquid placeat commodi maxime dolore, repellendus corporis debitis consequuntur illum quas mollitia nulla? Voluptates, obcaecati.</p>
+							<div class="col-12 col-lg-12">							        
+								<h5 class="mb-3 text-uppercase">Atenção para as Informações</h5>
+								<p class="text-justify">Abaixo estão as informações importantes para o manuseio e solicitação de serviços de tecnologia:</p>
 								<ul>
 									<li>
-										<strong>Lorem ipsum dolor</strong><br>
-										<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque rerum unde ab eaque officia iure est cupiditate sed numquam illo aliquam.</p>
+										<strong class="text-uppercase">Desmontagem e instalação de equipamentos de informática</strong><br>
+										<p>Toda desmontagem e instalação de qualquer equipamento de informática (impressoras, computadores, totens, telefonia, etc.) somente poderá ser feita pelos técnicos especializados da Subsecretaria de Tecnologia da Informação e Comunicação.</p>
 									</li>
 									<li>
-										<strong>Lorem ipsum dolor</strong><br>
-										<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque rerum unde ab eaque officia iure est cupiditate sed numquam illo aliquam.</p>
+										<strong class="text-uppercase">Solicitação de mudança de endereço dos equipamentos</strong><br>
+										<p>Toda e qualquer solicitação de mudança de endereço dos equipamentos de informática (computadores, impressoras, cabeamento, etc.), de instalação de ponto de internet e telefonia, deverá ser feita com pelo menos 15 (quinze) dias corridos de antecedência da data da mudança.</p>
+										<p><strong>Obs.:</strong> Importante ressaltar que para qualquer mudança de endereço, é necessário verificar com antecedência se o novo local já possui estrutura para receber os equipamentos, ou seja, se já possui instalação elétrica suficiente para receber todos os equipamentos, se já possui cabeamento interno para a internet, etc. Toda essa demanda deve ser identificada antes. Sugerimos solicitar (com antecedência) uma visita de nossos técnicos ao local para identificar as necessidades para que, na mudança, tudo possa ser instalado sem demora.</p>
 									</li>
-									<li>
-										<strong>Lorem ipsum dolor</strong><br>
-										<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque rerum unde ab eaque officia iure est cupiditate sed numquam illo aliquam.</p>
-									</li>	
 								</ul>
+								<p>As solicitações acima deverão ser feitas através de memorando dentro do sistema digital para a caixa: <strong>FINANÇAS - TI SUBSECRETÁRIO</strong></p>
+
 							</div>							    
 						</div>
-						{% endif %}
+						
 						<h4 class="mt-4"><strong>Escolha o tipo de chamado:</strong></h4>				
 								{% for tipo in tipos %}							
 								<a class="btn btn-secondary w-100 mb-2" href="{% url 'chamados:criar' tipo.sigla %}">

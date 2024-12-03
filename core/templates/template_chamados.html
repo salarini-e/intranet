@@ -166,19 +166,14 @@
 							</a>
 					</li> -->
 					<!-- {% endif %} -->
-					 {% if 0|acesso_adm_or_helpdesk:request.user %}
-					<div class="sidebar-chamados-item" type="button" 
-						data-bs-toggle="dropdown" 
-						aria-expanded="false" 
-						style="text-decoration: none; color: black;"
-						data-bs-toggle="tooltip" 
-						data-bs-placement="right" 
-						title="Novo Ticket">
-						<button id="openModal" class="btn sidebar-chamados-item-link" style="padding: 0 !important;">
-						<i class="fa-solid fa-plus icon-sidebar-chamados"></i>
-						</button>
-					</div>
-					{% endif %}
+					 
+					
+					<li class="nav-item sidebar-chamados-item">
+						<a href="/chamados/criar-chamado/" class="sidebar-chamados-item-link" style="padding: 0 !important;">
+							<i class="fa-solid fa-plus icon-sidebar-chamados"></i>
+						</a>
+					</li>
+					
 				</nav>
 
 		       

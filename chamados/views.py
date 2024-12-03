@@ -235,6 +235,105 @@ def detalhes(request, hash):
     }
     return render(request, 'chamados/detalhes.html', context)
 
+
+from django.db.models import Count, Q, Avg, Max, Min, F
+
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Avg, F
+from django.core.paginator import Paginator
+from django.shortcuts import render
+from .models import Chamado, Secretaria, Atendente, TipoChamado
+
+@login_required
+def gerar_relatorio(request):
+    # Filtra chamados de acordo com os critérios do request
+    chamados = filtrar_chamados(request)
+    protocolos = [chamado.n_protocolo for chamado in chamados]
+    chamados_queryset = Chamado.objects.filter(n_protocolo__in=protocolos)
+
+    # Dados estáticos ou de referência
+    secretarias = Secretaria.objects.all()
+    atendentes = Atendente.objects.filter(ativo=True)
+    status_choices = Chamado.STATUS_CHOICES
+    prioridade_choices = Chamado.PRIORIDADE_CHOICES
+    tipos_chamados = TipoChamado.objects.all()
+
+    # Estatísticas gerais
+    total_chamados = Chamado.objects.count()
+
+    # Quantidade de chamados por status
+    chamados_por_status = {
+        status: chamados_queryset.filter(status=str(status)).count()
+        for status in [0, 2, 4, 5]  # Define os status relevantes
+    }
+
+    # Chamados agrupados por tipo
+    chamados_por_tipo = (
+        chamados_queryset.values('tipo__nome')
+        .annotate(total=Count('id'))
+        .order_by('-total')
+    )
+    print(chamados_por_tipo)
+
+    # Chamados agrupados por prioridade
+    chamados_por_prioridade = (
+        chamados_queryset.values('prioridade')
+        .annotate(total=Count('id'))
+    )
+
+    # Tempo médio de resolução para chamados finalizados
+    tempo_medio_resolucao = (
+        chamados_queryset.filter(
+            status='4',  # Finalizado
+            dt_inicio_execucao__isnull=False,
+            dt_execucao__isnull=False
+        )
+        .annotate(
+            tempo_resolucao=F('dt_execucao') - F('dt_inicio_execucao')
+        )
+        .aggregate(tempo_medio=Avg('tempo_resolucao'))['tempo_medio']
+    )
+
+    # Atendentes com mais chamados atribuídos
+    atendentes_ativos = (
+        chamados_queryset.values('profissional_designado__nome_servidor')
+        .annotate(total=Count('id'))
+        .order_by('-total')
+    )
+
+    # Configuração de paginação
+    page = request.GET.get('page', 1)
+    paginator = Paginator(chamados, 10)
+    page_obj = paginator.get_page(page)
+
+    # Remove parâmetros desnecessários da URL
+    current_query = request.GET.copy()
+    current_query.pop('page', None)
+
+    # Contexto para o template
+    context = {
+        'tipos': tipos_chamados,
+        'chamados': page_obj,
+        'secretarias': secretarias.order_by('apelido'),
+        'atendentes': atendentes,
+        'status_choices': status_choices,
+        'prioridade_choices': prioridade_choices,
+        'current_query': current_query,
+        'is_atendente': Atendente.objects.filter(
+            servidor__user=request.user, ativo=True
+        ).exists(),
+
+        # Dados estatísticos
+        'total_chamados': total_chamados,
+        'chamados_por_status': chamados_por_status,
+        'chamados_por_tipo': chamados_por_tipo,
+        'chamados_por_prioridade': chamados_por_prioridade,
+        'tempo_medio_resolucao': tempo_medio_resolucao,
+        'atendentes_ativos': atendentes_ativos,
+    }
+
+    return render(request, 'chamados/relatorio.html', context)
+
 @login_required
 def api_relatorio(request, hash):
     chamado = Chamado.objects.get(hash=hash)
