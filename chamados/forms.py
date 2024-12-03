@@ -301,3 +301,19 @@ class Form_Motivo_Pausa(forms.ModelForm):
         if motivo == '':
             raise forms.ValidationError("O motivo não pode ser vazio.")
         return motivo
+    
+
+class FormDetalhesDoChamado(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(FormDetalhesDoChamado, self).__init__(*args, **kwargs)
+        if 'instance' in kwargs:
+            chamado = kwargs['instance']
+            self.fields['subtipo'].queryset = SubTipoChamado.objects.filter(tipo=chamado.tipo)              
+    class Meta:
+        model = Chamado
+        fields = ['dt_execucao', 'subtipo', 'relatorio']
+        widgets = {
+            'dt_execucao': forms.DateInput(attrs={'class': 'form-control mb-3', 'type': 'date'}),
+            'subtipo': forms.Select(attrs={'class': 'form-control mb-3'}),
+            'relatorio': forms.Textarea(attrs={'class': 'form-control mb-3', 'style': 'height: 150px;'}),
+        }

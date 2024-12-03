@@ -6,7 +6,7 @@ from .models import (TipoChamado, Secretaria, Setor, Servidor, Chamado, OSImpres
                      PeriodoPreferencial, Pausas_Execucao_do_Chamado, Historico_Designados)
 from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm, ServidorForm,
                     MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm, CriarSetorForm, Form_Agendar_Atendimento,
-                    Form_Motivo_Pausa)
+                    Form_Motivo_Pausa, FormDetalhesDoChamado)
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages as message
 from django.http import JsonResponse, HttpResponse
@@ -218,7 +218,7 @@ def detalhes(request, hash):
         return v
     
     requisitante_telefone = itel(chamado.requisitante.telefone)
-
+    
     context = {
         'chamado': chamado,    
         'servidor': servidor,    
@@ -230,11 +230,35 @@ def detalhes(request, hash):
         'is_atendente': Atendente.objects.filter(servidor = servidor, ativo = True).exists(),
         'tipos': tipos_chamados,
         'tipos_chamados': tipos_chamados,
-        'requisitante_telefone': requisitante_telefone
+        'requisitante_telefone': requisitante_telefone,
+        'form_relatorio': FormDetalhesDoChamado(instance=chamado)
     }
     return render(request, 'chamados/detalhes.html', context)
 
+@login_required
+def api_relatorio(request, hash):
+    chamado = Chamado.objects.get(hash=hash)
+    if request.method == 'POST':
+        form = FormDetalhesDoChamado(request.POST, instance=chamado)
+        print(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'status': 200, 'message': 'Relatório salvo com sucesso!'})
+        else:
+            return JsonResponse({'status': 400, 'message': 'Erro ao salvar relatório!'})
+    return JsonResponse({'status': 400, 'message': 'Método não permitido!'})
+from django.template.loader import render_to_string
 
+@login_required
+def api_montarFormRelatorio(request, hash):
+    chamado = Chamado.objects.get(hash=hash)
+    form = FormDetalhesDoChamado(instance=chamado)
+    context = {
+        'form_relatorio': form,        
+    }
+    # Renderiza o template como string
+    html = render_to_string('chamados/form_relatorio.html', context, request=request)
+    return JsonResponse({'status': 200, 'html': html})
 @login_required
 def detalhes_imprimir(request, hash):
     chamado = Chamado.objects.get(hash=hash)

@@ -758,6 +758,10 @@
                                 if (response.status == 200){
                                     alert(response.message +" (" + response.status+")")
                                     mudar_status_select(response.id, response.display_status)
+                                    {% if is_atendente %}		
+                                    postRelatorio(response, hash)
+                                    {% endif %}
+                                    
                                 }else{
                                     alert(response.message +" (" + response.status+")")
                                 }                                   
@@ -767,6 +771,31 @@
 								console.error(error)
 							});				
     }
+    {% if is_atendente %}	
+    function postRelatorio(response, hash) {
+        if (response.display_status === 'Finalizado') {
+            openModal('modalStatus');
+            getForm(hash);
+            document.getElementById('hash').value = hash;
+        }
+    }
+
+    function montaFormulario(response) {
+        response = JSON.parse(response)
+        console.log(response.html)
+        if (response && response.html) {
+            document.getElementById('formRelatorio').innerHTML = response.html;
+        } else {
+            console.error('Resposta inesperada:', response);
+            alert('Erro ao montar o formulário. Por favor, tente novamente.');
+        }
+    }
+
+    function getForm(hash) {
+        var url = '/chamados/api/' + hash + '/relatorio/form/';
+        getRequest(url, montaFormulario);
+    }
+    {% endif %}
     function mudar_prioridade(hash, prioridade){
         var url = "{% url 'chamados:api_prioridade' %}"; 
         formData = new FormData();
@@ -919,9 +948,62 @@
                 }
 
             }
+            {% if is_atendente %}
+            function enviarDetalhes(){
+                let divResponse = document.getElementById('response-relatorio');
+                divResponse.className = ''
+                divResponse.innerHTML = ''
+                let form = document.getElementById('formRelatorio');
+                let formData = new FormData(form);
+                hash = document.getElementById('hash').value;
+                let url = '/chamados/api/{hash}/relatorio/'.replace('{hash}', hash);
+                postRequest(url, formData)
+                                    .then(response => {
+                                        if (response.status == 200){
+                                            divResponse.className = 'bg-success text-white text-center mb-3'
+                                            divResponse.innerHTML = 'Relatório enviado com sucesso.'
+                                            closeModal('modalStatus')
+                                        }else{
+                                            alert(response.message +" (" + response.status+")")
+                                        }                                   
+                                    })
+                                    .catch(error => {
+                                        divResponse.className = 'bg-danger text-white text-center mb-3'
+                                        divResponse.innerHTML = 'Erro ao enviar relatório. Tente novamente mais tarde.'
+                                        console.error(error)
+                                    });
+            }
+            {% endif %}
             document.getElementById("indicativo-atualizacao").addEventListener("click", recarregarPagina);
         </script>
         
-        
+        {% if is_atendente %}
+        <div id="modalStatus" class="modal" tabindex="-1" style="background-color: #5d677867;">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalhes do chamado</h5>
+                    <button class="btn btn-primary btn-close" onclick="closeModal('modalStatus')">
+                        
+                    </button>	
+                </div>
+                <div class="modal-body">
+                    <div class="col-12 col-md-12">			
+                                <div id="response-relatorio" class="alert-danger">
+
+                                </div>
+                                <form id="formRelatorio" method="POST">
+                                    
+                                </form>
+                                <input type="hidden" id="hash">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="enviarDetalhes()" class="btn btn-primary w-100 text-white">Enviar</button>
+                </div>
+                </div>
+            </div>
+            </div>
+        {% endif %}
 
 {% endblock %}

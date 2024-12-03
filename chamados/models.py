@@ -26,6 +26,20 @@ class TipoChamado(models.Model):
         verbose_name = 'Tipo de Chamado'
         verbose_name_plural = 'Tipos de Chamados'
 
+class SubTipoChamado(models.Model):
+    tipo = models.ForeignKey(TipoChamado, on_delete=models.CASCADE, verbose_name='Tipo de chamado')
+    nome = models.CharField(max_length=164, verbose_name='Nome')
+    descricao = models.TextField(verbose_name='Descrição')
+    dt_inclusao = models.DateField(auto_now_add=True, verbose_name='Data de inclusão')
+    user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Usuário de inclusão', null=True)
+
+    def __str__(self):
+        return self.nome
+    
+    class Meta:
+        verbose_name = 'Subtipo de Chamado'
+        verbose_name_plural = 'Subtipos de Chamados'
+
 class Atendente(models.Model):
     NIVEL_CHOICES = (
         ('0', 'Nível 1 - Help Desk'),
@@ -92,6 +106,8 @@ class Chamado(models.Model):
     requisitante = models.ForeignKey(Servidor, verbose_name='Nome do servidor', null=True, on_delete=models.SET_NULL)
     endereco =models.CharField(max_length=250, verbose_name = 'Endereço', null=True)
     tipo = models.ForeignKey(TipoChamado, on_delete=models.SET_NULL, verbose_name='Tipo chamado', null=True)
+    subtipo = models.ForeignKey(SubTipoChamado, on_delete=models.SET_NULL, verbose_name='Subtipo chamado', null=True)
+    relatorio = models.TextField(verbose_name='Relatório do chamado', null=True)
     assunto = models.CharField(max_length=64, verbose_name='Assunto do chamado')
     prioridade = models.CharField(max_length=1, choices=PRIORIDADE_CHOICES, default='')
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='0')
@@ -500,7 +516,7 @@ class Chamado(models.Model):
                 data=timezone.now()
             )
             notificacao_profissional.save()
-        
+
 class Pausas_Execucao_do_Chamado(models.Model):
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')
     dt_inicio = models.DateTimeField(verbose_name='Data de início da pausa')

@@ -26,12 +26,14 @@ urlpatterns = [
 
     path('criar-periodos/', views.criar_periodos, name='criar_periodos'),
     path('api/', views.index, name='api'),
+
     path('api/mudar/status/', views.api_mudar_status, name='api_status'),
     path('api/mudar/prioridade/', views.api_mudar_prioridade, name='api_prioridade'),
     path('api/mudar/atendente/', views.api_mudar_atendente, name='api_atendente'),
     path('api/setor/', views.api_criar_setor, name='api_criar_setor'),
     path('api/servidor/', views.api_criar_servidor, name='api_criar_servidor'),
-    
+    path('api/<hash>/relatorio/', views.api_relatorio, name='api_relatorio'),
+    path('api/<hash>/relatorio/form/', views.api_montarFormRelatorio, name='api_form_relatorio'),
     path('tickets/', views.tickets, name ='tickets'),
     path('tickets/mesclar/', views.mesclar_chamados, name ='mesclar'),
     path('tickets/ordernar/', views.ordenarPorNaoFechados, name ='ordernarPorNaoFechados'),

@@ -60,7 +60,7 @@
 				<div class="detalhes-contato-wrapper"  onclick="toggleDetalhesContato()">
 					<div class="detalhes-contato-title">
 						{% if chamado.requisitante.avatar %}
-						<img src="{{ chamado.requisitante.avatar.url }}" alt="{{ chamado.requisitante.nome }}" class="img-avatar">
+						<img src="{{ chamado.requisitante.avatar.url }}" alt="avatar user" class="img-avatar">
 						{% else %}
 						<img src="{% static 'images/users/avatar.png' %}" alt="Avatar padrão" class="img-avatar">
 						{% endif %}
@@ -307,7 +307,7 @@
 						<div class="first-message-user-header">
 							<div class="perfil-image">
 								{% if chamado.requisitante.avatar %}
-									<img src="{{ chamado.requisitante.avatar.url }}" alt="{{ chamado.requisitante.nome }}" class="img-avatar">
+									<img src="{{ chamado.requisitante.avatar.url }}" alt="avatar user" class="img-avatar">
 								{% else %}
 									<img src="{% static 'images/users/avatar.png' %}" alt="Avatar padrão" class="img-avatar">
 								{% endif %}
@@ -332,7 +332,7 @@
 							<span class="messages-chamado-descricao-text">
 								{{chamado.descricao}}
 							</span>
-							{% if mensagem.anexo %}<button onclick="visualizarAnexo('{{mensagem.anexo.url}}')" class="my-auto ms-auto btn app-btn-secondary"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</button>{% endif %}
+							{% if chamado.anexo %}<a target="_blank" href="{{chamado.anexo.url}}" class="my-auto ms-auto btn app-btn-secondary"><i class="fa-solid fa-paperclip me-2"></i>Ver anexo</a>{% endif %}
 						</div>
 					</div>
 					<!-- WRAPPER LISTAR MENSAGENS DEMAIS MENSAGENS -->
@@ -362,9 +362,9 @@
 									{{ mensagem.mensagem }}
 									</span>
 									{% if mensagem.anexo %}
-										<button onclick="visualizarAnexo('{{ mensagem.anexo.url }}')" class="my-auto ms-auto btn app-btn-secondary">
+										<a target="_blank" href="{{mensagem.anexo.url}}" class="my-auto ms-auto btn app-btn-secondary">
 											<i class="fa-solid fa-paperclip me-2"></i>Ver anexo
-										</button>
+										</a>
 									{% endif %}
 								</div>
 							</div>
@@ -379,7 +379,7 @@
 									{% endif %}
 									{% else %}
 										{% if mensagem.user_inclusao.avatar %}
-											<img src="{{ mensagem.user_inclusao.avatar.url }}" alt="{{ mensagem.user_inclusao.nome }}" class="img-avatar">
+											<img src="{{ mensagem.user_inclusao.avatar.url }}" alt="avatar user" class="img-avatar">
 										{% else %}
 											<img src="{% static 'images/users/avatar.png' %}" alt="Avatar padrão" class="img-avatar">
 										{% endif %}
@@ -752,13 +752,41 @@
 					</div>
 				</div>
 				</div>
+				{% if is_atendente %}
+				<div id="modalStatus" class="modal" tabindex="-1" style="background-color: #5d677867;">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Detalhes do chamado</h5>
+							<button class="btn btn-primary btn-close" onclick="closeModal('modalStatus')">
+								
+							</button>	
+						</div>
+						<div class="modal-body">
+							<div class="col-12 col-md-12">			
+										<div id="response-relatorio" class="alert-danger">
+
+										</div>
+										<form id="formRelatorio" method="POST">
+											{% csrf_token %}
+											{{form_relatorio}}
+										</form>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button onclick="enviarDetalhes()" class="btn btn-primary w-100 text-white">Enviar</button>
+						</div>
+						</div>
+					</div>
+					</div>
+				{% endif %}
 				<script src="/static/js/request.js"></script>	
 					
 				<script>
-					function visualizarAnexo(url){
-						document.getElementById('anexo-url').src = url;
-						openModal('anexo');
-					}
+					// function visualizarAnexo(url){
+					// 	document.getElementById('anexo-url').src = url;
+					// 	openModal('anexo');
+					// }
 					function attChamado(atributo, valor){
 						
 						var form = new FormData();												
@@ -874,6 +902,31 @@
 					let selectAtendente = document.getElementById('selectAtendente-'+id);
 					selectAtendente.innerText = display_atendente;   
 				}
+				{% if is_atendente %}
+				function enviarDetalhes(){
+					let divResponse = document.getElementById('response-relatorio');
+					divResponse.className = ''
+					divResponse.innerHTML = ''
+					let form = document.getElementById('formRelatorio');
+					let formData = new FormData(form);
+					let url = "{% url 'chamados:api_relatorio' chamado.hash %}";
+					postRequest(url, formData)
+										.then(response => {
+											if (response.status == 200){
+												divResponse.className = 'bg-success text-white text-center mb-3'
+												divResponse.innerHTML = 'Relatório enviado com sucesso.'
+												closeModal('modalStatus')
+											}else{
+												alert(response.message +" (" + response.status+")")
+											}                                   
+										})
+										.catch(error => {
+											divResponse.className = 'bg-danger text-white text-center mb-3'
+											divResponse.innerHTML = 'Erro ao enviar relatório. Tente novamente mais tarde.'
+											console.error(error)
+										});
+				}
+				{% endif %}
 				function mudar_status(hash, status){
 					
 					var url = "{% url 'chamados:api_status' %}"; 
@@ -883,8 +936,13 @@
 					formData.append('csrfmiddlewaretoken', '{{csrf_token}}');
 					postRequest(url, formData)
 										.then(response => {
-											if (response.status == 200){
+											if (response.status == 200){										
 												mudar_status_select(response.id, response.display_status)
+												{% if is_atendente %}												
+												if (response.display_status == 'Finalizado') {
+													openModal('modalStatus');
+												}
+												{% endif %}
 											}else{
 												alert(response.message +" (" + response.status+")")
 											}                                   
