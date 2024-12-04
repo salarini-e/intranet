@@ -97,7 +97,8 @@ class Chamado(models.Model):
         ('2', 'Pendente'),        
         # ('3', 'Fechado'),
         ('4', 'Finalizado'),
-        ('5', 'Cancelado')
+        ('5', 'Cancelado'),
+        ('6', 'Mesclado')
     )
 
     setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, verbose_name='Para qual setor é o chamado?', null=True, blank=True)
@@ -246,8 +247,20 @@ class Chamado(models.Model):
 
     def save(self, *args, **kwargs):
 
+        historico_mesclagem = Historico_Mesclagem.objects.filter(chamado_resultante=self)
         if self.status == '4' and not self.dt_fechamento:
             self.dt_fechamento = timezone.now()
+            if self.mesclado:                
+                if historico_mesclagem.exists():                    
+                    for chamado in historico_mesclagem.first().chamados_mesclados.all():                        
+                        chamado.dt_fechamento = timezone.now()
+                        chamado.save()
+
+        if historico_mesclagem.exists():    
+            for chamado in historico_mesclagem.first().chamados_mesclados.all():                        
+                        chamado.chamado_mesclado.dt_atualizacao= timezone.now()
+                        chamado.chamado_mesclado.save()
+
         super().save(*args, **kwargs)
 
     def gerar_hash(self):

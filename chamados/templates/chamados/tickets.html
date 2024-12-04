@@ -209,7 +209,9 @@
                                                     </a>
                                                     <ul class="dropdown-menu">
                                                         {% for status in chamado.STATUS_CHOICES %}
+                                                            {% if not status.0 == '6' %}
                                                             <li><a class="dropdown-item" href="#" onclick="mudar_status('{{chamado.hash}}','{{status.0}}')">{{status.1}}</a></li>
+                                                            {% endif %}
                                                         {% endfor %}
                                                     </ul>
                                                 </div>

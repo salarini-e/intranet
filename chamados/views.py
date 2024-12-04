@@ -1148,6 +1148,7 @@ def mesclar_chamados(request):
             profissional_designado=primeiro_chamado.profissional_designado,
             user_inclusao=Servidor.objects.get(user=request.user),
             anexo=primeiro_chamado.anexo,
+            mesclado=True
         )
         chamado_resultante.gerar_hash()
         chamado_resultante.gerar_protocolo()
@@ -1155,7 +1156,7 @@ def mesclar_chamados(request):
         for chamado in chamados_mesclados:
             Mensagem.objects.filter(chamado=chamado).update(chamado=chamado_resultante)
             chamado.mesclado = True
-            chamado.status = '5'
+            chamado.status = '6'
             chamado.save()
 
         chamado_resultante.dt_atualizacao = timezone.now()
