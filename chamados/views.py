@@ -1117,7 +1117,7 @@ def verificar_atualizacoes(request):
 def mesclar_chamados(request):
     try:
         atendente = Atendente.objects.get(servidor__user=request.user, ativo=True)
-        if atendente.nivel not in [0, 1]:
+        if atendente.nivel not in [0, 2]:
             return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
     except Atendente.DoesNotExist:
         return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
