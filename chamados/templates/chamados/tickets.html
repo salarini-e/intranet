@@ -761,7 +761,7 @@
 		postRequest(url, formData)
 							.then(response => {
                                 if (response.status == 200){
-                                    alert(response.message +" (" + response.status+")")
+                                    // alert(response.message +" (" + response.status+")")
                                     mudar_status_select(response.id, response.display_status)
                                     {% if is_atendente %}		
                                     postRelatorio(response, hash)
