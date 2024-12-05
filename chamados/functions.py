@@ -443,8 +443,10 @@ def filtrar_chamados(request):
                 }
                 chamado = Chamado(**data)
                 
-                if row[4] == '4' and request.session['ordenacao']:
+                if row[4] == '4' or row[4] == '5' and request.session['ordenacao']:
                     fechados.append(chamado)
+                elif row[4] != '6':
+                    pass
                 else:
                     queryset.append(chamado)
             queryset = sorted(queryset, key=lambda x: (x.dt_atualizacao if x.dt_atualizacao else x.dt_inclusao), reverse=True)
