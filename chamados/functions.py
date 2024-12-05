@@ -445,7 +445,7 @@ def filtrar_chamados(request):
                 
                 if row[4] == '4' or row[4] == '5' and request.session['ordenacao']:
                     fechados.append(chamado)
-                elif row[4] != '6':
+                elif row[4] == '6':
                     pass
                 else:
                     queryset.append(chamado)
