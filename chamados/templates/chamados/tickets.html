@@ -21,9 +21,11 @@
             <a href="{% url 'chamados:ordernarPorNaoFechados' %}" class="my-auto btn app-btn-secondary {% if request.session.ordenacao %}text-success{% endif %}" data-bs-toggle="tooltip" data-bs-title="Ordenar {% if not request.session.ordenacao %}por chamados não fechados{% else %}normal{% endif %}">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
             </a>
-            <a href="{% url 'chamados:relatorio' %}" class="my-auto btn app-btn-secondary" data-bs-toggle="tooltip" data-bs-title="Gerar relatório">
+            {% if request.user.is_superuser %}
+            <a href="{% url 'chamados:download_relatorio' %}" class="my-auto btn app-btn-secondary" data-bs-toggle="tooltip" data-bs-title="Gerar relatório">
                 <i class="fa-solid fa-file-contract"></i>
             </a>
+            {% endif %}
             {% endif %}
             <a href="{% url 'chamados:tickets' %}" class="my-auto btn app-btn-secondary" data-bs-toggle="tooltip" data-bs-title="Atualizar página">
                 <i class="fa-solid fa-rotate-left"></i>

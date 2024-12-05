@@ -208,7 +208,8 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
     margin-bottom: .5rem;
     font-weight: 500;
     line-height: 1.2;
-    color: var(--bs-heading-color)
+    color: var(--bs-heading-color);
+    font-family: "Inter", sans-serif !important;
 }
 
 h1, .h1 {
@@ -261,7 +262,8 @@ h6, .h6 {
 
 p {
     /* margin-top: 0; */
-    margin-bottom: 1rem
+    margin-bottom: 1rem;
+    font-family: "Inter", sans-serif !important;
 }
 
 abbr[title] {

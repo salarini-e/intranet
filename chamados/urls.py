@@ -39,4 +39,6 @@ urlpatterns = [
     path('tickets/mesclar/', views.mesclar_chamados, name ='mesclar'),
     path('tickets/ordernar/', views.ordenarPorNaoFechados, name ='ordernarPorNaoFechados'),
     path('verificar-atualizacoes/', views.verificar_atualizacoes, name='verificar-atualizacoes'),
+
+    path('download/relatorio/', views.download_relatorio, name='download_relatorio'),
 ]

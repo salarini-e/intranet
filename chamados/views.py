@@ -9,7 +9,7 @@ from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistem
                     Form_Motivo_Pausa, FormDetalhesDoChamado)
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages as message
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseForbidden
 from django.utils import timezone
 from .functions import enviar_email_atendente, Email_Chamado
 from django.urls import reverse
@@ -21,6 +21,10 @@ from django.db.models import Count, Q
 from dateutil.relativedelta import relativedelta
 import locale
 from django.views.decorators.http import require_POST
+
+from .functions import carregar_novos_filtros, filtrar_chamados
+import pandas as pd
+
 
 
 # Define a localidade para português (Brasil)
@@ -661,7 +665,6 @@ def agendar_atendimento(request, hash):
     return render(request, 'chamados/generic_form.html', context)
 
 
-from .functions import carregar_novos_filtros, filtrar_chamados
 
 @login_required
 def tickets(request):
@@ -1166,3 +1169,51 @@ def mesclar_chamados(request):
 
     except Exception as e:
         return JsonResponse({'status': 500, 'message': f'Erro interno: {str(e)}'})
+    
+def download_relatorio(request):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden('Você não tem autorização para acessar esta página!')
+    
+    chamados = filtrar_chamados(request)
+    chamados_ids = [chamado.id for chamado in chamados]
+    
+    chamados_queryset = Chamado.objects.filter(id__in=chamados_ids)    
+    finalizados = chamados_queryset.filter(status='4')
+
+    campos = ['n_protocolo', 
+              'profissional_designado', 
+              'tipo',
+              'dt_inclusao',
+              'dt_execucao',
+              'dt_fechamento',
+              'subtipo',
+              'observacao'
+            ]
+    
+    # Cria uma lista de dicionários com os dados dos chamados finalizados
+    data = [
+        {
+            'Protocolo': chamado.n_protocolo,
+            'Técnico': chamado.profissional_designado.nome_servidor if chamado.profissional_designado else '',
+            'Grupos': chamado.tipo.nome,
+            'Data de Inclusão': chamado.dt_inclusao.strftime('%d/%m/%Y %H:%M:%S'),
+            'Data de Execução': chamado.dt_execucao.strftime('%d/%m/%Y %H:%M:%S') if chamado.dt_execucao else '',
+            'Data de Fechamento': chamado.dt_fechamento.strftime('%d/%m/%Y %H:%M:%S') if chamado.dt_fechamento else '',
+            'Serviços': chamado.subtipo,
+            'Observação': chamado.relatorio ,
+        }
+        for chamado in finalizados
+    ]
+
+    # Cria um DataFrame a partir dos dados
+    df = pd.DataFrame(data)
+
+    # Cria uma resposta HTTP com o arquivo Excel
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=relatorio_chamados_finalizados.xlsx'
+
+    # Salva o DataFrame no arquivo Excel
+    df.to_excel(response, index=False)
+
+    return response
+

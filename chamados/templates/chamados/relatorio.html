@@ -79,7 +79,7 @@
                         <div class="row my-4 text-center">
                             <div class="col">
                                 <div class="card">
-                                    <div class="card-body">
+                                    <div id="abertos" class="card-body">
                                         <h5 class="card-title">Abertos</h5>
                                         <p class="card-text">{{chamados_por_status.0}}</p>
                                     </div>
@@ -87,7 +87,7 @@
                             </div>
                             <div class="col">
                                 <div class="card">
-                                    <div class="card-body">
+                                    <div id="pendentes" class="card-body">
                                         <h5 class="card-title">Pendentes</h5>
                                         <p class="card-text">{{chamados_por_status.2}}</p>
                                     </div>
@@ -95,7 +95,7 @@
                             </div>
                             <div class="col">
                                 <div class="card">
-                                    <div class="card-body">
+                                    <div id="fechados" class="card-body">
                                         <h5 class="card-title">Fechados</h5>
                                         <p class="card-text">{{chamados_por_status.4}}</p>
                                     </div>
@@ -103,7 +103,7 @@
                             </div>
                             <div class="col">
                                 <div class="card">
-                                    <div class="card-body">
+                                    <div id="cancelados" class="card-body">
                                         <h5 class="card-title">Cancelados</h5>
                                         <p class="card-text">{{chamados_por_status.5}}</p>
                                     </div>
@@ -463,17 +463,28 @@
         overflow: hidden;
         transition: max-height 0.5s ease-in;
     }
-
+    #abertos{
+        background-color: #91f8c1;
+    }
+    #pendentes{
+        background-color: #fae080;
+    }
+    #fechados{
+        background-color: #a1a2ff;
+    }
+    #cancelados{
+        background-color: #ff9191;
+    }
     </style>
     <script src="/static/js/request.js"></script>	
     <script src="/static/plugins/chart.js/chart.min.js"></script> 
 	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>			
     <script>
     window.chartColors = {
-        abertos: '#1db062', // rgba(117,193,129, 1)
-        pendentes: '#FFDB58', // rgba(255,219,88, 1)
-        fechados: '#808080', // rgba(128,128,128, 1)
-        cancelados: '#ff0000',
+        abertos: '#91f8c1', // rgba(117,193,129, 1)
+        pendentes: '#fae080', // rgba(255,219,88, 1)
+        fechados: '#a1a2ff', // rgba(128,128,128, 1)
+        cancelados: '#ff9191',
         text: '#252930',
         border: '#e7e9ed'
     };
