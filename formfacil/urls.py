@@ -14,6 +14,7 @@ urlpatterns = [
     path('cadastro-treinamento-tributario-contadores', views.cadastroTreinamentoTributarioContadores, name='cadastro-treinamento-tributario-contadores'),
     path('cadastro-processo-digital', views.cadastroAulasProcessoDigial, name='cadastro-processo-digital'),
 
+    path('inscricao-decretos-portaria-atos-prefeito', views.inscricaoDecretosPortariaAtosPrefeito, name='inscricao-decretos-portaria-atos-prefeito'),
     #### URLS PARA VISUALIZAÇÃO DE DADOS ####
     path('visualizar/cadastro-processo-digital/', views.visualizarDados_Aulas_Processo_Digital, name='visualizar_aulas_processo_digital'),
 

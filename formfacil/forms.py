@@ -127,3 +127,34 @@ class CadastroAulasContadoresForm(forms.ModelForm):
     def clean_telefone(self):
         telefone = clear_tel(self.cleaned_data["telefone"])
         return telefone
+    
+
+class InscricaoDecretosPortariaAtosPrefeitoForm(forms.ModelForm):
+    turma_escolhida = forms.ModelChoiceField(
+        queryset=Opcao_Turmas_Decretos.objects.filter(ativo=True),
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        required=True,
+        label="Selecione uma turma"
+    )
+
+    class Meta:
+        model = Inscricao_Decretos_Portaria_Atos_Prefeito
+        fields = ['nome', 'cpf', 'matricula', 'secretaria', 'setor', 'telefone', 'turma_escolhida']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'cpf': forms.TextInput(attrs={'class': 'form-control', 'onkeydown': 'mascara(this, icpf)'}),
+            'matricula': forms.TextInput(attrs={'class': 'form-control'}),
+            'secretaria': forms.TextInput(attrs={'class': 'form-control'}),
+            'setor': forms.TextInput(attrs={'class': 'form-control'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control', 'onkeydown': 'mascara(this, itel)'}),
+        }
+
+    def clean_cpf(self):
+        cpf = validate_cpf(cpf=self.cleaned_data["cpf"].strip())
+        if Inscricao_Decretos_Portaria_Atos_Prefeito.objects.filter(cpf=cpf).exists():
+            raise forms.ValidationError("Este CPF já está cadastrado no sistema. Por favor, verifique.")
+        return cpf
+    
+    def clean_telefone(self):
+        telefone = clear_tel(self.cleaned_data["telefone"])
+        return telefone

@@ -3,6 +3,7 @@ from .email import Email
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from datetime import datetime
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 class FormIndicacaoComitePSP(models.Model):
@@ -133,4 +134,49 @@ class Cadastro_Aulas_Treinamento_Tributario_Contadores(models.Model):
     def __str__(self):
         return f'{self.matricula} - {self.nome}'  
 
+#####################
+class Opcao_Turmas_Decretos(models.Model):
+    dia_da_semana = models.CharField(max_length=50, verbose_name='Dia da semana')
+    dia_do_mes = models.CharField(max_length=2, verbose_name='Dia do mês')
+    hora_inicio = models.TimeField()
+    ativo = models.BooleanField(default=True, verbose_name='Opcao de turma ainda aberta?')
 
+    def __str__(self):
+        return f'{self.dia_da_semana}, dia {self.dia_do_mes} - {self.hora_inicio.strftime("%H:%M")}'
+
+    def get_cadastros_por_turma(self):
+        return Inscricao_Decretos_Portaria_Atos_Prefeito.objects.filter(turma_escolhida=self)
+    
+    def get_total(self):
+        return Inscricao_Decretos_Portaria_Atos_Prefeito.objects.filter(turma_escolhida=self).count()
+
+
+
+
+class Inscricao_Decretos_Portaria_Atos_Prefeito(models.Model):
+    nome = models.CharField(max_length=150, verbose_name='Nome Completo')
+    cpf = models.CharField(max_length=14, verbose_name='CPF', unique=True, null=True)
+    matricula = models.CharField(max_length=6, verbose_name='Matrícula', blank=True)
+    secretaria = models.CharField(max_length=250)
+    setor = models.CharField(max_length=250)
+    telefone = models.CharField(max_length=15, verbose_name='Seu telefone', blank=False)
+    turma_escolhida = models.ForeignKey(
+        Opcao_Turmas_Decretos, on_delete=models.SET_NULL, verbose_name='Selecione uma turma', null=True
+    )
+    dt_registro = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.matricula} - {self.nome}'
+
+    def save(self, *args, **kwargs):
+        # Verifica se a turma já tem uma inscrição
+        if self.turma_escolhida.get_total() >= 7 and self.turma_escolhida.ativo:
+            raise ValueError(f"A turma {self.turma_escolhida} já atingiu o limite de 1 inscrição.")
+        
+        super().save(*args, **kwargs)
+        
+        # Se a turma tiver uma inscrição, desativa a turma
+        if self.turma_escolhida.get_total() >= 7:
+            self.turma_escolhida.ativo = False
+            self.turma_escolhida.save()
+            print(f"Turma {self.turma_escolhida} desativada. Limite de inscrições atingido.")

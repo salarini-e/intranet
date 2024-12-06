@@ -134,3 +134,29 @@ def logCadastrosRepetidos(request):
 
     # Renderiza o template com os cadastros repetidos
     return render(request, 'formfacil/cadastrosrepetidos.html', {'cadastros': cadastros_repetidos, 'total': cadastros_repetidos.count()})
+
+
+
+def inscricaoDecretosPortariaAtosPrefeito(request):
+    if request.method == 'POST':
+        form = InscricaoDecretosPortariaAtosPrefeitoForm(request.POST)
+        if form.is_valid():
+            print("Form is valid")
+            form.save()
+            print("Form saved")
+            context = {
+                'titulo': 'Inscrição Decretos e Portaria Atos do Prefeito',    
+                'subtitulo': 'Subsecretaria de Tecnologia da Informação e Comunicação',
+                'mensagem': "<span class='text-success'><i class='fa-solid fa-circle-check me-2'></i>Formulário enviado com sucesso!</span>"
+            }
+            return render(request, 'formfacil/formfacil_success.html', context)
+    else:
+        form = InscricaoDecretosPortariaAtosPrefeitoForm()
+        
+    context = {
+            'form': form,
+            'titulo': 'Inscrição Decretos e Portaria Atos do Prefeito',    
+            'subtitulo': 'Subsecretaria de Tecnologia da Informação e Comunicação',
+            'mensagem': ''
+    }
+    return render(request, 'formfacil/formfacil_form.html', context)
