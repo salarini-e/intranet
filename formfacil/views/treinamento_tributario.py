@@ -261,6 +261,7 @@ def logCadastrosRepetidosTTContadores(request):
 
 
 def cadastroDecretos2024(request):
+    
     if request.method == 'POST':
         form = CadastroDecretos2024Form(request.POST)
         if form.is_valid():

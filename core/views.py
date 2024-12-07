@@ -3,6 +3,9 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.contrib.auth.decorators import login_required
 from chamados.models import Chamado, TipoChamado
 from datetime import datetime, timedelta
+
+from noticias.models import Carrousell, Noticias
+
 @xframe_options_exempt
 @login_required
 def index(request):
@@ -45,6 +48,9 @@ def index(request):
         tres_meses_atras += timedelta(days=7)
 
     context = {                
+        'carrousel': Carrousell.objects.all(),
+        'destaques': Noticias.objects.filter(destaque=True).order_by('-dt_inclusao')[:4],
+        'noticias': Noticias.objects.filter(destaque=False).order_by('-dt_inclusao')[:12],
         'count_abertos': count_abertos,
         'count_em_atendimento': count_em_atendimento,
         'count_pendentes': count_pendentes,

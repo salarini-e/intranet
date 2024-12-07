@@ -1,3 +1,8 @@
 from django.shortcuts import render
-
-# Create your views here.
+from .models import Noticias
+def detalhe(request, noticia_id):
+    noticia = Noticias.objects.get(id=noticia_id)
+    context = {
+        'noticia': noticia
+    }
+    return render(request, 'noticias/detalhe.html', context)

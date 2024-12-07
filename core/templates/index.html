@@ -17,6 +17,7 @@
 					    
 				    </div>
 			    </div> -->
+				
 				<style>
 					.text-justify{
 						text-align: justify;
@@ -70,30 +71,16 @@
 				
 				<div class="carousel mb-5">
 					<div class="carousel-track">
+					{% for item in carrousel %}
 					  <!-- Slide 1 -->
 					  <div class="carousel-slide">
 						<div class="slide-content">
 						 <!-- <img src="https://desenvolve.novafriburgo.rj.gov.br/static/images/paisagem-banner.png" alt=""> -->
-							<img src="/static/images/natal-teste.png" alt="">
+							<img src="{{item.imagem.url}}" alt="{{item.alt}}">
 
 						</div>
 					  </div>
-					  <!-- Slide 2 -->
-					  <div class="carousel-slide">
-						<div class="slide-content">
-						  <h1>SALA DO EMPREENDEDOR</h1>
-						  <p>Tire suas dúvidas e saiba mais sobre:</p>
-						  
-						  <p>Contato: <strong>(22) 2525-9151</strong></p>
-						</div>
-					  </div>
-					  <!-- Slide 3 -->
-					  <div class="carousel-slide">
-						<div class="slide-content">
-						  <h1>PROGRAMA DE DESENVOLVIMENTO DE ESTÁGIO</h1>
-						  <p>Descubra como participar e construir seu futuro profissional!</p>
-						</div>
-					  </div>
+					{% endfor %}
 					</div>
 					<button class="carousel-button prev" aria-label="Anterior">
 						<i class="fa-solid fa-chevron-left"></i>
@@ -180,7 +167,8 @@
 					}
 					.text-justify{
 						text-align: justify;
-					}					
+					}	
+								
 				  </style>
 				  <script>
 					const track = document.querySelector('.carousel-track');
@@ -240,52 +228,29 @@
 			        </div>					
 					<div class="col">
 						<div class="row">
-							<div class="col">
-								<div class="app-card app-card-progress-list h-100 shadow-sm">
-									<img src="https://s2-g1.glbimg.com/pqIz_TQOeaSoUKaCR1FoveNc3kE=/4x0:566x316/1080x608/smart/filters:max_age(3600)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2024/E/s/azYeJZTCuty5syabKW7w/fotojet-2024-11-10t112641.847.jpg" class="img-fluid" alt="">
-								</div>
+							{% for destaque in destaques %}
+							<div class="col-6 destaques">
+								<a href="{% url 'noticias:detalhe' destaque.id %}" class="app-card app-card-progress-list h-100 shadow-sm">
+									<img src="{{destaque.imagem_capa.url}}" class="img-fluid" alt="{{destaque.alt_capa}}">
+								</a>
 							</div>
-							<div class="col">
-								<div class="app-card app-card-progress-list h-100 shadow-sm">
-									<img src="https://s2-g1.glbimg.com/h3RLAojQbUgS85CeWOTCbIrvF8U=/0x0:5332x2999/1080x608/smart/filters:max_age(3600)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2024/e/r/5rdAUoT3AEaYcEinMYLg/emerson-vieira-cpkpj-u9eum-unsplash.jpg" class="img-fluid" alt="">
-								</div>
-							</div>
+							{% endfor %}
 						</div>
-						<div class="row mt-2">
-							<div class="col">
-								<div class="app-card app-card-progress-list h-100 shadow-sm">
-									<img src="https://s2-g1.glbimg.com/UpgAb-rqpmGgxYN9Hb9lLwUrwo0=/0x412:5824x3688/540x304/smart/filters:max_age(3600)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2024/B/y/PVu5dfTkK7x51XxdJw9Q/000-36nq4vx.jpg" alt="" class="img-fluid">
-								</div>
-							</div>
-							<div class="col">
-								<div class="app-card app-card-progress-list h-100 shadow-sm">
-									<img src="https://s2-g1.glbimg.com/al2KXlXGUp1ZMrlzbG17RXU3WTU=/0x0:3840x2160/540x304/smart/filters:max_age(3600)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2024/d/l/qso4r7QlGLVSYvqF12IQ/libertadores.jpeg" alt="" class="img-fluid">
-								</div>
-							</div>
-						</div>
+						
 					</div>
 					<div class="row pt-4">
-						<div class="col d-flex">
-							<img src="/static/images/teste3.png" class="m-auto img-fluid" alt="">
-						</div>
+						{% for noticia in noticias %}
+						<a href="{% url 'noticias:detalhe' noticia.id %}" class="col-4 d-flex flex-column">							
+							<img src="{{noticia.imagem_capa.url}}" class="m-auto img-fluid" alt="{{noticia.alt_capa}}">
+							<p style="font-size: 11pt; color: #000 !important;" class="px-2 mt-2">
+								<span style="font-size: 8pt;">{{noticia.dt_inclusao|date:"d/m/y	"}}</span><br>
+								<strong>{{noticia.titulo}}</strong>
+							</p>
+						</a>
+						{% endfor %}
 					</div>
-					<div class="row">
-						<div class="col d-flex">
-							<img src="/static/images/teste3.png" class="m-auto img-fluid" alt="">
-						</div>
-					</div>
-					<!-- <div class="row">
-						<div class="col d-flex">
-							<img src="/static/images/teste2.png" class="m-auto img-fluid" alt="">
-						</div>
-					</div>
-					<div class="row">
-						<div class="col">
-							<img src="/static/images/teste.png" class="img-fluid" alt="">
-						</div>
-					</div>
-				</div> -->
-				<button class="m-auto btn btn-primary">
+					
+				<button class="m-auto btn btn-primary text-white">
 					ver mais
 				</button>
 				{% endif %}

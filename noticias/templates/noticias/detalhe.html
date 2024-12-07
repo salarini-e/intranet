@@ -1,0 +1,35 @@
+{% extends 'template.html' %}
+{% block visao %}active{% endblock %}
+{% block main %}   
+
+	
+				<div class="row">
+					<div class="col d-flex">
+						<h1 class="mt-4 mb-5">Notícias</h1>
+						<a href="/" class="ms-auto my-auto">
+							Voltar
+						</a>
+					</div>
+				</div>
+				<div id="mainNoticias" class="row g-4 mb-4 app-card mx-1">
+				    <div class="col-12 col-lg-12">
+				        <div class="px-5 pt-3 h-100">
+							<div class="row">
+								<div class="col d-flex">
+									<h2 class="mb-4">{{noticia.titulo}}</h2>											
+									
+								</div>
+							</div>
+							
+							<div class="conteudo">
+								{{noticia.conteudo|safe}}
+							</div>
+							<p class="mb-5" style="color: #777; font-size: 14px; margin-bottom: 15px;">Publicado em: {{noticia.dt_inclusao}}.</p>
+						</div>
+						
+				        </div>
+			        </div>					
+									
+				</div>
+				<script src="/static/plugins/chart.js/chart.min.js"></script> 
+{% endblock %}
