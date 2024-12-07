@@ -124,9 +124,7 @@ from .treinamento_tributario import *
 def index(request):
     context = {
         'registros':{
-            'aulas_processo_digital': Cadastro_Aulas_Processo_Digital.objects.all().count(),
-            'contador_tributario_emissores': Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas.objects.all().count(),
-            'contador_tributario_contadores': Cadastro_Aulas_Treinamento_Tributario_Contadores.objects.all().count(),
+            'decretos_protaria_e_atos_do_prefeito_total': 0,
         }
     }
     return render(request, 'formfacil/index.html', context)

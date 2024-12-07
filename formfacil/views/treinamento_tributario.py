@@ -91,6 +91,21 @@ def visualizarDados_TT_Emissores(request):
     }
     return render(request, 'formfacil/template_emissores.html', context)
 
+def visualizarDados_Decreto_Portaria_Atos_Prefeito(request):
+    registros = []
+    for horario in Inscricao_Decretos_Portaria_E_Atos_Do_Prefeito.HORARIOS_CHOICES:
+        itens = Inscricao_Decretos_Portaria_E_Atos_Do_Prefeito.objects.filter(horarios=horario[1])
+        registros.append({
+            'horario': horario[1],
+            'itens': itens,
+            'total': itens.count(),
+        })
+    context = {
+        'registros': registros
+    }
+    return render(request, 'formfacil/template_atos_do_prefeito.html', context)
+
+
 def visualizarDados_TT_Contadores(request):
     cadastros_contadores = Cadastro_Aulas_Treinamento_Tributario_Contadores.objects.all()
     context = {
@@ -243,3 +258,30 @@ def logCadastrosRepetidosTTContadores(request):
 
     # Renderiza o template com os cadastros repetidos
     return render(request, 'formfacil/cadastrosrepetidos.html', {'cadastros': cadastros_repetidos, 'total': cadastros_repetidos.count()})
+
+
+def cadastroDecretos2024(request):
+    if request.method == 'POST':
+        form = CadastroDecretos2024Form(request.POST)
+        if form.is_valid():
+            form.save()
+            context = {
+                'titulo': 'Decretos e Portaria Atos do Prefeito',    
+                'subtitulo': 'Subsecretaria de Tecnologia da Informação e Comunicação',
+                'mensagem': "<span class='text-success'><i class='fa-solid fa-circle-check me-2'></i>Formulário enviado com sucesso!</span>"
+            }
+            return render(request, 'formfacil/formfacil_success.html', context)
+    else:
+        form = CadastroDecretos2024Form()
+        
+    context = {
+            'form': form,
+            'titulo': 'Decretos e Portaria Atos do Prefeito',       
+            'subtitulo': 'Subsecretaria de Tecnologia da Informação e Comunicação',
+            'mensagem': (                
+                "Data: 12/12 (Quinta-feira) <br>"
+                "Horário : das 14h às 16h. <br>"
+                "Local: À definir"
+            )
+        }
+    return render(request, 'formfacil/formfacil_form.html', context)

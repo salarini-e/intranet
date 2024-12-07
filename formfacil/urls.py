@@ -13,6 +13,7 @@ urlpatterns = [
     path('cadastro-treinamento-tributario-emissores', views.cadastroTreinamentoTributarioEmissoresTaxas, name='cadastro-treinamento-tributario-emissores'),
     path('cadastro-treinamento-tributario-contadores', views.cadastroTreinamentoTributarioContadores, name='cadastro-treinamento-tributario-contadores'),
     path('cadastro-processo-digital', views.cadastroAulasProcessoDigial, name='cadastro-processo-digital'),
+    path('inscricao-ato-prefeito', views.cadastroDecretos2024, name='inscricao-ato-prefeito'),
 
     path('inscricao-decretos-portaria-atos-prefeito', views.inscricaoDecretosPortariaAtosPrefeito, name='inscricao-decretos-portaria-atos-prefeito'),
     #### URLS PARA VISUALIZAÇÃO DE DADOS ####
@@ -20,7 +21,8 @@ urlpatterns = [
 
     path('visualizar/cadastros-treinamento-tributario-emissores/', views.visualizarDados_TT_Emissores, name='cadastros-treinamento-tributario-emissores'),
     path('visualizar/cadastros-treinamento-tributario-contadores/', views.visualizarDados_TT_Contadores, name='cadastros-treinamento-tributario-contadores'),
-    
+    path('visualizar/cadastros-decretos-portaria-atos-prefeito/', views.visualizarDados_Decreto_Portaria_Atos_Prefeito, name='cadastros-decretos-portaria-atos-prefeito'),
+
     path('exportar/cadastro-processo-digital/', views.exportar_aulas_processo_digital_to_excel, name='exportar_aulas_processo_digital'),
     path('exportar/treinamento-tributario-emissores-taxas/', views.exportar_aulas_tributario_emissores_to_excel, name='exportar_treinamento_tributario_emissores_taxas'),
     path('exportar/treinamento-tributario-contadores/', views.exportar_aulas_tributario_contadores_to_excel, name='exportar_treinamento_tributario_contadores'),
