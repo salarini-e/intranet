@@ -24,6 +24,7 @@
 					}	
 				</style>
 				<h1 class="mt-4 mb-5">Bem vindo, servidor!</h1>
+				{% if not request.user.is_superuser %}
 				<div id="mainNoticias" class="row g-4 mb-4 app-card mx-1">
 				    <div class="col-12 col-lg-6">
 				        <div class="px-5 py-3 h-100">
@@ -67,6 +68,7 @@
 						</div>
 					</div>
 				</div>
+				{% endif %}
 				{% if request.user.is_superuser %}
 				
 				<div class="carousel mb-5">

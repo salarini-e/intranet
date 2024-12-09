@@ -260,18 +260,26 @@ def logCadastrosRepetidosTTContadores(request):
     return render(request, 'formfacil/cadastrosrepetidos.html', {'cadastros': cadastros_repetidos, 'total': cadastros_repetidos.count()})
 
 
+from django.contrib import messages
 def cadastroDecretos2024(request):
     
     if request.method == 'POST':
         form = CadastroDecretos2024Form(request.POST)
         if form.is_valid():
-            form.save()
-            context = {
-                'titulo': 'Decretos e Portaria Atos do Prefeito',    
-                'subtitulo': 'Subsecretaria de Tecnologia da Informação e Comunicação',
-                'mensagem': "<span class='text-success'><i class='fa-solid fa-circle-check me-2'></i>Formulário enviado com sucesso!</span>"
-            }
-            return render(request, 'formfacil/formfacil_success.html', context)
+            inscricao = form.save(commit=False)
+            horarios_disponiveis = Inscricao_Decretos_Portaria_E_Atos_Do_Prefeito.get_qnt_inscritos()
+            print(horarios_disponiveis)
+            if not horarios_disponiveis.get(inscricao.horarios, False):
+                messages.error(request, f"Não há vagas disponíveis para o horário <strong>{inscricao.horarios}</strong>.")
+            else:
+                # Salva a inscrição
+                inscricao.save()                            
+                context = {
+                    'titulo': 'Decretos e Portaria Atos do Prefeito',    
+                    'subtitulo': 'Subsecretaria de Tecnologia da Informação e Comunicação',
+                    'mensagem': "<span class='text-success'><i class='fa-solid fa-circle-check me-2'></i>Formulário enviado com sucesso!</span>"
+                }
+                return render(request, 'formfacil/formfacil_success.html', context)
     else:
         form = CadastroDecretos2024Form()
         

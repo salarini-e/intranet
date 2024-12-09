@@ -152,13 +152,12 @@ class Inscricao_Decretos_Portaria_E_Atos_Do_Prefeito(models.Model):
     def __str__(self):
         return f'{self.matricula} - {self.nome}'  
 
-    def get_qnt_inscritos(self):
-        qnt= []
-        for horario in self.HORARIOS_CHOICES:
-            if self.objects.filter(horarios=horario[1]).count() == 7:
-                qnt.append(False)
-            else:
-                qnt.append(True)
+    @classmethod
+    def get_qnt_inscritos(cls):
+        qnt = {}
+        for horario, _ in cls.HORARIOS_CHOICES:
+            count = cls.objects.filter(horarios=horario).count()
+            qnt[horario] = count < 7  # True se ainda há vagas, False caso contrário
         return qnt
     
     def filtrar_por_horario(self, horario):

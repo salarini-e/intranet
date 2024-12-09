@@ -88,6 +88,15 @@
 					    <div class="notification-content">
                             <form method="POST" class="settings-form" enctype="multipart/form-data">
 								{% csrf_token %}
+								{% if messages %}
+									<div>
+										{% for message in messages %}
+											<div class="text-center alert {% if message.tags %}{{ message.tags }}{% else %}alert-info{% endif %}">
+												{{ message|safe }}
+											</div>
+										{% endfor %}
+									</div>
+								{% endif %}
 								{{form}}
                                 <button type="submit" class="btn app-btn-primary" >Enviar</button>
                             </form>
