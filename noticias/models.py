@@ -5,6 +5,7 @@ class Carrousell(models.Model):
     titulo = models.CharField(max_length=100)
     imagem = models.ImageField(upload_to='noticias/carrousell/')
     alt = models.CharField(max_length=100)
+    link = models.CharField(max_length=200, default='#')
     data = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -20,6 +21,7 @@ class Noticias(models.Model):
     imagem_capa = models.ImageField(upload_to='noticias/')
     alt_capa = models.CharField(max_length=100)
     conteudo = models.TextField()
+    resumo = models.TextField(default='')
     destaque = models.BooleanField(default=False)
     dt_inclusao = models.DateTimeField(auto_now_add=True)
     
