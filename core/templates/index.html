@@ -1,10 +1,12 @@
 {% extends 'template.html' %}
 {% block visao %}active{% endblock %}
 {% block main %}   
+
 				<!-- Owl Carousel CSS -->
 				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
 				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
 				<style>
+					
 					.owl-carousel .item {
 					  background: #4a90e2;
 					  color: white;
@@ -21,6 +23,7 @@
 						opacity: 200% !important;
 						
 					}
+
 				  </style>
 			
 				<!-- Owl Carousel JS -->
@@ -41,7 +44,7 @@
 							items: 1
 						  },
 						  600: {
-							items: 3
+							items: 1
 						  },
 						  1000: {
 							items: 1.5
@@ -72,53 +75,7 @@
 					}	
 				</style>
 				<h1 class="mt-4 mb-3">Bem vindo, servidor!</h1>				
-				{% if not request.user.is_superuser %}
-				<div id="mainNoticias" class="row g-4 mb-4 app-card mx-1">
-				    <div class="col-12 col-lg-6">
-				        <div class="px-5 py-3 h-100">
-							<h2>Formulários Fundo de Previdência</h2>				
-							<p class="text-justify">Segue as orientações para realizar o recadastramento: fazer o download do
-								arquivo (formulário de recadastramento), imprimir, preencher corretamente os
-								dados e entregar presencialmente o FORMULÁRIO no Fundo de Previdência
-								Social de Nova Friburgo, seguindo o calendário de recadastramento.
-								</p>
-								<p class="text-justify">É necessário apresentar os documentos originais juntamente com o formulário
-									preenchido.</p>
-							<p class="text-justify">Excepcionalmente, o recadastramento será aceito por via postal ou
-								envio de documentação digital, nos casos em que o servidor aposentado ou
-								pensionista esteja comprovadamente impossibilitado de comparecer para realizar
-								o recadastramento presencialmente, seja nos casos de dificuldade de locomoção,
-								resida em outro Estado da Federação ou esteja residindo no exterior.
-							</p>
-							<p class="text-justify">
-								Nesse caso, é necessário enviar o formulário de recadastramento preenchido e
-								os documentos originais, ambos digitalizados, para o e-mail:
-								<strong>fundoprev.recadastramento@gmail.com</strong></p>
-				        </div>
-			        </div>					
-					<div class="col d-flex flex-column">
-						<p class="text-center mt-auto mb-5" style="font-weight: bold;">Downloads dos formulários</p>
-
-						<div class="mb-auto w-100 px-5 d-flex">
 							
-							<a href="https://drive.google.com/file/d/1fEW-3vk7ZEXXNH7U7JpMDZLpvXndGdmx/view?usp=sharing" target="https://drive.google.com/file/d/1fEW-3vk7ZEXXNH7U7JpMDZLpvXndGdmx/view?usp=sharing" class="text-center d-flex flex-column">
-								<span><i class="fa-regular fa-file-pdf fa-3x"></i></span>
-								<small class="mt-3">Formulário de Recadastramento</small>
-							</a>
-							<a href="https://drive.google.com/file/d/16M85-o0gPzwS_wjNmUff-jGU9hGSdVD3/view?usp=sharing" target="_blank" class="mx-auto text-center d-flex flex-column">
-								<span><i class="fa-regular fa-file-pdf fa-3x"></i></span>
-								<small class="mt-3">Declaração - Prova de Vida Aposentado</small>
-							</a>
-							<a href="https://drive.google.com/file/d/1v9JyH9-wDotxiMmulU1TTYlvNzeYgsUk/view?usp=sharing" target="_blank" class="text-center d-flex flex-column">
-								<span><i class="fa-regular fa-file-pdf fa-3x"></i></span>
-								<small class="mt-3">Declaração - Prova de Vida Pensionista</small>
-							</a>
-						</div>
-					</div>
-				</div>
-				{% endif %}
-				{% if request.user.is_superuser %}
-				
 				<div class="mb-5">
 					<div class="row pb-4">
 						<div class="col pb-4">
@@ -137,19 +94,22 @@
 					
 				    <div class="col-12 col-lg-6">
 				        <div class="px-5 py-3 h-100">
-							<h1>Lorem ipsum dolor sit amet </h1>
-							<p class="text-justify">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor, sunt rerum omnis excepturi recusandae iste quia minus veniam, eligendi, nulla distinctio doloribus quam beatae possimus voluptatum cumque totam praesentium quod?</p>
-							<p class="text-justify">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quibusdam quae accusamus nihil nisi vel! Cum odit doloribus tenetur, inventore consequuntur libero esse quos consequatur doloremque suscipit, rerum sunt, maxime numquam.</p>
-							<button class="btn btn-primary text-white">
+							<h1>Mural de Notícias</h1>
+							<p class="text-justify">
+								A Intranet é o nosso espaço exclusivo de comunicação interna, pensado para facilitar o acesso a informações, recursos e novidades sobre a organização. Aqui, você pode acompanhar as notícias mais recentes, conferir os documentos importantes e se conectar com outras áreas e equipes.
+							</p>
+								Explore nossos conteúdos e fique por dentro de tudo o que acontece. Este é o lugar onde a colaboração se transforma em resultados e onde o trabalho em equipe é fortalecido a cada clique.
+							</p>
+							<!-- <button class="btn btn-primary text-white">
 								Lorem ipsum
-							</button>
+							</button> -->
 				        </div>
 			        </div>					
 					<div class="col">
 						<div class="row">
 							{% for destaque in destaques %}
-							<div class="col-6 mb-4 destaques">
-								<a href="{% url 'noticias:detalhe' destaque.id %}" class="app-card app-card-progress-list h-100 shadow-sm">
+							<div class="col-lg-6 col-md-5 col-sm-12 mb-4 destaques">
+								<a href="#" class="app-card app-card-progress-list h-100 shadow-sm">
 									<img src="{{destaque.imagem_capa.url}}" class="img-fluid" alt="{{destaque.alt_capa}}" style="border-radius: 10px;">
 								</a>
 							</div>
@@ -163,7 +123,7 @@
 							{% for noticia in noticias %}
 							<hr>
 							<div class="row mt-3">
-								<a href="{% url 'noticias:detalhe' noticia.id %}" class="col-4 d-flex flex-column d-flex">							
+								<a href="{% url 'noticias:detalhe' noticia.id %}" class="col-lg-4 col-sm-12 d-flex flex-column d-flex">							
 									<img src="{{noticia.imagem_capa.url}}" class="m-auto img-fluid" alt="{{noticia.alt_capa}}" style="border-radius: 10px;">									
 								</a>
 								<div class="col d-flex flex-column pe-5">
@@ -174,7 +134,7 @@
 										<span class="my-0 py-0" style="font-size: 8pt;">{{noticia.dt_inclusao|date:"d/m/y	"}}</span>										
 									</p>
 									<p class="text-justify">
-										{{noticia.resumo}}
+										{{noticia.resumo}}	
 									</p>
 									<a href="{% url 'noticias:detalhe' noticia.id %}" >
 										Ler mais
@@ -189,7 +149,6 @@
 						</div>
 						
 					</div>					
-				{% endif %}               
 			  
 				<script src="/static/plugins/chart.js/chart.min.js"></script> 
 <script>
