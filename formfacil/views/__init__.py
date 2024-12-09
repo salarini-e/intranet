@@ -124,7 +124,7 @@ from .treinamento_tributario import *
 def index(request):
     context = {
         'registros':{
-            'decretos_protaria_e_atos_do_prefeito_total': 0,
+            'decretos_protaria_e_atos_do_prefeito_total': Inscricao_Decretos_Portaria_E_Atos_Do_Prefeito.objects.count(),
         }
     }
     return render(request, 'formfacil/index.html', context)
