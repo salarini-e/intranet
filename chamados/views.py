@@ -1259,3 +1259,44 @@ def api_get_data_servidor(request):
 
     return JsonResponse({'status': 400, 'message': 'Método não permitido!'})
 
+from dashboards.graficos import dados_chamados_por_secretaria
+
+def new_dashboard(request):
+    dados = '''{
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+            datasets: [{
+                label: 'Exemplo',
+                data: [10, 20, 15, 25, 30],
+                backgroundColor: 'black',
+                borderColor: 'black',
+                borderWidth: 1
+            }]
+        };'''
+    opcoes = '''{
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                    anchor: 'end', // Onde o texto será fixado
+                    align: 'end',  // Alinhamento do texto
+                    color: 'black', // Cor do texto
+                    font: {
+                        weight: 'bold'
+                    },
+                    formatter: (value) => {
+                        return value; // Mostra o valor diretamente
+                    }
+                }
+            }
+        };'''
+    
+    graficos = [
+        {'id': 'chartC1', 'tipo': 'bar', 'dados': dados, 'opcoes': opcoes, 'scales': {}, 'plugins': {}},
+        {'id': 'chartA1', 'tipo': 'bar', 'dados': dados_chamados_por_secretaria(), 'opcoes': opcoes, 'scales': {}, 'plugins': {}},
+    ]
+    context= {
+        'graficos': graficos
+    }
+    return render(request, 'chamados/new_dashboard.html', context)

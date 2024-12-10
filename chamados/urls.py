@@ -45,4 +45,5 @@ urlpatterns = [
     path('verificar-atualizacoes/', views.verificar_atualizacoes, name='verificar-atualizacoes'),
 
     path('download/relatorio/', views.download_relatorio, name='download_relatorio'),
+    path('new_dashboard/', views.new_dashboard, name='new_dashboard'),
 ]

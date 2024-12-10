@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Base HTML template with Bootstrap">
+    <title>Página Base com Bootstrap</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        html,body {
+            height: 100%;
+            overflow-y: hidden  ;
+            /* background-color: rgb(224, 224, 224); */
+        }
+        html{
+            background-image: url('https://senhas.novafriburgo.rj.gov.br/static/images/bg-login-old.jpg');
+            background-size: cover;
+        }
+        body{
+            background-color: rgba(255, 255, 255, 0.829);
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        nav #logo {
+            height: 30px;
+            margin-right: 8px;
+        }
+        .col-graf {
+            min-height: 34vh;
+            max-height: 73vh;
+        }
+        canvas {
+            height: 100% !important;
+            width: 100% !important;
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+        }
+        #display-2 {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="/static/brasao.ico" alt="" id="logo">
+                Prefeitura Municipal de Nova Friburgo
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <button class="nav-link" onclick="next_display()"><i class="fa-solid fa-caret-left"></i></button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" onclick="prev_display()"><i class="fa-solid fa-caret-right"></i></button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div id="display-1" class="container-fluid mt-3">
+        <div class="row">
+            <div class="col-lg-12 text-left px-4">
+                <h2 class="display-5 text-center">Chamados por secretarias</h2>
+            </div>
+        </div>
+        <div class="row px-4 my-4">
+            <div class="col-12 d-flex col-graf">
+                <div style="width: 70%;" class="m-auto">
+                    <canvas id="chartA1"></canvas>
+                </div>
+            </div>
+            
+        </div>       
+    </div>
+    <div id="display-2" class="container-fluid mt-3">
+        <div class="row">
+            <div class="col-lg-12 text-left px-4">
+                <h2 class="display-5">Página 2</h2>
+            </div>
+        </div>
+        <div class="row px-4 my-4">
+            <div class="col col-graf me-2">
+                <canvas id="chartC1"></canvas>
+            </div>
+            <div class="col col-graf ms-2">
+                <canvas id="chartC2"></canvas>
+            </div>
+            <div class="col col-graf ms-2">
+                <canvas id="chartC3"></canvas>
+            </div>
+            
+        </div>
+        <div class="row px-4">
+            <div class="col col-graf me-2">
+                <canvas id="chartD1"></canvas>
+            </div>
+            <div class="col col-graf ms-2">
+                <canvas id="chartD2"></canvas>
+            </div>
+            <div class="col col-graf ms-2">
+                <canvas id="chartD3"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light pt-3 mt-5">
+        <div class="container text-center">
+            <p>&copy; 2025 Subsecretaria de Tecnologia da Informação e Comunicação. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let display_atual = 1;
+        let display_max = 2;
+        function next_display() {
+            for (let i = 1; i <= display_max; i++) {
+                $('#display-' + i).fadeOut(); // Esconde com fade
+            }
+            display_atual = display_atual === display_max ? 1 : display_atual + 1;
+            setTimeout(function() {
+                $('#display-' + display_atual).fadeIn(); // Exibe com fade
+            }, 800);
+            // $('#display-' + display_atual).fadeIn(); // Exibe com fade
+        }
+
+        // Função para mostrar a página anterior com efeito fade
+        function prev_display() {
+            for (let i = 1; i <= display_max; i++) {
+                $('#display-' + i).fadeOut(); // Esconde com fade
+            }
+            display_atual = display_atual === 1 ? display_max : display_atual - 1;
+            $('#display-' + display_atual).fadeIn(); // Exibe com fade
+        }
+
+        // Gerar gráficos
+        function gerarGrafico(id, tipo, dados, opcoes, scales, plugins) {
+            new Chart(document.getElementById(id), {
+                type: tipo,
+                data: dados,
+                options: opcoes,
+                scales: scales,
+                plugins: plugins,
+            });
+        }
+
+        // Dados e opções para gráficos
+        const dadosExemplo = {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+            datasets: [{
+                label: 'Exemplo',
+                data: [10, 20, 15, 25, 30],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const opcoesExemplo = {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            }
+        };
+
+        // Criar gráficos
+        {% for grafico in graficos %}
+            dados_{{grafico.id}} = {{grafico.dados|safe}}
+            opcoes_{{grafico.id}} = {{grafico.opcoes|safe}}
+            scales_{{grafico.id}} = {{grafico.scales|safe}}
+            plugins_{{grafico.id}} = {{grafico.plugins|safe}}
+            gerarGrafico('{{grafico.id}}', '{{grafico.tipo}}', dados_{{grafico.id}}, opcoes_{{grafico.id}}, scales_{{grafico.id}}, plugins_{{grafico.id}});
+        {% endfor %}
+
+        $(document).ready(function() {
+            setInterval(next_display, 10000);
+        });
+        // gerarGrafico('chartA2', 'line', dadosExemplo, opcoesExemplo);
+        // gerarGrafico('chartB1', 'pie', dadosExemplo, opcoesExemplo);
+        // gerarGrafico('chartB2', 'doughnut', dadosExemplo, opcoesExemplo);
+        // gerarGrafico('chartC1', 'radar', dadosExemplo, opcoesExemplo);
+        // gerarGrafico('chartC2', 'polarArea', dadosExemplo, opcoesExemplo);
+        // gerarGrafico('chartD1', 'line', dadosExemplo, opcoesExemplo);
+        // gerarGrafico('chartD2', 'bar', dadosExemplo, opcoesExemplo);
+    </script>
+</body>
+</html>

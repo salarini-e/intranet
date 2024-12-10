@@ -237,6 +237,8 @@ def dados_total_atendimentos_por_atendente():
     for atendente, total in results:
         dados["labels"].append(atendente.split()[0] or "Não definido")
         dados["totals"].append(total)
+        dados['backgroundColor']=   'black'
+            
 
     return dados
 
@@ -249,13 +251,23 @@ def dados_chamados_por_secretaria():
         .order_by("-total")  # Ordenar por número de chamados em ordem decrescente
     )
 
+    # datasets: [{
+    #             label: 'Exemplo',
+    #             data: [10, 20, 15, 25, 30],
+    #             backgroundColor: 'rgba(75, 192, 192, 0.2)',
+    #             borderColor: 'rgba(75, 192, 192, 1)',
+    #             borderWidth: 1
+    #         }]
+
     dados = {
         "labels": [],
-        "values": []
+        "datasets": [{
+            'data': [], 
+        }]
     }
 
     for chamado in chamados:
         dados["labels"].append(chamado["secretaria__apelido"])  # Nome da secretaria
-        dados["values"].append(chamado["total"])  # Total de chamados
+        dados["datasets"][0]["data"].append(chamado["total"])  # Total de chamados
 
     return dados
