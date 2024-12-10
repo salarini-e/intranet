@@ -13,7 +13,9 @@ urlpatterns = [
     path('zerar-filtros/', views.zerar_filtros, name='zerar_filtros'),
     path('criar-chamado/', views.criarChamadoEscolher, name='criar_chamado_escolher'),
     path('criar-chamado/<sigla>/', views.criarChamado, name='criar'),
+
     path('<hash>/detalhes/', views.detalhes, name='detalhes'),    
+    path('<hash_chamado>/detalhes/editar/', views.editar_chamado, name='editar'),    
     path('<hash>/detalhes/att/', views.attChamado, name='attChamado'),    
     path('<hash>/iniciar-atendimento/', views.iniciar_atendimento, name='inicializar'),
     path('<hash>/pausar/', views.declarar_motivo_pausa, name='motivo'),
@@ -35,7 +37,7 @@ urlpatterns = [
     path('api/servidor/', views.api_criar_servidor, name='api_criar_servidor'),
     path('api/<hash>/relatorio/', views.api_relatorio, name='api_relatorio'),
     path('api/<hash>/relatorio/form/', views.api_montarFormRelatorio, name='api_form_relatorio'),
-    
+
     path('tickets/', views.tickets, name ='tickets'),
     path('tickets/mesclar/', views.mesclar_chamados, name ='mesclar'),
     path('tickets/ordernar/', views.ordenarPorNaoFechados, name ='ordernarPorNaoFechados'),

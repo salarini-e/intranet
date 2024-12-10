@@ -1,0 +1,46 @@
+{% extends 'template_chamados.html' %}
+{% block chamados %}active{% endblock %}
+{% block title %} {{usuario.nome}} - Perfil{% endblock %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="/static/css/perfil.css">
+{% endblock %}
+{% block main %}   
+<div class="row g-3 mb-4 align-items-center justify-content-between">
+    <div class="col-auto">
+        <h1 class="app-page-title mb-0">Chamado {{chamado}}</h1>
+    </div>
+    <div class="col-auto">
+         <div class="page-utilities">
+            <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+                <div class="col-auto">
+                    <div class="table-search-form row gx-1 align-items-center">                                        					           
+                        <div class="col-auto">
+                            <a href="{% url 'chamados:tickets' %}" class="my-auto btn app-btn-secondary" ><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
+                        </div>
+                        
+                    </div>
+                    
+                </div>		
+            </div>
+        </div>
+    </div>
+</div>
+<div class="perfil-wrapper">
+    <div class="perfil-name-wrapper p-5 d-flex">        
+        <form class="perfil-infos m-auto">
+            <h2 class="mb-3">Editar</h2>
+            {{form}}
+            <button type="submit" class="btn btn-primary text-white">Salvar</button>
+        </form>
+    </div>
+</div>
+<style>
+    label{
+        color : #000;
+    }
+    .form-control{
+        color : #474747;
+    }
+</style>
+{% endblock %}

@@ -317,3 +317,31 @@ class FormDetalhesDoChamado(forms.ModelForm):
             'subtipo': forms.Select(attrs={'class': 'form-control mb-3'}),
             'relatorio': forms.Textarea(attrs={'class': 'form-control mb-3', 'style': 'height: 150px;'}),
         }
+
+class FormEditarChamado(forms.ModelForm):
+    class Meta:
+        model = Chamado
+        fields = ['secretaria', 
+                  'telefone', 
+                  'endereco', 
+                  'assunto',
+                  'descricao',
+                  ]
+        widgets = {
+            'secretaria': forms.Select(attrs={'class': 'form-control mb-3'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'endereco': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'assunto': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control mb-3', 'style': 'height: 150px;'}),
+        }
+    
+    def clean_dt_agendamento(self):
+        dt_agendamento = self.cleaned_data.get('dt_agendamento')
+        dt_agendamento_com_hora = timezone.make_aware(
+            timezone.datetime.combine(dt_agendamento, timezone.now().time())
+        )
+
+        if dt_agendamento_com_hora < timezone.now():
+            raise forms.ValidationError("A data de agendamento não pode ser no passado.")
+
+        return dt_agendamento

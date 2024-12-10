@@ -6,7 +6,7 @@ from .models import (TipoChamado, Secretaria, Setor, Servidor, Chamado, OSImpres
                      PeriodoPreferencial, Pausas_Execucao_do_Chamado, Historico_Designados)
 from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm, ServidorForm,
                     MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm, CriarSetorForm, Form_Agendar_Atendimento,
-                    Form_Motivo_Pausa, FormDetalhesDoChamado)
+                    Form_Motivo_Pausa, FormDetalhesDoChamado, FormEditarChamado)
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages as message
 from django.http import JsonResponse, HttpResponse, HttpResponseForbidden
@@ -232,6 +232,7 @@ def detalhes(request, hash):
         'prioridades': chamado.PRIORIDADE_CHOICES,
         'status': chamado.STATUS_CHOICES,     
         'is_atendente': Atendente.objects.filter(servidor = servidor, ativo = True).exists(),
+        'helpdesk_or_adm': Atendente.objects.filter(servidor = servidor, nivel__in = ['0', '2'],ativo = True).exists(),
         'tipos': tipos_chamados,
         'tipos_chamados': tipos_chamados,
         'requisitante_telefone': requisitante_telefone,
@@ -239,6 +240,24 @@ def detalhes(request, hash):
     }
     return render(request, 'chamados/detalhes.html', context)
 
+def editar_chamado(request, hash_chamado):
+    servidor = Servidor.objects.get(user=request.user)
+    if not Atendente.objects.filter(servidor = servidor, nivel__in = ['0', '2'],ativo = True).exists():
+        return HttpResponseForbidden('Você não tem permissão para acessar esta página!')
+    chamado = get_object_or_404(Chamado, hash=hash_chamado)
+    if request.method == 'POST':
+        form = FormEditarChamado(request.POST, instance=chamado)
+        if form.is_valid():
+            chamado = form.save()
+            return redirect('chamados:detalhes', hash=chamado.hash)
+    else:
+        form = FormEditarChamado(instance=chamado)
+    context = {
+        'form': form,
+        'chamado': chamado,
+    }
+    return render(request, 'chamados/editar_chamado.html', context)
+        
 
 from django.db.models import Count, Q, Avg, Max, Min, F
 
