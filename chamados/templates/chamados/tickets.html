@@ -92,6 +92,11 @@
                                     </div>
                                     <div class="col-lg-7 col-sm-11 chamados-tickets-infos-chamado">
                                         <div class="chamados-tickets-infos-chamado-text">
+                                            <div class="d-flex">
+                                            <div class="my-auto me-1">
+                                                {{chamado.tipo.sigla}}{{ chamado.id|stringformat:"04d" }} {% if request.user.is_superuser or is_atendente%}<span class="ms-1">{{chamado.se_mesclado|safe}}</span>{% endif %}   
+                                            </div>
+
                                             {% if chamado.is_novo %}
                                             {% if chamado.respondido_pelo_cliente %}
                                             <div>
@@ -112,10 +117,11 @@
                                             {% endif %}
                                             {% endif %}
                                             {% endif %}
-
+                                            </div>
+                                            
                                             <a href="{% url 'chamados:detalhes' chamado.hash %}">
                                                 <span class="chamados-tickets-infos-chamado-text-assunto">                                                    
-                                                    {% if request.user.is_superuser or is_atendente%}{{chamado.se_mesclado|safe}}{% endif %} {{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}
+                                                    {{ chamado.assunto }} {{ chamado.setor.secretaria }}
                                                 </span>
                                                 </a>
                                             <div class="solution-infos-wrapper">
