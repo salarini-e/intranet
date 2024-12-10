@@ -28,8 +28,9 @@
 </div>
 <div class="perfil-wrapper">
     <div class="perfil-name-wrapper p-5 d-flex">        
-        <form class="perfil-infos m-auto">
+        <form method="POST" class="perfil-infos m-auto">
             <h2 class="mb-3">Editar</h2>
+            {% csrf_token %}
             {{form}}
             <button type="submit" class="btn btn-primary text-white">Salvar</button>
         </form>

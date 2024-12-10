@@ -78,7 +78,7 @@ class CriarChamadoForm(forms.ModelForm):
             
             self.fields['requisitante'] = forms.ModelChoiceField(
                 queryset=Servidor.objects.all(),
-                widget=RequisitanteWidget(attrs={'class': 'form-select', 'required': 'required'}),
+                widget=RequisitanteWidget(attrs={'class': 'form-select', 'required': 'required', 'onchange':'get_data_servidor(this)'}),
                 label='Nome do Servidor'
             )
 

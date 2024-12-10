@@ -29,12 +29,12 @@
 					<div class="col-lg-6 col-sm-12 px-5">
 						<h4 class="mt-4"><strong>Escolha o tipo de chamado:</strong></h4>				
 								{% for tipo in tipos %}							
-								<a class="btn btn-secondary w-100 mb-2" href="{% url 'chamados:criar' tipo.sigla %}">
-									{{tipo.nome}}
+								<a class="btn w-100 mb-2 p-1" style="border-radius: 10px; background-color: #00528A;" href="{% url 'chamados:criar' tipo.sigla %}">									
+									<img class="img-fluid" style="border-radius: 10px;" src="/static/images/icon-tipo-chamado/{{tipo.nome}}.png" alt="{{tipo.nome}}">
 								</a>
 								{% endfor %}
 					</div>
-					<div class="col-lg-6 col-sm-12 p-5" style="border: 1px solid rgba(0, 0, 0, 0); background-color: white; border-radius: 5px; color: rgb(0, 0, 0);">
+					<div class="col-lg-6 col-sm-12 p-5" style="border: 1px solid rgba(0, 0, 0, 0); background-color: rgb(255, 255, 255); border-radius: 5px; color: rgb(0, 0, 0);">
 						<div class="row">						    
 							<div class="col-12 col-lg-12">							        
 								<h5 class="mb-3 text-uppercase">Atenção para as Informações</h5>

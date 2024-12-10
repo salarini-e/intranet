@@ -312,6 +312,43 @@
 					function execmascara(){
 							v_obj.value=v_fun(v_obj.value)
 						}	
+
+					function get_data_servidor(e){
+						console.log(e.value);
+
+						var url = "{% url 'chamados:api_get_data_servidor' %}";
+
+						var formData = new FormData();
+						formData.append('id', e.value);
+						formData.append('csrfmiddlewaretoken', '{{csrf_token}}');
+						postRequest(url, formData)
+							.then(response => {
+								console.log(response);
+								if (response.status == 200){
+									// document.getElementById('id_secretaria').value = response.secretaria_id;									
+									document.getElementById('id_endereco').value = response.endereco;
+									document.getElementById('id_telefone').value = response.telefone;
+									document.querySelector('#select2-id_secretaria-container').setAttribute('title', response.secretaria);
+									document.querySelector('#select2-id_secretaria-container').textContent = response.secretaria;
+									var inputSecretaria = document.createElement('input');
+									inputSecretaria.type = 'hidden';
+									inputSecretaria.id = 'id_secretaria';
+									inputSecretaria.name = 'secretaria';
+									inputSecretaria.value = response.secretaria_id;
+									document.getElementById('formulario').appendChild(inputSecretaria);
+									
+
+								}else{
+									console.log(response)
+									
+								}
+							})
+							.catch(error => {
+								console.error(error);
+							});
+					}	
+				
+
 				</script>
 				<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 				{{ form.media.js }}						  

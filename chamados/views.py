@@ -146,6 +146,7 @@ def criarChamado(request, sigla):
         }
 
     if request.POST:
+        print(request.POST)
         form = CriarChamadoForm(request.POST, request.FILES, user=request.user)
 
         if form.is_valid():
@@ -1235,4 +1236,18 @@ def download_relatorio(request):
     df.to_excel(response, index=False)
 
     return response
+
+def api_get_data_servidor(request):
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        servidor = Servidor.objects.get(id=id)
+        return JsonResponse({
+            'status': 200,
+            'secretaria_id': servidor.setor.secretaria.id,
+            'secretaria': servidor.setor.secretaria.nome,
+            'endereco': servidor.setor.endereco,            
+            'telefone': servidor.telefone
+        })
+
+    return JsonResponse({'status': 400, 'message': 'Método não permitido!'})
 
