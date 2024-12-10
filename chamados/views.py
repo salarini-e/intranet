@@ -251,6 +251,8 @@ def editar_chamado(request, hash_chamado):
         if form.is_valid():
             chamado = form.save()
             return redirect('chamados:detalhes', hash=chamado.hash)
+        else:
+            print(form.errors)
     else:
         form = FormEditarChamado(instance=chamado)
     context = {
@@ -1238,6 +1240,12 @@ def download_relatorio(request):
     return response
 
 def api_get_data_servidor(request):
+    atendente = Atendente.objects.filter(servidor__user=request.user)
+    if not atendente.exists():
+        return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
+    elif not atendente.last().nivel in ['0', '2']:
+            return JsonResponse({'status': 403, 'message': 'Acesso negado!'})
+    
     if request.method == 'POST':
         id = request.POST.get('id')
         servidor = Servidor.objects.get(id=id)
