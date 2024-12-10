@@ -138,11 +138,9 @@ class Chamado(models.Model):
         return self.n_protocolo
 
     def se_mesclado(self):
-        print(self.mesclado)
         if self.mesclado:
-            historico_mesclagem = Historico_Mesclagem.objects.filter(chamado_mesclado=self)
-            chamado = historico_mesclagem.chamado_resultante
-            return f'{self.chamado.n_protocolo} <i class="fa-solid fa-code-merge me-2"></i>'
+            historico_mesclagem = Historico_Mesclagem.objects.filter(chamado_resultante=self)            
+            return '<i class="fa-solid fa-code-merge me-2"></i>'
         else:
             return ''
     def calcular_media_diaria():

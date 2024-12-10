@@ -670,7 +670,7 @@ def agendar_atendimento(request, hash):
 def tickets(request):
     if not 'ordenacao' in request.session:
         request.session['ordenacao'] = False
-
+    
     if request.method == 'POST':
         carregar_novos_filtros(request)
 

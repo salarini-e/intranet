@@ -433,3 +433,9 @@ def cadastrar_servidor(request):
             
         
     return render(request, 'instituicoes/cadastrar_servidor.html')
+
+def new_login(request):
+    return render(request, 'adm/new_login.html')
+
+def new_cadastrar(request):
+    return render(request, 'adm/new_cadastrar.html')

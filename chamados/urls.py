@@ -35,6 +35,7 @@ urlpatterns = [
     path('api/servidor/', views.api_criar_servidor, name='api_criar_servidor'),
     path('api/<hash>/relatorio/', views.api_relatorio, name='api_relatorio'),
     path('api/<hash>/relatorio/form/', views.api_montarFormRelatorio, name='api_form_relatorio'),
+    
     path('tickets/', views.tickets, name ='tickets'),
     path('tickets/mesclar/', views.mesclar_chamados, name ='mesclar'),
     path('tickets/ordernar/', views.ordenarPorNaoFechados, name ='ordernarPorNaoFechados'),

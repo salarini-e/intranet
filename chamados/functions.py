@@ -50,7 +50,7 @@ class Email_Chamado:
     def chamado_criado(self): 
         email_template = self.create_email(self.chamado.requisitante.email, 'chamados/emails/criar_chamado.txt')   
         email_to = self.chamado.requisitante.email
-        print(email_template)
+        # print(email_template)
         self.criar_notificacao('Chamado criado com sucesso!')
 
         msg = {
@@ -406,58 +406,79 @@ from django.db import connection, models
 def filtrar_chamados(request):
     if request.user.is_superuser or Atendente.objects.filter(servidor__user=request.user, ativo=True).exists():
         sql = make_query_chamados(request)
-
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            results = cursor.fetchall()
-
-            queryset = []
-            fechados =[]
-
-            for row in results:                
-
-                data = {
-                    'id': row[0],
-                    'telefone': row[1],
-                    'assunto': row[2],
-                    'prioridade': row[3],
-                    'status': row[4],
-                    'descricao': row[5],
-                    'dt_inclusao': row[6],
-                    'dt_atualizacao': row[7],
-                    'dt_execucao': row[8],
-                    'dt_fechamento': row[9],
-                    'n_protocolo': row[10],
-                    'anexo': row[11],
-                    'hash': row[12],
-                    'atendente_id': row[13],
-                    'profissional_designado_id': row[14],
-                    'requisitante_id': row[15],
-                    'setor_id': row[16],
-                    'user_atualizacao_id': row[17],
-                    'user_inclusao_id': row[18],
-                    'tipo_id': row[19],
-                    'dt_inicio_execucao': row[20],
-                    'dt_agendamento': row[21],
-                    'endereco': row[22]
-                }
-                chamado = Chamado(**data)
-                
-                if row[4] == '4' or row[4] == '5' and request.session['ordenacao']:
-                    fechados.append(chamado)
-                elif row[4] == '6':
-                    pass
-                else:
-                    queryset.append(chamado)
-            queryset = sorted(queryset, key=lambda x: (x.dt_atualizacao if x.dt_atualizacao else x.dt_inclusao), reverse=True)
-            if request.session['ordenacao']:
-                fechados = sorted(fechados, key=lambda x: (x.dt_atualizacao if x.dt_atualizacao else x.dt_inclusao), reverse=True)
-                queryset.extend(fechados)
-            # print("chamado:", queryset, '\n')
         
-        return queryset  
+        results = Chamado.objects.raw(sql)
+        queryset = []
+        fechados = []
+        ordenacao = request.session.get('ordenacao', False)
 
+        for chamado in results:
+            if (chamado.status == '4' or chamado.status == '5') and ordenacao:
+                fechados.append(chamado)
+            elif chamado.status != '6':
+                queryset.append(chamado)
+        queryset.sort(key=lambda x: (x.dt_atualizacao or x.dt_inclusao), reverse=True)
+        if ordenacao:
+            fechados.sort(key=lambda x: (x.dt_atualizacao or x.dt_inclusao), reverse=True)
+            queryset.extend(fechados)
+        return queryset
     else:
-        queryset = Chamado.objects.filter(requisitante__user=request.user).order_by('-dt_atualizacao')
+        return Chamado.objects.filter(requisitante__user=request.user).order_by('-dt_atualizacao')
     
-    return queryset
+# def filtrar_chamados(request):
+#     if request.user.is_superuser or Atendente.objects.filter(servidor__user=request.user, ativo=True).exists():
+#         sql = make_query_chamados(request)
+
+#         with connection.cursor() as cursor:
+#             cursor.execute(sql)
+#             results = cursor.fetchall()
+
+#             queryset = []
+#             fechados =[]
+
+#             for row in results:                
+
+#                 data = {
+#                     'id': row[0],
+#                     'telefone': row[1],
+#                     'assunto': row[2],
+#                     'prioridade': row[3],
+#                     'status': row[4],
+#                     'descricao': row[5],
+#                     'dt_inclusao': row[6],
+#                     'dt_atualizacao': row[7],
+#                     'dt_execucao': row[8],
+#                     'dt_fechamento': row[9],
+#                     'n_protocolo': row[10],
+#                     'anexo': row[11],
+#                     'hash': row[12],
+#                     'atendente_id': row[13],
+#                     'profissional_designado_id': row[14],
+#                     'requisitante_id': row[15],
+#                     'setor_id': row[16],
+#                     'user_atualizacao_id': row[17],
+#                     'user_inclusao_id': row[18],
+#                     'tipo_id': row[19],
+#                     'dt_inicio_execucao': row[20],
+#                     'dt_agendamento': row[21],
+#                     'endereco': row[22]
+#                 }
+#                 chamado = Chamado(**data)
+                
+#                 if (row[4] == '4' or row[4] == '5') and request.session['ordenacao']:
+#                     fechados.append(chamado)
+#                 elif row[4] != '6':                    
+#                     queryset.append(chamado)
+
+#             queryset = sorted(queryset, key=lambda x: (x.dt_atualizacao if x.dt_atualizacao else x.dt_inclusao), reverse=True)
+#             if request.session['ordenacao']:
+#                 fechados = sorted(fechados, key=lambda x: (x.dt_atualizacao if x.dt_atualizacao else x.dt_inclusao), reverse=True)
+#                 queryset.extend(fechados)
+#             # print("chamado:", queryset, '\n')
+#         print(request.session['ordenacao'])
+#         return queryset  
+
+#     else:
+#         queryset = Chamado.objects.filter(requisitante__user=request.user).order_by('-dt_atualizacao')
+    
+#     return queryset

@@ -114,9 +114,8 @@
                                             {% endif %}
 
                                             <a href="{% url 'chamados:detalhes' chamado.hash %}">
-                                                <span class="chamados-tickets-infos-chamado-text-assunto">
-                                                    
-                                                    {{chamado.se_mesclado}} {{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}
+                                                <span class="chamados-tickets-infos-chamado-text-assunto">                                                    
+                                                    {% if request.user.is_superuser or is_atendente%}{{chamado.se_mesclado|safe}}{% endif %} {{ chamado.assunto }} - {{ chamado.setor.secretaria }} #{{ chamado.id|stringformat:"04d" }}
                                                 </span>
                                                 </a>
                                             <div class="solution-infos-wrapper">

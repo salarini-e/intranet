@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+{% load static %}
+{% load bootstrap5 %}
+<html lang="pt-br">
+    <head>
+        <link rel="icon" type="image/x-icon" href="https://senhas.novafriburgo.rj.gov.br/static/favicon.ico">
+        <!-- Meta tags Obrigatórias -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- GOOGLE FONTS -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;800&display=swap" rel="stylesheet">
+        <!-- Bootstrap CSS -->
+        <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
+        <!-- CUSTOM CSS -->
+         {# Load CSS and JavaScript #}
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+        <link href="https://senhas.novafriburgo.rj.gov.br/static/css/jlb.css" rel="stylesheet" type="text/css">
+        <link href="https://senhas.novafriburgo.rj.gov.br/static/css/login.css" rel="stylesheet" type="text/css">
+    
+        <title>Turismo Nova Friburgo</title>
+    
+        <link rel="stylesheet" href="{% static '/css/login.css' %}">   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    </head>
+
+    <SCRIPT LANGUAGE="JavaScript">
+        
+    </script>
+
+    <body class="body pt-5">
+        <!-- <a href="/kpi/usuarios" id="float-right-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-data" viewBox="0 0 16 16">
+                <path d="M4 11a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1zm6-4a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V7zM7 9a1 1 0 0 1 2 0v3a1 1 0 1 1-2 0V9z"/>
+                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+              </svg>
+             <span class="my-auto ml-2">
+                DADOS ABERTOS
+             </span>
+        </a> -->
+        <style>
+            html {
+                overflow-y: auto;
+            }
+            body{
+                min-height: 100%;
+            }
+            #float-right-button{
+                box-shadow: 5px 5px 5px rgba(80, 80, 80, 0.678);    
+                position: fixed;
+                display: flex;
+                top: 15px;
+                right: 20px;
+                padding: 5px 10px;
+                background-color: white;
+                color: black;
+                border-radius: 4px;
+                font-size: 10pt;
+                font-weight: bolder;
+            }
+        </style>
+        <div class="container-fluid pb-4">  
+            <div id="header" class="row">
+                <!-- <div class="col">
+                    <img class="img-fluid" src="https://senhas.novafriburgo.rj.gov.br/static/logopmnf.png" alt="Logo Pmnf" title="Logo Pmnf"/>
+                </div> -->
+                <div class="col">
+                    <img class="img-fluid" src="/static/images/logo.png" style="max-width: 300px;" alt="Logo Pmnf" title="Logo Pmnf"/>
+                </div>
+            </div>          
+            
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+<div id="login-screen">    
+    <h3 class="text-center">INTRANET</h3>
+    <form action="." method="post">
+        
+        <h2 class="text-center">NOVO CADASTRO</h2>
+            {% if messages %}
+        <div class="messages my-4">
+            {% for message in messages %}
+            <div{% if message.tags %} class="{{ message.tags }} p-2 text-center"{% endif %}>{{ message|safe }}</div>
+            {% endfor %}
+        </div>
+        {% endif %} 
+            <form class="pt-3 px-5" method="POST">                
+                
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="matricula" class="form-label">Sua matrícula</label>
+                    <div class="d-flex">
+                        <input type="text" class="form-control" id="matricula" name="matricula" maxlength="6" required>
+                        <button id="validar" type="button" class="btn btn-success m-0" style="width: auto !important; background-color: rgb(57, 163, 57); border-color: rgb(57, 163, 57);" onclick="callMetaServidor()">
+                            <span class='btn_text' id='btn_text'>Validar</span>
+                            <img id='loading_validar' src="{% static 'images/loading.png'%}" class='btn_loading_image'></img>
+                        </button>
+                    </div>
+                    <div class="row">
+                        <small id="error" class="text-danger">
+                        
+                        </small>
+                    </div>
+                </div>
+                <div id="novos-inputs" class="mb-3">
+
+                </div>
+                <div class="form-check mt-3">
+                    <input type="checkbox" name="consentimento" class="form-check-input" id="id_consentimento">
+                    <label class="form-check-label text-justify" for="id_consentimento">Eu concordo com os termos e condições e autorizo o uso dos meus dados pessoais conforme a <a href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Política de Privacidade</a>.</label>
+                </div>
+                <div class="form-row d-flex flex-column mt-4">                                  
+                    <div class="h-captcha m-auto" data-sitekey="{{hCAPTCHA}}"></div>                               
+                </div>
+                <button id="cadastrar" type="submit" class="btn btn-primary w-100 mb-3 mt-3">CADASTRAR-SE</button>
+                
+                <a href="/login">
+                    <small>
+                        Login
+                    </small>
+                </a>        
+            </form>
+
+    </form>
+</div>
+<style>
+    
+        .btn:focus{            
+            box-shadow:0 0 0 0.2rem rgba(78, 78, 78, 0.25) !important;            
+        }
+        .btn-primarry:focus{
+            box-shadow:0 0 0 0.2rem rgba(78, 78, 78, 0.25) !important;            
+        }
+</style>
+
+        </div>    
+        <!-- JavaScript (Opcional) -->
+        <!-- jQuery primeiro, depois Popper.js, depois Bootstrap JS -->
+        <!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script> -->
+
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
+        <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script> -->
+
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">Política de Privacidade</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-justify">
+                    
+        
+                    <p>Esta Política de Privacidade descreve como a Prefeitura Municipal de Nova Friburgo coleta, usa e compartilha informações pessoais quando você usa este site. É essencial que você leia atentamente esta política antes de usar o site ou fornecer quaisquer informações pessoais. Ao usar o site, você concorda com as práticas descritas nesta política.</p>
+                
+                    <b>Coleta de Informações Pessoais</b>
+                
+                    <p>Ao usar este site, podemos coletar informações pessoais que você voluntariamente nos fornece durante o processo de cadastro ou ao preencher formulários. Isso pode incluir seu nome, endereço de e-mail, número de telefone e outras informações necessárias para os serviços fornecidos.</p>
+                
+                    <b class="mt-3">Uso de Informações Pessoais</b>
+                
+                    <p>As informações pessoais coletadas são utilizadas para fornecer os serviços solicitados e para melhorar a experiência do usuário. Podemos utilizar essas informações para entrar em contato com você, fornecer atualizações e informações relevantes, responder às suas solicitações e melhorar nossos serviços.</p>
+                
+                    <b class="mt-3">Compartilhamento de Informações Pessoais</b>
+                
+                    <p>Não compartilhamos suas informações pessoais com terceiros, exceto quando exigido por lei ou quando necessário para fornecer os serviços solicitados. Em alguns casos, podemos compartilhar informações com prestadores de serviços terceirizados que nos auxiliam na operação do site e na prestação de serviços. Esses prestadores de serviços estão obrigados a manter a confidencialidade das informações e a não utilizá-las para outros fins.</p>
+                
+                    <b class="mt-3">Segurança das Informações Pessoais</b>
+                
+                    <p>Implementamos medidas de segurança adequadas para proteger as informações pessoais contra acesso não autorizado, alteração, divulgação ou destruição. No entanto, observe que nenhum método de transmissão pela internet ou método de armazenamento eletrônico é totalmente seguro. Assim, não podemos garantir a segurança absoluta das informações pessoais.</p>
+                
+                    <b class="mt-3">Seus Direitos de Privacidade</b>
+                
+                    <p>Você tem o direito de acessar, corrigir, atualizar ou solicitar a exclusão de suas informações pessoais a qualquer momento. Para exercer esses direitos, entre em contato conosco através das informações fornecidas abaixo.</p>
+                
+                    <b class="mt-3">Alterações nesta Política de Privacidade</b>
+                
+                    <p>Reservamo-nos o direito de atualizar ou modificar esta política de privacidade a qualquer momento. Quaisquer alterações entrarão em vigor imediatamente após a publicação da política de privacidade revisada neste site.</p>                        
+                </div>
+                <div class="modal-footer flex-column">
+                    <b class="mt-3">Contato</b>        
+                    <p>Se tiver alguma dúvida sobre esta Política de Privacidade, entre em contato conosco.</p>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Ok, entendi.</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <style>    
+            .error{
+                background-color: red;
+                color: white;
+            }
+        </style>
+        <script src="/static/js/request.js"></script>
+                        
+                        <script>		
+                            var podeCadastrar= false;
+                            var buttonCadastrar = document.getElementById('cadastrar');
+                            var buttonValidar = document.getElementById('validar');
+                            buttonCadastrar.addEventListener('mouseenter', function(e) {                        
+                                buttonValidar.classList.add('shake');
+                                if (!podeCadastrar) {
+                                    buttonCadastrar.classList.add('disabled');
+                                }
+                            });
+                            buttonCadastrar.addEventListener('click', function(e) {
+                                if (!podeCadastrar) {
+                                    e.preventDefault();                                
+                                }else{                            
+                                    form.submit();
+                                }
+                                
+                            });
+                            buttonCadastrar.addEventListener('animationend', function() {
+                                buttonValidar.classList.remove('shake');
+                            });
+                            function errorCPF(response){
+                                response = JSON.parse(response);                        
+                                var cpfSmall = document.getElementById('errorCPF');
+                                cpfSmall.innerText = response.msg;
+                            }
+                            function checkInputLength(inputId) {
+                                var input = document.getElementById(inputId);
+                                if(input.value.length === 14) {
+                                    console.log(input.value.length)
+                                    getRequest("{% url 'ins:testar_cpf' %}" + "?cpf=" + input.value, errorCPF);
+                                } else {
+                                    console.log(input.value.length)
+                                }
+                            }
+        
+                       
+                            
+                            function montarSelect(response){    
+                                var form = document.getElementById('novos-inputs');
+                                form.innerHTML = '';
+                                console.log(response)
+                                if (response == 404){                            
+                                    document.getElementById('error').innerHTML = 'Servidor não encontrado';
+                                    btnValidar = document.getElementById('validar');  
+                                    btnValidar.classList.remove('btn-secondary');
+                                    btnValidar.classList.add('btn-success')
+                                    btnValidar.classList.remove('btnValidar');
+                                }
+                                else if(response == 500){
+                                    document.getElementById('error').innerText = 'Servidor não encontrado';
+                                    btnValidar = document.getElementById('validar');  
+                                    btnValidar.classList.remove('btn-secondary');
+                                    btnValidar.classList.add('btn-success')
+                                    btnValidar.classList.remove('btnValidar');
+                                }
+                                else{
+                                    document.getElementById('error').innerHTML = '';
+                                    // Create input for name
+                                    var nameInput = document.createElement("input");
+                                    nameInput.type = "text";
+                                    nameInput.className = "form-control bg-readonly mb-3";
+                                    nameInput.id = "nome";
+                                    nameInput.name = "nome";
+                                    nameInput.required = true;
+                                    nameInput.readOnly = true; 
+                                    var nameLabel = document.createElement("label");
+                                    nameLabel.for = "nome";
+                                    nameLabel.className = "form-label";
+                                    nameLabel.innerHTML = "Nome";
+        
+                                    // Create input for CPF Oculto
+                                    var cpfOcultoInput = document.createElement("input");
+                                    cpfOcultoInput.type = "text";
+                                    cpfOcultoInput.className = "form-control bg-readonly mb-3";
+                                    cpfOcultoInput.id = "cpf_oculto";
+                                    cpfOcultoInput.name = "cpf_oculto";
+                                    cpfOcultoInput.required = true;
+                                    cpfOcultoInput.readOnly = true; // Make the input read-only
+                                    var cpfOcultoLabel = document.createElement("label");
+                                    cpfOcultoLabel.for = "cpf";
+                                    cpfOcultoLabel.className = "form-label";
+                                    cpfOcultoLabel.innerHTML = "CPF";
+                                    
+                                    
+                                    
+                                    // Create input for CPF
+                                    var cpfInput = document.createElement("input");
+                                    cpfInput.type = "text";
+                                    cpfInput.className = "form-control";
+                                    cpfInput.id = "cpf";
+                                    cpfInput.name = "cpf";
+                                    cpfInput.required = true;
+                                    
+                                    
+                                    var cpfLabel = document.createElement("label");
+                                    cpfLabel.for = "cpf";
+                                    cpfLabel.className = "form-label";
+                                    cpfLabel.innerHTML = "Confirme seu CPF";
+                                    
+                                    var divErrorCpf = document.createElement("div");
+                                    divErrorCpf.className = "row mt-1";
+                                    var cpfSmall = document.createElement("small");
+                                    cpfSmall.id = "errorCPF";
+                                    cpfSmall.className = "text-danger";
+                                    
+                                    // Create select for Secretaria
+                                    var secretariaSelect = document.createElement("select");
+                                    secretariaSelect.className = "form-control bg-readonly";
+                                    secretariaSelect.id = "secretaria";
+                                    secretariaSelect.required = true;
+                                    secretariaSelect.readOnly = true; 
+                                    secretariaSelect.name = "secretaria"
+                                    var secretariaLabel = document.createElement("label");
+                                    secretariaLabel.for = "secretaria";
+                                    secretariaLabel.className = "form-label mt-3";
+                                    secretariaLabel.innerHTML = "Secretaria";
+        
+                                    // Create options for select
+                                    var option1 = document.createElement("option");                           
+                                    secretariaSelect.add(option1);
+                                    secretariaSelect.tabIndex = "-1";
+                                    secretariaSelect.setAttribute("aria-disabled", "true");
+        
+        
+        
+                                    // Append to form                            
+                                    form.appendChild(nameLabel);
+                                    form.appendChild(nameInput);
+                                    form.appendChild(cpfOcultoLabel);
+                                    form.appendChild(cpfOcultoInput);
+                                    form.appendChild(cpfLabel);
+                                    form.appendChild(cpfInput);
+                                    form.appendChild(divErrorCpf)
+                                    divErrorCpf.appendChild(cpfSmall);
+                                    form.appendChild(secretariaLabel);
+                                    form.appendChild(secretariaSelect);
+                                    
+                                    response = JSON.parse(response);
+                                    option1.value = response.secretaria.id;
+                                    option1.text = response.secretaria.nome;                       
+                                    nameInput.value = response.nome;
+                                    cpfOcultoInput.value = response.cpf;
+                                   
+                                    // Create select for Setor
+                                    var setorSelect = document.createElement("select");
+                                    setorSelect.className = "form-select";
+                                    setorSelect.id = "setor";
+                                    setorSelect.required = true;
+                                    setorSelect.readOnly = true; 
+                                    setorSelect.name = "setor"
+                                    var setorLabel = document.createElement("label");
+                                    setorLabel.for = "setor";
+                                    setorLabel.className = "form-label mt-3";
+                                    setorLabel.innerHTML = "Selecione seu setor";
+        
+                                    // Assuming response.setores is the setores data
+                                    for (var i = 0; i < response.setores.length; i++) {
+                                        var optionSetor = document.createElement("option");
+                                        optionSetor.value = response.setores[i].id;
+                                        optionSetor.text = response.setores[i].nome;
+                                        setorSelect.add(optionSetor);
+                                    }
+                                    
+                                    var optionSetor = document.createElement("option");
+                                    optionSetor.value = 0;
+                                    optionSetor.text = 'Outro';                            
+                                    setorSelect.add(optionSetor);                            
+                                    
+        
+                                    setorSelect.tabIndex = "-1";
+                                    setorSelect.setAttribute("aria-disabled", "true");
+                                    
+                                    //PARA APARECER O SELECT DO SETOR B
+                                    // Append to form                            
+                                    // form.appendChild(setorLabel);
+                                    // form.appendChild(setorSelect);
+        
+                                    // Create hidden input for other setor
+                                    var otherSetorInput = document.createElement("input");
+                                    otherSetorInput.className = "form-control mt-2";
+                                    otherSetorInput.placeholder = "Digite o nome do setor";
+                                    if (response.setores.length == 0) {
+                                        otherSetorInput.style.display = "block";
+                                        otherSetorInput.required = true;
+                                    }else{
+                                        otherSetorInput.style.display = "none";    
+                                    }
+                                    
+                                    otherSetorInput.id = "outro";
+                                    otherSetorInput.name = "outro";
+                                    otherSetorInput.required = false;
+        
+                                    // Append to form
+                                    form.appendChild(otherSetorInput);
+                                    
+                                    // Create input for Email
+                                    var emailInput = document.createElement("input");
+                                    emailInput.type = "email";
+                                    emailInput.className = "form-control mb-3";                            
+                                    emailInput.id = "email";
+                                    emailInput.name = "email";
+                                    emailInput.required = true;
+                                    // Create label for Email
+                                    var emailLabel = document.createElement("label");
+                                    emailLabel.for = "email";
+                                    emailLabel.className = "form-label mt-3";
+                                    emailLabel.innerHTML = "Digite seu email";
+        
+                                    // Append to form
+                                    form.appendChild(emailLabel);
+                                    form.appendChild(emailInput);
+        
+                                    // Create input for Telefone
+                                    var telefoneInput = document.createElement("input");
+                                    telefoneInput.type = "tel";
+                                    telefoneInput.className = "form-control mb-3";                        
+                                    telefoneInput.id = "telefone";
+                                    telefoneInput.name = "telefone";
+                                    telefoneInput.required = true;
+                                    // Create label for Telefone
+                                    var telefoneLabel = document.createElement("label");
+                                    telefoneLabel.for = "telefone";
+                                    telefoneLabel.className = "form-label";
+                                    telefoneLabel.innerHTML = "Digite seu telefone";
+                                    // Append to form
+                                    form.appendChild(telefoneLabel);
+                                    form.appendChild(telefoneInput);
+                                    
+                                    // Create input for Data de Nascimento
+                                    var dtNascimentoInput = document.createElement("input");
+                                    dtNascimentoInput.type = "date";
+                                    dtNascimentoInput.className = "form-control mb-3";                        
+                                    dtNascimentoInput.id = "dt_nascimento";
+                                    dtNascimentoInput.name = "dt_nascimento";
+                                    dtNascimentoInput.required = true;
+                                    // Create label for Data de Nascimento
+                                    var dtNascimentoLabel = document.createElement("label");
+                                    dtNascimentoLabel.for = "dt_nascimento";
+                                    dtNascimentoLabel.className = "form-label";
+                                    dtNascimentoLabel.innerHTML = "Digite sua data de nascimento";
+                                    // Append to form
+                                    form.appendChild(dtNascimentoLabel);
+                                    form.appendChild(dtNascimentoInput);
+                                    
+        
+                                    setorSelect.addEventListener('change', function() {                                
+                                        if (this.value == '0') {
+                                            otherSetorInput.style.display = "block";
+                                            otherSetorInput.required = true;
+                                        } else {
+                                            otherSetorInput.style.display = "none";
+                                            otherSetorInput.value = '';
+                                            otherSetorInput.required = false;
+                                        }
+                                    });
+        
+                                    cpfInput.addEventListener('keyup', function (e) {                                
+                                        mascara(cpfInput, icpf);
+                                        checkInputLength(cpfInput.id);
+                                        
+                                    });
+                                    telefoneInput.addEventListener('keyup', function (e) {
+                                        mascara(telefoneInput, itel);								
+                                    });
+                                }
+                                textValidar = document.getElementById('btn_text');  
+                                imageValidar = document.getElementById('loading_validar');  
+                                textValidar.classList.remove('text_loading');
+                                imageValidar.classList.remove('loading_image');
+                                
+                            }
+                            function callMetaServidor(){
+                                document.getElementById('error').innerHTML = '';
+                                podeCadastrar = true;
+                                if (buttonCadastrar.classList.contains('disabled')) {
+                                    buttonCadastrar.classList.remove('disabled');
+                                }
+                                // document.getElementById('response-message').display = 'none';
+                                var matricula = document.getElementById('matricula').value; 
+                                var url = "{% url 'ins:getServidor' %}" + "?matricula=" + matricula; 
+                                
+                                if(matricula== "000000"){
+                                    document.getElementById('error').innerText = 'Preencha a matrícula';
+                                }
+                                else{
+                                    getRequest(url, montarSelect);       
+                                    btnValidar = document.getElementById('validar');  
+                                    imageValidar = document.getElementById('loading_validar');   
+                                    textValidar = document.getElementById('btn_text');      
+                                    btnValidar.classList.remove('btn-success');
+                                    btnValidar.classList.add('btn-secondary');
+                                    btnValidar.classList.add('btnValidar');
+                                    textValidar.classList.add('text_loading');
+                                imageValidar.classList.add('loading_image');
+                                    document.getElementById('cadastrar').disabled = false;
+                                    alert('Aguarde enquanto sua matrícula é validada!')
+                                }
+                            }
+                    
+                            
+        
+                            
+                            function itel(v) {
+                                v = v.replace(/\D/g, ""); // Remove tudo o que não é dígito
+        
+                                // Coloca parênteses em volta dos dois primeiros dígitos (DDD)
+                                v = v.replace(/^(\d{2})(\d)/g, "($1) $2"); 
+                                
+                                if (v.length === 14) { // Formato DDD + 9 dígitos (celular)
+                                    v = v.replace(/(\d{5})(\d)/, "$1-$2"); // Coloca hífen entre o 5º e 6º dígitos
+                                    
+                                } else { // Formato DDD + 8 dígitos (fixo)
+                                    v = v.replace(/(\d{4})(\d)/, "$1-$2"); // Coloca hífen entre o 4º e 5º dígitos
+                                } 
+                                
+                                return v;
+                            }
+                            function icpf(v){
+                                v=v.replace(/\D/g,"")                    //Remove tudo o que nao e digito
+                                v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+                                v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+                                                                        //de novo (para o segundo bloco de numeros)
+                                v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hifen entre o terceiro e o quarto digitos
+                                return v
+                            }
+                            function mascara(o,f){
+                                        v_obj=o
+                                        v_fun=f
+                                        setTimeout("execmascara()",1)
+                                    }
+                                
+                            function execmascara(){
+                                        v_obj.value=v_fun(v_obj.value)
+                                    }
+        
+                            
+                            document.getElementById('matricula').addEventListener('input', function (e) {
+                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                            });
+        
+                            document.querySelector('form').addEventListener('keydown', function(e) {
+                                if (e.keyCode == 13) {
+                                    e.preventDefault();
+                                    return false;
+                                }
+                            });
+                            //iniciar o input com 000000 e alterar de acordo com o que o usuario digita ou apaga
+                            document.addEventListener("DOMContentLoaded", function() {
+                                const matriculaInput = document.getElementById("matricula");
+                                // Inicia o campo com 000000
+                                matriculaInput.value = "000000";
+                                matriculaInput.addEventListener("keydown", function(e) {
+                                    //Caso tenha 6 digitos já, não permite que mais dígitos sejam adicionados
+                                    if (matriculaInput.value.replace(/^0+/, '').length >= 6 && /^\d$/.test(e.key)) {
+                                        e.preventDefault();
+                                        return;
+                                    }
+                    
+                                    // Se a tecla pressionada for um número (0-9)
+                                    if (/^\d$/.test(e.key)) {
+                                        e.preventDefault();
+                                        let value = e.key;
+                                        // Remove o zero inicial a cada tecla numérica
+                                        let currentValue = matriculaInput.value.replace(/^0+/, '');
+                                        // Concatena o valor digitado ao final da matricula
+                                        currentValue += value;
+                                        // Garante que o valor tenha no máximo 6 dígitos
+                                        if (currentValue.length > 6) {
+                                            currentValue = currentValue.slice(-6);
+                                        }
+                                        // Preenche com zeros à esquerda para garantir 6 dígitos
+                                        matriculaInput.value = currentValue.padStart(6, '0');
+                                    }
+                                    
+                                    // Controle de Backspace e Delete
+                                    if ((e.key === "Backspace" || e.key === "Delete")) {
+                                        e.preventDefault();
+                                        // Remove o último dígito da direita
+                                        let currentValue = matriculaInput.value.slice(0, -1);
+                                        // Preenche com zeros à esquerda até ter 6 dígitos
+                                        matriculaInput.value = currentValue.padStart(6, '0');
+                                    }
+                                });
+                            });
+                        </script>
+                        <style>
+                            .bg-readonly{
+                                background-color: #b5cfec !important;
+                                pointer-events: none;
+                                touch-action: none;
+                            }
+                            .shake{
+                                animation: shake 0.5s ease-in-out;
+                            }
+        
+                            @keyframes shake {
+                                0% { transform: translateX(0); }
+                                20% { transform: translateX(-10px); }
+                                40% { transform: translateX(10px); }
+                                60% { transform: translateX(-10px); }
+                                80% { transform: translateX(10px); }
+                                100% { transform: translateX(0); }
+                            }
+                            #cadastrar:disabled {                        
+                                cursor: not-allowed;
+                            }
+                        </style>
+    </body>
+</html>

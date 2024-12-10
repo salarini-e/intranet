@@ -19,7 +19,7 @@ urlpatterns = [
     path('cadastro/checkcpf/', views.checkCPF, name='checkcpf'),    
 
     path('cadastro-servidor/', views.cadastrar_servidor, name='cadastrar_servidor'),
-
+    path('new-login/', views.new_login, name='new_login'),
 
 
     
