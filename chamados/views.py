@@ -25,6 +25,9 @@ from django.views.decorators.http import require_POST
 from .functions import carregar_novos_filtros, filtrar_chamados
 import pandas as pd
 
+from .graficos import (date_chamados_por_secretaria, options_chamados_por_secretaria,
+                       date_generic, options_generic)
+
 
 
 # Define a localidade para português (Brasil)
@@ -1262,39 +1265,17 @@ def api_get_data_servidor(request):
 from dashboards.graficos import dados_chamados_por_secretaria
 
 def new_dashboard(request):
-    dados = '''{
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-            datasets: [{
-                label: 'Exemplo',
-                data: [10, 20, 15, 25, 30],
-                backgroundColor: 'black',
-                borderColor: 'black',
-                borderWidth: 1
-            }]
-        };'''
-    opcoes = '''{
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                datalabels: {
-                    anchor: 'end', // Onde o texto será fixado
-                    align: 'end',  // Alinhamento do texto
-                    color: 'black', // Cor do texto
-                    font: {
-                        weight: 'bold'
-                    },
-                    formatter: (value) => {
-                        return value; // Mostra o valor diretamente
-                    }
-                }
-            }
-        };'''
     
-    graficos = [
-        {'id': 'chartC1', 'tipo': 'bar', 'dados': dados, 'opcoes': opcoes, 'scales': {}, 'plugins': {}},
-        {'id': 'chartA1', 'tipo': 'bar', 'dados': dados_chamados_por_secretaria(), 'opcoes': opcoes, 'scales': {}, 'plugins': {}},
+    
+    graficos = [        
+        {'id': 'chartA1', 'tipo': 'bar', 'dados': date_chamados_por_secretaria(), 'opcoes': options_chamados_por_secretaria(), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartC1', 'tipo': 'line', 'dados': date_generic('impressora'), 'opcoes': options_generic('impressora'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartC2', 'tipo': 'line', 'dados': date_generic('internet'), 'opcoes': options_generic('internet'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartC3', 'tipo': 'line', 'dados': date_generic('sistemas E&L'), 'opcoes': options_generic('sistemas E&L'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartD1', 'tipo': 'line', 'dados': date_generic('computador'), 'opcoes': options_generic('computador'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartD2', 'tipo': 'line', 'dados': date_generic('telefonia'), 'opcoes': options_generic('telefonia'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        # {'id': 'chartD3', 'tipo': 'line', 'dados': date_generic(), 'opcoes': options_generic('a'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+
     ]
     context= {
         'graficos': graficos
