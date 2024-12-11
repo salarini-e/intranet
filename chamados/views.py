@@ -26,7 +26,7 @@ from .functions import carregar_novos_filtros, filtrar_chamados
 import pandas as pd
 
 from .graficos import (date_chamados_por_secretaria, options_chamados_por_secretaria,
-                       date_generic, options_generic)
+                       data_generic, options_generic)
 
 
 
@@ -1269,11 +1269,11 @@ def new_dashboard(request):
     
     graficos = [        
         {'id': 'chartA1', 'tipo': 'bar', 'dados': date_chamados_por_secretaria(), 'opcoes': options_chamados_por_secretaria(), 'scales': {}, 'plugins': '[ChartDataLabels]'},
-        {'id': 'chartC1', 'tipo': 'line', 'dados': date_generic('impressora'), 'opcoes': options_generic('impressora'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
-        {'id': 'chartC2', 'tipo': 'line', 'dados': date_generic('internet'), 'opcoes': options_generic('internet'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
-        {'id': 'chartC3', 'tipo': 'line', 'dados': date_generic('sistemas E&L'), 'opcoes': options_generic('sistemas E&L'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
-        {'id': 'chartD1', 'tipo': 'line', 'dados': date_generic('computador'), 'opcoes': options_generic('computador'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
-        {'id': 'chartD2', 'tipo': 'line', 'dados': date_generic('telefonia'), 'opcoes': options_generic('telefonia'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartC1', 'tipo': 'line', 'dados': data_generic('impressora'), 'opcoes': options_generic('impressora'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartC2', 'tipo': 'line', 'dados': data_generic('internet'), 'opcoes': options_generic('internet'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartC3', 'tipo': 'line', 'dados': data_generic('sistemas - E&L'), 'opcoes': options_generic('sistemas - E&L'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartD1', 'tipo': 'line', 'dados': data_generic('computador'), 'opcoes': options_generic('computador'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartD2', 'tipo': 'line', 'dados': data_generic('telefonia'), 'opcoes': options_generic('telefonia'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
         # {'id': 'chartD3', 'tipo': 'line', 'dados': date_generic(), 'opcoes': options_generic('a'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
 
     ]

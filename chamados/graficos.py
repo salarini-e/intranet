@@ -2,11 +2,13 @@
 from random import randint
 from django.db.models import Count
 from chamados.models import Chamado
+from django.db import connection
+import calendar
 
 DEFAULT_COLORS ={
-    'impressora': 'black',
+    'impressora': 'white',
     'internet': 'yellow',
-    'sistemas E&L': 'red',
+    'sistemas - E&L': 'red',
     'computador': 'blue',
     'telefonia': 'green'
 }
@@ -42,6 +44,69 @@ def date_chamados_por_secretaria():
 
     return data
 
+def data_generic(titulo, periodo='dia'):    
+
+    """
+    Gera dados de evolução de chamados agrupados por dia, semana ou mês.
+
+    :param titulo: O nome do tipo de chamado a ser filtrado.
+    :param periodo: O período de agrupamento ('dia', 'semana', 'mes').
+    :return: Um dicionário com labels e valores.
+    """
+
+    data = {
+        "labels": [],
+        "datasets": [{
+            'label': 'Total de chamados',
+            'data': [], 
+            'backgroundColor': DEFAULT_COLORS[titulo],
+            'borderColor': DEFAULT_COLORS[titulo],
+            'borderWidth': 2
+
+        }]
+    }
+
+    # Definindo o formato de agrupamento com base no período
+    if periodo == 'dia':
+        agrupamento = "DATE_FORMAT(dt_inclusao, '%%Y-%%m-%%d')"  # Agrupamento diário
+    elif periodo == 'semana':
+        agrupamento = "DATE_FORMAT(dt_inclusao, '%%Y-%%u')"  # Agrupamento semanal (ano-semana)
+    elif periodo == 'mes':
+        agrupamento = "DATE_FORMAT(dt_inclusao, '%%Y-%%m')"  # Agrupamento mensal
+    else:
+        raise ValueError("Período inválido. Use 'dia', 'semana' ou 'mes'.")
+
+    query = f"""
+        SELECT {agrupamento} AS periodo, COUNT(id) AS total
+        FROM chamados_chamado
+        WHERE tipo_id = (
+            SELECT id FROM chamados_tipochamado WHERE nome = %s
+        )
+        GROUP BY periodo
+        ORDER BY periodo;
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, [titulo])
+        resultados = cursor.fetchall()
+
+
+    for periodo_, total in resultados:
+        if periodo == 'mes':
+            ano, mes = periodo_.split("-")
+            nome_mes = calendar.month_name[int(mes)] 
+            data["labels"].append(f"{nome_mes}")  
+        elif periodo == 'dia':
+            # Formatando a data no formato "dd/mm/yyyy"
+            ano, mes, dia = periodo_.split("-")
+            data_formatada = f"{int(dia):02d}/{int(mes):02d}"
+            data["labels"].append(data_formatada)
+        else:
+            data["labels"].append(periodo_)  # `periodo` já está em formato de string
+        data['datasets'][0]["data"].append(total)
+
+    return data
+
 def options_chamados_por_secretaria():
     return '''{
                 responsive: true,
@@ -49,7 +114,7 @@ def options_chamados_por_secretaria():
                     datalabels: {
                         anchor: 'end', 
                         align: 'top',
-                        color: 'black',
+                        color: 'white',
                     },
                     title: {
                         display: false,
@@ -73,22 +138,22 @@ def options_chamados_por_secretaria():
                 scales: {
                     x: {
                         ticks: { 
-                            color: 'black', 
+                            color: 'white', 
                         },
                         title: {
                             display: false,
                             text: 'Secretarias',
-                            color: 'black'
+                            color: 'white'
                         }
                     },
                     y: {
                         ticks: { 
-                            color: 'black', 
+                            color: 'white', 
                         },
                         title: {
                             display: false,
                             text: 'Número de Chamados',
-                            color: 'black'
+                            color: 'white'
                         },
                         beginAtZero: true
                     }
@@ -96,17 +161,17 @@ def options_chamados_por_secretaria():
             }
 '''
 
-def date_generic(titulo):
-    return '''{
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-            datasets: [{
-                label: 'Exemplo',
-                data: [10, 20, 15, 25, 30],
-                backgroundColor: "'''+DEFAULT_COLORS[titulo]+'''",
-                borderColor: "'''+DEFAULT_COLORS[titulo]+'''",
-                borderWidth: 2
-            }]
-        };'''
+# def data_generic(titulo):
+#     return '''{
+#             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+#             datasets: [{
+#                 label: 'Exemplo',
+#                 data: [10, 20, 15, 25, 30],
+#                 backgroundColor: "'''+DEFAULT_COLORS[titulo]+'''",
+#                 borderColor: "'''+DEFAULT_COLORS[titulo]+'''",
+#                 borderWidth: 2
+#             }]
+#         };'''
 def options_generic(titulo):
     # options = {
     #     'responsive': True,
@@ -117,7 +182,7 @@ def options_generic(titulo):
     #         'datalabels': {
     #             'anchor': 'end',
     #             'align': 'end',
-    #             'color': 'black',
+    #             'color': 'white',
     #             'font': {
     #                 'weight': 'bold'
     #             },
@@ -126,7 +191,7 @@ def options_generic(titulo):
     #         'title': {
     #             'display': True,
     #             'text': 'Exemplo',
-    #             'color': 'black',
+    #             'color': 'white',
     #             'font': {
     #                 'size': 20
     #             }
@@ -143,7 +208,7 @@ def options_generic(titulo):
     #     'scales': {
     #         'x': {
     #             'ticks': {
-    #                 'color': 'black'
+    #                 'color': 'white'
     #             },
     #             'title': {
     #                 'display': False,
@@ -153,7 +218,7 @@ def options_generic(titulo):
     #         },
     #         'y': {
     #             'ticks': {
-    #                 'color': 'black'
+    #                 'color': 'white'
     #             },
     #             'title': {
     #                 'display': False,
@@ -173,7 +238,7 @@ def options_generic(titulo):
                 datalabels: {
                     anchor: 'end', // Onde o texto será fixado
                     align: 'end',  // Alinhamento do texto
-                    color: 'black', // Cor do texto
+                    color: 'white', // Cor do texto
                     font: {
                         weight: 'bold'
                     },
@@ -182,9 +247,9 @@ def options_generic(titulo):
                     }
                 },               
                 title: {
-                            display: true,
+                            display: false  ,
                             text: "'''+titulo+'''",
-                            color: 'black',
+                            color: 'white',
                             font: {
                                 size: 20
                             }                            
@@ -202,7 +267,7 @@ def options_generic(titulo):
             },
             scales: {
                         x: {
-                            ticks: { color: 'black'},
+                            ticks: { color: 'white'},
                             title: {
                                 display: false,
                                 text: 'Secretarias',
@@ -210,7 +275,7 @@ def options_generic(titulo):
                             }
                         },
                         y: {
-                            ticks: { color: 'black' },
+                            ticks: { color: 'white' },
                             title: {
                                 display: false,
                                 text: 'Número de Chamados',

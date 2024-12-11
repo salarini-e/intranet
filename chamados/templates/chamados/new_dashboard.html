@@ -43,7 +43,7 @@
         canvas {
             height: 100% !important;
             width: 100% !important;
-            background-color: white;
+            background-color: #212529c7;
             padding: 40px;
             border-radius: 15px;
         }
@@ -52,7 +52,7 @@
         }
     </style>
 </head>
-<body>
+<body class="d-flex flex-column">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
@@ -77,12 +77,7 @@
     </nav>
 
     <!-- Main Content -->
-    <div id="display-1" class="container-fluid mt-3">
-        <div class="row">
-            <div class="col-lg-12 text-left px-4">
-                <h2 class="display-5 text-center">Chamados por secretarias</h2>
-            </div>
-        </div>
+    <div id="display-1" class="container-fluid m-auto">
         <div class="row px-4 my-4">
             <div class="col-12 d-flex col-graf">
                 <div style="width: 70%;" class="m-auto">
@@ -92,12 +87,8 @@
             
         </div>       
     </div>
-    <div id="display-2" class="container-fluid mt-3">
-        <div class="row">
-            <div class="col-lg-12 text-left px-4">
-                <h2 class="display-5">Página 2</h2>
-            </div>
-        </div>
+    <div id="display-2" class="container-fluid m-auto">
+ 
         <div class="row px-4 my-4">
             <div class="col col-graf me-2">
                 <canvas id="chartC1"></canvas>
@@ -124,7 +115,12 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-dark text-light pt-3 mt-5">
+    <div class="bg-dark text-light pt-3" style="opacity: 0;">
+        <div class="container text-center">
+            <p>&copy; 2025 Subsecretaria de Tecnologia da Informação e Comunicação. Todos os direitos reservados.</p>
+        </div>
+    </div>
+    <footer class="bg-dark text-light pt-3">
         <div class="container text-center">
             <p>&copy; 2025 Subsecretaria de Tecnologia da Informação e Comunicação. Todos os direitos reservados.</p>
         </div>
