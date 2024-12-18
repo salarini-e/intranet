@@ -127,7 +127,7 @@
                                             <div class="solution-infos-wrapper">
                                                 <span style="display: flex;">
                                                 <i class="fa-solid fa-globe" style="width: 10px;"></i>
-                                                <a href="{% if chamado.requisitante.matricula %}{% url 'chamados:ver-perfil' chamado.requisitante.matricula %}{% else %}#{% endif %}" class="tickets-user-link" target="_blank">
+                                                <a href="{% url 'chamados:ver-perfil' chamado.requisitante.matricula %}" class="tickets-user-link" target="_blank">
                                                     <span class="chamados-tickets-infos-chamado-text-requisitante">{{ chamado.requisitante }}
                                                 </a>
                                                 </span>
