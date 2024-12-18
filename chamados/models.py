@@ -595,7 +595,7 @@ class Mensagem(models.Model):
     def notificar_nova_mensagem(self):
         if isinstance(self.user_inclusao, Atendente) or self.user_inclusao.user.is_superuser: 
             # A mensagem foi enviada por um atendente ou superusuário, notificar o requisitante
-            requisitante = self.chamado.requisitante  # O requisitante já é um objeto do tipo Servidor
+            requisitante = self.mensagem.chamado.requisitante  # O requisitante já é um objeto do tipo Servidor
             msg = f'O chamado <b>{self.chamado.n_protocolo}</b> tem uma nova mensagem do atendente!'
             icone = "fa-solid fa-user"
         else:

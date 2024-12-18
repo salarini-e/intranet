@@ -398,7 +398,7 @@ def cadastro_user(request):
     context = {
         'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,
     }    
-    return render(request, 'adm/cadastro.html', context)
+    return render(request, 'adm/new_cadastro.html', context)
 
 
 import json

@@ -18,7 +18,7 @@
         {% bootstrap_css %}
         {% bootstrap_javascript %}
         <link href="https://senhas.novafriburgo.rj.gov.br/static/css/jlb.css" rel="stylesheet" type="text/css">
-        <link href="https://senhas.novafriburgo.rj.gov.br/static/css/login.css" rel="stylesheet" type="text/css">
+        <link href="/static/css/new_login.css" rel="stylesheet" type="text/css">
     
         <title>Turismo Nova Friburgo</title>
     
@@ -85,10 +85,10 @@
             {% endfor %}
         </div>
         {% endif %} 
-            <form class="pt-3 px-5" method="POST">                
+            <form class="pt-3 px-5 d-flex flex-column" method="POST">                
                 
                 {% csrf_token %}
-                <div class="mb-3">
+                <div class="mb-3" style="max-width: 350px; margin: auto;">
                     <label for="matricula" class="form-label">Sua matrícula</label>
                     <div class="d-flex">
                         <input type="text" class="form-control" id="matricula" name="matricula" maxlength="6" required>
@@ -108,7 +108,7 @@
                 </div>
                 <div class="form-check mt-3">
                     <input type="checkbox" name="consentimento" class="form-check-input" id="id_consentimento">
-                    <label class="form-check-label text-justify" for="id_consentimento">Eu concordo com os termos e condições e autorizo o uso dos meus dados pessoais conforme a <a href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Política de Privacidade</a>.</label>
+                    <label class="form-check-label text-justify" style="text-align: justify;" for="id_consentimento">Eu concordo com os termos e condições e autorizo o uso dos meus dados pessoais conforme a <a href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Política de Privacidade</a>.</label>
                 </div>
                 <div class="form-row d-flex flex-column mt-4">                                  
                     <div class="h-captcha m-auto" data-sitekey="{{hCAPTCHA}}"></div>                               

@@ -882,7 +882,7 @@ def painel_controle(request):
     count_pendentes = chamados.filter(status='2').count()
     count_fechados = chamados.filter(status='3').count()
     count_finalizados = chamados.filter(status='4').count()
-    total_nao_resolvidos = total_chamados - count_finalizados
+    total_nao_resolvidos = total_chamados - count_finalizados - chamados.filter(status='5').count() - chamados.filter(status='6').count()
     total_nao_atribuidos = chamados.filter(profissional_designado__isnull=True).count()
 
     # Calcular a porcentagem de não atribuídos
