@@ -93,7 +93,7 @@ body{
 #login-screen form table tr td, input{
     width: 100%;
     height: 35px;
-    background-color: white !important;
+    /* background-color: white !important; */
     box-shadow: none;
 }
 #login-screen form table tr td input:focus{

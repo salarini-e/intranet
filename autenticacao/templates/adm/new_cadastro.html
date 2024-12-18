@@ -47,6 +47,7 @@
             }
             body{
                 min-height: 100%;
+                height: auto;
             }
             #float-right-button{
                 box-shadow: 5px 5px 5px rgba(80, 80, 80, 0.678);    
@@ -107,9 +108,15 @@
 
                 </div>
                 <div class="form-check mt-3">
+                    <input class="form-check-input"  name="consentimento" id="id_consentimento" type="checkbox">
+                    <label class="form-check-label text-justify" style="text-align: justify;" for="id_consentimento">
+                        Eu concordo com os termos e condições e autorizo o uso dos meus dados pessoais conforme a <a href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Política de Privacidade</a>.
+                    </label>
+                  </div>
+                <!-- <div class="form-check mt-3">
                     <input type="checkbox" name="consentimento" class="form-check-input" id="id_consentimento">
-                    <label class="form-check-label text-justify" style="text-align: justify;" for="id_consentimento">Eu concordo com os termos e condições e autorizo o uso dos meus dados pessoais conforme a <a href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Política de Privacidade</a>.</label>
-                </div>
+                    <label class="form-check-label text-justify" style="text-align: justify;" for="id_consentimento"></label>
+                </div> -->
                 <div class="form-row d-flex flex-column mt-4">                                  
                     <div class="h-captcha m-auto" data-sitekey="{{hCAPTCHA}}"></div>                               
                 </div>
@@ -194,7 +201,7 @@
         </style>
         <script src="/static/js/request.js"></script>
                         
-                        <script>		
+                        <script>		                        
                             var podeCadastrar= false;
                             var buttonCadastrar = document.getElementById('cadastrar');
                             var buttonValidar = document.getElementById('validar');

@@ -128,7 +128,7 @@ def login_view(request):
             context = {
                 'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,
             }
-            return render(request, 'adm/login.html', context)
+            return render(request, 'adm/new_login.html', context)
         
         username = request.POST['username']
         password = request.POST['password']
@@ -175,7 +175,7 @@ def login_view(request):
         context = {
             'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,
         }   
-    return render(request, 'adm/login.html', context)
+    return render(request, 'adm/new_login.html', context)
 
 def passwd_reset(request):
     if request.method == "POST":
