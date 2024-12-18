@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Base HTML template with Bootstrap">
-    <title>Página Base com Bootstrap</title>
+    <title>Dashboard Chamados</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -21,11 +21,13 @@
             /* background-color: rgb(224, 224, 224); */
         }
         html{
-            background-image: url('https://senhas.novafriburgo.rj.gov.br/static/images/bg-login-old.jpg');
+            /* background-image: url('https://senhas.novafriburgo.rj.gov.br/static/images/bg-login-old.jpg'); */
+            background-image: url('/static/images/banner-pmnf.jpeg');
             background-size: cover;
+            background-position: center;
         }
         body{
-            background-color: rgba(255, 255, 255, 0.829);
+            background-color: rgba(0, 0, 0, 0.692);
         }
         footer, #fake-footer {
             font-size: 9pt;
@@ -88,7 +90,7 @@
 
     <!-- Main Content -->
     <div id="display-1" class="container-fluid m-auto">
-        <h3 class="text-secondary text-center">Chamados por Secretarias</h3>
+        <h3 class="text-white text-center">Chamados por Secretarias</h3>
         <div class="row px-4 my-4">
             <div class="col-12 d-flex col-graf">
                 <div style="width: 70%;" class="m-auto">
@@ -101,39 +103,86 @@
     <div id="display-2" class="container-fluid  mt-3 mb-auto">
         <div class="row px-4 my-4">            
             <div class="col col-graf me-2">
-                <strong class="text-secondary text-center" style="padding-left: 10px;">Impressora</strong>
+                <strong class="text-white text-center" style="padding-left: 10px;">Impressora</strong>
                 <canvas id="chartC1"></canvas>
             </div>
             <div class="col col-graf ms-2">
-                <strong class="text-secondary text-center" style="padding-left: 10px;">Internet</strong>
+                <strong class="text-white text-center" style="padding-left: 10px;">Internet</strong>
                 <canvas id="chartC2"></canvas>
             </div>
             <div class="col col-graf ms-2">
-                <strong class="text-secondary text-center" style="padding-left: 10px;">Sistemas - E&L</strong>
+                <strong class="text-white text-center" style="padding-left: 10px;">Sistemas - E&L</strong>
                 <canvas id="chartC3"></canvas>
             </div>
             
         </div>
         <div class="row px-4 pt-3">
             <div class="col col-graf me-2">
-                <p class="m-0 p-0 text-secondary text-center w-100">
+                <p class="m-0 p-0 text-white w-100">
                     <strong>Computador</strong>
                 </p>
                 <canvas id="chartD1"></canvas>
             </div>
             <div class="col col-graf ms-2">
-                <p class="m-0 p-0 text-secondary text-center w-100">
+                <p class="m-0 p-0 text-white w-100">
                     <strong>Telefonia</strong>
                 </p>
                 <canvas id="chartD2"></canvas>
             </div>
             <div class="col col-graf ms-2">
-                <strong class="text-secondary text-center w-100" style="opacity: 0;">Nada aqui</strong>
-                <canvas id="chartD3"></canvas>
+                <strong class="text-white text-center w-100" style="opacity: 0;">Nada aqui</strong>
+                <div class="row" style="height: 100%; width: 100%;">
+                    <div class="col px-5">
+                        <p style="font-size: 14pt; color: white;">
+                            <strong>Nos últimos 30 dias</strong>
+                        </p>
+                        <div class="row ind">
+                            <div class="col text-center">
+                                <div>
+                                    <p style="background-color: #1256bb; color: white;">Total de chamados<br><span>{{totais.total_chamados}}</span></p>
+                                    <p style="background-color: #28A745">Total resolvidos <br><span>{{totais.chamados_fechados}}</span></p>
+                                </div>
+                            </div>
+                            <div class="col text-center">
+                                <p style="background-color: #a72828;">Total abertos<br><span>{{totais.chamados_abertos}}</span></p>
+                                <p style="background-color: #dc8035;">Total pendentes<br><span>{{totais.chamados_pendentes}}</span></p>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col px-4">
+                                <div class="row ind2" style="background-color: #1b262b; padding: 10px 20px; border-radius: 10px; color: white;">
+                                    <div class="col text-center">
+                                        <p class="m-auto">Eficiência<br><span>{{taxa_eficiencia}}%</span></p>
+
+                                    </div>
+                                    <div class="col text-center">
+                                        <p class="m-auto">Média de chamados por dia<br><span>{{media_diaria}}</span></p>
+                                    </div>
+                                </div>                                
+
+                            </div>                            
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
+    <style>
+        .ind p{
+            color: aliceblue;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+        .ind p span{
+            font-weight: bold;
+            font-size: 16pt;
+        }
+        .ind2 p span{
+            font-weight: bold;
+            font-size: 16pt;
+        }
+    </style>
     <!-- Footer -->
     <div id="fake-footer" class="bg-dark text-light" style="opacity: 0;">
         <div class="container text-center">
