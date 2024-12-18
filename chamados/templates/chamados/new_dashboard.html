@@ -264,6 +264,9 @@
         $(document).ready(function() {
             setInterval(next_display, 10000);
         });
+        setTimeout(function() {
+            location.reload();
+        }, 120000); // 120000 milliseconds = 2 minutes
         // gerarGrafico('chartA2', 'line', dadosExemplo, opcoesExemplo);
         // gerarGrafico('chartB1', 'pie', dadosExemplo, opcoesExemplo);
         // gerarGrafico('chartB2', 'doughnut', dadosExemplo, opcoesExemplo);
