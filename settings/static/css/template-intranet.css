@@ -711,6 +711,37 @@ progress {
     margin-left: auto
 }
 
+.welcome-servidor-mobile{
+    display: none;
+}
+
+@media(max-width: 768px){
+    .welcome-servidor-mobile{
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .welcome-servidor-mobile-text{
+        font-family: var(--bs-body-font-family);
+        font-size: 16px;
+        color: #252930;
+    }
+    .ver-menu-lateral-web{
+        display: none;
+    }
+    .nome-servidor-web {
+        display: none !important;
+    }
+}
+
+@media(min-width: 769px){
+    .ver-menu-lateral-mobile{
+        display: none;
+    }
+}
+
 @media(min-width: 576px) {
     .container-sm, .container {
         max-width: 540px
@@ -13616,11 +13647,13 @@ button.close:focus {
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, .1);
     border-bottom: 1px solid #e7e9ed;
     height: 56px;
-    background: #fff
+    background: #00528A;
+    /* background: var(--bs-body-bg); */
 }
 
 .app-header-inner {
-    position: relative
+    position: relative;
+    transition: margin-left 0.4s ease-in-out;
 }
 
 .app-search-form {
@@ -13708,7 +13741,7 @@ button.close:focus {
 }
 
 .app-utility-item .icon-badge.icon-badge {
-    background: #ec776c;
+    background: #0f6102;
     border: 2px solid #fff
 }
 
@@ -13868,7 +13901,8 @@ button.close:focus {
     left: 0;
     top: 0;
     font-size: .875rem;
-    border-right: 1px solid #e7e9ed
+    border-right: 1px solid #e7e9ed;
+    transition: left 0.4s ease-in-out;
 }
 
 .app-sidepanel .panel-drop {
@@ -14105,14 +14139,13 @@ button.close:focus {
         min-width: 100vw;
         left: 0;
         top: 0;
-        background: rgba(0, 0, 0, .35);
-        z-index: -1;
+        background: rgba(0, 0, 0, .35)
     }
 }
 
 @media(min-width: 1200px) {
     .app-wrapper {
-        margin-left: 250px
+        margin-left: 250px;        
     }
 }
 
@@ -14121,6 +14154,7 @@ button.close:focus {
     height: 100%;
     width: 100%;
     background: #f5f6fe;
+    /* background-color: #43ff1918; */
     padding-top: 56px;
     overflow-x: hidden
 }
@@ -14840,33 +14874,43 @@ button.close:focus {
       transform: translate(-50%, -50%) rotate(360deg);
     }
   }
-.welcome-servidor-mobile{
-    display: none;
-}
-
-@media(max-width: 768px){
-    .welcome-servidor-mobile{
-        display: flex;
-        width: 100%;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 10px;
+  	/* Animação de cor para notificações novas */
+@keyframes fadeInNew {
+    0% {
+        background-color: #f8f9fa; /* cor inicial */
     }
-    .welcome-servidor-mobile-text{
-        font-family: var(--bs-body-font-family);
-        font-size: 16px;
-        color: #252930;
+    50% {
+        background-color: #f0ad4e; /* cor de destaque */
     }
-    .ver-menu-lateral-web{
-        display: none;
-    }
-    .nome-servidor-web {
-        display: none !important;
+    100% {
+        background-color: #f8f9fa; /* cor final */
     }
 }
 
-@media(min-width: 769px){
-    .ver-menu-lateral-mobile{
-        display: none;
+.item.new {
+    animation: fadeInNew 1s ease-in-out infinite;
+    transition: background-color 0.3s ease;
+}
+
+/* Animação de pulsação no ícone */
+@keyframes iconPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
     }
 }
+
+.icon-badge.new-notification {
+    animation: iconPulse 1s ease-in-out infinite;
+}
+
+/* Animação de transição de estado quando a notificação é lida */
+.item.lida {
+    background-color: #e9ecef; /* cor de fundo para lidas */
+}
+	
