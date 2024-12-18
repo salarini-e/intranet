@@ -133,4 +133,4 @@ dmypy.json
 .pyre/
 
 
-settings/media/downloads/
+downloads/
