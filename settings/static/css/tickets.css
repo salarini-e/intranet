@@ -66,7 +66,7 @@
 }
 .chamados-tickets-infos-chamado-text-assunto{
     font: var(--bs-font-sans-serif);
-    font-size: 12px;
+    font-size: 1rem;
     color: black;
 }
 
@@ -91,8 +91,8 @@
 }
 .chamados-tickets-infos-chamado-text-requisitante, .chamados-tickets-infos-chamado-text-status{
     font: var(--bs-font-sans-serif);
-    font-size: 10px;
-    margin-left: 3px;
+    font-size: 0.7rem;
+    margin-left: 5px;
 }
 .chamados-tickets-infos{
     display: flex;
@@ -334,3 +334,10 @@
     position: relative !important;
 }
 
+@media(max-width:500px){
+    .solution-infos-wrapper{
+        flex-direction: column;
+        align-items: start;
+        margin-bottom: 5px;
+    }
+}
