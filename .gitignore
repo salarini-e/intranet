@@ -133,3 +133,5 @@ dmypy.json
 .pyre/
 
 
+settings/media/
+settings/static/    
