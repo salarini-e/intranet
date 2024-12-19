@@ -76,7 +76,7 @@
 						</div>
 	            {% endif %}
                 {% for chamado in chamados %}
-                    <div id="chamado-{{chamado.id}}" class="row ticket-chamado-background{% if chamado.status == '4' or chamado.status == '5' %} card-status-finalizado{% endif %}">
+                    <div id="chamado-{{chamado.id}}" class="row ticket-chamado-background{% if chamado.status == '4' or chamado.status == '5' %} card-status-finalizado{% endif %} border-status-{{chamado.status}}">
                         <div class="row">
                             <div class="col-1 m-auto checkbox-container">
                                 <input type="checkbox" class="checkbox-tickets" onchange="toggleStatusCheckBox(this)">
@@ -530,6 +530,24 @@
         </div>
     </div>
     <style>
+    .border-status-0{
+        border-left: 4px solid #6495ED;
+        border-radius: 5px;         
+    }
+    .border-status-2{
+        border-left: 4px solid #FF8C00;
+        border-radius: 5px;         
+    }
+        
+    }
+    .border-status-4{
+        border-left: 4px solid #000000;
+        border-radius: 5px;         
+    }
+    .border-status-5{
+        border-left: 4px solid #383838;
+        border-radius: 5px;         
+    }
     .hiddenAction {
         max-height: 0;
         overflow: hidden;
