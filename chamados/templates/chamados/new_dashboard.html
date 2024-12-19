@@ -121,29 +121,29 @@
                 <p class="m-0 p-0 text-white w-100">
                     <strong>Computador</strong>
                 </p>
-                <canvas id="chartD1"></canvas>
+                <canvas class="mb-auto" id="chartD1"></canvas>
             </div>
             <div class="col col-graf ms-2">
                 <p class="m-0 p-0 text-white w-100">
                     <strong>Telefonia</strong>
                 </p>
-                <canvas id="chartD2"></canvas>
+                <canvas class="mb-auto" id="chartD2"></canvas>
             </div>
             <div class="col col-graf ms-2">
                 <strong class="text-white text-center w-100" style="opacity: 0;">Nada aqui</strong>
-                <div class="row" style="height: 100%; width: 100%;">
+                <div class="row" style="width: 100%;">
                     <div class="col px-5">
                         <p style="font-size: 14pt; color: white;">
                             <strong>Nos últimos 30 dias</strong>
                         </p>
                         <div class="row ind">
-                            <div class="col text-center">
+                            <div class="ind-item col text-center">
                                 <div>
                                     <p style="background-color: #1256bb; color: white;">Total de chamados<br><span>{{totais.total_chamados}}</span></p>
                                     <p style="background-color: #28A745">Total resolvidos <br><span>{{totais.chamados_fechados}}</span></p>
                                 </div>
                             </div>
-                            <div class="col text-center">
+                            <div class="ind-item col text-center">
                                 <p style="background-color: #a72828;">Total abertos<br><span>{{totais.chamados_abertos}}</span></p>
                                 <p style="background-color: #dc8035;">Total pendentes<br><span>{{totais.chamados_pendentes}}</span></p>
                             </div>
@@ -151,11 +151,11 @@
                         <div class="row mt-3">
                             <div class="col px-4">
                                 <div class="row ind2" style="background-color: #1b262b; padding: 10px 20px; border-radius: 10px; color: white;">
-                                    <div class="col text-center">
+                                    <div class=" ind-item col text-center">
                                         <p class="m-auto">Eficiência<br><span>{{taxa_eficiencia}}%</span></p>
 
                                     </div>
-                                    <div class="col text-center">
+                                    <div class="ind-item col text-center">
                                         <p class="m-auto">Média de chamados por dia<br><span>{{media_diaria}}</span></p>
                                     </div>
                                 </div>                                
@@ -173,15 +173,22 @@
             color: aliceblue;
             padding: 10px 20px;
             border-radius: 10px;
+            font-size: 0.5rem;
         }
         .ind p span{
             font-weight: bold;
-            font-size: 16pt;
+            font-size: 0.8rem;
+        }
+        .ind2 p{         
+            font-size: 0.5rem;
         }
         .ind2 p span{
             font-weight: bold;
-            font-size: 16pt;
+            font-size: 0.8rem;
         }
+        /* .ind-item{
+
+        } */
     </style>
     <!-- Footer -->
     <div id="fake-footer" class="bg-dark text-light" style="opacity: 0;">
