@@ -259,6 +259,11 @@ class Chamado(models.Model):
                         chamado.chamado_mesclado.dt_atualizacao= timezone.now()
                         chamado.chamado_mesclado.save()
 
+        old_instance = Chamado.objects.filter(pk=self.pk)
+        if old_instance.exists():
+            if old_instance.first().tipo != self.tipo:
+                self.n_protocolo = self.calcula_protocolo()
+            
         super().save(*args, **kwargs)
 
     def gerar_hash(self):
@@ -269,12 +274,15 @@ class Chamado(models.Model):
             self.save()
     
     def gerar_protocolo(self): 
-        if not self.n_protocolo:
-            prefixo = self.tipo.sigla  
-            id_formatado = str(self.id).zfill(6)          
-            self.n_protocolo = f"{prefixo}{id_formatado}"
+        if not self.n_protocolo:               
+            self.n_protocolo = self.calcula_protocolo()
             self.save()
-        
+
+    def calcula_protocolo(self):
+        prefixo = self.tipo.sigla
+        id_formatado = str(self.id).zfill(6)
+        return f"{prefixo}{id_formatado}"        
+
     def get_total_msg(self):        
         count = Mensagem.objects.filter(chamado=self).count()
         # print(count)

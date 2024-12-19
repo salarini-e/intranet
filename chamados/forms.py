@@ -321,13 +321,16 @@ class FormDetalhesDoChamado(forms.ModelForm):
 class FormEditarChamado(forms.ModelForm):
     class Meta:
         model = Chamado
-        fields = ['secretaria', 
+        fields = [
+                  'tipo',
+                  'secretaria', 
                   'telefone', 
                   'endereco', 
                   'assunto',
                   'descricao',
                   ]
         widgets = {
+            'tipo': forms.Select(attrs={'class': 'form-control mb-3'}),
             'secretaria': forms.Select(attrs={'class': 'form-control mb-3'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control mb-3'}),
             'endereco': forms.TextInput(attrs={'class': 'form-control mb-3'}),
