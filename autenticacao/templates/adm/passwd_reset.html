@@ -1,35 +1,87 @@
 <!DOCTYPE html>
+{% load bootstrap5 %}
 <html lang="pt-br">
-<head>    
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trocar Senha</title>
-    {% load static %}    
-    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
-    {% load bootstrap5 %}
-    {# Load CSS and JavaScript #}
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
-    <!-- FONTAWESOME -->
-    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
-    <!-- CUSTOM CSS -->
-    <link rel="stylesheet" href="{% static '/css/template.css' %}">
-    <link rel="stylesheet" href="{% static '/css/login.css' %}">    
-</head>
-<body class="container-fluid">
-<div class="row">
-    <div id="bannerLogin" class="col">
-        <div class="filter d-flex flex-column">
-            <img class="m-auto img-fluid" src="{% static '/images/brasao.png' %}" alt="brasão de nova friburgo">
-            <span style="font-size: 10pt;" class="mb-2 ms-3">© SECRETARIA DE CIÊNCIA, TECNOLOGIA, INOVAÇÃO E EDUCAÇÃO PROFISSIONALIZANTE E SUPERIOR.</span>
-        </div>
-    </div>
-    <div class="col-4 d-flex">
-        <div class="m-auto">
-            <a href="/">
-                <img style="max-width: 300px;" class="img-fluid mb-5" src="{% static 'images/logo_desenvolvenf_white.png' %}" alt="">                
-            </a>
+    <head>
+        <link rel="icon" type="image/x-icon" href="https://senhas.novafriburgo.rj.gov.br/static/favicon.ico">
+        <!-- Meta tags Obrigatórias -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- GOOGLE FONTS -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;800&display=swap" rel="stylesheet">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- CUSTOM CSS -->
+        <link href="https://senhas.novafriburgo.rj.gov.br/static/css/jlb.css" rel="stylesheet" type="text/css">
+        <link href="https://senhas.novafriburgo.rj.gov.br/static/css/login.css" rel="stylesheet" type="text/css">
+    
+        <title>Login - Intranet</title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    </head>
+
+    <SCRIPT LANGUAGE="JavaScript">
+        
+    </script>
+
+    <body class="body">
+        <!-- <a href="/kpi/usuarios" id="float-right-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-data" viewBox="0 0 16 16">
+                <path d="M4 11a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1zm6-4a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V7zM7 9a1 1 0 0 1 2 0v3a1 1 0 1 1-2 0V9z"/>
+                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+              </svg>
+             <span class="my-auto ml-2">
+                DADOS ABERTOS
+             </span>
+        </a> -->
+        <style>
+            #float-right-button{
+                box-shadow: 5px 5px 5px rgba(80, 80, 80, 0.678);    
+                position: fixed;
+                display: flex;
+                top: 15px;
+                right: 20px;
+                padding: 5px 10px;
+                background-color: white;
+                color: black;
+                border-radius: 4px;
+                font-size: 10pt;
+                font-weight: bolder;
+            }
+        </style>
+        <div class="container-fluid pb-4">  
+            <div id="header" class="row">
+                <!-- <div class="col">
+                    <img class="img-fluid" src="https://senhas.novafriburgo.rj.gov.br/static/logopmnf.png" alt="Logo Pmnf" title="Logo Pmnf"/>
+                </div> -->
+                <div class="col">
+                    <img class="img-fluid" src="/static/images/logo.png" style="max-width: 300px;" alt="Logo Pmnf" title="Logo Pmnf"/>
+                </div>
+            </div>          
+            
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+<div id="login-screen">    
+    
+    <h3 class="text-center mb-4">Redefinir Senha</h3>
+
+    {% if messages %}
+            <ul class="messages mb-4">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }} px-4"{% endif %}>{{ message|safe }}</li>
+                {% endfor %}
+            </ul>
+            <style>
+                li{
+                    list-style: none;
+                }
+            </style>
+            {% endif %}
+            {% if error %}
+            <!-- <p class="bg-danger text-white mb-4 py-2 text-center">Usuário ou senha não conferem.</p> -->
+            <p class="bg-danger text-white mb-4 py-2 text-center px-1">{{msg}}</p>
+            {% endif %}
             {% if messages %}
             <ul class="messages mb-4">
                 {% for message in messages %}
@@ -45,9 +97,8 @@
             {% if error %}
             <p class="bg-danger text-white mb-4 py-2 text-center">Usuário ou senha não conferem.</p>
             {% endif %}
-            <h3>Redefinir Senha</h3>
 
-            <p class="text-justify">Esqueceu sua senha? Entre com seu e-mail abaixo, <br> para enviarmos instruções para criar a nova senha.</p>
+            <p class="text-justify">Entre com seu e-mail abaixo, para enviarmos instruções para criar a nova senha.</p>
 
             <form class="pt-3" method="POST">
                 {% csrf_token %}
@@ -65,13 +116,24 @@
                 </a>        
                 <br>                                    
             </form>
-            <!-- <style>
-                p{
-                    padding-right: 100px;
-                    padding-left: 100px;
-                    margin-top: 15px;
-                }
-            </style>  -->
-        </div>
-    </div>
+    <!-- <a href="/contas/password_reset">Esqueci minha senha</a> -->
 </div>
+<style>
+        .btn:focus{            
+            box-shadow:0 0 0 0.2rem rgba(78, 78, 78, 0.25) !important;            
+        }
+        .btn-primarry:focus{
+            box-shadow:0 0 0 0.2rem rgba(78, 78, 78, 0.25) !important;            
+        }
+</style>
+
+        </div>    
+        <!-- JavaScript (Opcional) -->
+        <!-- jQuery primeiro, depois Popper.js, depois Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    </body>
+</html>
+
