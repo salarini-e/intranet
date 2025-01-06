@@ -10,6 +10,6 @@ Este link só pode ser usado uma vez. Se você precisar redefinir sua senha nova
 Se você não fez essa solicitação, simplesmente ignore este e-mail.
 
 Grato,
-A equipe do site.
+Subsecretaria de TI.
 
 {% endautoescape %}

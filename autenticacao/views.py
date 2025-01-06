@@ -185,7 +185,7 @@ def passwd_reset(request):
             associated_users = User.objects.filter(email=data)
             if associated_users.exists():
                 for user in associated_users:
-                    subject = "Solicitação de alteração de senha do sistema Desenvolve NF"
+                    subject = "Solicitação de alteração de senha do sistema INTRANET"
                     email_template_name = "adm/email_passwd_reset.txt"
                     c = {
                         "email": user.email,
