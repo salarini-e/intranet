@@ -75,7 +75,7 @@ def date_chamados_por_atendente():
         nome = chamado["profissional_designado__nome_servidor"].split()[0] if chamado["profissional_designado__nome_servidor"] else "Sem atendente"
         data["labels"].append(nome)  # Nome da secretaria
         data["datasets"][0]["data"].append(chamado["total"])  # Total de chamados
-    print(data)
+    # print(data)
     return data
 
 def date_chamados_por_mes():
@@ -114,7 +114,7 @@ def date_chamados_por_mes():
         mes_formatado = mes.strftime("%B de %Y")
         data["labels"].append(mes_formatado)
         data["datasets"][0]["data"].append(row.total)
-    print(data)
+    # print(data)
     return data
 
 def data_generic(titulo, periodo='dia'):    
