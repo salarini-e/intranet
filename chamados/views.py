@@ -26,7 +26,8 @@ from .functions import carregar_novos_filtros, filtrar_chamados
 import pandas as pd
 
 from .graficos import (date_chamados_por_secretaria, options_chamados_por_secretaria,
-                       data_generic, options_generic)
+                       data_generic, options_generic, date_chamados_por_atendente, 
+                       options_chamados_por_atendente, date_chamados_por_mes, options_chamados_por_mes,)
 
 
 
@@ -1274,6 +1275,9 @@ def new_dashboard(request):
         {'id': 'chartC3', 'tipo': 'line', 'dados': data_generic('sistemas - E&L'), 'opcoes': options_generic('sistemas - E&L'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
         {'id': 'chartD1', 'tipo': 'line', 'dados': data_generic('computador'), 'opcoes': options_generic('computador'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
         {'id': 'chartD2', 'tipo': 'line', 'dados': data_generic('telefonia'), 'opcoes': options_generic('telefonia'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+
+        {'id': 'chartA2', 'tipo': 'bar', 'dados': date_chamados_por_atendente(), 'opcoes': options_chamados_por_atendente(), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartA3', 'tipo': 'bar', 'dados': date_chamados_por_mes(), 'opcoes': options_chamados_por_mes(), 'scales': {}, 'plugins': '[ChartDataLabels]'},
         # {'id': 'chartD3', 'tipo': 'line', 'dados': date_generic(), 'opcoes': options_generic('a'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
 
     ]

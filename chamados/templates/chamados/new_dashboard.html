@@ -59,7 +59,7 @@
             padding: 40px;
             border-radius: 15px;
         }
-        #display-2 {
+        #display-2, #display-3, #display-4 {
             display: none;
         }
     </style>
@@ -78,11 +78,15 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <button class="nav-link" onclick="next_display()"><i class="fa-solid fa-caret-left"></i></button>
+                        <button class="nav-link" onclick="prev_display()"><i class="fa-solid fa-backward-step"></i></button>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link" onclick="prev_display()"><i class="fa-solid fa-caret-right"></i></button>
+                        <button id="btn-pause" class="nav-link" onclick="pause_display()"><i id="icon-pause" class="fa-solid fa-pause"></i></button>
                     </li>
+                    <li class="nav-item">
+                        <button class="nav-link" onclick="next_display()"><i class="fa-solid fa-forward-step"></i></button>
+                    </li>
+                    
                 </ul>
             </div>
         </div>
@@ -168,6 +172,28 @@
             </div>
         </div>
     </div>
+    <div id="display-3" class="container-fluid m-auto">
+        <h3 class="text-white text-center">Chamados por atendentes</h3>
+        <div class="row px-4 my-4">
+            <div class="col-12 d-flex">
+                <div style="width: 70%;" class="m-auto">
+                    <canvas id="chartA2"></canvas>
+                </div>
+            </div>
+            
+        </div>       
+    </div>
+    <div id="display-4" class="container-fluid m-auto">
+        <h3 class="text-white text-center">Chamados por mês</h3>
+        <div class="row px-4 my-4">
+            <div class="col-12 d-flex">
+                <div style="width: 70%;" class="m-auto">
+                    <canvas id="chartA3"></canvas>
+                </div>
+            </div>
+            
+        </div>       
+    </div>
     <style>
         .ind p{
             color: aliceblue;
@@ -209,7 +235,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let display_atual = 1;
-        let display_max = 2;
+        let display_max = 4;
         function next_display() {
             for (let i = 1; i <= display_max; i++) {
                 $('#display-' + i).fadeOut(); // Esconde com fade
@@ -229,7 +255,20 @@
             display_atual = display_atual === 1 ? display_max : display_atual - 1;
             $('#display-' + display_atual).fadeIn(); // Exibe com fade
         }
+        function pause_display() {
+            clearInterval(displayInterval); // Limpa o intervalo
+            document.getElementById('icon-pause').classList.remove('fa-pause');
+            document.getElementById('icon-pause').classList.add('fa-play');
+            document.getElementById('btn-pause').setAttribute('onclick', 'resume_display()');
+        }
 
+        // Função para retomar a navegação entre displays
+        function resume_display() {
+            displayInterval = setInterval(next_display, 10000); // Reinicia o intervalo            
+            document.getElementById('icon-pause').classList.remove('fa-play');
+            document.getElementById('icon-pause').classList.add('fa-pause');
+            document.getElementById('btn-pause').setAttribute('onclick', 'pause_display()');
+        }
         // Gerar gráficos
         function gerarGrafico(id, tipo, dados, opcoes, scales, plugins) {
             new Chart(document.getElementById(id), {
@@ -272,18 +311,12 @@
         {% endfor %}
 
         $(document).ready(function() {
-            setInterval(next_display, 10000);
+            displayInterval = setInterval(next_display, 10000); // Inicia a navegação automática
         });
         setTimeout(function() {
             location.reload();
-        }, 120000); // 120000 milliseconds = 2 minutes
-        // gerarGrafico('chartA2', 'line', dadosExemplo, opcoesExemplo);
-        // gerarGrafico('chartB1', 'pie', dadosExemplo, opcoesExemplo);
-        // gerarGrafico('chartB2', 'doughnut', dadosExemplo, opcoesExemplo);
-        // gerarGrafico('chartC1', 'radar', dadosExemplo, opcoesExemplo);
-        // gerarGrafico('chartC2', 'polarArea', dadosExemplo, opcoesExemplo);
-        // gerarGrafico('chartD1', 'line', dadosExemplo, opcoesExemplo);
-        // gerarGrafico('chartD2', 'bar', dadosExemplo, opcoesExemplo);
+        }, 120000); 
+        
     </script>
 </body>
 </html>

@@ -5,6 +5,13 @@ from chamados.models import Chamado
 from django.db import connection
 import calendar
 
+from django.db.models.functions import TruncMonth
+from datetime import datetime, timedelta
+
+from django.utils.timezone import make_aware
+from datetime import datetime, timedelta
+
+
 DEFAULT_COLORS ={
     'impressora': 'white',
     'internet': 'yellow',
@@ -42,6 +49,72 @@ def date_chamados_por_secretaria():
         data["labels"].append(chamado["secretaria__apelido"])  # Nome da secretaria
         data["datasets"][0]["data"].append(chamado["total"])  # Total de chamados
 
+    return data
+
+def date_chamados_por_atendente():
+    chamados = (
+        Chamado.objects.values("profissional_designado__nome_servidor")  # Agrupar pelos nomes das secretarias
+        .annotate(total=Count("id"))  # Contar os chamados por secretaria
+        .order_by("-total")  # Ordenar por número de chamados em ordem decrescente
+    )
+    cores = loadColors(len(chamados))
+
+    data = {
+        "labels": [],
+        "datasets": [{
+            'label': 'Total de chamados',
+            'data': [], 
+            'backgroundColor': cores,
+            'borderColor': cores,
+            'borderWidth': 1
+
+        }]
+    }
+
+    for chamado in chamados:
+        nome = chamado["profissional_designado__nome_servidor"].split()[0] if chamado["profissional_designado__nome_servidor"] else "Sem atendente"
+        data["labels"].append(nome)  # Nome da secretaria
+        data["datasets"][0]["data"].append(chamado["total"])  # Total de chamados
+    print(data)
+    return data
+
+def date_chamados_por_mes():
+    # Certifique-se de que `inicio_periodo` está no formato adequado
+    inicio_periodo =    make_aware(datetime.now() - timedelta(days=365))
+    
+    # Consulta raw usando a correção do SQL
+    sql = '''
+        SELECT
+            id,  -- Incluindo a chave primária na consulta
+            DATE_FORMAT(dt_inclusao, '%%Y-%%m-01') AS mes,
+            COUNT(id) AS total
+        FROM chamados_chamado
+        WHERE dt_inclusao >= %s
+        GROUP BY mes
+        ORDER BY mes ASC
+    '''
+    
+    # Executando a consulta e retornando os resultados
+    result = Chamado.objects.raw(sql, [inicio_periodo])
+    
+    cores = loadColors(len(result))
+    data = {
+        "labels": [],
+        "datasets": [{
+            'label': 'Total de chamados',
+            'data': [], 
+            'backgroundColor': cores,
+            'borderColor': cores,
+            'borderWidth': 1
+
+        }]
+    }
+    for row in result:
+        mes = datetime.strptime(row.mes, "%Y-%m-%d")
+        mes_formatado = mes.strftime("%B de %Y")
+        data["labels"].append(mes_formatado)
+        data["datasets"][0]["data"].append(row.total)
+    print(data)
     return data
 
 def data_generic(titulo, periodo='dia'):    
@@ -143,6 +216,113 @@ def options_chamados_por_secretaria():
                         title: {
                             display: false,
                             text: 'Secretarias',
+                            color: 'white'
+                        }
+                    },
+                    y: {
+                        ticks: { 
+                            color: 'white', 
+                        },
+                        title: {
+                            display: false,
+                            text: 'Número de Chamados',
+                            color: 'white'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+'''
+def options_chamados_por_atendente():
+    return '''{
+                responsive: true,
+                plugins: {
+                    datalabels: {
+                        anchor: 'end', 
+                        align: 'top',
+                        color: 'white',
+                    },
+                    title: {
+                        display: false,
+                        text: 'Chamados por Atendentes',
+                        color: '#FFFFFF',
+                        font: {
+                            size: 8
+                        }
+                       },
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Total: ${context.raw}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { 
+                            color: 'white', 
+                        },
+                        title: {
+                            display: false,
+                            text: 'Atendentes',
+                            color: 'white'
+                        }
+                    },
+                    y: {
+                        ticks: { 
+                            color: 'white', 
+                        },
+                        title: {
+                            display: false,
+                            text: 'Número de Chamados',
+                            color: 'white'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+'''
+
+def options_chamados_por_mes():
+    return '''{
+                responsive: true,
+                plugins: {
+                    datalabels: {
+                        anchor: 'end', 
+                        align: 'top',
+                        color: 'white',
+                    },
+                    title: {
+                        display: false,
+                        text: 'Chamados por Mês',
+                        color: '#FFFFFF',
+                        font: {
+                            size: 8
+                        }
+                       },
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Total: ${context.raw}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { 
+                            color: 'white', 
+                        },
+                        title: {
+                            display: false,
+                            text: 'Mês',
                             color: 'white'
                         }
                     },
