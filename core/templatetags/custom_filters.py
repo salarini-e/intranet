@@ -137,6 +137,7 @@ def total_subtipo(tipo__nome):
 
 @register.filter
 def check_satisfacao(user):
+    return False
     servidor = Servidor.objects.get(user=user)
     chamados = Chamado.objects.filter(requisitante=servidor, status='4', pesquisa_satisfacao=False).order_by('-id')
     if chamados.exists():
