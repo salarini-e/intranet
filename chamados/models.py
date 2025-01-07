@@ -685,15 +685,32 @@ class Historico_Mesclagem(models.Model):
 
 class chamadoSatisfacao(models.Model):
     AVALIACAO_CHOICES = (
-        ('0', 'Totalmente insatisfeito'),
-        ('1', 'Insatisfeito'),
-        ('2', 'Neutro'),
-        ('3', 'Satisfeito'),
-        ('4', 'Extremamente satisfeito')
+        ('0', 'Ruim'),
+        ('1', 'Regular'),
+        ('2', 'Bom'),
+        ('3', 'Ótimo'),
+        ('4', 'Excelente')
+    )
+
+    RESOLUCAO_CHOICES = (
+        ('sc', 'Sim, completamente'),
+        ('sp', 'Sim, parcialmente'),
+        ('n', 'Não'),
+    )
+
+    RECEBER_CHOICES = (
+        ('n', 'Não'),
+        ('s', 'Sim'),
+        ('i', 'Indiferente')
     )
     chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')
-    avaliacao = models.CharField(max_length=1, verbose_name='Satisfação', null=True, choices=AVALIACAO_CHOICES)
-    comentario = models.TextField(verbose_name='Comentário', null=True, blank=True)
+    avaliacao = models.CharField(max_length=1, verbose_name='Qual sua avaliação geral sobre o atendimento do técnico?', null=True, choices=AVALIACAO_CHOICES)
+    avaliacao_justificativa = models.TextField(verbose_name='Justificativa da avaliação', null=True, blank=True)
+    cordialidade = models.CharField(max_length=1, verbose_name='Como foi a cordialidade e educação do nosso técnico?', null=True, choices=AVALIACAO_CHOICES)
+    cordialidade_justificativa = models.TextField(verbose_name='Justificativa da cordialidade', null=True, blank=True)
+    resolucao = models.CharField(max_length=2, verbose_name='O problema foi resolvido de forma satisfatória?', null=True, choices=RESOLUCAO_CHOICES)
+    receberia_novamente_o_tecnico = models.CharField(max_length=1, verbose_name='Você receberia novamente o mesmo técnico?', null=True, choices=RECEBER_CHOICES)
+    comentario = models.TextField(verbose_name='Você possui alguma sugestão para melhorar o nosso serviço?', null=True, blank=True)
     dt_inclusao = models.DateTimeField(auto_now_add=True, verbose_name='Data de inclusão')
 
     class Meta:

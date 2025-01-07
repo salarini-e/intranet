@@ -68,18 +68,42 @@ def index(request):
 
 from django.http import JsonResponse
 import json
+
 def post_satisfacao(request):
     if request.method == 'POST':
         try:
+            # Parse o corpo da requisição
             data = json.loads(request.body)
-            chamado = Chamado.objects.get(id=data['chamado_id'])            
-            chamadoSatisfacao.objects.create(chamado=chamado, avaliacao=data['nivel_satisfacao'], comentario=data['comentario'])
+            print(data)
+            # Obtenha o chamado correspondente
+            chamado = Chamado.objects.get(id=data['chamado_id'])
+            
+            # Crie o registro de satisfação
+            satisfacao = chamadoSatisfacao.objects.create(
+                chamado=chamado,
+                avaliacao=data.get('nivel_satisfacao'),
+                avaliacao_justificativa=data.get('satisfacao_justificativa'),
+                cordialidade=data.get('nivel_cordialidade'),
+                cordialidade_justificativa=data.get('cordialidade_justificativa'),
+                resolucao=data.get('satisfacao_resolucao'),
+                receberia_novamente_o_tecnico=data.get('receberia_novamente_o_tecnico'),
+                comentario=data.get('comentario')
+            )
+            
+            # Atualize o campo de pesquisa de satisfação no chamado
             chamado.pesquisa_satisfacao = True
             chamado.save()
+
+            return JsonResponse({'status': 'success', 'message': 'Satisfação registrada com sucesso'})
+        
         except Chamado.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Chamado não encontrado'}, status=404)
+        
         except json.JSONDecodeError:
-            return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
-        except Exception as E:
-            return JsonResponse({'status': 'error', 'message': str(E)}, status=500)
-    return JsonResponse({'status': 'success'})
+            return JsonResponse({'status': 'error', 'message': 'JSON inválido'}, status=400)
+        
+        except Exception as e:
+            print(e)
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Método não permitido'}, status=405)

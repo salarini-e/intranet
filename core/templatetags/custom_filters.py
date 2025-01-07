@@ -137,7 +137,7 @@ def total_subtipo(tipo__nome):
 
 @register.filter
 def check_satisfacao(user):
-    return False
+    # return True    
     servidor = Servidor.objects.get(user=user)
     chamados = Chamado.objects.filter(requisitante=servidor, status='4', pesquisa_satisfacao=False).order_by('-id')
     if chamados.exists():
@@ -146,5 +146,20 @@ def check_satisfacao(user):
 
 @register.filter
 def check_satisfacao_chamado(user):
+    # return Chamado.objects.get(id=216).id
     servidor = Servidor.objects.get(user=user)
-    return Chamado.objects.filter(requisitante=servidor, status='4', pesquisa_satisfacao=False).order_by('-id').first().id
+    return Chamado.objects.filter(requisitante=servidor, status='4', pesquisa_satisfacao=False).order_by('-id').first()
+
+@register.filter
+def chamado_satisfacao_display(user):
+    servidor = Servidor.objects.get(user=user)
+    chamados = Chamado.objects.filter(requisitante=servidor, status='4', pesquisa_satisfacao=False).order_by('-id')
+    if chamados.exists():
+        chamado = chamados.first()
+        return f'''
+        <p class="text-center" style="margin-bottom: 0; padding-bottom: 0; line-height: auto;"><strong>#{chamado.n_protocolo}</strong></p>
+        <p class="text-center" style="margin: 0;">{chamado.descricao}</p>				
+        <p class="text-center" style="color: #5b6b7c; margin-top: 10px;">
+                <i class="fa-solid fa-tools"></i> {chamado.profissional_designado}
+        </p>'''
+    return False

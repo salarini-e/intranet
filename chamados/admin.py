@@ -60,8 +60,18 @@ class SubTipoChamadoAdmin(admin.ModelAdmin):
     list_filter = ('dt_inclusao', 'user_inclusao')
     search_fields = ('nome', 'tipo__nome')
 
-
 @admin.register(chamadoSatisfacao)
 class chamadoSatisfacaoAdmin(admin.ModelAdmin):
-    list_display = ('chamado', 'avaliacao', 'comentario', 'dt_inclusao')    
-    search_fields = ('chamado__n_protocolo', 'avaliacao', 'comentario')
+    list_display = (
+        'chamado', 
+        'dt_inclusao'
+    )
+    list_filter = (
+        'avaliacao', 
+        'cordialidade', 
+        'resolucao', 
+        'receberia_novamente_o_tecnico', 
+        'dt_inclusao'
+    )
+    search_fields = ('chamado__id', 'chamado__descricao', 'comentario')
+    readonly_fields = ('dt_inclusao',)
