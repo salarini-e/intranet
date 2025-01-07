@@ -129,7 +129,8 @@ class Chamado(models.Model):
     hash=models.CharField(max_length=64)
     mesclado = models.BooleanField(default=False, verbose_name='Chamado mesclado')
     motivo_cancelamento = models.TextField(verbose_name='Motivo do cancelamento', null=True, blank=True)
-
+    pesquisa_satisfacao = models.BooleanField(verbose_name='Pesquisa de satisfação', default=False)
+    
     class Meta:
         verbose_name = 'Chamado'
         verbose_name_plural = 'Chamados'
@@ -609,6 +610,7 @@ class Mensagem(models.Model):
         else:
             # A mensagem foi enviada pelo requisitante, notificar o profissional designado
             profissional_designado = self.chamado.profissional_designado
+            requisitante = self.chamado.profissional_designado.servidor
             if profissional_designado:  # Verifique se há um profissional designado
                 profissional_servidor = profissional_designado.servidor  # Assumindo que o profissional tem um campo 'servidor'
                 msg = f'O chamado <b>{self.chamado.n_protocolo}</b> tem uma nova mensagem do usuário!'
@@ -680,3 +682,20 @@ class Historico_Mesclagem(models.Model):
     class Meta:
         verbose_name = 'Histórico de mesclagem'
         verbose_name_plural = 'Histórico de mesclagens'
+
+class chamadoSatisfacao(models.Model):
+    AVALIACAO_CHOICES = (
+        ('0', 'Totalmente insatisfeito'),
+        ('1', 'Insatisfeito'),
+        ('2', 'Neutro'),
+        ('3', 'Satisfeito'),
+        ('4', 'Extremamente satisfeito')
+    )
+    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, verbose_name='Chamado')
+    avaliacao = models.CharField(max_length=1, verbose_name='Satisfação', null=True, choices=AVALIACAO_CHOICES)
+    comentario = models.TextField(verbose_name='Comentário', null=True, blank=True)
+    dt_inclusao = models.DateTimeField(auto_now_add=True, verbose_name='Data de inclusão')
+
+    class Meta:
+        verbose_name = 'Satisfação do atendimento'
+        verbose_name_plural = 'Satisfações dos atendimentos'

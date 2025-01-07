@@ -324,6 +324,128 @@
 		disableFlags: false
 	});
 	</script> -->
+	{% if request.user|check_satisfacao %}
+	<script>
+		let chamado_id = {{request.user|check_satisfacao_chamado}};
+		let nivel_satisfacao = null;
+		let comentario = null;
+
+		function set_nivel_satisfacao(nivel) {
+			nivel_satisfacao = nivel;
+
+			// Remove a classe "selected" de todos os ícones
+			document.querySelectorAll('.satisfacao-icon').forEach(icon => {
+				icon.classList.remove('selected');
+			});
+
+			// Adiciona a classe "selected" ao ícone clicado
+			const selectedIcon = document.querySelector(`.satisfacao-icon[data-nivel="${nivel}"]`);
+			if (selectedIcon) {
+				selectedIcon.classList.add('selected');
+			}
+		}
+		function set_comentario(){
+			comentario = document.getElementById('comentario').value;
+		}
+		function enviarSatisfacao(){
+			set_comentario();
+			console.log('nivel_satisfacao', nivel_satisfacao);
+			console.log('comentario', comentario);
+			if (nivel_satisfacao == null){
+				alert('Por favor, avalie o atendimento!');
+				return;
+			}
+			if (comentario == null){
+				alert('Por favor, deixe um comentário!');
+				return;
+			}
+			const data = {
+				'chamado_id': chamado_id,
+				'nivel_satisfacao': nivel_satisfacao,
+				'comentario': comentario
+			}
+			fetch('/post-satisfacao/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': csrfToken
+				},
+				body: JSON.stringify(data)
+			})
+			.then(response => response.json())
+			.then(data => {
+				if (data.status == 'success'){
+					alert('Obrigado pela avaliação!');
+					document.getElementById('modalSatisfacao').style.display = 'none';
+				}
+			})
+			.catch((error) => {
+				console.error('Error:', error);
+			});
+		}
+	</script>
+	<div id="modalSatisfacao" class="modal">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">PESQUISA DE SATISFAÇÃO</h5>
+				
+			</div>
+			<div class="modal-body">
+				<div class="col-12 col-md-12 d-flex flex-column">			
+
+							<p class="text-center" style="margin-bottom: 0; padding-bottom: 0; line-height: auto;"><strong>#COMP0207</strong></p>
+							<p class="text-center" style="margin: 0;">VERIFICAÇÃO DO COMPUTADOR - MUITO LENTO </p>				
+							<p class="text-center" style="color: #5b6b7c; margin-top: 10	px;">
+									<i class="fa-solid fa-tools"></i> Luis Eduardo Cordeiro Salarini
+							</p>
+							<hr>
+							<p>Como você avalia o seu atendimento?</p>
+							<div class="d-flex mx-auto">
+								<div style="color: #FF3B30;">
+									<i class="fa-solid fa-face-angry fa-2x satisfacao-icon" data-nivel="0" onclick="set_nivel_satisfacao(0)"></i>
+								</div>
+								<div style="color: #FF9500;" class="mx-4">
+									<i class="fa-solid fa-face-frown fa-2x satisfacao-icon" data-nivel="1" onclick="set_nivel_satisfacao(1)"></i>
+								</div>
+								<div style="color: #FFD60A;">
+									<i class="fa-solid fa-face-meh fa-2x satisfacao-icon" data-nivel="2" onclick="set_nivel_satisfacao(2)"></i>
+								</div>
+								<div style="color: #34C759;" class="mx-4">
+									<i class="fa-solid fa-face-smile fa-2x satisfacao-icon" data-nivel="3" onclick="set_nivel_satisfacao(3)"></i>
+								</div>
+								<div style="color: #007AFF;">
+									<i class="fa-solid fa-face-grin fa-2x satisfacao-icon" data-nivel="4" onclick="set_nivel_satisfacao(4)"></i>
+								</div>
+							</div>
+							<p>Gostaria de deixar um comentário?</p>
+							<textarea class="form-control" name="comentario" id="comentario" cols="30" rows="5" style="height: 100px;"></textarea>	
+							
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-success" style="color: white;" onclick="enviarSatisfacao()">Enviar</button>
+			</div>
+			</div>
+		</div>
+	</div>
+	<style>
+		.satisfacao-icon {
+			cursor: pointer !important;
+			transition: transform 0.2s ease, color 0.2s ease;
+		}
+	
+		.satisfacao-icon:hover {
+			transform: scale(1.2); /* Aumenta o tamanho no hover */
+		}
+	
+		.satisfacao-icon.selected {
+			transform: scale(1.5); /* Destaca o selecionado */
+			/* color: #000; Altere a cor para indicar seleção */
+		}
+	</style>
+	<script src="/static/js/openModal.js"></script>		
+	{% endif %}
 	<script>
 		function hiddenMenu(){
 			var sidepanel = document.getElementById('app-sidepanel');
@@ -345,6 +467,9 @@
 			var preloader = document.getElementById('preloader');
 			preloader.style.display = 'none';
 		};
+		{% if request.user|check_satisfacao %}
+			openModal('modalSatisfacao');
+		{% endif %}
 	</script>
 </body>
 </html> 

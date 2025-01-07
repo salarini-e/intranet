@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.contrib.auth.decorators import login_required
-from chamados.models import Chamado, TipoChamado
+from chamados.models import Chamado, TipoChamado, chamadoSatisfacao
 from datetime import datetime, timedelta
 
 from noticias.models import Carrousell, Noticias
@@ -65,3 +65,21 @@ def index(request):
         'media_diaria': "{:.1f}".format(media_diaria)
     }
     return render(request, 'index.html', context)
+
+from django.http import JsonResponse
+import json
+def post_satisfacao(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            chamado = Chamado.objects.get(id=data['chamado_id'])            
+            chamadoSatisfacao.objects.create(chamado=chamado, avaliacao=data['nivel_satisfacao'], comentario=data['comentario'])
+            chamado.pesquisa_satisfacao = True
+            chamado.save()
+        except Chamado.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Chamado não encontrado'}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+        except Exception as E:
+            return JsonResponse({'status': 'error', 'message': str(E)}, status=500)
+    return JsonResponse({'status': 'success'})

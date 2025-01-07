@@ -348,3 +348,9 @@ class FormEditarChamado(forms.ModelForm):
             raise forms.ValidationError("A data de agendamento não pode ser no passado.")
 
         return dt_agendamento
+
+class FormSatisfacao(forms.ModelForm):
+    class Meta:
+        model = chamadoSatisfacao
+        fields = ['avaliacao', 'comentario']
+        

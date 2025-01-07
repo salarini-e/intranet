@@ -1,6 +1,6 @@
 from django import template
 from django.utils import timezone
-from chamados.models import Chamado, SubTipoChamado
+from chamados.models import Chamado, SubTipoChamado, chamadoSatisfacao
 from notificacoes.models import Notificacao
 from instituicoes.models import Servidor
 from django.utils.html import format_html
@@ -134,3 +134,16 @@ def acesso_adm_or_helpdesk(chamado_id, user):
 def total_subtipo(tipo__nome):
     
     return 'tenho que terminar esse filtro'
+
+@register.filter
+def check_satisfacao(user):
+    servidor = Servidor.objects.get(user=user)
+    chamados = Chamado.objects.filter(requisitante=servidor, status='4', pesquisa_satisfacao=False).order_by('-id')
+    if chamados.exists():
+            return True        
+    return False
+
+@register.filter
+def check_satisfacao_chamado(user):
+    servidor = Servidor.objects.get(user=user)
+    return Chamado.objects.filter(requisitante=servidor, status='4', pesquisa_satisfacao=False).order_by('-id').first().id
