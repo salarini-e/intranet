@@ -148,7 +148,7 @@ def check_satisfacao(user):
 def check_satisfacao_chamado(user):
     # return Chamado.objects.get(id=216).id
     servidor = Servidor.objects.get(user=user)
-    return Chamado.objects.filter(requisitante=servidor, status='4', pesquisa_satisfacao=False).order_by('-id').first()
+    return Chamado.objects.filter(requisitante=servidor, status='4', pesquisa_satisfacao=False).order_by('-id').first().id
 
 @register.filter
 def chamado_satisfacao_display(user):
