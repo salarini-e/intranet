@@ -25,6 +25,13 @@
             <a href="{% url 'chamados:download_relatorio' %}" class="my-auto btn app-btn-secondary" data-bs-toggle="tooltip" data-bs-title="Gerar relatório">
                 <i class="fa-solid fa-file-arrow-down"></i>
             </a>
+            <a href="{% url 'chamados:satisfacao' %}" class="my-auto btn app-btn-secondary" data-bs-toggle="tooltip" data-bs-title="Painel de Feedbacks">
+                <i class="fa-solid fa-ranking-star"></i>
+            </a>
+            <a href="{% url 'chamados:new_dashboard' %}" target="_blank" class="my-auto btn app-btn-secondary" data-bs-toggle="tooltip" data-bs-title="Dashboard">
+                <i class="fa-solid fa-chart-line"></i>
+            </a>
+            
             {% endif %}
             {% endif %}
             <a href="{% url 'chamados:tickets' %}" class="my-auto btn app-btn-secondary" data-bs-toggle="tooltip" data-bs-title="Atualizar página">

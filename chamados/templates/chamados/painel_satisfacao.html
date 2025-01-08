@@ -1,0 +1,334 @@
+{% extends 'template_chamados.html' %}
+{% block chamados %}active{% endblock %}
+{% block title %}Detalhes chamado{% endblock %}
+{% block css %}
+{% load static %}
+
+{% endblock %}
+{% block main %}   		    
+{% load custom_filters %}
+<style>
+    #message{
+        display: none;
+    }
+    #response-message{
+        font-weight: bold;
+        color: white;
+    }
+    .bg-gray{
+        background-color: rgba(128, 128, 128, 0.281) !important;
+    }										
+    #msg .form-body textarea{
+        height: 100px;
+        width: 70%;
+    }
+    #msg .form-body .div-anexo{
+        display: flex;
+        margin-left: 20px;
+        padding: 0.6rem;
+        height: 100px;						
+        border: 1px solid #e7e9ed;						
+        border-radius: var(--bs-border-radius);
+        color: #5d6778;
+    }
+
+    .container-xl{
+        width: 100% !important;;
+    }
+
+    .dashboard {
+        width: 100%;
+        margin: 20px auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+        margin-bottom: 30px;
+    }
+
+    .header h1 {
+        color: rgb(73, 73, 73);
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stats {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+
+    .card {
+        background-color: rgb(243, 250, 255);
+        color: RGB(132, 220, 81);
+        padding: 20px 20px 10px 20px;
+        border-radius: 8px;
+        width: 24%;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card h3 {
+        color: rgb(156, 156, 156);
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .card p {
+        color: black;
+        margin-top: auto;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .feedbacks {
+        margin-bottom: 30px;
+    }
+
+    .feedbacks h2 {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        background-color: #f9f9f9;
+    }
+
+    table th, table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+        background-color: #0044cc;
+        color: #fff;
+    }
+
+    #avnegativas table th {
+        background-color: #ff0000;
+        color: #fff;
+    }
+
+    table tbody tr:hover {
+        background-color: #f1f1f1;
+        cursor: pointer;
+    }
+	table tbody .tr-details{
+		width: 100%;
+		background-color: #ffdfdf;
+	}
+    .feedback-card {
+        background-color: #f1f1f1;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .feedback-card h3 {
+        color: #0044cc;
+        margin-bottom: 20px;
+    }
+
+    .details p {
+        margin-bottom: 10px;
+        line-height: 1.6;
+    }
+
+    .details strong {
+        color: #0044cc;
+    }
+
+</style>
+
+<script>
+    // Função para exibir detalhes do feedback
+    function showDetails(feedbackId) {
+        let details = document.getElementById('details-' + feedbackId);
+        details.style.display = details.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+
+<div class="dashboard">
+    <header class="header d-flex">
+        <h1>Painel de Pesquisa de Satisfação</h1>
+		<p class="my-auto ms-auto">Feedbacks pendentes: {{feed_pendentes}}</p>
+    </header>
+	<div class="row">
+		<div class="col">
+			
+		</div>
+	</div>
+    <div class="content">
+        <div class="stats">						
+            <div class="card">
+                <h3>Média de Avaliação Geral</h3>								
+                <p>{{media_geral}}</p>
+            </div>
+            <div class="card">
+                <h3>Média de Avaliação Cordialidade</h3>								
+                <p>{{media_cordialidade}}</p>
+            </div>
+            <div class="card">
+                <h3>Avaliações Geral<br>Ruim ou Regular</h3>
+                <p>{{qnt_negativos_geral}}</p>
+            </div>
+            <div class="card">
+                <h3>Avaliações Cordialidade<br>Ruim ou Regular</h3>
+                <p>{{qnt_negativos_cordialidade}}</p>
+            </div>
+        </div>        				
+        <div class="feedbacks">
+            <div class="row">
+				<div class="col d-flex">
+					<h2 class="my-auto">Últimos Feedbacks</h2>
+					<button class="btn ms-auto my-auto" style="color: #ff0000;" onclick="document.getElementById('avnegativas').style.display = 'block';">
+						<i class="fa-regular fa-eye"></i> Negativos	
+					</button>
+				</div>
+			</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Chamado</th>
+                        <th>Avaliação Geral</th>
+                        <th>Cordialidade</th>
+                        <th>Resolução</th>
+                        <th>Sugestões</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feed in feedbacks_positivos %}
+                    <tr onclick="showDetails({{feed.id}})">
+                        <td>{{feed.chamado}}</td>
+                        <td>{{feed.get_avaliacao_display}}</td>
+                        <td>{{feed.get_cordialidade_display}}</td>
+                        <td>{{feed.get_resolucao_display}}</td>
+                        <td>{{feed.get_receberia_novamente_o_tecnico_display}}</td>
+                    </tr>
+                    <tr id="details-{{feed.id}}" style="display: none;">
+                        <td colspan="5">                            
+							<p><strong>Sugestão:</strong> {% if feed.comentario %} {{feed.comentario}}{% else %} N/H{% endif %}</p>
+                        </td>
+                    </tr>
+					{% endfor %}
+                </tbody>
+            </table>
+        </div>
+		<div id="avnegativas" class="feedbacks" style="display: none;">
+            <div class="row">
+                <div class="col d-flex">
+                    <h2 class="my-auto">Últimos Feedbacks Negativos</h2>
+                    <button style="font-size: 14pt;" class="btn ms-auto my-auto" onclick="document.getElementById('avnegativas').style.display = 'none';"><i class="fa-solid fa-circle-xmark"></i></button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Chamado</th>
+                        <th>Avaliação Geral</th>
+                        <th>Cordialidade</th>
+                        <th>Resolução</th>
+                        <th>Receberia o técnico novamente</th>						
+                    </tr>
+                </thead>
+                <tbody>
+					{% for feed in feedbacks_negativos %}
+                    <tr onclick="showDetails({{feed.id}})">
+                        <td>{{feed.chamado}}</td>
+                        <td>{{feed.get_avaliacao_display}}</td>
+                        <td>{{feed.get_cordialidade_display}}</td>
+                        <td>{{feed.get_resolucao_display}}</td>
+                        <td>{{feed.get_receberia_novamente_o_tecnico_display}}</td>
+                    </tr>
+                    <tr id="details-{{feed.id}}" style="display: none;">
+                        <td colspan="5">
+                            <p><strong>Justificativa avaliação geral:</strong> {{feed.avaliacao_justificativa}}</p>
+                            <p><strong>Justificativa avaliação cordialidade:</strong>{{feed.cordialidade_justificativa}}.</p>
+							<p><strong>Sugestão:</strong>{% if feed.comentario %} {{feed.comentario}}{% else %} N/H{% endif %}</p>
+                        </td>
+                    </tr>
+					{% endfor %}
+                    
+                </tbody>
+            </table>
+        </div>		
+        <div class="feedback-card">
+            <div class="row">
+                <div class="col d-flex">
+                    <h3 class="my-auto">Pesquisar Feedback</h3>
+                    <input type="text" class="form-control my-auto" placeholder="Pesquisar nº protocolo" id="protocolo" style="width: 250px; margin-left: auto;">
+                    <button class="btn btn-secondary ms-1 my-auto" onclick="pesquisarFeedback()"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+            </div>
+            <div class="details">
+                <div id="resultado"></div>
+				<div style="display: none;" id="error" class="mt-3 alert alert-danger"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+	function pesquisarFeedback() {
+        // Pega o valor do protocolo no campo de pesquisa
+        const protocolo = document.querySelector('#protocolo').value;
+
+        // Verifica se o protocolo foi informado
+        if (!protocolo) {
+            alert("Por favor, informe um protocolo.");
+            return;
+        }
+
+        // Faz a requisição fetch para a view
+        fetch(`/chamados/pesquisar-feedback/?protocolo=${protocolo}`)
+            .then(response => {
+                if (!response.ok) {
+					console.log(response)
+                    throw new Error('Erro ao buscar o feedback');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Manipulação do retorno da requisição
+                if (data.error) {
+                    // Exibe mensagem de erro
+					document.querySelector('#error').innerHTML = data.error;
+					document.querySelector('#resultado').innerHTML = '';
+					document.querySelector('#error').style.display = 'block';
+                } else {
+					// Limpa a mensagem de erro
+					document.querySelector('#error').style.display = 'none';
+					document.querySelector('#error').innerHTML = '';
+                    // Aqui você pode manipular os dados e exibir no HTML
+                    document.querySelector('#resultado').innerHTML = `
+                        <p><strong>Protocolo:</strong> ${data.protocolo}</p>
+                        <p><strong>Avaliação Geral:</strong> ${data.avaliacao_geral}</p>
+                        <p><strong>Justificativa geral:</strong> ${data.geral_justificativa}</p>
+						<p><strong>Avaliação Cordialidade:</strong> ${data.avaliacao_cordialidade}</p>
+                        <p><strong>Justificativa cordialidade:</strong> ${data.cordialidade_justificativa}</p>
+						<p><strong>Resolução:</strong> ${data.resolucao}</p>
+                        <p><strong>Receberia o técnico novamente:</strong> ${data.receberia_novamente}</p>
+						<p><strong>Sugestões:</strong> ${data.sugestoes}</p>
+                        						
+                        <p><strong>Data Feedback:</strong> ${data.data_feedback}</p>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao processar a requisição. Tente novamente.');
+            });
+    }
+</script>
+{% endblock %}

@@ -3,7 +3,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from datetime import datetime, timedelta
 from django.shortcuts import get_object_or_404
 from .models import (TipoChamado, Secretaria, Setor, Servidor, Chamado, OSImpressora, OSInternet, OSSistemas, Atendente, Mensagem, OSTelefonia, 
-                     PeriodoPreferencial, Pausas_Execucao_do_Chamado, Historico_Designados)
+                     PeriodoPreferencial, Pausas_Execucao_do_Chamado, Historico_Designados, chamadoSatisfacao)
 from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistemasForm, ServidorForm,
                     MensagemForm, AtendenteForm, TipoChamadoForm, OSTelefoniaForm, CriarSetorForm, Form_Agendar_Atendimento,
                     Form_Motivo_Pausa, FormDetalhesDoChamado, FormEditarChamado)
@@ -1317,3 +1317,66 @@ def get_news():
     except requests.exceptions.RequestException as e:
         print(f"Erro ao buscar notícias: {e}")
         return []
+    
+def painel_satisfacao(request):    
+    feedbacks = chamadoSatisfacao.objects.filter(chamado__pesquisa_satisfacao = True)[:90]
+    totais = {
+        'geral': 0,
+        'cordialidade': 0,
+        'negativos_geral': 0,
+        'negativos_cordialidade': 0,
+    }
+    feedbacks_positivos = []
+    feedbacks_negativos = []
+    for feed in feedbacks:
+        totais['geral'] += int(feed.avaliacao)
+        totais['cordialidade'] += int(feed.cordialidade)
+        if int(feed.avaliacao) < 2:
+            totais['negativos_geral'] += 1
+        if int(feed.cordialidade) < 2:
+            totais['negativos_cordialidade'] += 1
+        if int(feed.avaliacao) < 2 or int(feed.cordialidade) < 2:
+            feedbacks_negativos.append(feed)
+        else:
+            feedbacks_positivos.append(feed)
+        
+    context={
+        'feedbacks_positivos': feedbacks_positivos[:15],
+        'feedbacks_negativos': feedbacks_negativos[:15],
+        'media_geral': round(totais['geral'] / feedbacks.count(), 1) if feedbacks.count() > 0 else 0,
+        'media_cordialidade': round(totais['cordialidade'] / feedbacks.count(), 1) if feedbacks.count() > 0 else 0,
+        'qnt_negativos_geral': totais['negativos_geral'],
+        'qnt_negativos_cordialidade': totais['negativos_cordialidade'],
+        'feed_pendentes': chamadoSatisfacao.objects.filter(chamado__pesquisa_satisfacao = False).count(),
+    }
+    
+    return render(request, 'chamados/painel_satisfacao.html', context)
+
+
+def pesquisar_feedback(request):
+    if request.method == 'GET':
+        protocolo = request.GET.get('protocolo')
+        if not protocolo:
+            return JsonResponse({'error': 'Protocolo não fornecido'}, status=400)
+        try:
+            feedback = chamadoSatisfacao.objects.filter(chamado__n_protocolo=protocolo)
+            if not feedback.exists():
+                return JsonResponse({'status':404, 'error': 'Feedback não encontrado para o protocolo fornecido.'}, status=200)
+            feedback = feedback.first()
+            response_data = {
+                'status': 200,
+                'protocolo': feedback.chamado.n_protocolo,
+                'avaliacao_geral': feedback.get_avaliacao_display(),
+                'geral_justificativa': feedback.avaliacao_justificativa if feedback.avaliacao_justificativa else 'N/H',
+                'avaliacao_cordialidade': feedback.get_cordialidade_display(),
+                'cordialidade_justificativa': feedback.cordialidade_justificativa if feedback.cordialidade_justificativa else 'N/H',
+                'resolucao': feedback.get_resolucao_display(),
+                'receberia_novamente': feedback.get_receberia_novamente_o_tecnico_display(),
+                'sugestoes': feedback.comentario if feedback.comentario != '' else 'N/H',
+                
+                'data_feedback': feedback.dt_inclusao.strftime('%d/%m/%Y'),
+            }
+            return JsonResponse(response_data, status=200)
+        except Exception as e:
+            return JsonResponse({'status': 500, 'error': str(e)}, status=200)
+    return JsonResponse({'status':405,'error': 'Método não permitido.'}, status=405)
