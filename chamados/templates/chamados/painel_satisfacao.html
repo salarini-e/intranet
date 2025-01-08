@@ -147,7 +147,7 @@
     }
 
     .details strong {
-        color: #0044cc;
+        color: #000000;
     }
 	@media (min-width: 1400px) {
 		.container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
@@ -207,6 +207,8 @@
                 <thead>
                     <tr>
                         <th>Chamado</th>
+						<th>Técnico</th>
+						<th>Requisitante</th>
                         <th>Avaliação Geral</th>
                         <th>Cordialidade</th>
                         <th>Resolução</th>
@@ -217,6 +219,8 @@
                     {% for feed in feedbacks_positivos %}
                     <tr onclick="showDetails({{feed.id}})">
                         <td>{{feed.chamado}}</td>
+						<td>{{feed.chamado.profissional_designado}}</td>
+						<td>{{feed.chamado.requisitante}}</td>
                         <td>{{feed.get_avaliacao_display}}</td>
                         <td>{{feed.get_cordialidade_display}}</td>
                         <td>{{feed.get_resolucao_display}}</td>
@@ -242,6 +246,8 @@
                 <thead>
                     <tr>
                         <th>Chamado</th>
+						<th>Técnico</th>
+						<th>Requisitante</th>
                         <th>Avaliação Geral</th>
                         <th>Cordialidade</th>
                         <th>Resolução</th>
@@ -252,6 +258,8 @@
 					{% for feed in feedbacks_negativos %}
                     <tr onclick="showDetails({{feed.id}})">
                         <td>{{feed.chamado}}</td>
+						<td>{{feed.chamado.profissional_designado}}</td>
+						<td>{{feed.chamado.requisitante}}</td>
                         <td>{{feed.get_avaliacao_display}}</td>
                         <td>{{feed.get_cordialidade_display}}</td>
                         <td>{{feed.get_resolucao_display}}</td>
@@ -317,16 +325,34 @@
 					document.querySelector('#error').innerHTML = '';
                     // Aqui você pode manipular os dados e exibir no HTML
                     document.querySelector('#resultado').innerHTML = `
-                        <p><strong>Protocolo:</strong> ${data.protocolo}</p>
-                        <p><strong>Avaliação Geral:</strong> ${data.avaliacao_geral}</p>
-                        <p><strong>Justificativa geral:</strong> ${data.geral_justificativa}</p>
-						<p><strong>Avaliação Cordialidade:</strong> ${data.avaliacao_cordialidade}</p>
-                        <p><strong>Justificativa cordialidade:</strong> ${data.cordialidade_justificativa}</p>
-						<p><strong>Resolução:</strong> ${data.resolucao}</p>
-                        <p><strong>Receberia o técnico novamente:</strong> ${data.receberia_novamente}</p>
-						<p><strong>Sugestões:</strong> ${data.sugestoes}</p>
-                        						
-                        <p><strong>Data Feedback:</strong> ${data.data_feedback}</p>
+						<div class="row mt-4">
+						<div class="col-lg-6 col-sm-12">
+							<div class="w-100 d-flex">
+							<h3 class="">Chamado</h3>
+							<a class="ms-1 btn" style="border-color: black !important;" href="${data.chamado.link}" target='_blank'><i class="fa-regular fa-eye"></i></a>
+							</div>
+                        	<p><strong>Protocolo:</strong> ${data.chamado.n_protocolo}</p>                        
+							<p><strong>Secretaria:</strong> ${data.chamado.secretaria}</p>
+							<p><strong>Telefone:</strong> ${data.chamado.telefone}</p>
+							<p><strong>Requisitante:</strong> ${data.chamado.requisitante}</p>
+							<p><strong>Profissional Designado:</strong> ${data.chamado.profissional_designado}</p>
+							<p><strong>Descrição:</strong> ${data.chamado.descricao}</p>
+							<p><strong>Contato:</strong> ${data.chamado.telefone}</p>
+							<p><strong>Data de abertura:</strong> ${data.chamado.data_abertura}</p>							
+						</div>
+						<div class="col-lg-6 col-sm-12">
+							<h3>Feedback</h3>
+							<p><strong>Avaliação Geral:</strong> ${data.avaliacao_geral}</p>
+							<p><strong>Justificativa geral:</strong> ${data.geral_justificativa}</p>
+							<p><strong>Avaliação Cordialidade:</strong> ${data.avaliacao_cordialidade}</p>
+							<p><strong>Justificativa cordialidade:</strong> ${data.cordialidade_justificativa}</p>
+							<p><strong>Resolução:</strong> ${data.resolucao}</p>
+							<p><strong>Receberia o técnico novamente:</strong> ${data.receberia_novamente}</p>
+							<p><strong>Sugestões:</strong> ${data.sugestoes}</p>
+													
+							<p><strong>Data Feedback:</strong> ${data.data_feedback}</p>							
+						</div>
+						</div>
                     `;
                 }
             })

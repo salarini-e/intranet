@@ -1359,13 +1359,22 @@ def pesquisar_feedback(request):
         if not protocolo:
             return JsonResponse({'error': 'Protocolo não fornecido'}, status=400)
         try:
-            feedback = chamadoSatisfacao.objects.filter(chamado__n_protocolo=protocolo)
+            feedback = chamadoSatisfacao.objects.filter(chamado__n_protocolo__icontains=protocolo)
             if not feedback.exists():
                 return JsonResponse({'status':404, 'error': 'Feedback não encontrado para o protocolo fornecido.'}, status=200)
             feedback = feedback.first()
             response_data = {
                 'status': 200,
-                'protocolo': feedback.chamado.n_protocolo,
+                'chamado': {
+                            'n_protocolo': feedback.chamado.n_protocolo,
+                            'secretaria': feedback.chamado.secretaria.nome,
+                            'telefone': feedback.chamado.telefone,
+                            'requisitante': feedback.chamado.requisitante.nome,
+                            'profissional_designado': feedback.chamado.profissional_designado.nome_servidor if feedback.chamado.profissional_designado else 'N/H',
+                            'descricao': feedback.chamado.descricao,
+                            'link': reverse('chamados:detalhes', args=[feedback.chamado.hash]),
+                            'data_abertura': feedback.chamado.dt_inclusao.strftime('%d/%m/%Y'),
+                            },
                 'avaliacao_geral': feedback.get_avaliacao_display(),
                 'geral_justificativa': feedback.avaliacao_justificativa if feedback.avaliacao_justificativa else 'N/H',
                 'avaliacao_cordialidade': feedback.get_cordialidade_display(),
