@@ -59,7 +59,7 @@
             padding: 40px;
             border-radius: 15px;
         }
-        #display-2, #display-3, #display-4 {
+        #display-2, #display-3, #display-4, #display-5 {
             display: none;
         }
     </style>
@@ -194,6 +194,26 @@
             
         </div>       
     </div>
+    <div id="display-5" class="container-fluid m-auto">
+        <h3 class="text-white text-center">Notícias</h3>
+        <div class="row px-4 my-4">
+            <div class="col-12 d-flex">
+                <div style="width: 80%;" class="row m-auto">
+                    {% if noticias %}
+                        {% for noticia in noticias %}
+                        <div class="news-card col-5 {% if forloop.counter|divisibleby:2 %}me-auto ms-1{% else %}ms-auto me-1{% endif %}">
+                                <h5>{{ noticia.title }}</h5>
+                                <p>{{ noticia.description|default:"Descrição indisponível." }}</p>
+                                <a href="{{ noticia.url }}" target="_blank">Leia mais</a>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center">Não foi possível carregar as notícias no momento.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
     <style>
         .ind p{
             color: aliceblue;
@@ -215,6 +235,17 @@
         .col-graf{
             max-height: 252px !important;
         }
+        .news-card {
+            background: rgba(255, 255, 255, 0.8);
+            color: black;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            padding: 15px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        .news-card a {
+            color: #007bff;
+        }
         /* .ind-item{
 
         } */
@@ -235,7 +266,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let display_atual = 1;
-        let display_max = 4;
+        let display_max = 5;
         function next_display() {
             for (let i = 1; i <= display_max; i++) {
                 $('#display-' + i).fadeOut(); // Esconde com fade
@@ -316,7 +347,7 @@
         setTimeout(function() {
             location.reload();
         }, 120000); 
-        
+    
     </script>
 </body>
 </html>

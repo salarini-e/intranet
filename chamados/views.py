@@ -1281,6 +1281,12 @@ def new_dashboard(request):
         # {'id': 'chartD3', 'tipo': 'line', 'dados': date_generic(), 'opcoes': options_generic('a'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
 
     ]
+    try:
+        noticias = get_news()
+    except Exception as e:
+        print(f"Erro ao buscar notícias: {e}")
+        noticias = []
+
     context= {
         'graficos': graficos,
         'totais': {
@@ -1291,5 +1297,23 @@ def new_dashboard(request):
         },
         'taxa_eficiencia': round(Chamado.objects.filter(status='4', dt_inclusao__gte=timezone.now() - timedelta(days=30)).count() / Chamado.objects.filter(dt_inclusao__gte=timezone.now() - timedelta(days=30)).count() * 100, 1) if Chamado.objects.filter(dt_inclusao__gte=timezone.now() - timedelta(days=30)).count() > 0 else 0,
         'media_diaria': round(Chamado.objects.filter(dt_inclusao__gte=timezone.now() - timedelta(days=30)).count() / 30, 1),
+        'noticias': noticias
     }
     return render(request, 'chamados/new_dashboard.html', context)
+
+import requests
+def get_news():
+    API_KEY = 'a562b55b3c794fff85f3492b3a72fa15'
+    API_URL = f'https://newsapi.org/v2/everything?q="Nova+Friburgo"+OR+"tecnologias+da+informação"&apiKey={API_KEY}'
+
+    
+    try:
+        response = requests.get(API_URL)
+        response.raise_for_status()  # Levanta uma exceção para códigos de status HTTP de erro
+        data = response.json()
+        if data['status'] == 'ok':
+            return data['articles'][:6]  # Retorna apenas as 5 primeiras notícias
+        return []
+    except requests.exceptions.RequestException as e:
+        print(f"Erro ao buscar notícias: {e}")
+        return []

@@ -51,31 +51,75 @@ def date_chamados_por_secretaria():
 
     return data
 
+# def date_chamados_por_atendente():
+#     chamados = (
+#         Chamado.objects.values("profissional_designado__nome_servidor")  # Agrupar pelos nomes das secretarias
+#         .annotate(total=Count("id"))  # Contar os chamados por secretaria
+#         .order_by("-total")  # Ordenar por número de chamados em ordem decrescente
+#     )
+#     cores = loadColors(len(chamados))
+
+#     data = {
+#         "labels": [],
+#         "datasets": [{
+#             'label': 'Total de chamados',
+#             'data': [], 
+#             'backgroundColor': cores,
+#             'borderColor': cores,
+#             'borderWidth': 1
+
+#         }]
+#     }
+
+#     for chamado in chamados:
+#         nome = chamado["profissional_designado__nome_servidor"].split()[0] if chamado["profissional_designado__nome_servidor"] else "Sem atendente"
+#         data["labels"].append(nome)  # Nome da secretaria
+#         data["datasets"][0]["data"].append(chamado["total"])  # Total de chamados
+#     # print(data)
+#     return data
+
+from django.db.models import Count, Q
+
 def date_chamados_por_atendente():
+    # Contando chamados atendidos e pendentes
     chamados = (
-        Chamado.objects.values("profissional_designado__nome_servidor")  # Agrupar pelos nomes das secretarias
-        .annotate(total=Count("id"))  # Contar os chamados por secretaria
-        .order_by("-total")  # Ordenar por número de chamados em ordem decrescente
+        Chamado.objects
+        .values("profissional_designado__nome_servidor")  # Agrupar pelos nomes dos atendentes
+        .annotate(
+            total_atendidos=Count("id", filter=Q(status=4)),  # Contar chamados atendidos (status = 4)
+            total_pendentes=Count("id", filter=~Q(status=4)),  # Contar chamados pendentes (não status = 4)
+        )
+        .order_by("-total_atendidos")  # Ordenar por chamados atendidos em ordem decrescente
     )
+
     cores = loadColors(len(chamados))
 
     data = {
-        "labels": [],
-        "datasets": [{
-            'label': 'Total de chamados',
-            'data': [], 
-            'backgroundColor': cores,
-            'borderColor': cores,
-            'borderWidth': 1
-
-        }]
+        "labels": [],  # Nomes dos atendentes
+        "datasets": [
+            {
+                'label': 'Chamados Atendidos',
+                'data': [],
+                'backgroundColor': cores,  # Cores para os chamados atendidos
+                'borderColor': cores,
+                'borderWidth': 1
+            },
+            {
+                'label': 'Chamados Pendentes',
+                'data': [],
+                'backgroundColor': '#FF5733',  # Cores para os chamados pendentes
+                'borderColor': '#FF5733',
+                'borderWidth': 1
+            }
+        ]
     }
 
     for chamado in chamados:
         nome = chamado["profissional_designado__nome_servidor"].split()[0] if chamado["profissional_designado__nome_servidor"] else "Sem atendente"
-        data["labels"].append(nome)  # Nome da secretaria
-        data["datasets"][0]["data"].append(chamado["total"])  # Total de chamados
-    # print(data)
+        data["labels"].append(nome)  # Nome do atendente
+        data["datasets"][0]["data"].append(chamado["total_atendidos"])  # Chamados atendidos
+        data["datasets"][1]["data"].append(chamado["total_pendentes"])  # Chamados pendentes
+
     return data
 
 def date_chamados_por_mes():
@@ -233,6 +277,59 @@ def options_chamados_por_secretaria():
                 }
             }
 '''
+# def options_chamados_por_atendente():
+#     return '''{
+#                 responsive: true,
+#                 plugins: {
+#                     datalabels: {
+#                         anchor: 'end', 
+#                         align: 'top',
+#                         color: 'white',
+#                     },
+#                     title: {
+#                         display: false,
+#                         text: 'Chamados por Atendentes',
+#                         color: '#FFFFFF',
+#                         font: {
+#                             size: 8
+#                         }
+#                        },
+#                     legend: {
+#                         display: false
+#                     },
+#                     tooltip: {
+#                         callbacks: {
+#                             label: function(context) {
+#                                 return `Total: ${context.raw}`;
+#                             }
+#                         }
+#                     }
+#                 },
+#                 scales: {
+#                     x: {
+#                         ticks: { 
+#                             color: 'white', 
+#                         },
+#                         title: {
+#                             display: false,
+#                             text: 'Atendentes',
+#                             color: 'white'
+#                         }
+#                     },
+#                     y: {
+#                         ticks: { 
+#                             color: 'white', 
+#                         },
+#                         title: {
+#                             display: false,
+#                             text: 'Número de Chamados',
+#                             color: 'white'
+#                         },
+#                         beginAtZero: true
+#                     }
+#                 }
+#             }
+# '''
 def options_chamados_por_atendente():
     return '''{
                 responsive: true,
@@ -249,9 +346,9 @@ def options_chamados_por_atendente():
                         font: {
                             size: 8
                         }
-                       },
+                    },
                     legend: {
-                        display: false
+                        display: true
                     },
                     tooltip: {
                         callbacks: {
@@ -283,7 +380,9 @@ def options_chamados_por_atendente():
                         },
                         beginAtZero: true
                     }
-                }
+                },
+                barThickness: 30,  // Ajuste para garantir que as barras fiquem lado a lado
+                indexAxis: 'x'  // Organizar as barras horizontalmente
             }
 '''
 
