@@ -156,7 +156,7 @@ def date_chamados_por_mes():
     for row in result:
         mes = datetime.strptime(row.mes, "%Y-%m-%d")
         mes_formatado = mes.strftime("%B de %Y")
-        data["labels"].append(mes_formatado)
+        data["labels"].append(mes_formatado.capitalize())
         data["datasets"][0]["data"].append(row.total)
     # print(data)
     return data
