@@ -211,6 +211,8 @@
                 <thead>
                     <tr>
                         <th>Chamado</th>
+                        <th>Data inclusão</th>
+                        <th>Data fechamento</th>
 						<th>Técnico</th>
 						<th>Requisitante</th>
                         <th>Secretaria</th>
@@ -221,6 +223,8 @@
                     {% for chamado in feed_pendentes %}
                     <tr onclick="showDetails({{feed.id}})">
                         <td>{{chamado.n_protocolo}}</td>
+                        <td>{{chamado.dt_inclusao|date:"d/m/Y"}}</td>
+                        <td>{{chamado.dt_fechamento|date:"d/m/Y"}}</td>
 						<td>{{chamado.profissional_designado}}</td>
 						<td>{{chamado.requisitante}}</td>
                         <td>{{chamado.secretaria}}</td>
@@ -252,11 +256,14 @@
                 <thead>
                     <tr>
                         <th>Chamado</th>
+                        <th>Data finalizado</th>
+                        <th>Data feed</th>
 						<th>Técnico</th>
 						<th>Requisitante</th>
                         <th>Avaliação Geral</th>
                         <th>Cordialidade</th>
                         <th>Resolução</th>
+                        <th>Ret. téc. novamente</th>						
                         <th>Sugestões</th>
                     </tr>
                 </thead>
@@ -264,12 +271,15 @@
                     {% for feed in feedbacks_positivos %}
                     <tr onclick="showDetails({{feed.id}})">
                         <td>{{feed.chamado}}</td>
+                        <td>{{feed.chamado.dt_fechamento|date:"d/m/Y"}}</td>
+                        <td>{{feed.dt_inclusao|date:"d/m/Y"}}</td>
 						<td>{{feed.chamado.profissional_designado}}</td>
 						<td>{{feed.chamado.requisitante}}</td>
                         <td>{{feed.get_avaliacao_display}}</td>
                         <td>{{feed.get_cordialidade_display}}</td>
                         <td>{{feed.get_resolucao_display}}</td>
                         <td>{{feed.get_receberia_novamente_o_tecnico_display}}</td>
+                        <td>{% if feed.comentario %}<i class="fa-solid fa-comment"></i>{% else %}<i class="fa-solid fa-comment-slash"></i>{% endif %}</td>
                     </tr>
                     <tr id="details-{{feed.id}}" style="display: none;">
                         <td colspan="5">                            
@@ -297,24 +307,30 @@
                 <thead>
                     <tr>
                         <th>Chamado</th>
+                        <th>Data finalizado</th>
+                        <th>Data feed</th>
 						<th>Técnico</th>
 						<th>Requisitante</th>
                         <th>Avaliação Geral</th>
                         <th>Cordialidade</th>
                         <th>Resolução</th>
-                        <th>Receberia o técnico novamente</th>						
+                        <th>Ret. téc.novamente</th>								
+                        <th>Sugestões</th>			
                     </tr>
                 </thead>
                 <tbody>
 					{% for feed in feedbacks_negativos %}
                     <tr onclick="showDetails({{feed.id}})">
                         <td>{{feed.chamado}}</td>
+                        <td>{{feed.chamado.dt_fechamento|date:"d/m/Y"}}</td>
+                        <td>{{feed.dt_inclusao|date:"d/m/Y"}}</td>  
 						<td>{{feed.chamado.profissional_designado}}</td>
 						<td>{{feed.chamado.requisitante}}</td>
                         <td>{{feed.get_avaliacao_display}}</td>
                         <td>{{feed.get_cordialidade_display}}</td>
                         <td>{{feed.get_resolucao_display}}</td>
                         <td>{{feed.get_receberia_novamente_o_tecnico_display}}</td>
+                        <td>{% if feed.comentario %}<i class="fa-solid fa-comment"></i>{% else %}<i class="fa-solid fa-comment-slash"></i>{% endif %}</td>
                     </tr>
                     <tr id="details-{{feed.id}}" style="display: none;">
                         <td colspan="5">
