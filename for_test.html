@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .menu {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .menu button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .menu button:hover {
+            background-color: #0056b3;
+        }
+
+        .board {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        .column {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 16px;
+            min-width: 250px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .column-header h3 {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .column-header h3:hover {
+            text-decoration: underline;
+        }
+
+        .column-header .drag-handle {
+            cursor: grab;
+            margin-right: 8px;
+        }
+
+        .column-header button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: auto;
+            
+        }
+
+        .column-header button:hover {
+            background-color: #218838;
+        }
+
+        .card {
+            background-color: #e3e4e8;
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 8px;
+            margin-bottom: 0px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card.dragging {
+            opacity: 0.5;
+        }
+
+        .card input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .card-container{
+            width: calc(100% - 12px);
+            min-height: 45px;
+            background-color: rgba(245, 245, 245, 0.363);
+            border-radius: 4px;
+            padding: 0px 8px 8px 8px;
+        }
+        .card-container button{
+            cursor: pointer;
+            margin-left: auto; 
+            border: none; 
+            padding: 4px 8px; 
+            border-radius: 4px;
+            background-color: #ffffff00;
+        }
+        .fake-card {
+            height: 50px;
+            background-color: transparent;
+          
+            display: none;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content textarea,
+        .modal-content input {
+            width: calc(100% - 16px);
+            margin-top: 5px;
+            margin-bottom: 10px;
+            padding: 8px;
+            font-size: 1em;
+        }
+
+        .subtasks {
+            margin-top: 16px;
+        }
+
+        .subtasks input {
+            margin-right: 8px;
+        }
+
+        .modal-buttons {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .modal-buttons button {
+            padding: 8px 16px;
+            margin-left: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <h2>Kanban Board</h2>
+        <button onclick="addColumn()">+ Adicionar coluna</button>
+    </div>
+
+    <div class="board" id="board"></div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <label for="card-title">Título:</label>
+            <input type="text" id="card-title" placeholder="Enter card title">
+            
+            <label for="card-description">Descrição:</label>
+            <textarea id="card-description" placeholder="Enter description"></textarea>
+
+            <label for="card-assignee">Atribuição:</label>
+            <input type="text" id="card-assignee" placeholder="Enter assignee">
+
+            <label for="card-date">Dt. Execução:</label>
+            <input type="date" id="card-date">
+
+            <div class="subtasks">
+                <h4>Subtarefas:</h4>
+                <div id="subtasks-container"></div>
+                <button type="button" onclick="addSubtask()">+ Add Subtarefa</button>
+            </div>
+
+            <div class="modal-buttons">
+                <button onclick="closeModal()">Cancelar</button>
+                <button onclick="saveCardDetails()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const board = document.getElementById('board');
+        const modal = document.getElementById('modal');
+        const cardTitle = document.getElementById('card-title');
+        const cardDescription = document.getElementById('card-description');
+        const cardAssignee = document.getElementById('card-assignee');
+        const cardDate = document.getElementById('card-date');
+        const subtasksContainer = document.getElementById('subtasks-container');
+
+        let activeCard = null;
+        let draggedCard = null;
+        let draggedColumn = null;
+
+        function logActivity(activity) {
+            console.log(`Activity: ${activity}`);
+        }
+
+        function addColumn() {
+            const columnId = Date.now();
+            const column = document.createElement('div');
+            column.className = 'column';
+            column.dataset.columnId = columnId;
+
+            column.innerHTML = `
+                <div class="column-header">
+                    <span class="drag-handle" draggable="true">☰</span>
+                    <h3 contenteditable="true">Nova coluna</h3>
+                    <button onclick="addCard(this)">+</button>
+                </div>
+                <div class="card-container"></div>                
+            `;
+
+            const dragHandle = column.querySelector('.drag-handle');
+
+            dragHandle.addEventListener('dragstart', (e) => {
+                draggedColumn = column;
+                e.dataTransfer.setData('text/plain', '');
+            });
+
+            column.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const draggingOver = document.elementFromPoint(e.clientX, e.clientY);
+                if (draggingOver && draggingOver.classList.contains('column') && draggedColumn) {
+                    const board = draggingOver.parentNode;
+                    board.insertBefore(draggedColumn, draggingOver.nextSibling);
+                }
+            });
+
+            dragHandle.addEventListener('dragend', () => {
+                draggedColumn = null;
+            });
+
+            column.querySelector('.card-container').addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            column.querySelector('.card-container').addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (draggedCard) {
+                    const container = column.querySelector('.card-container');
+                    container.appendChild(draggedCard);
+                    
+                    logActivity(`Moved card: ${draggedCard.dataset.cardId} to column: ${column.dataset.columnId}`);
+                }
+            });
+
+            board.appendChild(column);
+            logActivity(`Added new column: ${columnId}`);
+        }
+
+        function addCard(button) {
+            const column = button.closest('.column');
+            const cardId = Date.now();
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.draggable = true;
+            card.dataset.cardId = cardId;
+            card.dataset.subtasks = JSON.stringify([]);
+
+            card.innerHTML = `
+                <input type="checkbox" onclick="event.stopPropagation()">
+                <span contenteditable="true">Nova tarefa</span>
+                <button onclick="event.stopPropagation(); deleteCard(this)">x</button>
+            `;
+
+            card.addEventListener('click', () => openModal(card));
+
+            card.addEventListener('dragstart', () => {
+                draggedCard = card;
+            });
+
+            card.addEventListener('dragend', () => {
+                draggedCard = null;
+            });
+
+            column.querySelector('.card-container').appendChild(card);
+            logActivity(`Added new card: ${cardId} in column: ${column.dataset.columnId}`);
+        }
+
+        function deleteCard(button) {
+            const response = confirm(`Você tem certeza que deseja excluir a tarefa ${button.closest('.card').querySelector('span').textContent }?`);
+            if (response){
+                const card = button.closest('.card');
+                const cardId = card.dataset.cardId;
+                const column = card.closest('.column');
+                const container = column.querySelector('.card-container');
+                card.remove();
+                logActivity(`Deleted card: ${cardId} from column: ${column.dataset.columnId}`);
+            }            
+        }
+
+        function openModal(card) {
+            activeCard = card;
+            cardTitle.value = card.querySelector('span').textContent || '';
+            cardDescription.value = card.dataset.description || '';
+            cardAssignee.value = card.dataset.assignee || '';
+            cardDate.value = card.dataset.date || '';
+
+            subtasksContainer.innerHTML = '';
+            const subtasks = JSON.parse(card.dataset.subtasks || '[]');
+            subtasks.forEach(task => addSubtask(task.text, task.completed));
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            activeCard = null;
+        }
+
+        function saveCardDetails() {
+            if (activeCard) {
+                activeCard.querySelector('span').textContent = cardTitle.value;
+                activeCard.dataset.description = cardDescription.value;
+                activeCard.dataset.assignee = cardAssignee.value;
+                activeCard.dataset.date = cardDate.value;
+
+                const subtasks = [];
+                document.querySelectorAll('.subtask').forEach((subtask) => {
+                    const text = subtask.querySelector('input[type="text"]').value;
+                    const completed = subtask.querySelector('input[type="checkbox"]').checked;
+                    subtasks.push({ text, completed });
+                });
+
+                activeCard.dataset.subtasks = JSON.stringify(subtasks);
+                closeModal();
+                logActivity(`Updated card: ${activeCard.dataset.cardId}`);
+            }
+        }
+
+        function addSubtask(text = '', completed = false) {
+            const subtask = document.createElement('div');
+            subtask.className = 'subtask';
+            subtask.innerHTML = `
+                <input type="checkbox" ${completed ? 'checked' : ''}>
+                <input type="text" value="${text}">
+            `;
+            subtasksContainer.appendChild(subtask);
+        }
+
+        addColumn();
+    </script>
+</body>
+</html>

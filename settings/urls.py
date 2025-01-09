@@ -18,5 +18,6 @@ urlpatterns = [
     path('agricultura/', include('agricultura_codigobarras.urls')),
     path('notificacoes/', include('notificacoes.urls')),
     path('noticias/', include('noticias.urls')),
+    path('projetos/', include('gestao_de_projetos.urls')),
 ]   
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
