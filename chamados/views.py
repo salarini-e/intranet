@@ -1388,11 +1388,11 @@ def painel_satisfacao(request):
 
     # Preparar os dados para o gráfico
     cores = {
-        'Excelente': '#A8E6A1',  # Verde Claro
-        'Ótimo': '#80D4FF',      # Azul Claro
-        'Bom': '#FFB74D',        # Laranja Claro
-        'Regular': '#FFEB3B',    # Amarelo Claro
-        'Ruim': '#FF9CC7',       # Rosa Claro
+        'Excelente': '#007AFF',  # Verde Claro
+        'Ótimo': '#34C759',      # Azul Claro
+        'Bom': '#FFD60A',        # Laranja Claro
+        'Regular': '#FF9500',    # Amarelo Claro
+        'Ruim': '#FF3B30',       # Rosa Claro
     }
 
 
