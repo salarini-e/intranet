@@ -1347,7 +1347,7 @@ def painel_satisfacao(request):
         'media_cordialidade': round(totais['cordialidade'] / feedbacks.count(), 1) if feedbacks.count() > 0 else 0,
         'qnt_negativos_geral': totais['negativos_geral'],
         'qnt_negativos_cordialidade': totais['negativos_cordialidade'],
-        'feed_pendentes': chamadoSatisfacao.objects.filter(chamado__pesquisa_satisfacao = False).count(),
+        'feed_pendentes': Chamado.objects.filter(status='4', pesquisa_satisfacao=False),
     }
     
     return render(request, 'chamados/painel_satisfacao.html', context)

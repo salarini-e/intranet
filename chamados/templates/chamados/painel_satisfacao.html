@@ -119,8 +119,11 @@
     #avnegativas table th {
         background-color: #ff0000;
         color: #fff;
+    }   
+    #avpendente table th {
+        background-color: #ffae00;
+        color: #fff;
     }
-
     table tbody tr:hover {
         background-color: #f1f1f1;
         cursor: pointer;
@@ -168,7 +171,8 @@
 <div class="dashboard">
     <header class="header d-flex">
         <h1>Painel de Pesquisa de Satisfação</h1>
-		<p class="my-auto ms-auto">Feedbacks pendentes: {{feed_pendentes}}</p>
+		<p class="my-auto ms-auto">Feedbacks pendentes: {{feed_pendentes.count}}</p>
+        <button id="btnToogle-avpendente" style="color: #ffae00;" class="btn" onclick="toogleFeedback('avpendente')"><i class="fa-regular fa-eye-slash"></i></button>  
     </header>
 	<div class="row">
 		<div class="col">
@@ -194,12 +198,53 @@
                 <p>{{qnt_negativos_cordialidade}}</p>
             </div>
         </div>        				
+        <div id="avpendente" class="feedbacks">
+            <div class="row">
+				<div class="col d-flex">
+					<h2 class="my-auto">Feedbacks Pendentes</h2>
+					<button class="btn ms-auto my-auto" style="color: #ffae00;" onclick="toogleFeedback('avpendente')">
+						<i class="fa-solid fa-circle-xmark"></i>                        
+					</button>
+				</div>
+			</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Chamado</th>
+						<th>Técnico</th>
+						<th>Requisitante</th>
+                        <th>Secretaria</th>
+                        <th>Contato</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for chamado in feed_pendentes %}
+                    <tr onclick="showDetails({{feed.id}})">
+                        <td>{{chamado.n_protocolo}}</td>
+						<td>{{chamado.profissional_designado}}</td>
+						<td>{{chamado.requisitante}}</td>
+                        <td>{{chamado.secretaria}}</td>
+                        <td>{{chamado.telefone}}</td>
+                    </tr>
+                    <tr id="details-{{feed.id}}" style="display: none;">
+                        <td colspan="5">                            
+							<p><strong>Sugestão:</strong> {% if feed.comentario %} {{feed.comentario}}{% else %} N/H{% endif %}</p>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">Nenhum feedback pendente</td>
+                    </tr>
+					{% endfor %}
+                </tbody>
+            </table>
+        </div>
         <div class="feedbacks">
             <div class="row">
 				<div class="col d-flex">
 					<h2 class="my-auto">Últimos Feedbacks</h2>
-					<button class="btn ms-auto my-auto" style="color: #ff0000;" onclick="document.getElementById('avnegativas').style.display = 'block';">
-						<i class="fa-regular fa-eye"></i> Negativos	
+					<button id="btnToogle-avnegativas" class="btn ms-auto my-auto" style="color: #ff0000;" onclick="toogleFeedback('avnegativas')">
+						<i class="fa-regular fa-eye-slash"></i>
 					</button>
 				</div>
 			</div>
@@ -231,15 +276,21 @@
 							<p><strong>Sugestão:</strong> {% if feed.comentario %} {{feed.comentario}}{% else %} N/H{% endif %}</p>
                         </td>
                     </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">Nenhum feedback</td>
+                    </tr>                    
 					{% endfor %}
                 </tbody>
             </table>
         </div>
-		<div id="avnegativas" class="feedbacks" style="display: none;">
+		<div id="avnegativas" class="feedbacks" style="display: block;">
             <div class="row">
                 <div class="col d-flex">
-                    <h2 class="my-auto">Últimos Feedbacks Negativos</h2>
-                    <button style="font-size: 14pt;" class="btn ms-auto my-auto" onclick="document.getElementById('avnegativas').style.display = 'none';"><i class="fa-solid fa-circle-xmark"></i></button>
+                    <h2 class="my-auto">Últimos Feedbacks Negativos</h2>        
+                    <button class="btn ms-auto my-auto" style="color: #ff0000;" onclick="toogleFeedback('avnegativas')">
+						<i class="fa-solid fa-circle-xmark"></i>                        
+					</button>            
                 </div>
             </div>
             <table>
@@ -272,6 +323,10 @@
 							<p><strong>Sugestão:</strong>{% if feed.comentario %} {{feed.comentario}}{% else %} N/H{% endif %}</p>
                         </td>
                     </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">Nenhum feedback negativo</td>
+                    </tr>
 					{% endfor %}
                     
                 </tbody>
@@ -293,6 +348,10 @@
     </div>
 </div>
 <script>
+    function toogleFeedback(id){
+        document.getElementById(id).style.display = document.getElementById(id).style.display === 'none' ? 'block' : 'none';
+        document.getElementById(`btnToogle-${id}`).innerHTML = document.getElementById(id).style.display === 'none' ? '<i class="fa-regular fa-eye"></i>' : '<i class="fa-regular fa-eye-slash"></i>';
+    }
 	function pesquisarFeedback() {
         // Pega o valor do protocolo no campo de pesquisa
         const protocolo = document.querySelector('#protocolo').value;
