@@ -1317,17 +1317,23 @@ def get_news():
     except requests.exceptions.RequestException as e:
         print(f"Erro ao buscar notícias: {e}")
         return []
-    
-def painel_satisfacao(request):    
-    feedbacks = chamadoSatisfacao.objects.filter(chamado__pesquisa_satisfacao = True)[:90]
+    from django.shortcuts import render
+from django.db.models import Count
+from .models import chamadoSatisfacao, Chamado
+
+def painel_satisfacao(request):
+    feedbacks = chamadoSatisfacao.objects.filter(chamado__pesquisa_satisfacao=True)[:90]
+
     totais = {
         'geral': 0,
         'cordialidade': 0,
         'negativos_geral': 0,
         'negativos_cordialidade': 0,
     }
+
     feedbacks_positivos = []
     feedbacks_negativos = []
+
     for feed in feedbacks:
         totais['geral'] += int(feed.avaliacao)
         totais['cordialidade'] += int(feed.cordialidade)
@@ -1339,8 +1345,79 @@ def painel_satisfacao(request):
             feedbacks_negativos.append(feed)
         else:
             feedbacks_positivos.append(feed)
-        
-    context={
+
+    # Dados agrupados por atendente e avaliação
+    avaliacao_atendentes = chamadoSatisfacao.objects.values(
+        'chamado__profissional_designado__nome_servidor', 'avaliacao'
+    ).annotate(total=Count('avaliacao')).order_by('chamado__profissional_designado__nome_servidor', 'avaliacao')
+
+    # Dados agrupados por atendente e cordialidade
+    cordialidade_atendentes = chamadoSatisfacao.objects.values(
+        'chamado__profissional_designado__nome_servidor', 'cordialidade'
+    ).annotate(total=Count('cordialidade')).order_by('chamado__profissional_designado__nome_servidor', 'cordialidade')
+
+    # Estruturar os dados para o gráfico
+    avaliacao_labels = dict(chamadoSatisfacao.AVALIACAO_CHOICES).values()  # Valores legíveis ('Ruim', 'Regular', etc.)
+    atendente_labels = []
+    
+    data_avaliacao_por_atendente = {}
+    data_cordialidade_por_atendente = {}
+
+    # Processar os dados de avaliação
+    for dado in avaliacao_atendentes:
+        nome_atendente = dado['chamado__profissional_designado__nome_servidor']
+        avaliacao = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(dado['avaliacao'])
+        total = dado['total']
+
+        if nome_atendente not in data_avaliacao_por_atendente:
+            data_avaliacao_por_atendente[nome_atendente] = {label: 0 for label in avaliacao_labels}
+            atendente_labels.append(nome_atendente)
+
+        data_avaliacao_por_atendente[nome_atendente][avaliacao] = total
+
+    # Processar os dados de cordialidade
+    for dado in cordialidade_atendentes:
+        nome_atendente = dado['chamado__profissional_designado__nome_servidor']
+        cordialidade = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(dado['cordialidade'])
+        total = dado['total']
+
+        if nome_atendente not in data_cordialidade_por_atendente:
+            data_cordialidade_por_atendente[nome_atendente] = {label: 0 for label in avaliacao_labels}
+
+        data_cordialidade_por_atendente[nome_atendente][cordialidade] = total
+
+    # Preparar os dados para o gráfico
+    cores = {
+        'Excelente': '#A8E6A1',  # Verde Claro
+        'Ótimo': '#80D4FF',      # Azul Claro
+        'Bom': '#FFB74D',        # Laranja Claro
+        'Regular': '#FFEB3B',    # Amarelo Claro
+        'Ruim': '#FF9CC7',       # Rosa Claro
+    }
+
+
+    datasets_avaliacao = []
+    datasets_cordialidade = []
+
+    for avaliacao in avaliacao_labels:
+        datasets_avaliacao.append({
+            'label': f'{avaliacao}',
+            'data': [data_avaliacao_por_atendente[atendente][avaliacao] for atendente in atendente_labels],
+            'backgroundColor': cores[avaliacao],
+            'borderColor': cores[avaliacao].replace('0.2', '1'),
+            'borderWidth': 1,
+        })
+
+        datasets_cordialidade.append({
+            'label': f'{avaliacao}',
+            'data': [data_cordialidade_por_atendente[atendente][avaliacao] for atendente in atendente_labels],
+            'backgroundColor': cores[avaliacao],
+            'borderColor': cores[avaliacao].replace('0.2', '1'),
+            'borderWidth': 1,
+        })
+
+    atendente_labels_2 = [atendente.split()[0] for atendente in atendente_labels]
+    context = {
         'feedbacks_positivos': feedbacks_positivos[:15],
         'feedbacks_negativos': feedbacks_negativos[:15],
         'media_geral': round(totais['geral'] / feedbacks.count(), 1) if feedbacks.count() > 0 else 0,
@@ -1348,8 +1425,11 @@ def painel_satisfacao(request):
         'qnt_negativos_geral': totais['negativos_geral'],
         'qnt_negativos_cordialidade': totais['negativos_cordialidade'],
         'feed_pendentes': Chamado.objects.filter(status='4', pesquisa_satisfacao=False),
+        'atendente_labels': atendente_labels_2,
+        'datasets_avaliacao': datasets_avaliacao,
+        'datasets_cordialidade': datasets_cordialidade,
     }
-    
+
     return render(request, 'chamados/painel_satisfacao.html', context)
 
 

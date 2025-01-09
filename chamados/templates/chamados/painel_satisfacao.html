@@ -361,8 +361,24 @@
 				<div style="display: none;" id="error" class="mt-3 alert alert-danger"></div>
             </div>
         </div>
+        <div class="feedback-card mt-4">
+            <div class="row">
+                <div class="col">
+                    <h3>Análise gráfica</h3>
+                    <div class="row mt-4">
+                        <div class="col">
+                            <canvas id="graficoAvaliacao"></canvas>                            
+                        </div>
+                        <div class="col">
+                            <canvas id="graficoCordialidade"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     function toogleFeedback(id){
         document.getElementById(id).style.display = document.getElementById(id).style.display === 'none' ? 'block' : 'none';
@@ -436,5 +452,71 @@
                 alert('Erro ao processar a requisição. Tente novamente.');
             });
     }
+    
+         // Gráfico de Avaliação Geral
+    const ctxAvaliacao = document.getElementById('graficoAvaliacao').getContext('2d');
+    new Chart(ctxAvaliacao, {
+        type: 'bar',
+        data: {
+            labels: {{ atendente_labels|safe }},  // Nomes dos atendentes
+            datasets: {{ datasets_avaliacao|safe }},  // Dados da avaliação geral
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Avaliação por Técnico'
+                }
+            },
+            scales: {
+                x: { stacked: true },
+                y: { beginAtZero: true, stacked: true }
+            },
+            elements: {
+                bar: {
+                    barThickness: 40,
+                    maxBarThickness: 50,
+                    borderSkipped: false,
+                }
+            }
+        }
+    });
+
+        // Gráfico de Cordialidade
+    const ctxCordialidade = document.getElementById('graficoCordialidade').getContext('2d');
+    new Chart(ctxCordialidade, {
+        type: 'bar',
+        data: {
+            labels: {{ atendente_labels|safe }},  // Nomes dos atendentes
+            datasets: {{ datasets_cordialidade|safe }},  // Dados da cordialidade
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Cordialidade por Técnico'
+                }
+            },
+            scales: {
+                x: { stacked: true },
+                y: { beginAtZero: true, stacked: true }
+            },
+            elements: {
+                bar: {
+                    barThickness: 40,
+                    maxBarThickness: 50,
+                    borderSkipped: false,
+                }
+            }
+        }
+    });
 </script>
 {% endblock %}
