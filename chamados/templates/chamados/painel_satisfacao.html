@@ -378,6 +378,9 @@
                     <h3>Análise gráfica</h3>
                     <div class="row mt-4">
                         <div class="col">
+                            <canvas id="graficoGeral"></canvas>
+                        </div>
+                        <div class="col">
                             <canvas id="graficoAvaliacao"></canvas>                            
                         </div>
                         <div class="col">
@@ -463,7 +466,36 @@
                 alert('Erro ao processar a requisição. Tente novamente.');
             });
     }
-    
+    const ctxGeral = document.getElementById('graficoGeral').getContext('2d');
+    new Chart(ctxGeral, {
+        type: 'bar',
+        data: {
+            labels: {{ labels_geral|safe }},  // Labels: 'Excelente', 'Ótimo', etc.
+            datasets: {{ datasets_geral|safe }},  // Datasets: Avaliação e Cordialidade
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false,
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Avaliação e Cordialidade Geral do TI',
+                }
+            },
+            scales: {
+                x: {
+                    stacked: false,  // Barras lado a lado
+                },
+                y: {
+                    beginAtZero: true,
+                    stacked: false,  // Garantir lado a lado
+                }
+            }
+        }
+    });
          // Gráfico de Avaliação Geral
     const ctxAvaliacao = document.getElementById('graficoAvaliacao').getContext('2d');
     new Chart(ctxAvaliacao, {

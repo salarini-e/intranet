@@ -1322,6 +1322,18 @@ def get_news():
     from django.shortcuts import render
 from django.db.models import Count
 from .models import chamadoSatisfacao, Chamado
+from colorsys import rgb_to_hls, hls_to_rgb
+
+def ajustar_tom(cor_hex, fator):
+    """Ajusta o tom de uma cor em formato hexadecimal."""
+    cor_hex = cor_hex.lstrip('#')
+    r, g, b = tuple(int(cor_hex[i:i+2], 16) for i in (0, 2, 4))
+    r, g, b = [x / 255.0 for x in (r, g, b)]
+    h, l, s = rgb_to_hls(r, g, b)
+    l = max(0, min(1, l * fator))  # Ajusta a luminosidade
+    r, g, b = hls_to_rgb(h, l, s)
+    return f'#{int(r*255):02X}{int(g*255):02X}{int(b*255):02X}'
+
 
 def painel_satisfacao(request):
     feedbacks = chamadoSatisfacao.objects.filter(chamado__pesquisa_satisfacao=True)[:90]
@@ -1431,6 +1443,50 @@ def painel_satisfacao(request):
         'datasets_avaliacao': datasets_avaliacao,
         'datasets_cordialidade': datasets_cordialidade,
     }
+
+    # Dados agrupados por avaliação (geral)
+    avaliacao_geral = chamadoSatisfacao.objects.values('avaliacao').annotate(total=Count('avaliacao'))
+    cordialidade_geral = chamadoSatisfacao.objects.values('cordialidade').annotate(total=Count('cordialidade'))
+
+    # Estruturar os dados para o gráfico geral
+    data_geral_avaliacao = {label: 0 for label in avaliacao_labels}
+    data_geral_cordialidade = {label: 0 for label in avaliacao_labels}
+    
+    cores_avaliacao = {label: ajustar_tom(cor, 1.2) for label, cor in cores.items()}  # Tons mais claros
+    cores_cordialidade = {label: ajustar_tom(cor, 0.8) for label, cor in cores.items()}  # Tons mais escuros
+
+    # Processar os dados de avaliação geral
+    for dado in avaliacao_geral:
+        avaliacao = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(dado['avaliacao'])
+        total = dado['total']
+        data_geral_avaliacao[avaliacao] = total
+
+    # Processar os dados de cordialidade geral
+    for dado in cordialidade_geral:
+        cordialidade = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(dado['cordialidade'])
+        total = dado['total']
+        data_geral_cordialidade[cordialidade] = total
+
+    dataset_geral_avaliacao = {
+    'label': 'Avaliação',
+    'data': [data_geral_avaliacao[label] for label in avaliacao_labels],
+    'backgroundColor': [cores_avaliacao[label] for label in avaliacao_labels],
+    'borderColor': [cores[label] for label in avaliacao_labels],
+    'borderWidth': 1,
+    }
+
+    dataset_geral_cordialidade = {
+        'label': 'Cordialidade',
+        'data': [data_geral_cordialidade[label] for label in avaliacao_labels],
+        'backgroundColor': [cores_cordialidade[label] for label in avaliacao_labels],
+        'borderColor': [cores[label] for label in avaliacao_labels],
+        'borderWidth': 1,
+    }
+    # Atualizar o contexto com os dados do gráfico geral
+    context.update({
+        'labels_geral': list(avaliacao_labels),  # Labels das opções de avaliação
+        'datasets_geral': [dataset_geral_avaliacao, dataset_geral_cordialidade],
+    })
 
     return render(request, 'chamados/painel_satisfacao.html', context)
 
