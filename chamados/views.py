@@ -1528,6 +1528,6 @@ def feedback_in_excel(request):
 
     # Retorno como arquivo de download
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = f 'attachment; filename="feedbacks_{hoje}.xlsx"'
+    response['Content-Disposition'] = f'attachment; filename="feedbacks_{hoje}.xlsx"'
     workbook.save(response)
     return response
