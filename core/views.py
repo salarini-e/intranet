@@ -87,6 +87,7 @@ def post_satisfacao(request):
                 cordialidade_justificativa=data.get('cordialidade_justificativa'),
                 resolucao=data.get('satisfacao_resolucao'),
                 receberia_novamente_o_tecnico=data.get('receberia_novamente_o_tecnico'),
+                tempo_espera = data.get('tempo_espera'),
                 comentario=data.get('comentario')
             )
             
