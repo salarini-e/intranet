@@ -1483,6 +1483,7 @@ def feedback_in_excel(request):
     # Cabeçalhos
     headers = [
         "Chamado",
+        "Técnico",
         "Avaliação",
         "Justificativa da Avaliação",
         "Cordialidade",
@@ -1506,15 +1507,16 @@ def feedback_in_excel(request):
     feedbacks = chamadoSatisfacao.objects.all()
     for row_num, feedback in enumerate(feedbacks, 2):
         sheet.cell(row=row_num, column=1).value = feedback.chamado.n_protocolo
-        sheet.cell(row=row_num, column=2).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.avaliacao, "N/A")
-        sheet.cell(row=row_num, column=3).value = feedback.avaliacao_justificativa
-        sheet.cell(row=row_num, column=4).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.cordialidade, "N/A")
-        sheet.cell(row=row_num, column=5).value = feedback.cordialidade_justificativa
-        sheet.cell(row=row_num, column=6).value = dict(chamadoSatisfacao.RESOLUCAO_CHOICES).get(feedback.resolucao, "N/A")
-        sheet.cell(row=row_num, column=7).value = dict(chamadoSatisfacao.RECEBER_CHOICES).get(feedback.receberia_novamente_o_tecnico, "N/A")
-        sheet.cell(row=row_num, column=8).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.tempo_espera, "N/A")
-        sheet.cell(row=row_num, column=9).value = feedback.comentario
-        sheet.cell(row=row_num, column=10).value = feedback.dt_inclusao.strftime('%d/%m/%Y %H:%M:%S')
+        sheet.cell(row=row_num, column=2).value = feedback.chamado.profissional_designado.nome_servidor if feedback.chamado.profissional_designado else "N/H"
+        sheet.cell(row=row_num, column=3).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.avaliacao, "N/A")
+        sheet.cell(row=row_num, column=4).value = feedback.avaliacao_justificativa
+        sheet.cell(row=row_num, column=5).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.cordialidade, "N/A")
+        sheet.cell(row=row_num, column=6).value = feedback.cordialidade_justificativa
+        sheet.cell(row=row_num, column=7).value = dict(chamadoSatisfacao.RESOLUCAO_CHOICES).get(feedback.resolucao, "N/A")
+        sheet.cell(row=row_num, column=8).value = dict(chamadoSatisfacao.RECEBER_CHOICES).get(feedback.receberia_novamente_o_tecnico, "N/A")
+        sheet.cell(row=row_num, column=9).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.tempo_espera, "N/A")
+        sheet.cell(row=row_num, column=10).value = feedback.comentario
+        sheet.cell(row=row_num, column=11).value = feedback.dt_inclusao.strftime('%d/%m/%Y %H:%M:%S')
 
     # Ajuste de largura das colunas (opcional)
     for col in sheet.columns:
