@@ -24,6 +24,8 @@ from django.views.decorators.http import require_POST
 
 from .functions import carregar_novos_filtros, filtrar_chamados
 import pandas as pd
+import openpyxl
+from openpyxl.styles import Font
 
 from .graficos import (date_chamados_por_secretaria, options_chamados_por_secretaria,
                        data_generic, options_generic, date_chamados_por_atendente, 
@@ -1469,3 +1471,63 @@ def pesquisar_feedback(request):
         except Exception as e:
             return JsonResponse({'status': 500, 'error': str(e)}, status=200)
     return JsonResponse({'status':405,'error': 'Método não permitido.'}, status=405)
+
+
+def feedback_in_excel(request):
+    # Criação do arquivo Excel
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    hoje = datetime.now().strftime('%d/%m/%Y_%H:%M:%S')
+    sheet.title = "Feedbacks"
+
+    # Cabeçalhos
+    headers = [
+        "Chamado",
+        "Avaliação",
+        "Justificativa da Avaliação",
+        "Cordialidade",
+        "Justificativa da Cordialidade",
+        "Resolução",
+        "Receberia Novamente o Técnico",
+        "Tempo de Espera",
+        "Comentário",
+        "Data de Inclusão"
+    ]
+    
+    # Estilo para o cabeçalho
+    header_font = Font(bold=True)
+    
+    for col_num, header in enumerate(headers, 1):
+        cell = sheet.cell(row=1, column=col_num)
+        cell.value = header
+        cell.font = header_font
+
+    # Dados dos feedbacks
+    feedbacks = chamadoSatisfacao.objects.all()
+    for row_num, feedback in enumerate(feedbacks, 2):
+        sheet.cell(row=row_num, column=1).value = feedback.chamado.n_protocolo
+        sheet.cell(row=row_num, column=2).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.avaliacao, "N/A")
+        sheet.cell(row=row_num, column=3).value = feedback.avaliacao_justificativa
+        sheet.cell(row=row_num, column=4).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.cordialidade, "N/A")
+        sheet.cell(row=row_num, column=5).value = feedback.cordialidade_justificativa
+        sheet.cell(row=row_num, column=6).value = dict(chamadoSatisfacao.RESOLUCAO_CHOICES).get(feedback.resolucao, "N/A")
+        sheet.cell(row=row_num, column=7).value = dict(chamadoSatisfacao.RECEBER_CHOICES).get(feedback.receberia_novamente_o_tecnico, "N/A")
+        sheet.cell(row=row_num, column=8).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.tempo_espera, "N/A")
+        sheet.cell(row=row_num, column=9).value = feedback.comentario
+        sheet.cell(row=row_num, column=10).value = feedback.dt_inclusao.strftime('%d/%m/%Y %H:%M:%S')
+
+    # Ajuste de largura das colunas (opcional)
+    for col in sheet.columns:
+        max_length = 0
+        col_letter = col[0].column_letter  # Obter letra da coluna
+        for cell in col:
+            if cell.value:
+                max_length = max(max_length, len(str(cell.value)))
+        adjusted_width = max_length + 2
+        sheet.column_dimensions[col_letter].width = adjusted_width
+
+    # Retorno como arquivo de download
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f 'attachment; filename="feedbacks_{hoje}.xlsx"'
+    workbook.save(response)
+    return response

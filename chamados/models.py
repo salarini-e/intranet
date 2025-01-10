@@ -710,6 +710,7 @@ class chamadoSatisfacao(models.Model):
     cordialidade_justificativa = models.TextField(verbose_name='Justificativa da cordialidade', null=True, blank=True)
     resolucao = models.CharField(max_length=2, verbose_name='O problema foi resolvido de forma satisfatória?', null=True, choices=RESOLUCAO_CHOICES)
     receberia_novamente_o_tecnico = models.CharField(max_length=1, verbose_name='Você receberia novamente o mesmo técnico?', null=True, choices=RECEBER_CHOICES)
+    tempo_espera = models.CharField(max_length=1, verbose_name='Como você avalia o tempo de espera para o atendimento?', null=True, choices=AVALIACAO_CHOICES)
     comentario = models.TextField(verbose_name='Você possui alguma sugestão para melhorar o nosso serviço?', null=True, blank=True)
     dt_inclusao = models.DateTimeField(auto_now_add=True, verbose_name='Data de inclusão')
 

@@ -171,6 +171,7 @@
 <div class="dashboard">
     <header class="header d-flex">
         <h1>Painel de Pesquisa de Satisfação</h1>
+        <a href="{% url 'chamados:download_excel_feedback' %}" class="my-auto ms-3" style="color: #3ea126"><i class="fa-solid fa-file-arrow-down fa-2x"></i></a>
 		<p class="my-auto ms-auto">Feedbacks pendentes: {{feed_pendentes.count}}</p>
         <button id="btnToogle-avpendente" style="color: #ffae00;" class="btn" onclick="toogleFeedback('avpendente')"><i class="fa-regular fa-eye-slash"></i></button>  
     </header>
