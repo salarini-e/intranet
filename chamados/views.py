@@ -1417,7 +1417,9 @@ def painel_satisfacao(request):
 
     context = {
         'feedbacks_positivos': feedbacks_positivos[:15],
+        'feedbacks_positivos_count': len(feedbacks_positivos),
         'feedbacks_negativos': feedbacks_negativos[:15],
+        'feedbacks_negativos_count': len(feedbacks_negativos),
         'media_geral': round(totais['geral'] / len(feedbacks), 1) if feedbacks else 0,
         'media_cordialidade': round(totais['cordialidade'] / len(feedbacks), 1) if feedbacks else 0,
         'qnt_negativos_geral': totais['negativos_geral'],

@@ -202,7 +202,7 @@
         <div id="avpendente" class="feedbacks">
             <div class="row">
 				<div class="col d-flex">
-					<h2 class="my-auto">Feedbacks Pendentes</h2>
+					<h2 class="my-auto">Feedbacks Pendentes ({{feed_pendentes.count}})</h2>
 					<button class="btn ms-auto my-auto" style="color: #ffae00;" onclick="toogleFeedback('avpendente')">
 						<i class="fa-solid fa-circle-xmark"></i>                        
 					</button>
@@ -247,7 +247,7 @@
         <div class="feedbacks">
             <div class="row">
 				<div class="col d-flex">
-					<h2 class="my-auto">Últimos Feedbacks</h2>
+					<h2 class="my-auto">Feedbacks Positivos ({{feedbacks_positivos_count}})</h2>
 					<button id="btnToogle-avnegativas" class="btn ms-auto my-auto" style="color: #ff0000;" onclick="toogleFeedback('avnegativas')">
 						<i class="fa-regular fa-eye-slash"></i>
 					</button>
@@ -326,7 +326,7 @@
 		<div id="avnegativas" class="feedbacks" style="display: block;">
             <div class="row">
                 <div class="col d-flex">
-                    <h2 class="my-auto">Últimos Feedbacks Negativos</h2>        
+                    <h2 class="my-auto">Feedbacks Negativos ({{feedbacks_negativos_count}})</h2>        
                     <button class="btn ms-auto my-auto" style="color: #ff0000;" onclick="toogleFeedback('avnegativas')">
 						<i class="fa-solid fa-circle-xmark"></i>                        
 					</button>            
