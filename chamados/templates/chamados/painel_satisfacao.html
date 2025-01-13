@@ -284,16 +284,31 @@
                             {{feed.get_icon_cordialidade|safe}}
                             {{feed.get_cordialidade_display}}
                         </td>
-                        <td>{{feed.get_resolucao_display}}</td>
-                        <td>{{feed.get_receberia_novamente_o_tecnico_display}}</td>
+                        <td>
+                            {% if feed.resolucao == 'sc' %}
+                                <i class="fa-solid fa-check-double me-2" style="color: #46c53a;" ></i>
+                            {% elif feed.resolucao == 'sp' %}
+                                <i class="fa-solid fa-list-check me-2" style="color: #ffd900;" ></i>
+                            {% elif feed.resolucao == 'n' %}
+                                <i class="fa-solid fa-xmark me-2" style="color: #bd2121;" ></i>
+                            {% endif %}
+                            {{feed.get_resolucao_display}}</td>
+                        <td>
+                            {% if feed.receberia_novamente_o_tecnico == 's' %}
+                                <i class="fa-solid fa-check me-2" style="color: #46c53a;" ></i>
+                            {% elif feed.receberia_novamente_o_tecnico == 'n' %}
+                                <i class="fa-solid fa-xmark me-2" style="color: #bd2121;" ></i>
+                            {% endif %}
+                            {{feed.get_receberia_novamente_o_tecnico_display}}</td>
                         <td>
                             {% if feed.tempo_espera %}
+                            {{feed.get_icon_tempo_espera|safe}}
                             {{feed.get_tempo_espera_display}}
                             {% else %}
-                            N/H
+                            <i class="fa-solid fa-ghost me-2"></i>Não há
                             {% endif %}
                         </td>
-                        <td>{% if feed.comentario %}<i class="fa-solid fa-comment"></i>{% else %}<i class="fa-solid fa-comment-slash"></i>{% endif %}</td>
+                        <td>{% if feed.comentario %}<i style="color: #b2c0ff;" class="fa-solid fa-comment"></i>{% else %}<i class="fa-solid fa-comment-slash"></i>{% endif %}</td>
                     </tr>
                     <tr id="details-{{feed.id}}" style="display: none;">
                         <td colspan="5">                            
@@ -452,7 +467,7 @@
                     // Aqui você pode manipular os dados e exibir no HTML
                     document.querySelector('#resultado').innerHTML = `
 						<div class="row mt-4">
-						<div class="col-lg-6 col-sm-12">
+						<div class="col-lg-4 col-sm-12">
 							<div class="w-100 d-flex">
 							<h3 class="">Chamado</h3>
 							<a class="ms-1 btn" style="border-color: black !important;" href="${data.chamado.link}" target='_blank'><i class="fa-regular fa-eye"></i></a>
@@ -466,7 +481,13 @@
 							<p><strong>Contato:</strong> ${data.chamado.telefone}</p>
 							<p><strong>Data de abertura:</strong> ${data.chamado.data_abertura}</p>							
 						</div>
-						<div class="col-lg-6 col-sm-12">
+                        <div class="col-lg-4 col-sm-12">
+                            <h3>Relatório Atendente</h3>
+                            <p><strong>Tipo de serviço:</strong> ${data.chamado.tipo}</p>
+                            <p><strong>Serviço realizado:</strong> ${data.chamado.subtipo}</p>
+                            <p><strong>Descrição do serviço:</strong> ${data.chamado.relatorio}</p>
+                        </div>
+						<div class="col-lg-4 col-sm-12">
 							<h3>Feedback</h3>
 							<p><strong>Avaliação Geral:</strong> ${data.avaliacao_geral}</p>
 							<p><strong>Justificativa geral:</strong> ${data.geral_justificativa}</p>
@@ -474,6 +495,7 @@
 							<p><strong>Justificativa cordialidade:</strong> ${data.cordialidade_justificativa}</p>
 							<p><strong>Resolução:</strong> ${data.resolucao}</p>
 							<p><strong>Receberia o técnico novamente:</strong> ${data.receberia_novamente}</p>
+                            <p><strong>Tempo de espera:</strong> ${data.tempo_espera}</p>
 							<p><strong>Sugestões:</strong> ${data.sugestoes}</p>
 													
 							<p><strong>Data Feedback:</strong> ${data.data_feedback}</p>							

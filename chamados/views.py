@@ -1454,6 +1454,9 @@ def pesquisar_feedback(request):
                             'requisitante': feedback.chamado.requisitante.nome,
                             'profissional_designado': feedback.chamado.profissional_designado.nome_servidor if feedback.chamado.profissional_designado else 'N/H',
                             'descricao': feedback.chamado.descricao,
+                            'tipo': feedback.chamado.tipo.nome,
+                            'subtipo': feedback.chamado.subtipo.nome,
+                            'relatorio': feedback.chamado.relatorio,
                             'link': reverse('chamados:detalhes', args=[feedback.chamado.hash]),
                             'data_abertura': feedback.chamado.dt_inclusao.strftime('%d/%m/%Y'),
                             },
@@ -1463,6 +1466,7 @@ def pesquisar_feedback(request):
                 'cordialidade_justificativa': feedback.cordialidade_justificativa if feedback.cordialidade_justificativa else 'N/H',
                 'resolucao': feedback.get_resolucao_display(),
                 'receberia_novamente': feedback.get_receberia_novamente_o_tecnico_display(),
+                'tempo_espera': feedback.get_tempo_espera_display(),
                 'sugestoes': feedback.comentario if feedback.comentario != '' else 'N/H',
                 
                 'data_feedback': feedback.dt_inclusao.strftime('%d/%m/%Y'),

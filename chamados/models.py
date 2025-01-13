@@ -718,26 +718,27 @@ class chamadoSatisfacao(models.Model):
         verbose_name = 'Satisfação do atendimento'
         verbose_name_plural = 'Satisfações dos atendimentos'
 
+    def get_icon(self, valor):
+        if valor == '4':
+            return '<i style="color:#007AFF;" class="fa-solid fa-face-grin me-2 satisfacao-icon"></i>'
+        elif valor == '3':
+            return '<i style="color: #FF9500;"  class="fa-solid fa-face-smile me-2 satisfacao-icon"></i>'
+        elif valor == '2':
+            return '<i style="color: #FFD60A;" class="fa-solid fa-face-meh me-2 satisfacao-icon"></i>'
+        elif valor == '1':
+            return '<i style="color: #FF9500;" class="fa-solid fa-face-frown me-2 satisfacao-icon mb-2"></i>'
+        elif valor == '0':
+            return '<i style="color: #FF3B30;" class="fa-solid fa-face-angry me-2 satisfacao-icon mb-2""></i>'
+        else:
+            return '<i class="fa-solid fa-ghost"></i>'
     def get_icon_avaliacao(self):
-        if self.avaliacao == '4':
-            return '<i style="color:#007AFF;" class="fa-solid fa-face-grin me-2 satisfacao-icon"></i>'
-        elif self.avaliacao == '3':
-            return '<i style="color: #FF9500;"  class="fa-solid fa-face-smile me-2 satisfacao-icon"></i>'
-        elif self.avaliacao == '2':
-            return '<i style="color: #FFD60A;" class="fa-solid fa-face-meh me-2 satisfacao-icon"></i>'
-        elif self.avaliacao == '1':
-            return '<i style="color: #FF9500;" class="fa-solid fa-face-frown me-2 satisfacao-icon mb-2"></i>'
-        elif self.avaliacao == '0':
-            return '<i style="color: #FF3B30;" class="fa-solid fa-face-angry me-2 satisfacao-icon mb-2""></i>'
-        
+        valor = self.avaliacao
+        return self.get_icon(valor)
+    
     def get_icon_cordialidade(self):
-        if self.cordialidade == '4':
-            return '<i style="color:#007AFF;" class="fa-solid fa-face-grin me-2 satisfacao-icon"></i>'
-        elif self.cordialidade == '3':
-            return '<i style="color: #FF9500;"  class="fa-solid fa-face-smile me-2 satisfacao-icon"></i>'
-        elif self.cordialidade == '2':
-            return '<i style="color: #FFD60A;" class="fa-solid fa-face-meh me-2 satisfacao-icon"></i>'
-        elif self.cordialidade == '1':
-            return '<i style="color: #FF9500;" class="fa-solid fa-face-frown me-2 satisfacao-icon mb-2"></i>'
-        elif self.cordialidade == '0':
-            return '<i style="color: #FF3B30;" class="fa-solid fa-face-angry me-2 satisfacao-icon mb-2""></i>'
+        valor = self.cordialidade
+        return self.get_icon(valor)
+    
+    def get_icon_tempo_espera(self):
+        valor = self.tempo_espera
+        return self.get_icon(valor)
