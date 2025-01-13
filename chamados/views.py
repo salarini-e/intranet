@@ -166,7 +166,7 @@ def criarChamado(request, sigla):
             chamado.gerar_hash()
             chamado.gerar_protocolo()
 
-            message.success(request, 'Chamado criado com sucesso! Seu protocolo é {}'.format(chamado.n_protocolo))
+            message.success(request, 'Chamado {} criado com sucesso! Não esqueça de responder nossa pesquisa de satisfação quando seu chamado for finalizado!'.format(chamado.n_protocolo))
             mensagem, status = Email_Chamado(chamado).chamado_criado()
             if status == 400:
                 message.error(request, mensagem)
