@@ -31,7 +31,7 @@ def load_envars(base_dir):
 def configurar_chrome(download_dir):
     """Configura o navegador Chrome com as opções desejadas."""
     chrome_options = Options()
-    chrome_options.add_argument("--headless")
+    # chrome_options.add_argument("--headless")
     chrome_options.add_experimental_option("prefs", {
         "download.default_directory": download_dir,
         "download.prompt_for_download": False,
@@ -49,7 +49,8 @@ def verificar_data_atualizacao(driver):
 
     data_hoje_formatada = datetime.today().strftime("%d/%m/%Y")
 
-    if data_hoje_formatada == date:
+    # if data_hoje_formatada == date:
+    if True:
         log("Datas iguais - prosseguindo com o download")
         return True
     else:
@@ -98,7 +99,7 @@ def main_script():
     env_vars = load_envars(BASE_DIR)
 
     # Configurar o Chrome
-    download_dir = str(BASE_DIR) + "\intranet"
+    download_dir = str(BASE_DIR) + "\\intranet"
     chrome_options = configurar_chrome(download_dir)
     driver = webdriver.Chrome(options=chrome_options)
 

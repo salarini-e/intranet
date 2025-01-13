@@ -265,6 +265,7 @@
                         <th>Cordialidade</th>
                         <th>Resolução</th>
                         <th>Ret. téc. novamente</th>						
+                        <th>Tempo de espera</th>
                         <th>Sugestões</th>
                     </tr>
                 </thead>
@@ -285,6 +286,13 @@
                         </td>
                         <td>{{feed.get_resolucao_display}}</td>
                         <td>{{feed.get_receberia_novamente_o_tecnico_display}}</td>
+                        <td>
+                            {% if feed.tempo_espera %}
+                            {{feed.get_tempo_espera_display}}
+                            {% else %}
+                            N/H
+                            {% endif %}
+                        </td>
                         <td>{% if feed.comentario %}<i class="fa-solid fa-comment"></i>{% else %}<i class="fa-solid fa-comment-slash"></i>{% endif %}</td>
                     </tr>
                     <tr id="details-{{feed.id}}" style="display: none;">
@@ -320,7 +328,8 @@
                         <th>Avaliação Geral</th>
                         <th>Cordialidade</th>
                         <th>Resolução</th>
-                        <th>Ret. téc.novamente</th>								
+                        <th>Ret. téc.novamente</th>	
+                        <th>Tempo de espera</th>							
                         <th>Sugestões</th>			
                     </tr>
                 </thead>
@@ -341,6 +350,13 @@
                         </td>
                         <td>{{feed.get_resolucao_display}}</td>
                         <td>{{feed.get_receberia_novamente_o_tecnico_display}}</td>
+                        <td>
+                            {% if feed.tempo_espera %}
+                            {{feed.get_tempo_espera_display}}
+                            {% else %}
+                            N/H
+                            {% endif %}
+                        </td>
                         <td>{% if feed.comentario %}<i class="fa-solid fa-comment"></i>{% else %}<i class="fa-solid fa-comment-slash"></i>{% endif %}</td>
                     </tr>
                     <tr id="details-{{feed.id}}" style="display: none;">
@@ -387,6 +403,11 @@
                             <canvas id="graficoCordialidade"></canvas>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <canvas id="graficoTempoEspera"></canvas>
                 </div>
             </div>
         </div>
