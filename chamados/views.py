@@ -1334,7 +1334,7 @@ def ajustar_tom(cor_hex, fator):
     return f'#{int(r*255):02X}{int(g*255):02X}{int(b*255):02X}'
 
 def painel_satisfacao(request):
-    feedbacks = chamadoSatisfacao.objects.filter(chamado__pesquisa_satisfacao=True)[:90]
+    feedbacks = chamadoSatisfacao.objects.filter(chamado__pesquisa_satisfacao=True).order_by('-id')[:90]
 
     totais = {
         'geral': sum(int(feed.avaliacao) for feed in feedbacks),
@@ -1422,7 +1422,7 @@ def painel_satisfacao(request):
         'media_cordialidade': round(totais['cordialidade'] / len(feedbacks), 1) if feedbacks else 0,
         'qnt_negativos_geral': totais['negativos_geral'],
         'qnt_negativos_cordialidade': totais['negativos_cordialidade'],
-        'feed_pendentes': Chamado.objects.filter(status='4', pesquisa_satisfacao=False),
+        'feed_pendentes': Chamado.objects.filter(status='4', pesquisa_satisfacao=False).order_by('-id'),
         'atendente_labels': atendente_labels,
         'datasets_avaliacao': datasets_avaliacao,
         'datasets_cordialidade': datasets_cordialidade,
