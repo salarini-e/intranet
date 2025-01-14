@@ -84,7 +84,7 @@ INSTALLED_APPS = [
     'notificacoes',
     'dashboards',
     'noticias',
-    'gestao_de_projetos',
+    'projetos',
 ]
 
 MIDDLEWARE = [

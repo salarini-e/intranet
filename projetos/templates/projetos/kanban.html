@@ -34,7 +34,6 @@
         }
 
         .menu button {
-            padding: 8px 16px;
             background-color: #007bff;
             color: white;
             border: none;
@@ -214,8 +213,18 @@
 </head>
 <body>
     <div class="menu">
-        <h2>Kanban Board</h2>
-        <button onclick="addColumn()">+ Adicionar coluna</button>
+        <h2>{{projeto.nome}}</h2>
+        <button class="btn btn-dark ms-auto" onclick="addColumn()">+ Adicionar coluna</button>
+        <div class="ms-2" class="dropdown">
+            <button class="btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-ellipsis"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'projetos:index' %}">Voltar</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </div>
     </div>
 
     <div class="board" id="board"></div>
@@ -264,17 +273,22 @@
             console.log(`Activity: ${activity}`);
         }
 
-        function addColumn() {
+        function createColumn(){
+            //chama view
+            // addColumn(id, nome);
+        }
+        function addColumn(id = `new-${Date.now()}`, nome = 'Nova coluna') {
             const columnId = Date.now();
             const column = document.createElement('div');
             column.className = 'column';
+            column.id = id;
             column.dataset.columnId = columnId;
 
             column.innerHTML = `
-                <div class="column-header">
+                <div class="column-header" data-id="${id}">
                     <span class="drag-handle me-3" draggable="true">☰</span>
-                    <h3 contenteditable="true">Nova coluna</h3>
-                    <button onclick="addCard(this)">+</button>
+                    <h3 contenteditable="true">${nome}</h3>
+                    <button onclick="addCard('${id}')">+</button>
                 </div>
                 <div class="card-container"></div>                
             `;
@@ -291,14 +305,16 @@
                 const draggingOver = document.elementFromPoint(e.clientX, e.clientY);
                 if (draggingOver && draggingOver.classList.contains('column') && draggedColumn) {
                     const board = draggingOver.parentNode;
-                    board.insertBefore(draggedColumn, draggingOver.nextSibling);
+                    board.insertBefore(draggedColumn, draggingOver.nextSibling);                    
+                    console.log(`Coluna ${id} movida para ${draggingOver.dataset.columnId}`);
+                    console.log(draggingOver);
                 }
             });
-
-            dragHandle.addEventListener('dragend', () => {
+            
+            dragHandle.addEventListener('dragend', () => {                                
                 draggedColumn = null;
             });
-
+          
             column.querySelector('.card-container').addEventListener('dragover', (e) => {
                 e.preventDefault();
             });
@@ -306,9 +322,13 @@
             column.querySelector('.card-container').addEventListener('drop', (e) => {
                 e.preventDefault();
                 if (draggedCard) {
+                    console.log(draggedCard)
                     const container = column.querySelector('.card-container');
                     container.appendChild(draggedCard);
-                    
+                    console.log('Card movido:', draggedCard.dataset.cardId)
+                    console.log('Coluna de origem:', draggedCard.dataset.colunaOrigem)
+                    console.log('Movido para coluna:', id)
+                    draggedCard.dataset.colunaOrigem = id;
                     logActivity(`Moved card: ${draggedCard.dataset.cardId} to column: ${column.dataset.columnId}`);
                 }
             });
@@ -317,18 +337,19 @@
             logActivity(`Added new column: ${columnId}`);
         }
 
-        function addCard(button) {
-            const column = button.closest('.column');
+        function addCard(column_id, tarefa = 'Nova tarefa') {
+            const column = document.querySelector(`.column-header[data-id="${column_id}"]`).closest('.column');
             const cardId = Date.now();
             const card = document.createElement('div');
             card.className = 'card';
             card.draggable = true;
             card.dataset.cardId = cardId;
+            card.dataset.colunaOrigem = column_id;
             card.dataset.subtasks = JSON.stringify([]);
 
             card.innerHTML = `
                 <input type="checkbox" onclick="event.stopPropagation()">
-                <span contenteditable="true">Nova tarefa</span>
+                <span contenteditable="true">${tarefa}</span>
                 <button onclick="event.stopPropagation(); deleteCard(this)">x</button>
             `;
 
@@ -406,7 +427,12 @@
             `;
             subtasksContainer.appendChild(subtask);
         }
+        {% for fase in fases %}
+            addColumn({{fase.id}}, '{{fase.nome}}');
 
-        addColumn();
+            {% for tarefa in fase.tarefas %}
+
+            {% endfor %}
+        {% endfor %}
     </script>
 {% endblock %}

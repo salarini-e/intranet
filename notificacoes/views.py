@@ -6,6 +6,7 @@ from django.utils.timesince import timesince
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.contrib.auth.decorators import login_required
 
 
 def get_custom_timesince(notification_time):
@@ -37,6 +38,7 @@ def get_custom_timesince(notification_time):
         months = int(diff.total_seconds() // 2592000)
         return f'{months} mês{"es" if months > 1 else ""}'
         
+@login_required        
 def checkNotificationNew(request):
     servidor = Servidor.objects.get(user=request.user)
     notificacoes = Notificacao.objects.filter(user=servidor, lida=False, new=True)

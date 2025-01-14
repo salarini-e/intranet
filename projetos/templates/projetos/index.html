@@ -1,0 +1,291 @@
+{% extends 'template.html' %}
+{% block main %}
+    <style>
+        /* Estilos gerais */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .menu {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-radius: 8px;
+        }
+
+        .menu button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .menu button:hover {
+            background-color: #0056b3;
+        }
+
+        .board {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-top: 20px;
+        }
+
+        .projetos-container{
+            width: 100%;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .projetos-container h3 {
+            font-size: 1.2em;
+            margin-bottom: 16px;
+            color: #333;
+        }
+        table tbody tr {
+            cursor: pointer;
+        }
+        #id_status{
+            width: 100%;
+            padding: 10px;
+            background-color: #f4f4f9;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: #5e5d5d;            
+            margin-bottom: 20px;
+        }
+
+    </style>
+
+    <div class="menu">
+        <h2>Projetos</h2>
+        <button  type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">+ Adicionar projeto</button>
+    </div>
+
+    <div class="board">
+       <div class="projetos-container px-4">
+        <table class="table">
+            <thead>
+                <th></th>
+                <th>Nome do Projeto</th>
+                <th>Responsável</th>
+                <th>Dt. prevista</th>
+                <th>Descrição</th>
+                <th>Status</th>
+
+            </thead>
+            <tbody>     
+                {% for projeto in projetos %}
+                <tr onclick="clickTable({{projeto.id}})">
+                    <td onclick="aux=1; getDetalhes({{projeto.id}})" style="max-width: 28px; color: #0056b3;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"> 
+                        <i class="fa-solid fa-eye"></i>
+                    </td>
+                    <td>{{projeto.nome}}</td>
+                    <td>
+                        <img class="mb-1 me-2" style="width: 18px; height: 18px;" src="/static/images/user.png" alt="">
+                        {{projeto.servidor}}
+                    </td>
+                    <td>
+                        {{projeto.get_status_icon|safe}}{{projeto.data_fim|date:"d/m/y"}}
+                    </td>
+                    <td style="max-width: 300px;">
+                        {{projeto.descricao}}
+                    </td>
+                    <td style="text-align: center; background-color: {{projeto.get_status_color}}; color: white; max-width: 100px;">
+                        {{projeto.get_status_display}}
+                    </td>
+                </tr>
+                {% endfor %}
+                <!-- <tr onclick="window.location.href='/projetos/1/board/'">
+                    <td onclick="exibirDetalhes(1)" style="max-width: 28px; color: #0056b3;"> 
+                        <i class="fa-solid fa-eye"></i>
+                    </td>
+                    <td>Lorem ipsum dolor</td>
+                    <td>
+                        <img class="mb-1 me-2" style="width: 18px; height: 18px;" src="/static/images/user.png" alt="">
+                        Luis Eduardo Cordeiro Salarini
+                    </td>
+                    <td>
+                        <i class="fa-regular fa-clock me-3" style="color: #FCAA3D;"></i>01/01/22
+                    </td>
+                    <td style="max-width: 300px;">
+                        Lorem ipsum dolor sit amet...
+                    </td>
+                    <td style="text-align: center; background-color: #FCAA3D; color: white; max-width: 100px;">
+                        Em andamento
+                    </td>
+                </tr>
+                <tr onclick="window.location.href='/projetos/1/board/'">
+                    <td onclick="exibirDetalhes(1)" style="max-width: 28px; color: #0056b3;"> 
+                        <i class="fa-solid fa-eye"></i>
+                    </td>
+                    <td>Lorem ipsum dolor</td>
+                    <td>
+                        <img class="mb-1 me-2" style="width: 18px; height: 18px;" src="/static/images/user.png" alt="">
+                        Luis Eduardo Cordeiro Salarini
+                    </td>
+                    <td>
+                        <i class="fa-solid fa-circle-check me-lg-3" style="color: #00C875;"></i>01/01/22
+                    </td>
+                    <td style="max-width: 300px;">
+                        Lorem ipsum dolor sit amet...
+                    </td>
+                    <td style="text-align: center; background-color:#00C875; color: white; max-width: 100px;">
+                        Feito
+                    </td>
+                </tr>
+                <tr onclick="window.location.href='/projetos/1/board/'">
+                    <td onclick="exibirDetalhes(1)" style="max-width: 28px; color: #0056b3;"> 
+                        <i class="fa-solid fa-eye"></i>
+                    </td>
+                    <td>Lorem ipsum dolor</td>
+                    <td>
+                        <img class="mb-1 me-2" style="width: 18px; height: 18px;" src="/static/images/user.png" alt="">
+                        Luis Eduardo Cordeiro Salarini
+                    </td>
+                    <td>
+                        <i class="fa-solid fa-circle-pause me-3" style="color: #da2e48;"></i>01/01/22
+                    </td>
+                    <td style="max-width: 300px;">
+                        Lorem ipsum dolor sit amet...
+                    </td>
+                    <td style="text-align: center; background-color: #da2e48; color: white; max-width: 100px;">
+                        Parado
+                    </td>
+                </tr> -->
+
+            </tbody>
+        </table>
+       </div>
+    </div>
+      
+      <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <div>
+            Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+          </div>
+          <div class="dropdown mt-3">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              Dropdown button
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+     
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Novo projeto</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="form-projeto">
+            {% csrf_token %}
+            {{form_projetos}}
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary w-100" style="color: white;" onclick="postCriarProjeto();" data-bs-dismiss="modal"    >Iniciar projeto</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let aux = 0;                    
+    function clickTable(id){
+        if (aux == 0){
+            window.location.href=`/projetos/${id}/board/`;                            
+        }else{
+            aux=0
+        }
+    }
+    function getDetalhes(id){
+        console.log(id)
+    }
+    function addNovoProjeto(id, nome, responsavel, dt_fim, descricao, status){
+        let table = document.querySelector('table tbody');
+        let tr = document.createElement('tr');
+
+        if (status == 'C'){
+            var td_status = `<td style="text-align: center; background-color: #313131; color: white; max-width: 100px;">Planejamento</td>`;
+            var icone = `<i class="fa-solid fa-circle-notch me-3" style="color: #313131;"></i>`;
+        }else if (status == 'E'){
+            var td_status = `<td style="text-align: center; background-color: #FCAA3D; color: white; max-width: 100px;">Em andamento</td>`;
+            var icone = `<i class="fa-regular fa-clock me-3" style="color: #FCAA3D;"></i>`;
+        }else if (status == 'F'){
+            var td_status = `<td style="text-align: center; background-color: #00C875;; color: white; max-width: 100px;">Finalizado</td>`;
+            var icone = `<i class="fa-solid fa-circle-check me-lg-3" style="color: #00C875;"></i>`;
+        }else if (status == 'P'){
+            var td_status = `<td style="text-align: center; background-color: #da2e48; color: white; max-width: 100px;">Parado</td>`;
+            var icone = `<i class="fa-solid fa-circle-pause me-3" style="color: #da2e48;"></i>`;
+        }
+
+        tr.innerHTML = `
+            <td onclick="aux=1; getDetalhse(${id})" style="max-width: 28px; color: #0056b3;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"> 
+                <i class="fa-solid fa-eye"></i>
+            </td>
+            <td>${nome}</td>
+            <td>
+                <img class="mb-1 me-2" style="width: 18px; height: 18px;" src="/static/images/user.png" alt="">
+                ${responsavel}
+            </td>
+            <td>
+                ${icone}${dt_fim}
+            </td>
+            <td style="max-width: 300px;">
+                ${descricao}
+            </td>
+            ${td_status}
+        `;
+        table.appendChild(tr);
+        document.querySelector('#form-projeto').reset();
+    }
+    function postCriarProjeto() {
+        let form = document.querySelector('#form-projeto');
+        let formData = new FormData(form);
+
+        fetch('/projetos/api/criar-projeto/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())  // Garantir que a resposta seja convertida em JSON
+        .then(data => {
+            if (data.status === 200) {
+                // Exibir o projeto na tela, você pode personalizar a função 'addNovoProjeto' como preferir
+                addNovoProjeto(data.projeto.id, data.projeto.nome, data.projeto.responsavel, data.projeto.data_fim, data.projeto.descricao, data.projeto.status);
+            } else {
+                console.error('Erro:', data.erros || 'Erro desconhecido');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao enviar dados:', error);
+        });
+    }
+</script>      
+{% endblock %}
