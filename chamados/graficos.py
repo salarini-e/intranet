@@ -178,7 +178,7 @@ def data_generic(titulo, periodo='dia'):
             'data': [], 
             'backgroundColor': DEFAULT_COLORS[titulo],
             'borderColor': DEFAULT_COLORS[titulo],
-            'borderWidth': 2
+            'borderWidth': 2,
 
         }]
     }

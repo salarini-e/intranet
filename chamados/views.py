@@ -1291,7 +1291,7 @@ def new_dashboard(request):
     context= {
         'graficos': graficos,
         'totais': {
-            'total_chamados': Chamado.objects.filter(dt_inclusao__gte=timezone.now() - timedelta(days=30)).count(),
+            'total_chamados': Chamado.objects.filter(dt_inclusao__gte=timezone.now() - timedelta(days=365)).count(),
             'chamados_abertos': Chamado.objects.filter(status='0', dt_inclusao__gte=timezone.now() - timedelta(days=30)).count(),
             'chamados_pendentes': Chamado.objects.filter(status='2', dt_inclusao__gte=timezone.now() - timedelta(days=30)).count(),
             'chamados_fechados': Chamado.objects.filter(status='4', dt_inclusao__gte=timezone.now() - timedelta(days=30)).count(),            
