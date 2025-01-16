@@ -227,7 +227,18 @@
 						        </span>
 		                        <span class="nav-link-text">Form Fácil</span>
 					        </a>
-					    </li>						
+					    </li>		
+						{% if request.user.is_superuser %}
+						<li class="nav-item">
+					        <a class="nav-link" href="#">
+						        <span class="nav-icon">
+									<i class="fa-solid fa-fingerprint"></i>				
+						        </span>
+		                        <span class="nav-link-text">Ponto</span>
+					        </a>
+					    </li>		
+						{% endif %}
+						
 					    <li class="nav-item">
 					        <a class="nav-link" href="{% url 'base_conhecimento:index' %}">
 						        <span class="nav-icon">

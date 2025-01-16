@@ -1,0 +1,246 @@
+{% extends 'template.html' %}
+{% block title %}Controle de Ponto{% endblock %}
+{% block main %}
+    <h1>Controle de Ponto</h1>
+    <style>
+        .form-group label {
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        .btn-ponto {
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        .btn-entrada {
+            background-color: #34a853;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-saida {
+            background-color: #ea4335;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-entrada:disabled, .btn-saida:disabled {
+            background-color: #a1c4b4;
+        }
+        .btn-entrada:hover {
+            background-color: #2c9c47;
+        }
+        .btn-saida:hover {
+            background-color: #c1351d;
+        }
+        .status {
+            font-weight: 500;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #34a853;
+            margin-top: 15px;
+        }
+        .status.inactive {
+            color: #ea4335;
+        }
+        .total-hours {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1a73e8;
+            margin-top: 20px;
+            text-align: center;
+        }
+        #ponto .nav-link {
+            color: #555555;
+            padding: 10px 20px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+    </style>
+    
+    <div class="container-fluid d-flex" id="ponto">
+        <div class="mx-auto my-5 d-flex flex-column px-0" style="background-color: white; min-width: 50%; border-radius: 5px;">
+            <ul class="nav border-0 nav-tabs" id="pontoTab" style="background-color: #F5F6FE;">
+                <li class="nav-item border-0" >
+                    <a class="nav-link active border-0" id="tabRegistro" data-bs-toggle="tab" href="#registro" aria-controls="registro" aria-selected="true">Registrar Ponto</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link border-0" id="tabHistorico" data-bs-toggle="tab" href="#historico" aria-controls="historico" aria-selected="false">Histórico de Pontos</a>
+                </li>
+            </ul>
+    
+            <div class="tab-content my-5 mx-auto" id="pontoTabContent">
+                <div class="tab-pane fade show active" id="registro" role="tabpanel" aria-labelledby="tabRegistro">
+                    <div class=" p-lg-5 p-sm-1 border-0">                 
+                        <div class="" style="min-width: 300px;">
+                            <div class="d-flex justify-content-center w-100">
+                                <div class="text-center w-100">
+                                    <h3 id="horaAtual">Hora Atual: 00:00:00</h3>
+                                    <div id="status" class="status inactive">Nenhum registro efetuado hoje.</div>
+                                    <div class="d-flex d-grid gap-2 mt-4">
+                                        <button style="color: white;" class="btn py-1 w-100 btn-entrada btn-ponto" id="btnRegistrar" onclick="registrarPonto()">Registrar Ponto</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="historico" role="tabpanel" aria-labelledby="tabHistorico">
+                    <div class="">                       
+                        <div class="p-5">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Entrada</th>
+                                        <th>Saída</th>
+                                        <th>Entrada</th>
+                                        <th>Saída</th>
+                                        <th>Total de Horas</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let estado = '{{estado}}';
+        let historico = [];
+        {% for registro in registros %}
+        historico.push({data:"{{registro.data_registro|date:"d/m/Y"}}", entrada1: "{{registro.entrada1}}", saida1: "{% if registro.saida1 %}{{registro.saida1}}{% else %}{% endif %}", entrada2: "{% if registro.entrada2 %}{{registro.entrada2}}{% else %}{% endif %}", saida2: "{% if registro.saida2 %}{{registro.saida2}}{% else %}{% endif %}", totalHoras: '{{registro.total_horas}}' });
+        {% endfor %}
+        function atualizarHoraAtual() {
+            const agora = new Date();
+            const hora = String(agora.getHours()).padStart(2, '0');
+            const minuto = String(agora.getMinutes()).padStart(2, '0');
+            const segundo = String(agora.getSeconds()).padStart(2, '0');
+            document.getElementById('horaAtual').innerText = `Hora Atual: ${hora}:${minuto}:${segundo}`;
+        }
+
+        setInterval(atualizarHoraAtual, 1000);
+
+        async function enviarRegistro(registro, data) {
+            // Dados de exemplo que serão enviados. Substitua pelos dados reais conforme necessário.
+            const dados = {
+                registro: registro,                
+                data_registro: data, // Data no formato ISO (YYYY-MM-DD)
+                csrf: '{{ csrf_token }}' // Token CSRF para proteção contra CSRF
+            };
+
+            try {
+                // Fazendo a requisição para a API
+                const resposta = await fetch('/ponto/api/enviar-registro/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // Especifica que estamos enviando JSON
+                    },
+                    body: JSON.stringify(dados) // Converte os dados para uma string JSON
+                });
+
+                // Lendo a resposta da API
+                const resultado = await resposta.json();
+
+                // Verificando o status da resposta
+                if (resposta.ok) {
+                    console.log('Registro enviado com sucesso:', resultado);
+                    alert('Registro salvo com sucesso!');
+                    estado = resultado.estado;
+                    hora = resultado.hora;
+                    totalHoras = resultado.totalHoras;
+                    if (estado === 'entrada1') {
+                        statusMessage = `Entrada registrada ${hora}`;
+                        statusClass = 'active';
+                        buttonClass = 'btn-saida';
+                        buttonText = 'Registrar Saída';
+                        historico.push({ data: data, entrada1: hora, saida1: '', entrada2: '', saida2: '', totalHoras: '' });
+                        estado = 'saida1';
+                    } else if (estado === 'saida1') {
+                        statusMessage = `Saída registrada ${hora}`;
+                        statusClass = 'active';
+                        buttonClass = 'btn-entrada';
+                        buttonText = 'Registrar Entrada';
+                        historico[historico.length - 1].saida1 = hora;
+                        estado = 'entrada2';
+                    } else if (estado === 'entrada2') {
+                        statusMessage = `Entrada registrada ${hora}`;
+                        statusClass = 'active';
+                        buttonClass = 'btn-saida';
+                        buttonText = 'Registrar Saída';
+                        historico[historico.length - 1].entrada2 = hora;
+                        estado = 'saida2';
+                    } else if (estado === 'saida2') {
+                        statusMessage = `Saída registrada ${hora}`;;
+                        statusClass = 'active';
+                        buttonClass = 'btn-entrada';
+                        buttonText = 'Registrar Entrada';
+                        historico[historico.length - 1].saida2 = hora;
+                        historico[historico.length - 1].totalHoras = totalHoras;
+                        estado = 'entrada1';
+                    }
+                    atualizarHistorico();
+
+                } else {
+                    console.error('Erro ao enviar registro:', resultado);
+                    alert(`${resultado.message}`);
+                }
+            } catch (erro) {
+                console.error('Erro na requisição:', erro);
+                alert('Ocorreu um erro ao tentar enviar o registro.');
+            }
+        }
+
+        function registrarPonto() {
+            const agora = new Date();
+            const hora = `${agora.getHours()}:${agora.getMinutes()}:${agora.getSeconds()}`;
+            let mes = String(agora.getMonth() + 1).padStart(2, '0');
+            const data = `${agora.getDate()}/${mes}/${agora.getFullYear()}`;
+            let statusMessage = '';
+            let statusClass = 'inactive';
+            let buttonClass = 'btn-entrada';
+            let buttonText = 'Registrar Ponto';
+
+            enviarRegistro(hora, data);
+
+            document.getElementById('status').innerText = statusMessage;
+            document.getElementById('status').classList.remove('inactive');
+            document.getElementById('status').classList.add(statusClass);
+
+            document.getElementById('btnRegistrar').classList.remove('btn-entrada', 'btn-saida');
+            document.getElementById('btnRegistrar').classList.add(buttonClass);
+            document.getElementById('btnRegistrar').innerText = buttonText;
+
+
+            if (estado === 'entrada1') {
+                document.getElementById('btnRegistrar').disabled = false;
+            } else if (estado === 'saida2') {
+                document.getElementById('btnRegistrar').disabled = false;
+            }
+        }
+
+        function atualizarHistorico() {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '';
+
+            historico.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.data}</td>
+                    <td>${item.entrada1}</td>
+                    <td>${item.saida1 || '-'}</td>
+                    <td>${item.entrada2 || '-'}</td>
+                    <td>${item.saida2 || '-'}</td>
+                    <td>${item.totalHoras}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        atualizarHistorico();       
+    </script>
+{% endblock %}

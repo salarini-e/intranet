@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     'dashboards',
     'noticias',
     'projetos',
+    'controle_de_ponto',
 ]
 
 MIDDLEWARE = [
