@@ -1,6 +1,16 @@
 from django.shortcuts import render
 from .models import Registro
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .models import Registro
+from datetime import datetime
+from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+
+
+@login_required
 def index(request):
     agora = datetime.now()
 
@@ -14,6 +24,7 @@ def index(request):
     }
     return render(request, 'controle_de_ponto/index.html', context)
 
+@staff_member_required
 def painel(request):
     registros = Registro.objects.all().order_by('-data_registro','-id')
     context = {
@@ -21,11 +32,6 @@ def painel(request):
     }
     return render(request, 'controle_de_ponto/painel.html', context)
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import json
-from .models import Registro
-from datetime import datetime
 
 @csrf_exempt
 def api_registrar_ponto(request):
