@@ -21,6 +21,8 @@ urlpatterns = [
     path('cadastro-servidor/', views.cadastrar_servidor, name='cadastrar_servidor'),
     path('new-login/', views.new_login, name='new_login'),
 
+    path('envio-meta-servidores/', views.upload_csv_view, name='envio-meta-servidores'),
+
 
     
 ]

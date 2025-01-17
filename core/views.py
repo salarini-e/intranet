@@ -108,3 +108,6 @@ def post_satisfacao(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
     return JsonResponse({'status': 'error', 'message': 'Método não permitido'}, status=405)
+
+def termos_de_uso(request):
+    return render(request, 'termos_de_uso.html')

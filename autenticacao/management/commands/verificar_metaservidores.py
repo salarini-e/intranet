@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 
 def processar_csv():
     # Caminho completo do arquivo CSV
-    csv_path = os.path.join(settings.BASE_DIR, 'grdData.csv')
+    csv_path = os.path.join(settings.MEDIA_ROOT, 'grdData.csv')
     
     # Definindo o caminho para o arquivo de log
     log_path = os.path.join(settings.BASE_DIR, 'matriculas_nao_encontradas.csv')

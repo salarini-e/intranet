@@ -1,0 +1,42 @@
+{% extends 'template.html' %}
+{% block main %}  
+
+<div class="app-content pt-3 p-md-3 p-lg-4">
+    <div class="container d-flex">
+        <div class="card shadow-sm m-auto my-5" style="max-width: 600px;">
+            <div class="card-body">
+                {% if status %}
+                <h5 class="card-title text-success">Arquivo enviado com sucesso!</h5>
+                <p class="card-text">Gostaria de atualizar o banco de dados?</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="ms-auto btn btn-primary">Sim</a>
+                    <a href="#" class="me-auto btn btn-secondary">Não</a>
+                </div>
+                {% else %}
+                <h5 class="card-title">Envie o arquivo CSV</h5>
+                <a href="https://novafriburgo-rj.portaltp.com.br/consultas/pessoal/servidores.aspx">
+                    <small><i class="fa-solid fa-download me-2"></i>Portal da Transparência </small>
+                </a>
+                <form method="post" enctype="multipart/form-data" class="mt-4">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="file" class="form-label">grdData:</label>
+                        <input type="file" name="file" id="file" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100" style="color: white;">Enviar</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card shadow-sm m-auto my-5 col-lg ms-2 col-sm-12">
+            <div class="card-body">
+                <h5 class="card-title">Instruções</h5>
+                <p>Você deve mudar a primeira linha do arquivo de</p>
+                <code style="color: red;">Detalhes;Matr�cula;Nome;Lota��o;CPF;V�nculo;Cargo;Admiss�o;Demiss�o;Ano;M�s;Situa��o Funcional</code>
+                <p>para</p>
+                <code style="color: green;">Detalhes;Matricula;Nome;Lotacao;CPF;Vinculo;Cargo;Admissao;Demissao;Ano;Mes;Situacao Funcional</code>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

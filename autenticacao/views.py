@@ -439,3 +439,26 @@ def new_login(request):
 
 def new_cadastrar(request):
     return render(request, 'adm/new_cadastrar.html')
+import os
+from django.shortcuts import render
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.http import HttpResponse
+
+def upload_csv_view(request):
+    if request.method == 'POST' and 'file' in request.FILES:
+        uploaded_file = request.FILES['file']
+        if uploaded_file.name.endswith('.csv'):  # Verifica se é um CSV
+            file_name = uploaded_file.name
+            file_path = os.path.join(settings.MEDIA_ROOT, 'grdData.csv')
+
+            # Salvar o arquivo dentro de MEDIA_ROOT
+            with open(file_path, 'wb+') as destination:
+                for chunk in uploaded_file.chunks():
+                    destination.write(chunk)
+
+            return render(request, 'autenticacao/upload_csv.html', {'status': True})
+        else:
+            return HttpResponse("Por favor, envie um arquivo CSV.", content_type="text/html")
+
+    return render(request, 'autenticacao/upload_csv.html')
