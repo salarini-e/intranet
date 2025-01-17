@@ -100,7 +100,7 @@
                             <div class="d-flex justify-content-center w-100">
                                 <div class="text-center w-100">
                                     <h5 class="mb-3" style="text-transform: capitalize;">{{request.user|get_user_name|lower}}</h5>
-                                    <img style="width: 100px;" class="mb-3 rounded-circle" src="{{request|get_avatar}}" alt="" id="avatar">
+                                    <img style="width: 100px; height: 100px;" class="mb-3 rounded-circle" src="{{request|get_avatar}}" alt="" id="avatar">
                                     <h3 id="horaAtual">00:00:00</h3>
                                     {% if not registro_do_dia %}
                                     <div id="status" class="status inactive">Nenhum registro efetuado hoje.</div>
