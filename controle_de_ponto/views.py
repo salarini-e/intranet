@@ -14,6 +14,13 @@ def index(request):
     }
     return render(request, 'controle_de_ponto/index.html', context)
 
+def painel(request):
+    registros = Registro.objects.all().order_by('-id')
+    context = {
+        'registros': registros
+    }
+    return render(request, 'controle_de_ponto/painel.html', context)
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json

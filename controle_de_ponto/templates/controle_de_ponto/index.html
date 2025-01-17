@@ -1,7 +1,29 @@
 {% extends 'template.html' %}
+{% block ponto %}active{% endblock %}
+{% load custom %}
+{% load custom_filters %}	
+
 {% block title %}Controle de Ponto{% endblock %}
 {% block main %}
-    <h1>Controle de Ponto</h1>
+<style>
+    .btn-ponto{
+        background-color: #1a73e8;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+    .btn-ponto:hover{
+        background-color: #1558d6;
+    }
+</style>
+    <div class="row">
+        <div class="col d-flex">
+            <h1>Controle de Ponto</h1>
+            <a href="{% url 'controle_de_ponto:painel' %}" class="btn btn-ponto px-3 py-2 my-auto ms-auto" style="color: white;">
+                <i class="fa-solid fa-clipboard-list me-2"></i>
+                PAINEL DE PONTOS    
+            </a>
+        </div>
+    </div>
     <style>
         .form-group label {
             font-weight: 500;
@@ -77,8 +99,12 @@
                         <div class="" style="min-width: 300px;">
                             <div class="d-flex justify-content-center w-100">
                                 <div class="text-center w-100">
-                                    <h3 id="horaAtual">Hora Atual: 00:00:00</h3>
+                                    <h5 class="mb-3" style="text-transform: capitalize;">{{request.user|get_user_name|lower}}</h5>
+                                    <img style="width: 100px;" class="mb-3" src="{{request|get_avatar}}" alt="" id="avatar">
+                                    <h3 id="horaAtual">00:00:00</h3>
+                                    {% if not registro_do_dia %}
                                     <div id="status" class="status inactive">Nenhum registro efetuado hoje.</div>
+                                    {% endif %}
                                     <div class="d-flex d-grid gap-2 mt-4">
                                         <button style="color: white;" class="btn py-1 w-100 btn-entrada btn-ponto" id="btnRegistrar" onclick="registrarPonto()">Registrar Ponto</button>
                                     </div>
@@ -120,7 +146,7 @@
             const hora = String(agora.getHours()).padStart(2, '0');
             const minuto = String(agora.getMinutes()).padStart(2, '0');
             const segundo = String(agora.getSeconds()).padStart(2, '0');
-            document.getElementById('horaAtual').innerText = `Hora Atual: ${hora}:${minuto}:${segundo}`;
+            document.getElementById('horaAtual').innerText = `${hora}:${minuto}:${segundo}`;
         }
 
         setInterval(atualizarHoraAtual, 1000);

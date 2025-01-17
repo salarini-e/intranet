@@ -1,0 +1,27 @@
+{% extends 'template.html' %}
+{% load custom %}
+{% load custom_filters %}	
+
+{% block title %}Controle de Ponto{% endblock %}
+{% block main %}
+<style>
+    .btn-ponto{
+        background-color: #1a73e8;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+    .btn-ponto:hover{
+        background-color: #1558d6;
+    }
+</style>
+    <div class="row">
+        <div class="col d-flex">
+            <h1>Painel Controle de Ponto</h1>
+            <a href="{% url 'controle_de_ponto:index' %}" class="btn btn-ponto px-3 py-2 my-auto ms-auto" style="color: white;">
+                <i class="fa-solid fa-backward me-2"></i>
+                Voltar    
+            </a>
+        </div>
+    </div>
+    
+{% endblock %}

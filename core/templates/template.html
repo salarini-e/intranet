@@ -221,7 +221,7 @@
 					        </a>
 					    </li> -->
 						<li class="nav-item">
-					        <a class="nav-link" href="{% url 'formfacil:index' %}">
+					        <a class="nav-link {% block formfacil %}{% endblock %}" href="{% url 'formfacil:index' %}">
 						        <span class="nav-icon">
 									<img src="/static/images/forms-like.svg" style="height: 25px;" alt="">
 						        </span>
@@ -230,7 +230,7 @@
 					    </li>		
 						{% if request.user.is_superuser %}
 						<li class="nav-item">
-					        <a class="nav-link" href="#">
+					        <a class="nav-link {% block ponto %}{% endblock %}" href="{% url 'controle_de_ponto:index' %}">
 						        <span class="nav-icon">
 									<i class="fa-solid fa-fingerprint"></i>				
 						        </span>
