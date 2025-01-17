@@ -50,5 +50,5 @@ class Registro(models.Model):
         horas, segundos = divmod(total.total_seconds(), 3600)
         minutos = segundos // 60
         result = f"{int(horas)}h {int(minutos)}m"
-        print(result)
+        # print(result)
         return result

@@ -114,7 +114,10 @@
                     {% for registro in registros %}
                     <tr>
                         <td>{{ registro.matricula }}</td>
-                        <td>{{ registro.nome }}</td>                        
+                        <td>
+                            <img class="rounded-circle mb-1 me-1" style="width: 20px;" src="{{registro.user|get_avatar}}" alt="">
+                            {{ registro.nome }}
+                        </td>                        
                         <td>{{ registro.secretaria.nome }}</td>
                         <td>{{ registro.setor.nome }}</td>
                         <td>{{ registro.data_registro|date:"d/m/Y" }}</td>
