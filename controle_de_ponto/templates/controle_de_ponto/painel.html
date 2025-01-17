@@ -1,27 +1,139 @@
 {% extends 'template.html' %}
 {% load custom %}
-{% load custom_filters %}	
+{% load custom_filters %}
 
-{% block title %}Controle de Ponto{% endblock %}
+{% block title %}Painel de Controle de Ponto{% endblock %}
+
 {% block main %}
 <style>
-    .btn-ponto{
+    .btn-ponto {
         background-color: #1a73e8;
         border: none;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-    .btn-ponto:hover{
+    .btn-ponto:hover {
         background-color: #1558d6;
+        transform: scale(1.05);
+    }
+    .table-custom {
+        border-collapse: separate;
+        border-spacing: 0 10px;
+        width: 100%;
+        background-color: #f8f9fa;
+    }
+    .table-custom th, .table-custom td {
+        padding: 12px 15px;
+        text-align: left;
+        vertical-align: middle;
+    }
+    .table-custom th {
+        background-color: #1a73e8;
+        color: white;
+        font-weight: bold;
+    }
+    .table-custom tbody tr {
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .table-custom tbody tr td {
+        border-top: 1px solid #dee2e6;
+    }
+    .badge-status {
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 0.9em;
+        color: white;
+    }
+    .badge-status.success {
+        background-color: #28a745;
+    }
+    .badge-status.warning {
+        background-color: #ffc107;
+    }
+    .badge-status.danger {
+        background-color: #dc3545;
     }
 </style>
-    <div class="row">
-        <div class="col d-flex">
-            <h1>Painel Controle de Ponto</h1>
-            <a href="{% url 'controle_de_ponto:index' %}" class="btn btn-ponto px-3 py-2 my-auto ms-auto" style="color: white;">
-                <i class="fa-solid fa-backward me-2"></i>
-                Voltar    
+
+<script>
+    function filterTable() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById('registroTable');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let rowContainsFilter = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j].innerText.toLowerCase().includes(filter)) {
+                    rowContainsFilter = true;
+                    break;
+                }
+            }
+
+            rows[i].style.display = rowContainsFilter ? '' : 'none';
+        }
+    }
+</script>
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col d-flex align-items-center">
+            <h1>Painel de Controle de Ponto</h1>
+            <input style="max-width: 250px;" type="text" id="searchInput" class="form-control w-50 ms-auto me-3" placeholder="Pesquisar..." onkeyup="filterTable()">
+            <a href="{% url 'controle_de_ponto:index' %}" class="btn btn-ponto px-3 py-2">
+                <i class="fa-solid fa-backward me-2"></i>Voltar
             </a>
         </div>
     </div>
-    
+
+    <div class="row">
+        <div class="col">
+            <table class="table-custom" id="registroTable">
+                <thead>
+                    <tr>
+                        <th>Matrícula</th>
+                        <th>Nome</th>
+                        <th>Secretaria</th>
+                        <th>Setor</th>
+                        <th>Data</th>
+                        <th>Entrada 1</th>
+                        <th>Saída 1</th>
+                        <th>Entrada 2</th>
+                        <th>Saída 2</th>
+                        <th>Total Horas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in registros %}
+                    <tr>
+                        <td>{{ registro.matricula }}</td>
+                        <td>{{ registro.nome }}</td>                        
+                        <td>{{ registro.secretaria.nome }}</td>
+                        <td>{{ registro.setor.nome }}</td>
+                        <td>{{ registro.data_registro|date:"d/m/Y" }}</td>
+                        <td>{{ registro.entrada1|time }}</td>
+                        <td>{{ registro.saida1|time }}</td>
+                        <td>{{ registro.entrada2|time }}</td>
+                        <td>{{ registro.saida2|time }}</td>
+                        <td>
+                            <span class="badge-status success">{{ registro.total_horas }}</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="text-center">Nenhum registro encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}

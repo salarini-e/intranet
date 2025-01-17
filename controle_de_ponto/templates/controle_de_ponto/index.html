@@ -210,7 +210,7 @@
                         estado = 'entrada1';
                     }
                     atualizarHistorico();
-
+                    window.location.reload();
                 } else {
                     console.error('Erro ao enviar registro:', resultado);
                     alert(`${resultado.message}`);
