@@ -60,6 +60,11 @@
 </style>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentMonth = new Date().getMonth() + 1;
+        document.getElementById('mes').value = currentMonth;
+    });
+
     function filterTable() {
         const input = document.getElementById('searchInput');
         const filter = input.value.toLowerCase();
@@ -87,8 +92,44 @@
         <div class="col d-flex align-items-center">
             <h1>Painel de Controle de Ponto</h1>
             <input style="max-width: 250px;" type="text" id="searchInput" class="form-control w-50 ms-auto me-3" placeholder="Pesquisar..." onkeyup="filterTable()">
+            <button class="btn btn-primary me-2" style="color: white;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                <i class="fa-solid fa-file-lines me-2"></i> Arquivo
+              </button>
+
+              <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="offcanvasExampleLabel">Gerar relatório</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                  <form method="POST" action="#">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                      <label for="mes" class="form-label">Mês</label>
+                      <select class="form-select" id="mes" name="mes" required>
+                        <option value="" disabled>Selecione o mês</option>
+                        <option value="1">Janeiro</option>
+                        <option value="2">Fevereiro</option>
+                        <option value="3">Março</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Maio</option>
+                        <option value="6">Junho</option>
+                        <option value="7">Julho</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Setembro</option>
+                        <option value="10">Outubro</option>
+                        <option value="11">Novembro</option>
+                        <option value="12">Dezembro</option>
+                      </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Gerar Excel</button>
+                  </form>
+                </div>
+              </div>
+
             <a href="{% url 'controle_de_ponto:index' %}" class="btn btn-ponto px-3 py-2">
-                <i class="fa-solid fa-backward me-2"></i>Voltar
+                <i class="fa-solid fa-rotate-left me-2"></i>Voltar
             </a>
         </div>
     </div>
@@ -100,7 +141,7 @@
                     <tr>
                         <th>Matrícula</th>
                         <th>Nome</th>
-                        <th>Secretaria</th>
+                        <!-- <th>Secretaria</th> -->
                         <th>Setor</th>
                         <th>Data</th>
                         <th>Entrada 1</th>
@@ -118,8 +159,8 @@
                             <img class="rounded-circle mb-1 me-1" style="width: 20px;" src="{{registro.user|get_avatar}}" alt="">
                             {{ registro.nome }}
                         </td>                        
-                        <td>{{ registro.secretaria.nome }}</td>
-                        <td>{{ registro.setor.nome }}</td>
+                        <!-- <td>{{ registro.secretaria.nome }}</td> -->
+                        <td>{{ registro.servidor.setor.nome }}</td>
                         <td>{{ registro.data_registro|date:"d/m/Y" }}</td>
                         <td>{{ registro.entrada1|time }}</td>
                         <td>{{ registro.saida1|time }}</td>

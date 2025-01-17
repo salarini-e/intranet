@@ -4,7 +4,7 @@ from .models import Registro
 def index(request):
     agora = datetime.now()
 
-    registros = Registro.objects.filter(user=request.user).order_by('-id')[:30]    
+    registros = Registro.objects.filter(user=request.user).order_by('data_registro', '-id')[:30]    
     registro_do_dia = Registro.objects.filter(user=request.user, data_registro=agora.date()).order_by('-id').first() if registros.exists() else None
 
     context = {
@@ -15,7 +15,7 @@ def index(request):
     return render(request, 'controle_de_ponto/index.html', context)
 
 def painel(request):
-    registros = Registro.objects.all().order_by('-id')
+    registros = Registro.objects.all().order_by('-data_registro','-id')
     context = {
         'registros': registros
     }
