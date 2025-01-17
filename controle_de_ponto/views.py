@@ -36,7 +36,7 @@ def api_registrar_ponto(request):
             horario_registro = datetime.strptime(dados.get('registro'), '%H:%M:%S').time()
             data_registro = datetime.strptime(dados.get('data_registro'), '%d/%m/%Y').date()
 
-            registro = Registro.objects.filter(data_registro=data_registro)
+            registro = Registro.objects.filter(user=request.user, data_registro=data_registro)
             if registro.exists():
                 registro = registro.first()
                 if registro.entrada1 is None:
