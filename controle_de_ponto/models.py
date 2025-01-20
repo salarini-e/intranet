@@ -2,8 +2,25 @@ from django.db import models
 from django.contrib.auth.models import User
 from instituicoes.models import Secretaria, Setor, Servidor
 
-# class Responsavel(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+class Responsavel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    geral = models.BooleanField(default=False)
+    secretaria = models.ForeignKey(Secretaria, on_delete=models.CASCADE, null=True, blank=True)
+    setor = models.ForeignKey(Setor, on_delete=models.CASCADE, null=True, blank=True)
+    dt_inclusao = models.DateTimeField(auto_now_add=True)   
+
+    def __str__(self):
+        return f"Responsável {self.user.username}"
+    
+    def servidor(self):
+        return Servidor.objects.filter(user=self.user).first()
+    
+    def servidor_nome(self):
+        return self.servidor().nome
+    
+    def is_responsavel(user):
+        return Responsavel.objects.filter(user=user).exists()
+        
 from datetime import datetime, timedelta
 
 class Registro(models.Model):
@@ -17,6 +34,7 @@ class Registro(models.Model):
     entrada2 = models.TimeField(null=True, blank=True)
     saida2 = models.TimeField(null=True, blank=True)
     data_registro = models.DateField()
+    # dt_inclusao = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Registro de {self.nome} em {self.data_registro}"
@@ -52,3 +70,4 @@ class Registro(models.Model):
         result = f"{int(horas)}h {int(minutos)}m"
         # print(result)
         return result
+   

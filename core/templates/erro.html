@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Erro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #495057;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .container h1 {
+            font-size: 2.5em;
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+
+        .container p {
+            font-size: 1.2em;
+            margin: 10px 0 20px;
+            color: #6c757d;
+        }
+
+        .container a {
+            display: inline-block;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .container a:hover {
+            background-color: #0056b3;
+        }
+
+        .icon {
+            font-size: 4em;
+            color: #ffc107;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">⚠️</div>
+        <h1>{{ mensagem }}</h1>    
+        <p>{{submensagem}}</p>    
+        <a href="/">Voltar para a página inicial</a>
+    </div>
+</body>
+</html>

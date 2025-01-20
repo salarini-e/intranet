@@ -228,7 +228,7 @@
 		                        <span class="nav-link-text">Form Fácil</span>
 					        </a>
 					    </li>		
-						{% if request.user.is_superuser %}
+						{% if request.servidor.setor.id == 51 %}
 						<li class="nav-item">
 					        <a class="nav-link {% block ponto %}{% endblock %}" href="{% url 'controle_de_ponto:index' %}">
 						        <span class="nav-icon">

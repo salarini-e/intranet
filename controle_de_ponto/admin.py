@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Registro
+from .models import Registro, Responsavel
 from django_select2.forms import ModelSelect2Widget
 
 @admin.register(Registro)
@@ -29,3 +29,31 @@ class RegistroAdmin(admin.ModelAdmin):
                 search_fields=["username__icontains", "email__icontains", "first_name__icontains", "last_name__icontains"],
             )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+@admin.register(Responsavel)
+class ResponsavelAdmin(admin.ModelAdmin):
+    # Configuração de exibição na lista de registros
+    list_display = ('user', 'geral', 'secretaria', 'setor', 'dt_inclusao')
+    list_filter = ('geral', 'secretaria', 'setor', 'dt_inclusao')  # Filtros laterais
+    search_fields = ('user__username', 'user__email', 'secretaria__nome', 'setor__nome')  # Campos pesquisáveis
+    ordering = ('-dt_inclusao', 'user__username')  # Ordenação padrão
+
+    # Configuração dos campos no formulário de detalhes
+    fieldsets = (
+        ('Informações do Usuário', {
+            'fields': ('user', 'geral')
+        }),
+        ('Vinculação', {
+            'fields': ('secretaria', 'setor')
+        }),
+        ('Outros', {
+            'fields': ('dt_inclusao',),
+            'classes': ('collapse',),  # Deixa essa seção colapsável
+        }),
+    )
+
+    # Torna o campo de data somente leitura
+    readonly_fields = ('dt_inclusao',)
+
+    # Torna o campo `user` uma barra de pesquisa
+    autocomplete_fields = ('user', 'secretaria', 'setor')

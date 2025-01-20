@@ -102,29 +102,41 @@
                   <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
-                  <form method="POST" action="#">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                      <label for="mes" class="form-label">Mês</label>
-                      <select class="form-select" id="mes" name="mes" required>
-                        <option value="" disabled>Selecione o mês</option>
-                        <option value="1">Janeiro</option>
-                        <option value="2">Fevereiro</option>
-                        <option value="3">Março</option>
-                        <option value="4">Abril</option>
-                        <option value="5">Maio</option>
-                        <option value="6">Junho</option>
-                        <option value="7">Julho</option>
-                        <option value="8">Agosto</option>
-                        <option value="9">Setembro</option>
-                        <option value="10">Outubro</option>
-                        <option value="11">Novembro</option>
-                        <option value="12">Dezembro</option>
-                      </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Gerar Excel</button>
-                  </form>
+                    <form method="POST" action="{% url 'controle_de_ponto:export_excel' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="mes" class="form-label">Mês</label>
+                            <select class="form-select" id="mes" name="mes" required>
+                                <option value="" disabled selected>Selecione o mês</option>
+                                <option value="1">Janeiro</option>
+                                <option value="2">Fevereiro</option>
+                                <option value="3">Março</option>
+                                <option value="4">Abril</option>
+                                <option value="5">Maio</option>
+                                <option value="6">Junho</option>
+                                <option value="7">Julho</option>
+                                <option value="8">Agosto</option>
+                                <option value="9">Setembro</option>
+                                <option value="10">Outubro</option>
+                                <option value="11">Novembro</option>
+                                <option value="12">Dezembro</option>
+                            </select>
+                        </div>
+                    
+                        <div class="mb-3">
+                            <label for="ano" class="form-label">Ano</label>
+                            <select class="form-select" id="ano" name="ano" required>
+                                <option value="" disabled selected>Selecione o ano</option>
+                                {% for ano in anos_possiveis %}
+                                    <option value="{{ ano }}" {% if ano == ano_atual %}selected{% endif %}>{{ ano }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    
+                        <button type="submit" class="btn btn-primary w-100 mt-3" style="color: white;">Gerar Excel</button>
+                    </form>
+                    
+                    
                 </div>
               </div>
 
@@ -159,7 +171,7 @@
                             <img class="rounded-circle mb-1 me-1" style="width: 20px;" src="{{registro.user|get_avatar}}" alt="">
                             {{ registro.nome }}
                         </td>                        
-                        <!-- <td>{{ registro.secretaria.nome }}</td> -->
+                        <!-- <td>{{ registro.secretaria.sigla }}</td> -->
                         <td>{{ registro.servidor.setor.nome }}</td>
                         <td>{{ registro.data_registro|date:"d/m/Y" }}</td>
                         <td>{{ registro.entrada1|time }}</td>
