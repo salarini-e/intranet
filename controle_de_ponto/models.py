@@ -34,6 +34,7 @@ class Registro(models.Model):
     entrada2 = models.TimeField(null=True, blank=True)
     saida2 = models.TimeField(null=True, blank=True)
     data_registro = models.DateField()
+    ip_inclusao = models.GenericIPAddressField(null=True, blank=True)
     # dt_inclusao = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

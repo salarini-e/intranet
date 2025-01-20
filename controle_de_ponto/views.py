@@ -13,6 +13,7 @@ import openpyxl
 from openpyxl.styles import Alignment, Font
 from django.utils.timezone import now
 
+from .functions import obter_ip_cliente
 
 @login_required
 def index(request):
@@ -170,7 +171,8 @@ def api_registrar_ponto(request):
                     secretaria = request.servidor.setor.secretaria,
                     setor = request.servidor.setor,
                     data_registro=data_registro,
-                    entrada1=horario_registro
+                    entrada1=horario_registro,
+                    ip_inclusao=obter_ip_cliente(request)
                 )
                 estado = 'entrada1'
 
