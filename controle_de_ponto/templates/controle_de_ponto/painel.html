@@ -50,6 +50,7 @@
     }
     .badge-status.success {
         background-color: #28a745;
+        width: 100%;
     }
     .badge-status.warning {
         background-color: #ffc107;
@@ -105,6 +106,12 @@
                     <form method="POST" action="{% url 'controle_de_ponto:export_excel' %}">
                         {% csrf_token %}
                         <div class="mb-3">
+                            <label for="arquivo">Tipo</label>
+                            <select class="form-select" id="arquivo" name="arquivo" required>
+                                <option value="" disabled selected>Selecione o tipo</option>
+                                <option value="1">Excel</option>
+                                <option value="2">PDF</option>
+                            </select>
                             <label for="mes" class="form-label">Mês</label>
                             <select class="form-select" id="mes" name="mes" required>
                                 <option value="" disabled selected>Selecione o mês</option>
@@ -156,10 +163,10 @@
                         <!-- <th>Secretaria</th> -->
                         <th>Setor</th>
                         <th>Data</th>
-                        <th>Entrada 1</th>
-                        <th>Saída 1</th>
-                        <th>Entrada 2</th>
-                        <th>Saída 2</th>
+                        <th style="text-align: center;">Entrada 1</th>
+                        <th style="text-align: center;">Saída 1</th>
+                        <th style="text-align: center;">Entrada 2</th>
+                        <th style="text-align: center;">Saída 2</th>
                         <th>Total Horas</th>
                     </tr>
                 </thead>
@@ -174,10 +181,10 @@
                         <!-- <td>{{ registro.secretaria.sigla }}</td> -->
                         <td>{{ registro.servidor.setor.nome }}</td>
                         <td>{{ registro.data_registro|date:"d/m/Y" }}</td>
-                        <td>{{ registro.entrada1|time }}</td>
-                        <td>{{ registro.saida1|time }}</td>
-                        <td>{{ registro.entrada2|time }}</td>
-                        <td>{{ registro.saida2|time }}</td>
+                        <td style="text-align: center;">{{ registro.entrada1|time }}</td>
+                        <td style="text-align: center;">{{ registro.saida1|time }}</td>
+                        <td style="text-align: center;">{{ registro.entrada2|time }}</td>
+                        <td style="text-align: center;">{{ registro.saida2|time }}</td>
                         <td>
                             <span class="badge-status success">{{ registro.total_horas }}</span>
                         </td>

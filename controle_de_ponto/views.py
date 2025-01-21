@@ -19,7 +19,7 @@ from .functions import obter_ip_cliente
 def index(request):
     agora = datetime.now()
 
-    registros = Registro.objects.filter(user=request.user).order_by('data_registro', '-id')[:30]    
+    registros = Registro.objects.filter(user=request.user).order_by('-data_registro', '-id')[:30]    
     registro_do_dia = Registro.objects.filter(user=request.user, data_registro=agora.date()).order_by('-id').first() if registros.exists() else None
 
     context = {
