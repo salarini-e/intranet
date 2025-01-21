@@ -27,3 +27,10 @@ def get_tema(user):
 def get_user_name(user):    
     servidor = Servidor.objects.get(user=user)    
     return servidor.nome
+
+@register.filter
+def get_registro_por_dia(registros, dia):
+    for registro in registros:
+        if registro.data_registro == dia:
+            return registro
+    return None

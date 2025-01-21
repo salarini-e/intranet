@@ -15,6 +15,13 @@ from django.utils.timezone import now
 
 from .functions import obter_ip_cliente
 
+from calendar import monthrange
+from datetime import date
+
+# Obtém os dias do mês
+def obter_dias_do_mes(mes, ano):
+    return [date(ano, mes, dia) for dia in range(1, monthrange(ano, mes)[1] + 1)]
+
 @login_required
 def index(request):
     agora = datetime.now()
@@ -36,79 +43,103 @@ def exportar_excel(request):
         return render(request, "erro.html", {"mensagem": "Acesso negado."})
     responsavel = Responsavel.objects.get(user=request.user)
     if request.method == "POST":
+        dict_meses = { # Dicionário para converter o mês de número para nome
+            '1': 'Janeiro', '2': 'Fevereiro', '3': 'Março', '4': 'Abril',
+            '5': 'Maio', '6': 'Junho', '7': 'Julho', '8': 'Agosto',
+            '9': 'Setembro', '10': 'Outubro', '11': 'Novembro', '12': 'Dezembro'
+        }
         # Obtem os valores do formulário
+        arquivo = request.POST.get("arquivo")
         mes = request.POST.get("mes")
         ano = request.POST.get("ano", now().year)  # Ano atual como padrão
 
         if not mes:
-            return render(request, "erro.html", {"mensagem": "Por favor, selecione um mês."})
-
-        # Filtra os registros pelo mês e ano
-        if responsavel.geral:
+            return render(request, "erro.html", {'mensagem': 'DATA INVÁLIDA',"submensagem": "Por favor, selecione um mês."})
+        elif arquivo == 'PDF':
             registros = Registro.objects.filter(
-                secretaria=responsavel.secretaria,            
-                data_registro__month=mes,
-                data_registro__year=ano
-            )
-        else:
-            registros = Registro.objects.filter(
-                setor=responsavel.setor,            
-                data_registro__month=mes,
-                data_registro__year=ano
-            )
+                data_registro__month=mes, data_registro__year=ano, 
+                setor=responsavel.setor
+            ).order_by('nome', 'data_registro')  # Ordenar por nome e data
+            funcionarios = {}
+            for registro in registros:
+                if registro.nome not in funcionarios:
+                    funcionarios[registro.nome] = []
+                funcionarios[registro.nome].append(registro)
 
-        # Cria um workbook e uma worksheet
-        wb = openpyxl.Workbook()
-        ws = wb.active
-        ws.title = f"Registros {mes}-{ano}"
+            context = {
+                'mes': dict_meses[mes],
+                'ano': ano,
+                'dias_do_mes': obter_dias_do_mes(int(mes), int(ano)),
+                'funcionarios': funcionarios  # Dicionário de funcionários com seus registros
+            }
+            return render(request, 'controle_de_ponto/relatorio_pdf.html', context)
+        elif arquivo == 'Excel':
+            # Filtra os registros pelo mês e ano
+            if responsavel.geral:
+                registros = Registro.objects.filter(
+                    secretaria=responsavel.secretaria,            
+                    data_registro__month=mes,
+                    data_registro__year=ano
+                )
+            else:
+                registros = Registro.objects.filter(
+                    setor=responsavel.setor,            
+                    data_registro__month=mes,
+                    data_registro__year=ano
+                )
 
-        # Cabeçalhos
-        headers = [
-            "Matrícula", "Nome", "Secretaria", "Setor", "Data do Registro",
-            "Entrada 1", "Saída 1", "Entrada 2", "Saída 2", "Total de Horas"
-        ]
-        ws.append(headers)
+            # Cria um workbook e uma worksheet
+            wb = openpyxl.Workbook()
+            ws = wb.active
+            ws.title = f"Registros {mes}-{ano}"
 
-        # Aplica estilos aos cabeçalhos
-        for col in ws.iter_cols(min_row=1, max_row=1, min_col=1, max_col=len(headers)):
-            for cell in col:
-                cell.font = Font(bold=True)
-                cell.alignment = Alignment(horizontal="center", vertical="center")
+            # Cabeçalhos
+            headers = [
+                "Matrícula", "Nome", "Secretaria", "Setor", "Data do Registro",
+                "Entrada 1", "Saída 1", "Entrada 2", "Saída 2", "Total de Horas"
+            ]
+            ws.append(headers)
 
-        # Adiciona os dados à planilha
-        for registro in registros:
-            ws.append([
-                registro.matricula,
-                registro.nome,
-                registro.secretaria.nome if registro.secretaria else "",
-                registro.setor.nome if registro.setor else "",
-                registro.data_registro.strftime("%d/%m/%Y"),
-                registro.entrada1.strftime("%H:%M") if registro.entrada1 else "",
-                registro.saida1.strftime("%H:%M") if registro.saida1 else "",
-                registro.entrada2.strftime("%H:%M") if registro.entrada2 else "",
-                registro.saida2.strftime("%H:%M") if registro.saida2 else "",
-                registro.total_horas(),
-            ])
+            # Aplica estilos aos cabeçalhos
+            for col in ws.iter_cols(min_row=1, max_row=1, min_col=1, max_col=len(headers)):
+                for cell in col:
+                    cell.font = Font(bold=True)
+                    cell.alignment = Alignment(horizontal="center", vertical="center")
 
-        # Ajusta o tamanho das colunas
-        for column in ws.columns:
-            max_length = 0
-            column_letter = column[0].column_letter  # Obtem a letra da coluna
-            for cell in column:
-                try:
-                    if cell.value:
-                        max_length = max(max_length, len(str(cell.value)))
-                except:
-                    pass
-            ws.column_dimensions[column_letter].width = max_length + 2
+            # Adiciona os dados à planilha
+            for registro in registros:
+                ws.append([
+                    registro.matricula,
+                    registro.nome,
+                    registro.secretaria.nome if registro.secretaria else "",
+                    registro.setor.nome if registro.setor else "",
+                    registro.data_registro.strftime("%d/%m/%Y"),
+                    registro.entrada1.strftime("%H:%M") if registro.entrada1 else "",
+                    registro.saida1.strftime("%H:%M") if registro.saida1 else "",
+                    registro.entrada2.strftime("%H:%M") if registro.entrada2 else "",
+                    registro.saida2.strftime("%H:%M") if registro.saida2 else "",
+                    registro.total_horas(),
+                ])
 
-        # Cria o arquivo de resposta HTTP
-        response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-        response["Content-Disposition"] = f'attachment; filename="registros_{mes}_{ano}.xlsx"'
+            # Ajusta o tamanho das colunas
+            for column in ws.columns:
+                max_length = 0
+                column_letter = column[0].column_letter  # Obtem a letra da coluna
+                for cell in column:
+                    try:
+                        if cell.value:
+                            max_length = max(max_length, len(str(cell.value)))
+                    except:
+                        pass
+                ws.column_dimensions[column_letter].width = max_length + 2
 
-        # Salva o workbook no response
-        wb.save(response)
-        return response
+            # Cria o arquivo de resposta HTTP
+            response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            response["Content-Disposition"] = f'attachment; filename="registros_{mes}_{ano}.xlsx"'
+
+            # Salva o workbook no response
+            wb.save(response)
+            return response
 
     return render(request, "erro.html", {"mensagem": "Método inválido."})
 

@@ -1,0 +1,187 @@
+{% load custom %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Frequência</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            /* background-color: #f2f2f2; */
+        }
+
+        .a4 {
+            width: 210mm;
+            height: 297mm;
+            /* background: white; */
+            padding: 20mm;
+            box-sizing: border-box;
+            page-break-after: always;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 12pt;
+        }
+        header h1 {
+            text-align: center;
+            margin: 8px 0;
+            font-size: 0.96rem;
+        }        
+        header h1:first-child {
+            margin-top: 0;
+        } 
+        header h2{
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: normal;
+        }
+        .info, .table {
+            margin-bottom: 20px;
+        }
+
+        .info h1, .info p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        .table th, .table td {
+            border: 1px solid #000;
+            padding: 5px;
+            font-size: 12px;
+        }
+
+        .table th {
+            background-color: #ddd;
+        }
+
+        .barcode {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+        .d-flex{
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    {% for nome, registros in funcionarios.items %}
+    <div class="a4">
+        <header>
+            <div class="d-flex">
+                <div>
+                    <img style="max-width: 70px;" src="https://desenvolve.novafriburgo.rj.gov.br/static/images/brasao-nf.png" alt="">
+                </div>
+                <div style="margin: auto;">
+                    <h1>Secretaria de Ciência, Tecnologia, Inovação e Desenvolvimento Econômico</h1>
+                    <h1>Relatório de Frequência</h1>
+                    <h2>{{ mes }} - {{ ano }}</h2>
+                </div>
+            </div>
+        </header>
+        <div class="info">
+            <p><strong>Funcionário:</strong> {{ nome }}</p>
+            <p><strong>Setor:</strong> {{ registros.0.setor }}</p>
+            <p><strong>Matrícula:</strong> {{ registros.0.matricula }}</p>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Entrada 1</th>
+                    <th>Saída 1</th>
+                    <th>Entrada 2</th>
+                    <th>Saída 2</th>
+                    <th>Total Horas</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dia in dias_do_mes %}
+                <tr>
+                    <td>{{ dia|date:"d/m/Y" }}</td>
+                    {% with registros|get_registro_por_dia:dia as registro_dia %}
+        <td>
+            {% if dia|date:"w" == "6" %} <!-- Verifica se é sábado -->
+                Sábado
+            {% elif dia|date:"w" == "0" %} <!-- Verifica se é domingo -->
+                Domingo
+            {% elif registro_dia and registro_dia.entrada1 %}
+                {{ registro_dia.entrada1 }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+        <td>
+            {% if dia|date:"w" == "6" %}
+                Sábado
+            {% elif dia|date:"w" == "0" %}
+                Domingo
+            {% elif registro_dia and registro_dia.saida1 %}
+                {{ registro_dia.saida1 }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+        <td>
+            {% if dia|date:"w" == "6" %}
+                Sábado
+            {% elif dia|date:"w" == "0" %}
+                Domingo
+            {% elif registro_dia and registro_dia.entrada2 %}
+                {{ registro_dia.entrada2 }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+        <td>
+            {% if dia|date:"w" == "6" %}
+                Sábado
+            {% elif dia|date:"w" == "0" %}
+                Domingo
+            {% elif registro_dia and registro_dia.saida2 %}
+                {{ registro_dia.saida2 }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+        <td>
+            {% if dia|date:"w" == "6" %}
+                Sábado
+            {% elif dia|date:"w" == "0" %}
+                Domingo
+            {% elif registro_dia and registro_dia.total_horas %}
+                {{ registro_dia.total_horas }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+        {% endwith %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="barcode">
+            ____________________________________________
+            <br>
+            Assinatura do Funcionário
+        </div>
+    </div>
+    {% endfor %}
+</body>
+</html>

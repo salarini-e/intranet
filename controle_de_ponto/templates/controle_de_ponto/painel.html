@@ -86,6 +86,11 @@
             rows[i].style.display = rowContainsFilter ? '' : 'none';
         }
     }
+
+    function mudarTextButton(select) {
+        const tipoBtn = document.getElementById('tipoBtn');
+        tipoBtn.innerText = select.value; 
+    }
 </script>
 
 <div class="container mt-4">
@@ -106,12 +111,14 @@
                     <form method="POST" action="{% url 'controle_de_ponto:export_excel' %}">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="arquivo">Tipo</label>
-                            <select class="form-select" id="arquivo" name="arquivo" required>
-                                <option value="" disabled selected>Selecione o tipo</option>
-                                <option value="1">Excel</option>
-                                <option value="2">PDF</option>
+                            <label class="mb-2" for="arquivo">Tipo</label>
+                            <select onchange="mudarTextButton(this)" class="form-select" id="arquivo" name="arquivo" required>
+                                <option value="" disabled>Selecione o tipo</option>
+                                <option value="Excel">Excel</option>
+                                <option value="PDF" selected>PDF</option>
                             </select>
+                        </div>
+                        <div class="mb-3">                            
                             <label for="mes" class="form-label">Mês</label>
                             <select class="form-select" id="mes" name="mes" required>
                                 <option value="" disabled selected>Selecione o mês</option>
@@ -140,7 +147,7 @@
                             </select>
                         </div>
                     
-                        <button type="submit" class="btn btn-primary w-100 mt-3" style="color: white;">Gerar Excel</button>
+                        <button type="submit" class="btn btn-primary w-100 mt-3" style="color: white;">Gerar <span id="tipoBtn">PDF</span></button>
                     </form>
                     
                     
