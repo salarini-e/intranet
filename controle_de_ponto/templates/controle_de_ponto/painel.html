@@ -96,12 +96,14 @@
 <div class="container mt-4">
     <div class="row mb-3">
         <div class="col d-flex align-items-center">
-            <h1>Painel de Controle de Ponto</h1>
+            <h1>Painel de Controle de Ponto</h1>            
             <input style="max-width: 250px;" type="text" id="searchInput" class="form-control w-50 ms-auto me-3" placeholder="Pesquisar..." onkeyup="filterTable()">
+            <a href="{% url 'controle_de_ponto:alocar_servidor' %}" class="btn btn-secondary px-3 me-2 py-2" style="background-color: black;">
+                <i class="fa-solid fa-user-plus"></i>
+            </a>
             <button class="btn btn-primary me-2" style="color: white;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                 <i class="fa-solid fa-file-lines me-2"></i> Arquivo
-              </button>
-
+              </button>              
               <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
                 <div class="offcanvas-header">
                   <h5 class="offcanvas-title" id="offcanvasExampleLabel">Gerar relatório</h5>
@@ -152,10 +154,9 @@
                     
                     
                 </div>
-              </div>
-
+              </div>              
             <a href="{% url 'controle_de_ponto:index' %}" class="btn btn-ponto px-3 py-2">
-                <i class="fa-solid fa-rotate-left me-2"></i>Voltar
+                <i class="fa-solid fa-rotate-left"></i>
             </a>
         </div>
     </div>

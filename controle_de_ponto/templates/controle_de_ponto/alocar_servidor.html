@@ -1,0 +1,111 @@
+{% extends 'template.html' %}
+{% load custom %}
+{% load custom_filters %}
+
+{% block title %}Painel de Controle de Ponto{% endblock %}
+
+{% block main %}
+{{ form.media.css }}
+<style>
+    .select2, .select2-container, .select2-container--default, .select2-container--below{
+						width: 100% !important;
+					}
+
+    .btn-ponto {
+        background-color: #1a73e8;
+        border: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .btn-ponto:hover {
+        background-color: #1558d6;
+        transform: scale(1.05);
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    thead th {
+        background-color: #1a73e8;
+        color: white;
+        text-align: left;
+        padding: 10px;
+        border-bottom: 2px solid #1558d6;
+    }
+    tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+    tbody td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }   
+</style>
+<div class="container">        
+    <div class="row">
+        <div class="col d-flex">
+            <h1>Servidores</h1>
+            <a href="{% url 'controle_de_ponto:painel' %}" class="btn btn-ponto px-3 py-2 ms-auto my-auto ">
+                <i class="fa-solid fa-rotate-left me-2"></i> Voltar
+            </a>
+        </div>
+    </div>
+    <h3 class="mb-5">{{responsavel.secretaria}}</h3>    
+    <form method="post" class="p-4 rounded shadow" style="background-color: white;">
+        <h2 class="mb-3">Alocar servidor</h2>
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.servidor.label_tag }}
+            {{ form.servidor }}
+            {% for error in form.servidor.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            {{ form.setor.label_tag }}
+            {{ form.setor }}
+            {% for error in form.setor.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% if mensagem %}
+        <div class="alert alert-success">{{ mensagem }}</div>
+        {% if submensagem %}
+            <p class="text-muted">{{ submensagem|safe }}</p>
+        {% endif %}
+    {% endif %}
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary" style="color: white;">Enviar</button>
+        </div>
+    </form>
+
+    <div class="mt-5">
+        <h3>Servidores alocados</h3>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Matrícula</th>
+                    <th>Nome</th>
+                    <th>Setor</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for servidor in servidores %}
+                <tr>
+                    <td>{{ servidor.matricula }}</td>
+                    <td>{{ servidor.nome }}</td>
+                    <td>{{ servidor.setor }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{{form.media.js}}
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Registro, Responsavel
-
+from instituicoes.models import Servidor, Setor
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -230,6 +230,48 @@ def api_registrar_ponto(request):
             return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
     return JsonResponse({'success': False, 'message': 'Método não permitido.'}, status=405)
+from .forms import SearchServidorForm
+
+def alocar_servidor(request):
+    context = {}
+    if not Responsavel.is_responsavel(request.user):
+        return render(request, "erro.html", {"mensagem": "Acesso negado."})
+
+    responsavel = Responsavel.objects.get(user=request.user)
+
+    if request.method == "POST":
+        form = SearchServidorForm(request.POST)
+        form.fields["setor"].queryset = Setor.objects.filter(secretaria=responsavel.setor.secretaria)
+
+        if form.is_valid():
+            servidor = form.cleaned_data["servidor"]
+            if responsavel.geral and form.cleaned_data["setor"]:    
+                setor = form.cleaned_data["setor"]
+                servidor.setor = setor
+            else:
+                servidor.setor = responsavel.setor
+            servidor.save()
+
+            context = {
+                'mensagem': 'Usuário alocado com sucesso.',
+                'submensagem': f'<strong>{servidor.nome} </strong>({servidor.matricula}) no setor: <br><strong>{servidor.setor}</strong>',  
+            }
+        else:
+            context = {
+                "mensagem": "Dados inválidos.",
+                "submensagem": "Por favor, corrija os erros abaixo.",
+                "form": form
+            }
+    else:
+        form = SearchServidorForm()
+        form.fields["setor"].queryset = Setor.objects.filter(secretaria=responsavel.secretaria)
+    context["form"] = form
+    context['responsavel'] = responsavel
+    if responsavel.geral:
+        context['servidores'] = Servidor.objects.filter(setor__secretaria=responsavel.secretaria).order_by('setor', 'nome')
+    else:
+        context['servidores'] = Servidor.objects.filter(setor=responsavel.setor).order_by('setor', 'nome')
+    return render(request, "controle_de_ponto/alocar_servidor.html", context)
 
 def gambiarra(request):
     registros = Registro.objects.all()
