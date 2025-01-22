@@ -179,6 +179,9 @@ def api_registrar_ponto(request):
             horario_registro = datetime.strptime(dados.get('registro'), '%H:%M:%S').time()
             data_registro = datetime.strptime(dados.get('data_registro'), '%d/%m/%Y').date()
 
+            ip_cliente = obter_ip_cliente(request)
+            if ip_cliente != '192.168.6.1':
+                return JsonResponse({'success': False, 'message': 'Ponto somente dentro da rede da prefeitura.'}, status=403)
             registro = Registro.objects.filter(user=request.user, data_registro=data_registro)
             if registro.exists():
                 registro = registro.first()
@@ -203,7 +206,7 @@ def api_registrar_ponto(request):
                     setor = request.servidor.setor,
                     data_registro=data_registro,
                     entrada1=horario_registro,
-                    ip_inclusao=obter_ip_cliente(request)
+                    ip_inclusao=ip_cliente
                 )
                 estado = 'entrada1'
 
