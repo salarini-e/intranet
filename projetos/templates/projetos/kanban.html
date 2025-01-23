@@ -236,16 +236,22 @@
 </head>
 <body>
     <div class="menu">
-        <h2>{{projeto.nome}}</h2>
-        <a class="btn ms-auto btn-primary" style="background-color: white;" href="{% url 'projetos:index' %}">
-            <i class="fa-solid fa-backward"></i>
-        </a>
+        <h2>{{projeto.nome}}</h2>        
         <div class="ms-2" class="dropdown">
-            <button class="btn btn-primary" style="background-color: white;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-gear"></i>
+            <button class="btn btn-primary" style="background-color: white; color: black;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-wrench me-2"></i> Configurar
             </button>
             <ul class="dropdown-menu">
-                <button class="btn btn-dark ms-auto dropdown-item"  onclick="createColumn({{projeto.id}})">+ Adicionar coluna</button>
+                <li   onclick="createColumn({{projeto.id}})">
+                    <a class="dropdown-item" href="#">
+                        <i class="fa-solid fa-square-plus me-2"></i> Adicionar coluna
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'projetos:index' %}">
+                        <i class="fa-solid fa-backward me-2"></i> Voltar para painel
+                    </a>
+                </li>
               <!-- <li><a >Voltar</a></li> -->
               <!-- <li><a class="dropdown-item" href="#">Another action</a></li> -->
               <!-- <li><a class="dropdown-item" href="#">Something else here</a></li> -->
