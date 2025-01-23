@@ -237,15 +237,18 @@
 <body>
     <div class="menu">
         <h2>{{projeto.nome}}</h2>
-        <button class="btn btn-dark ms-auto" onclick="createColumn({{projeto.id}})">+ Adicionar coluna</button>
+        <a class="btn ms-auto btn-primary" style="background-color: white;" href="{% url 'projetos:index' %}">
+            <i class="fa-solid fa-backward"></i>
+        </a>
         <div class="ms-2" class="dropdown">
-            <button class="btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-ellipsis"></i>
+            <button class="btn btn-primary" style="background-color: white;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-gear"></i>
             </button>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'projetos:index' %}">Voltar</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
+                <button class="btn btn-dark ms-auto dropdown-item"  onclick="createColumn({{projeto.id}})">+ Adicionar coluna</button>
+              <!-- <li><a >Voltar</a></li> -->
+              <!-- <li><a class="dropdown-item" href="#">Another action</a></li> -->
+              <!-- <li><a class="dropdown-item" href="#">Something else here</a></li> -->
             </ul>
           </div>
     </div>
