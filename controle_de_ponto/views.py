@@ -182,6 +182,7 @@ def api_registrar_ponto(request):
             ip_cliente = obter_ip_cliente(request)
             if ip_cliente != '192.168.6.1':
                 return JsonResponse({'success': False, 'message': 'Ponto somente dentro da rede da prefeitura.'}, status=403)
+
             registro = Registro.objects.filter(user=request.user, data_registro=data_registro)
             if registro.exists():
                 registro = registro.first()

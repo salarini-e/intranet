@@ -50,6 +50,7 @@
             gap: 16px;
             padding: 16px 0px;
             overflow-x: auto;
+            min-height: 600px;
         }
 
         .column {
@@ -57,9 +58,11 @@
             border-radius: 8px;
             padding: 16px;
             min-width: 250px;
+            min-height: 136px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
+            margin-bottom: auto;
         }
 
         .column-header {
@@ -87,12 +90,10 @@
             background-color: #33353400;
             color: rgb(0, 0, 0);
             border: none;
-            width: auto;
-            height: auto;
             /* padding: 6px     12px; */
             border-radius: 4px;
-            width: 24px;
-            height: 24px;
+            /* width: 24px; */
+            /* height: 24px; */
             cursor: pointer;
             margin: auto 0 auto auto;            
         }
@@ -131,7 +132,7 @@
         }
         .card-container{
             width: calc(100% - 12px);
-            min-height: 45px;
+            min-height: 66px;
             background-color: rgba(245, 245, 245, 0.363);
             border-radius: 4px;
             padding: 0px 8px 8px 8px;
@@ -151,7 +152,7 @@
             display: none;
         }
 
-        .modal {
+        /* .modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -180,7 +181,7 @@
             margin-bottom: 10px;
             padding: 8px;
             font-size: 1em;
-        }
+        } */
 
         .subtasks {
             margin-top: 16px;
@@ -190,7 +191,7 @@
             margin-right: 8px;
         }
 
-        .modal-buttons {
+        /* .modal-buttons {
             text-align: right;
             margin-top: 10px;
         }
@@ -198,7 +199,7 @@
         .modal-buttons button {
             padding: 8px 16px;
             margin-left: 8px;
-        }
+        } */
 
         .hidden {
             display: none;
@@ -209,12 +210,34 @@
 			margin-left: 3%;
 		}
 	}   
+    .modal-body label{
+        font-weight: bold;
+    }
+    .btn-addsubtarefa{
+        background-color: #cfcfcf;
+        color: rgb(0, 0, 0);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .progress {
+        width: 90%;
+        margin-right: 10px;
+        height: 10px; /* Altura da barra */
+        background-color: #acacac67; /* Cor de fundo da barra */
+        border-radius: 5px; /* Arredondamento das bordas */
+        }
+
+        .progress-bar {
+        background-color: #4CAF50; /* Cor da barra de progresso */
+        border-radius: 0px; /* Arredondamento das bordas */
+        }
     </style>
 </head>
 <body>
     <div class="menu">
         <h2>{{projeto.nome}}</h2>
-        <button class="btn btn-dark ms-auto" onclick="addColumn()">+ Adicionar coluna</button>
+        <button class="btn btn-dark ms-auto" onclick="createColumn({{projeto.id}})">+ Adicionar coluna</button>
         <div class="ms-2" class="dropdown">
             <button class="btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fa-solid fa-ellipsis"></i>
@@ -229,36 +252,84 @@
 
     <div class="board" id="board"></div>
 
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <label for="card-title">Título:</label>
-            <input type="text" id="card-title" placeholder="Enter card title">
+    <div class="modal fade" id="tarefaModal" tabindex="-1" aria-labelledby="tarefaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                <input type="text" id="card-title" placeholder="Enter card title" style="border: none; font-weight: bold;">
+              </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+               <div class="row">
+                    <div class="col px-5 d-flex flex-column pt-3">                                        
+                        <label for="card-description mt-3">Descrição:</label>
+                        <textarea id="card-description" placeholder="..." style="border: none; min-height: 100px;"></textarea>                                                            
+
+                        <div class="d-flex flex-column w-100">                            
+                                <label for=""><i class="fa-solid fa-paperclip me-2"></i>Anexos</label>
+                                <div id="listAnexo" class="w-100 px-3 pt-2 d-flex flex-column flex-wrap">
+                                    <a href="#">formulario.png</a>
+                                    <a href="#">formulario.png</a>
+                                    <a href="#">formulario.png</a>
+                                    <a href="#">formulario.png</a>
+                                </div>                                                   
+                        </div>  
+                        <div class="d-flex flex-column mt-auto" style="width: 90%;">
+                            <small class="mt-4">Enviar novo anexo</small><br>                                                                        
+                            <div class="input-group mb-3">
+                                <input type="file" class="form-control" style="border: none;">
+                                <button class="btn btn-addsubtarefa" type="button" id="button-addon1">Anexar</button>
+                              </div>
+                              
+                        </div>     
+                        
+                    </div>
+                    <div class="col px-5 d-flex flex-column">
+                        <label for="card-assignee" class="mt-3">Atribuição:</label>
+                        <select id="card-assignee" class="form-select" style="border: none;">
+                            <option value="" selected disabled>Selecione um usuário</option>
+                            <option value="user1">User 1</option>
+                            <option value="user2">User 2</option>
+                            <option value="user3">User 3</option>
+                        </select>
             
-            <label for="card-description">Descrição:</label>
-            <textarea id="card-description" placeholder="Enter description"></textarea>
-
-            <label for="card-assignee">Atribuição:</label>
-            <input type="text" id="card-assignee" placeholder="Enter assignee">
-
-            <label for="card-date">Dt. Execução:</label>
-            <input type="date" id="card-date">
-
-            <div class="subtasks">
-                <h4>Subtarefas:</h4>
-                <div id="subtasks-container"></div>
-                <button type="button" onclick="addSubtask()">+ Add Subtarefa</button>
+                        <label for="card-date" class="mt-2">Dt. prevista de execução:</label>
+                        <div class="w-100 d-flex mt-3">
+                            <div class="d-flex flex-column" style="width: 50%;">
+                                <small>Ínicio</small>
+                                <input type="date" id="data_inicio" class="form-control" name="data_inicio" style="border: none;">         
+                            </div>
+                            <div class="d-flex flex-column ms-3" style="width: 50%;">
+                                <small>Conclusão</small>
+                                <input type="date" id="data_fim" class="form-control" name="data_fim" style="border: none;">         
+                            </div>
+                        </div>
+                        <div class="subtasks">
+                            <label>Subtarefas:</label>
+                            <div class="mt-3" id="subtasks-container"></div>
+                            <button type="button" class="btn btn-addsubtarefa" onclick="addSubtask()"><i class="fa-solid fa-diagram-predecessor me-2"></i> Add Subtarefa</button>
+                        </div>
+                    </div>
+               </div>
+               <div class="row">
+                <div class="col px-5">
+                    
+                </div>
+               </div>
             </div>
-
-            <div class="modal-buttons">
-                <button onclick="closeModal()">Cancelar</button>
-                <button onclick="saveCardDetails()">Salvar</button>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+              <button type="button" class="btn btn-primary" onclick="saveCardDetails()"  data-bs-dismiss="modal" style="color: white;">Salvar mudanças</button>
             </div>
+          </div>
         </div>
-    </div>
-
+      </div>
+      
     <script>
         const board = document.getElementById('board');
-        const modal = document.getElementById('modal');
+        // const modal = new bootstrap.Modal(document.getElementById('tarefaModal'), {'backdrop': true});
         const cardTitle = document.getElementById('card-title');
         const cardDescription = document.getElementById('card-description');
         const cardAssignee = document.getElementById('card-assignee');
@@ -273,9 +344,26 @@
             console.log(`Activity: ${activity}`);
         }
 
-        function createColumn(){
-            //chama view
-            // addColumn(id, nome);
+        function createColumn(id){
+            fetch('/projetos/api/criar-coluna/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ nome: 'Nova coluna', projeto_id: id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 200) {
+                    addColumn(data.coluna.id, data.coluna.nome);
+                } else {
+                    console.error('Erro ao criar coluna:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
         }
         function addColumn(id = `new-${Date.now()}`, nome = 'Nova coluna') {
             const columnId = Date.now();
@@ -287,8 +375,26 @@
             column.innerHTML = `
                 <div class="column-header" data-id="${id}">
                     <span class="drag-handle me-3" draggable="true">☰</span>
-                    <h3 contenteditable="true">${nome}</h3>
-                    <button onclick="addCard('${id}')">+</button>
+                    <h3 contenteditable="true">${nome}</h3>                    
+                    <div class="btn-group" role="group">
+                        <button type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-caret-down"></i>    
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <button class="dropdown-item" onclick="addCard('${id}')">
+                                    <i class="fa-solid fa-circle-plus me-2"></i>
+                                    Nova tarefa
+                                </button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item" onclick="">
+                                    <i class="fa-regular fa-pen-to-square me-2"></i>
+                                    Editar coluna
+                                </button>
+                            </li>                            
+                        </ul>
+                    </div>
                 </div>
                 <div class="card-container"></div>                
             `;
@@ -336,21 +442,23 @@
             board.appendChild(column);
             logActivity(`Added new column: ${columnId}`);
         }
-
+        
         function addCard(column_id, tarefa = 'Nova tarefa') {
             const column = document.querySelector(`.column-header[data-id="${column_id}"]`).closest('.column');
             const cardId = Date.now();
-            const card = document.createElement('div');
+            const card = document.createElement('div');             
+            card.dataset.bsToggle = "modal";
+            card.dataset.bsTarget = "#tarefaModal";
             card.className = 'card';
             card.draggable = true;
             card.dataset.cardId = cardId;
             card.dataset.colunaOrigem = column_id;
             card.dataset.subtasks = JSON.stringify([]);
 
-            card.innerHTML = `
+            card.innerHTML = `                
                 <input type="checkbox" onclick="event.stopPropagation()">
-                <span contenteditable="true">${tarefa}</span>
-                <button onclick="event.stopPropagation(); deleteCard(this)">x</button>
+                <span>${tarefa}</span>
+                <button onclick="event.stopPropagation(); deleteCard(this)">x</button>                   
             `;
 
             card.addEventListener('click', () => openModal(card));
@@ -390,11 +498,10 @@
             const subtasks = JSON.parse(card.dataset.subtasks || '[]');
             subtasks.forEach(task => addSubtask(task.text, task.completed));
 
-            modal.style.display = 'flex';
+            
         }
 
-        function closeModal() {
-            modal.style.display = 'none';
+        function closeModal() {            
             activeCard = null;
         }
 
@@ -418,12 +525,12 @@
             }
         }
 
-        function addSubtask(text = '', completed = false) {
+        function addSubtask(text = 'Nova tarefa', completed = false) {
             const subtask = document.createElement('div');
-            subtask.className = 'subtask';
+            subtask.className = 'subtask mb-3';
             subtask.innerHTML = `
                 <input type="checkbox" ${completed ? 'checked' : ''}>
-                <input type="text" value="${text}">
+                <input type="text" value="${text}" style="border: none;">
             `;
             subtasksContainer.appendChild(subtask);
         }

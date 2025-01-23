@@ -68,7 +68,26 @@
             color: #5e5d5d;            
             margin-bottom: 20px;
         }
+        @media (min-width: 1400px) {
+            .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+                max-width: 1550px;
+            }
+        }
+        .td-progress{
+            min-width: 200px;
+        }
+        .progress {
+        width: 90%;
+        margin-right: 10px;
+        height: 10px; /* Altura da barra */
+        background-color: #acacac67; /* Cor de fundo da barra */
+        border-radius: 5px; /* Arredondamento das bordas */
+        }
 
+        .progress-bar {
+        background-color: #4CAF50; /* Cor da barra de progresso */
+        border-radius: 0px; /* Arredondamento das bordas */
+        }
     </style>
 
     <div class="menu">
@@ -83,6 +102,7 @@
                 <th></th>
                 <th>Nome do Projeto</th>
                 <th>Responsável</th>
+                <th>Progresso</th>
                 <th>Dt. prevista</th>
                 <th>Descrição</th>
                 <th>Status</th>
@@ -99,9 +119,18 @@
                         <img class="mb-1 me-2" style="width: 18px; height: 18px;" src="/static/images/user.png" alt="">
                         {{projeto.servidor}}
                     </td>
+                    <td class="td-progress">
+                        <div class="d-flex">
+                            <div class="my-auto progress">
+                                <div class="progress-bar" role="progressbar" style="width: 78%;" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"></div>                            
+                            </div>
+                            <small class="me-5">78%</small>
+                        </div>                        
+                    </td>
                     <td>
                         {{projeto.get_status_icon|safe}}{{projeto.data_fim|date:"d/m/y"}}
                     </td>
+                  
                     <td style="max-width: 300px;">
                         {{projeto.descricao}}
                     </td>

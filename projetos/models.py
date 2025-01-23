@@ -74,8 +74,8 @@ class Fases(models.Model):
 
     class Meta:
         unique_together = ('projeto', 'ordem')
-        verbose_name_plural = "Fases dos projetos"
-        verbose_name = "Fase do projeto"
+        verbose_name_plural = "Etapas dos projetos"
+        verbose_name = "Etapa do projeto"
 
 class Categorias(models.Model):
     

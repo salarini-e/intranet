@@ -43,3 +43,25 @@ def api_criar_projeto(request):
             return JsonResponse({'status': False, 'erros': form.errors})
     else:
         return JsonResponse({'status': False, 'erros': 'Método inválido'})
+
+import json
+@login_required
+def api_criar_coluna(request):
+    if request.method == 'POST':
+        dados = json.loads(request.body)
+        nome = dados['nome']
+        projeto_id = dados['projeto_id']
+        ordem = Fases.objects.filter(projeto__id=projeto_id).count() + 1
+
+        if nome and projeto_id and ordem:
+            projeto = Projetos.objects.get(id=projeto_id)
+            nova_fase = Fases.objects.create(status='at', projeto=projeto, ordem=ordem, nome=nome, descricao='n/h', user_inclusao=request.user)
+            return JsonResponse({'status': 200, 'message': 'Coluna criada com sucesso', 'coluna': {
+                'id': nova_fase.id,
+                'nome': nova_fase.nome,
+                'ordem': nova_fase.ordem,
+            }})
+        else:
+            return JsonResponse({'status': False, 'error': 'Dados incompletos'})
+    else:
+        return JsonResponse({'status': False, 'error': 'Método inválido'})
