@@ -194,7 +194,10 @@
                         <td style="text-align: center;">{{ registro.entrada2|time }}</td>
                         <td style="text-align: center;">{{ registro.saida2|time }}</td>
                         <td>
-                            <span class="badge-status success">{{ registro.total_horas }}</span>
+                            <span class="badge-status success">
+                                <i class="fa-solid fa-stopwatch me-2"></i>
+                                {{ registro.total_horas }}
+                            </span>
                         </td>
                     </tr>
                     {% empty %}
