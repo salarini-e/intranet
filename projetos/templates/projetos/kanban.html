@@ -452,7 +452,7 @@
             card.dataset.subtasks = JSON.stringify([]);
 
             card.innerHTML = `                
-                <input type="checkbox" value="${completed}" onclick="event.stopPropagation();">
+                <input type="checkbox" checked="${completed}" onclick="event.stopPropagation();">
                 <span>${tarefa}</span>
                 <button onclick="event.stopPropagation(); deleteCard(this)">x</button>                   
             `;
