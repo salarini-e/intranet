@@ -439,7 +439,7 @@
                 console.error('Erro na requisição:', error);
             });
         }
-        function addCard(column_id, card_id = Date.now(), tarefa = 'Nova tarefa') {
+        function addCard(column_id, card_id = Date.now(), tarefa = 'Nova tarefa', completed = false) {
             const column = document.querySelector(`.column-header[data-id="${column_id}"]`).closest('.column');
             const cardId = card_id;
             const card = document.createElement('div');             
@@ -452,7 +452,7 @@
             card.dataset.subtasks = JSON.stringify([]);
 
             card.innerHTML = `                
-                <input type="checkbox" onclick="event.stopPropagation();">
+                <input type="checkbox" value="${completed}" onclick="event.stopPropagation();">
                 <span>${tarefa}</span>
                 <button onclick="event.stopPropagation(); deleteCard(this)">x</button>                   
             `;
@@ -555,7 +555,7 @@
         {% for fase in fases %}
             addColumn({{fase.id}}, '{{fase.nome}}');
             {% for tarefa in fase.get_tarefas %}
-                addCard({{fase.id}}, {{tarefa.id}}, '{{tarefa.nome}}');
+                addCard({{fase.id}}, {{tarefa.id}}, '{{tarefa.nome}}', {% if tarefa.concluido %}true{% else %}false{% endif %});
                 {% for sub in tarefa.get_atividades %}
                 // addSubtask('{{sub.nome}}', false);
                     // addSubtask('{{sub.nome}}', {{sub.concluido}});
