@@ -8,6 +8,8 @@ urlpatterns = [
 
     path('api/criar-projeto/', views.api_criar_projeto, name='api_criar_projeto'),
     path('api/criar-coluna/', views.api_criar_coluna, name='api_criar_coluna'),
+    path('api/criar-card/', views.api_criar_card, name='api_criar_card'),
+    path('api/deletar-card/', views.api_remover_card, name='api_remover_card'),
     # path('project/<int:project_id>/', views.project_detail, name='project_detail'),
     # path('project/new/', views.new_project, name='new_project'),
     # path('project/<int:project_id>/edit/', views.edit_project, name='edit_project'),

@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from instituicoes.models import Servidor
+from django.db.models import Count, Q
+
 
 class Projetos(models.Model):
     
@@ -51,6 +53,35 @@ class Projetos(models.Model):
     def servidor(self):
         servidor=Servidor.objects.get(user=self.user_inclusao)
         return servidor.nome.title()
+    
+    def get_progresso(self):
+        tarefas = Tarefas.objects.filter(fase__projeto=self)
+        total_atividades = 0
+        total_atividades_concluidas = 0
+        
+        for tarefa in tarefas:
+            atividades = Atividades.objects.filter(tarefa=tarefa)
+            
+            if atividades.exists():
+                total_atividades += atividades.count() 
+                total_atividades_concluidas += atividades.filter(concluido=True).count() 
+            else:
+                total_atividades += 1  
+                total_atividades_concluidas += 1 if tarefa.concluido else 0  
+
+        if total_atividades > 0:
+            progresso = (total_atividades_concluidas / total_atividades) * 100
+        else:
+            progresso = 0  
+
+        print('Projeto:', self.nome)
+        print('Total tarefas:',tarefas.count())
+        print('Total concluidas:' , tarefas.filter(concluido=True).count())
+        print('Total de atividades:', total_atividades)
+        print('Total atividades concluidas:', total_atividades_concluidas)
+        return round(progresso)
+
+
 class Fases(models.Model):
     
     STATUS_CHOICES = (
@@ -77,6 +108,10 @@ class Fases(models.Model):
         verbose_name_plural = "Etapas dos projetos"
         verbose_name = "Etapa do projeto"
 
+    def get_tarefas(self):
+        tarefas = Tarefas.objects.filter(fase=self).order_by('orderm')
+        return tarefas
+    
 class Categorias(models.Model):
     
     nome = models.CharField(max_length=255)
@@ -132,6 +167,10 @@ class Tarefas(models.Model):
         comentarios = Comentarios.objects.filter(atribuicao='t', tarefa=self.id)
         return comentarios
 
+    def get_atividades(self):
+        atividades = Atividades.objects.filter(tarefa=self).order_by('ordem')
+        return atividades
+    
 class Atividades(models.Model):
     
     tarefa = models.ForeignKey(Tarefas, on_delete=models.CASCADE)

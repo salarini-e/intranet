@@ -125,9 +125,9 @@
                     <td class="td-progress">
                         <div class="d-flex">
                             <div class="my-auto progress">
-                                <div class="progress-bar" role="progressbar" style="width: 78%;" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"></div>                            
+                                <div class="progress-bar" role="progressbar" style="width: {{projeto.get_progresso}}%;" aria-valuenow="{{projeto.get_progresso}}" aria-valuemin="0" aria-valuemax="100"></div>                            
                             </div>
-                            <small class="me-5">78%</small>
+                            <small class="me-5">{{projeto.get_progresso}}%</small>
                         </div>                        
                     </td>
                     <td>

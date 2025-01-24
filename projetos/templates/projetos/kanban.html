@@ -152,37 +152,7 @@
             display: none;
         }
 
-        /* .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            display: none;
-        }
-
-        .modal-content {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-content textarea,
-        .modal-content input {
-            width: calc(100% - 16px);
-            margin-top: 5px;
-            margin-bottom: 10px;
-            padding: 8px;
-            font-size: 1em;
-        } */
-
+      
         .subtasks {
             margin-top: 16px;
         }
@@ -190,16 +160,6 @@
         .subtasks input {
             margin-right: 8px;
         }
-
-        /* .modal-buttons {
-            text-align: right;
-            margin-top: 10px;
-        }
-
-        .modal-buttons button {
-            padding: 8px 16px;
-            margin-left: 8px;
-        } */
 
         .hidden {
             display: none;
@@ -334,9 +294,14 @@
             </div>
           </div>
         </div>
-      </div>
+    </div>
       
-    <script>
+        
+{% endblock %}
+{% block scripts %}
+<script>
+
+        const modal = new bootstrap.Modal(document.getElementById('tarefaModal'));
         const board = document.getElementById('board');
         // const modal = new bootstrap.Modal(document.getElementById('tarefaModal'), {'backdrop': true});
         const cardTitle = document.getElementById('card-title');
@@ -391,7 +356,7 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li>
-                                <button class="dropdown-item" onclick="addCard('${id}')">
+                                <button class="dropdown-item" onclick="createCard('${id}')">
                                     <i class="fa-solid fa-circle-plus me-2"></i>
                                     Nova tarefa
                                 </button>
@@ -452,12 +417,34 @@
             logActivity(`Added new column: ${columnId}`);
         }
         
-        function addCard(column_id, tarefa = 'Nova tarefa') {
+        function createCard(id){
+            fetch('/projetos/api/criar-card/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ nome: 'Nova tarefa', fase_id: id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 200) {
+                    console.log(data)
+                    addCard(data.card.column_id, data.card.id, data.card.nome);
+                } else {
+                    console.error('Erro ao criar card:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
+        }
+        function addCard(column_id, card_id = Date.now(), tarefa = 'Nova tarefa') {
             const column = document.querySelector(`.column-header[data-id="${column_id}"]`).closest('.column');
-            const cardId = Date.now();
+            const cardId = card_id;
             const card = document.createElement('div');             
-            card.dataset.bsToggle = "modal";
-            card.dataset.bsTarget = "#tarefaModal";
+            // card.dataset.bsToggle = "modal";
+            // card.dataset.bsTarget = "#tarefaModal";
             card.className = 'card';
             card.draggable = true;
             card.dataset.cardId = cardId;
@@ -465,10 +452,13 @@
             card.dataset.subtasks = JSON.stringify([]);
 
             card.innerHTML = `                
-                <input type="checkbox" onclick="event.stopPropagation()">
+                <input type="checkbox" onclick="event.stopPropagation();">
                 <span>${tarefa}</span>
                 <button onclick="event.stopPropagation(); deleteCard(this)">x</button>                   
             `;
+
+            card.querySelector('input').addEventListener('click', (event) => event.stopPropagation());
+            card.querySelector('button').addEventListener('click', (event) => event.stopPropagation());
 
             card.addEventListener('click', () => openModal(card));
 
@@ -482,36 +472,55 @@
 
             column.querySelector('.card-container').appendChild(card);
             logActivity(`Added new card: ${cardId} in column: ${column.dataset.columnId}`);
-        }
-
+        }    
         function deleteCard(button) {
             const response = confirm(`Você tem certeza que deseja excluir a tarefa ${button.closest('.card').querySelector('span').textContent }?`);
-            if (response){
-                const card = button.closest('.card');
-                const cardId = card.dataset.cardId;
-                const column = card.closest('.column');
-                const container = column.querySelector('.card-container');
-                card.remove();
-                logActivity(`Deleted card: ${cardId} from column: ${column.dataset.columnId}`);
+            if (response){        
+                cardId = button.closest('.card').dataset.cardId;        
+                removerCard(cardId);
             }            
         }
-
+        function removerCard(id, button){
+            fetch('/projetos/api/deletar-card/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ card_id: id })                
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 200) {
+                    const card = document.querySelector(`.card[data-card-id="${id}"]`);                    
+                    const column = card.closest('.column');
+                    card.remove();
+                    logActivity(`Deleted card: ${id} from column: ${column.dataset.columnId}`);
+                } else {
+                    console.error('Erro ao criar card:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
+        }
         function openModal(card) {
             activeCard = card;
             cardTitle.value = card.querySelector('span').textContent || '';
             cardDescription.value = card.dataset.description || '';
             cardAssignee.value = card.dataset.assignee || '';
-            cardDate.value = card.dataset.date || '';
+            // cardDate.value = card.dataset.date || '';
 
             subtasksContainer.innerHTML = '';
             const subtasks = JSON.parse(card.dataset.subtasks || '[]');
             subtasks.forEach(task => addSubtask(task.text, task.completed));
 
-            
+            modal.show();
         }
 
         function closeModal() {            
             activeCard = null;
+            modal.close()
         }
 
         function saveCardDetails() {
@@ -545,10 +554,13 @@
         }
         {% for fase in fases %}
             addColumn({{fase.id}}, '{{fase.nome}}');
-
-            {% for tarefa in fase.tarefas %}
-
+            {% for tarefa in fase.get_tarefas %}
+                addCard({{fase.id}}, {{tarefa.id}}, '{{tarefa.nome}}');
+                {% for sub in tarefa.get_atividades %}
+                // addSubtask('{{sub.nome}}', false);
+                    // addSubtask('{{sub.nome}}', {{sub.concluido}});
+                {% endfor %}
             {% endfor %}
         {% endfor %}
-    </script>
+</script>
 {% endblock %}
