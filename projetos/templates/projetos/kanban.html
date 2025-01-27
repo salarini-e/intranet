@@ -250,6 +250,14 @@
                         
                     </div>
                     <div class="col px-5 d-flex flex-column">
+                        <label for="card-assignee" class="mt-3">Prioridade:</label>
+                        <select id="card-assignee" class="form-select" style="border: none;">
+                            <option value="" disabled>Selecione a prioridade</option>
+                            <option value="user1" selected>Normal</option>
+                            <option value="user2">Urgente</option>
+                            <option value="user3">Moderada</option>
+                        </select>
+            
                         <label for="card-assignee" class="mt-3">Atribuição:</label>
                         <select id="card-assignee" class="form-select" style="border: none;">
                             <option value="" selected disabled>Selecione um usuário</option>
@@ -284,7 +292,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-              <button type="button" class="btn btn-primary" onclick="saveCardDetails()"  data-bs-dismiss="modal" style="color: white;">Salvar mudanças</button>
+              <button id="btnEditarTarefa" type="button" class="btn btn-primary me-auto" onclick=""  data-bs-dismiss="modal" style="color: white;">Salvar mudanças</button>
             </div>
           </div>
         </div>
@@ -436,15 +444,40 @@ class Card {
         card.className = 'card';
         card.draggable = true;
         card.dataset.id = this.id;
-
+        const span = `<span id='card-title-${this.id}'>${this.tarefa}</span>`
         card.innerHTML = `
             <input type="checkbox" ${this.completed ? 'checked' : ''}>
-            <span>${this.tarefa}</span>
+            ${span}
             <button>x</button>
         `;
 
         card.addEventListener('click', () => {
-            this.openModalCard();
+            this.openModalCard(this);
+        });
+        card.querySelector('input').addEventListener('click', (e) => {
+            e.stopPropagation(); 
+        });
+        card.querySelector('input').addEventListener('change', (e) => {
+            e.stopPropagation(); 
+            fetch('/projetos/api/check-card/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.kanban.csrfToken
+                },
+                body: JSON.stringify({ card_id: this.id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 200) {
+                    this.completed = data.concluida;
+                } else {
+                    console.error('Erro ao deletar card:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });            
         });
         card.querySelector('button').addEventListener('click', (e) => {
             e.stopPropagation(); 
@@ -461,7 +494,7 @@ class Card {
 
         return card;
     }
-    openModalCard(){
+    openModalCard(e){
         console.log(this)
         this.kanban.modal.show();
         document.getElementById('card-title').value = this.tarefa;
@@ -471,6 +504,9 @@ class Card {
         if (this.anexo_url){
             document.getElementById('listAnexo').innerHTML = `<a href="${this.anexo_url}">${this.anexo_url}</a>`;        
         }        
+        document.getElementById('btnEditarTarefa').onclick = (() => {
+            this.editarCard(e);
+        });
     }
     deleteCard() {
         if (confirm(`Você tem certeza que deseja excluir a tarefa ${this.tarefa}?`)) {
@@ -496,6 +532,41 @@ class Card {
                 console.error('Erro na requisição:', error);
             });
         }
+    }
+    editarCard(e){
+        fetch('/projetos/api/editar-tarefa/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.kanban.csrfToken
+                },
+                body: JSON.stringify({ card_id: this.id,
+                    nome: document.getElementById('card-title').value,
+                    descricao: document.getElementById('card-description').value,
+                    data_inicio: document.getElementById('data_inicio').value,
+                    data_fim: document.getElementById('data_fim').value,
+                    prioridade: document.getElementById('card-assignee').value
+                 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 200) {
+                    console.log(data)
+                    this.tarefa = data.card.nome;
+                    document.getElementById(`card-title-${data.card.id}`).textContent = data.card.nome;
+                    this.descricao = data.card.descricao;
+                    this.dt_inicio = data.card.data_inicio;
+                    this.dt_fim = data.card.data_fim;
+                    this.prioridade = data.card.prioridade;
+                    this.element.querySelector('span').textContent = this.tarefa;
+                    this.kanban.logActivity(`Edited card: ${this.id}`);
+                } else {
+                    console.error('Erro ao deletar card:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
     }
     updateColumn(originalColumnId, newColumnId){
         console.log(`Card: ${this.id} changed from column: ${originalColumnId} to column: ${newColumnId}`);

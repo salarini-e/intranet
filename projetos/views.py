@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import Projetos, Fases, Tarefas, Atividades
+from .models import Projetos, Fases, Tarefas, Atividades, Prioridade
 from .forms import ProjetosForm
 from django.http import JsonResponse
 from instituicoes.models import Servidor
@@ -136,3 +136,27 @@ def api_mover_card_linha(request):
         #     return JsonResponse({'status': 400, 'error': 'Card não encontrado'})
     else:
         return JsonResponse({'status': 403, 'error': 'Método inválido'})
+    
+def api_check_card(request):
+    if request.method == 'POST':
+        dados = json.loads(request.body)
+        card_id = dados['card_id']
+        tarefa = Tarefas.objects.get(id=card_id)
+        tarefa.concluido = True if not tarefa.concluido else False
+        tarefa.save()
+        return JsonResponse({'status': 200, 'concluida': tarefa.concluido})
+    return JsonResponse({'status': 403, 'error': 'Método inválido'})
+
+def api_editar_tarefa(request):
+    if request.method == 'POST':
+        dados = json.loads(request.body)
+        card_id = dados['card_id']
+        tarefa = Tarefas.objects.get(id=card_id)
+        tarefa.nome = dados['nome'] if dados['nome'] else None
+        tarefa.descricao = dados['descricao'] if dados['descricao'] else None
+        tarefa.data_inicio = dados['data_inicio'] if dados['data_inicio'] else None
+        tarefa.data_fim = dados['data_fim'] if dados['data_fim'] else None
+        # tarefa.prioridade = Prioridade.objects.get(id=dados['prioridade'])
+        tarefa.save()
+        return JsonResponse({'status': 200, 'card': {'id': tarefa.id,'nome': tarefa.nome, 'descricao': tarefa.descricao, 'data_inicio': tarefa.data_inicio, 'data_fim': tarefa.data_fim}})
+    return JsonResponse({'status': 403, 'error': 'Método inválido'})
