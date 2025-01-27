@@ -1,198 +1,198 @@
 {% extends 'template.html' %}
 {% block main %}
-    <style>
-        button:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-        h3 {
-            margin: 0;
-            font-size: 1em;
-            font-weight: normal;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-
-        .menu {
-            background-color: #ffffff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 10px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .menu button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .menu button:hover {
-            background-color: #0056b3;
-        }
-
-        .board {
-            display: flex;
-            gap: 16px;
-            padding: 16px 0px;
-            overflow-x: auto;
-            min-height: 600px;
-        }
-
-        .column {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 16px;
-            min-width: 250px;
-            min-height: 136px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            margin-bottom: auto;
-        }
-
-        .column-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .column-header h3 {
-            margin: 0;
-            cursor: pointer;
-        }
-
-        .column-header h3:hover {
-            text-decoration: underline;
-        }
-
-        .column-header .drag-handle {
-            cursor: grab;
-            margin-right: 8px;
-        }
-
-        .column-header button {
-            background-color: #33353400;
-            color: rgb(0, 0, 0);
-            border: none;
-            /* padding: 6px     12px; */
-            border-radius: 4px;
-            /* width: 24px; */
-            /* height: 24px; */
-            cursor: pointer;
-            margin: auto 0 auto auto;            
-        }
-
-        .column-header button:hover {
-            background-color: #21883700;
-        }
-        .column-header button:active {
-            transform: scale(0.98);
-            border: none;
-            background-color: #21883700;
-        }
-        button:focus {
-            outline: none;
-            box-shadow: none;
-        }
-        .card {
-            background-color: #e3e4e8;
-            border-radius: 4px;
-            padding: 8px;
-            margin-top: 8px;
-            margin-bottom: 0px;
-            cursor: grab;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card.dragging {
-            opacity: 0.5;
-        }
-
-        .card input[type="checkbox"] {
-            margin-right: 8px;
-        }
-        .card-container{
-            width: calc(100% - 12px);
-            min-height: 66px;
-            background-color: rgba(245, 245, 245, 0.363);
-            border-radius: 4px;
-            padding: 0px 8px 8px 8px;
-        }
-        .card-container button{
-            cursor: pointer;
-            margin-left: auto; 
-            border: none; 
-            padding: 4px 8px; 
-            border-radius: 4px;
-            background-color: #ffffff00;
-        }
-        .fake-card {
-            height: 50px;
-            background-color: transparent;
-          
-            display: none;
-        }
-
-      
-        .subtasks {
-            margin-top: 16px;
-        }
-
-        .subtasks input {
-            margin-right: 8px;
-        }
-
-        .hidden {
-            display: none;
-        }
-        @media (min-width: 1400px) {
-		.container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
-			max-width: 97.5%;
-			margin-left: 3%;
-		}
-	}   
-    .modal-body label{
-        font-weight: bold;
+<style>
+    button:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
     }
-    .btn-addsubtarefa{
-        background-color: #cfcfcf;
-        color: rgb(0, 0, 0);
+
+    button:active {
+        transform: scale(0.98);
+    }
+    h3 {
+        margin: 0;
+        font-size: 1em;
+        font-weight: normal;
+    }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f9;
+    }
+
+    .menu {
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 10px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .menu button {
+        background-color: #007bff;
+        color: white;
         border: none;
         border-radius: 4px;
         cursor: pointer;
     }
-    .progress {
-        width: 90%;
-        margin-right: 10px;
-        height: 10px; /* Altura da barra */
-        background-color: #acacac67; /* Cor de fundo da barra */
-        border-radius: 5px; /* Arredondamento das bordas */
-        }
 
-        .progress-bar {
-        background-color: #4CAF50; /* Cor da barra de progresso */
-        border-radius: 0px; /* Arredondamento das bordas */
-        }
-    </style>
+    .menu button:hover {
+        background-color: #0056b3;
+    }
+
+    .board {
+        display: flex;
+        gap: 16px;
+        padding: 16px 0px;
+        overflow-x: auto;
+        min-height: 600px;
+    }
+
+    .column {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 16px;
+        min-width: 250px;
+        min-height: 136px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        margin-bottom: auto;
+    }
+
+    .column-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .column-header h3 {
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .column-header h3:hover {
+        text-decoration: underline;
+    }
+
+    .column-header .drag-handle {
+        cursor: grab;
+        margin-right: 8px;
+    }
+
+    .column-header button {
+        background-color: #33353400;
+        color: rgb(0, 0, 0);
+        border: none;
+        /* padding: 6px     12px; */
+        border-radius: 4px;
+        /* width: 24px; */
+        /* height: 24px; */
+        cursor: pointer;
+        margin: auto 0 auto auto;            
+    }
+
+    .column-header button:hover {
+        background-color: #21883700;
+    }
+    .column-header button:active {
+        transform: scale(0.98);
+        border: none;
+        background-color: #21883700;
+    }
+    button:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    .card {
+        background-color: #e3e4e8;
+        border-radius: 4px;
+        padding: 8px;
+        margin-top: 8px;
+        margin-bottom: 0px;
+        cursor: grab;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .card.dragging {
+        opacity: 0.5;
+    }
+
+    .card input[type="checkbox"] {
+        margin-right: 8px;
+    }
+    .card-container{
+        width: calc(100% - 12px);
+        min-height: 66px;
+        background-color: rgba(245, 245, 245, 0.363);
+        border-radius: 4px;
+        padding: 0px 8px 8px 8px;
+    }
+    .card-container button{
+        cursor: pointer;
+        margin-left: auto; 
+        border: none; 
+        padding: 4px 8px; 
+        border-radius: 4px;
+        background-color: #ffffff00;
+    }
+    .fake-card {
+        height: 50px;
+        background-color: transparent;
+      
+        display: none;
+    }
+
+  
+    .subtasks {
+        margin-top: 16px;
+    }
+
+    .subtasks input {
+        margin-right: 8px;
+    }
+
+    .hidden {
+        display: none;
+    }
+    @media (min-width: 1400px) {
+    .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+        max-width: 97.5%;
+        margin-left: 3%;
+    }
+}   
+.modal-body label{
+    font-weight: bold;
+}
+.btn-addsubtarefa{
+    background-color: #cfcfcf;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.progress {
+    width: 90%;
+    margin-right: 10px;
+    height: 10px; /* Altura da barra */
+    background-color: #acacac67; /* Cor de fundo da barra */
+    border-radius: 5px; /* Arredondamento das bordas */
+    }
+
+    .progress-bar {
+    background-color: #4CAF50; /* Cor da barra de progresso */
+    border-radius: 0px; /* Arredondamento das bordas */
+    }
+</style>
 </head>
 <body>
     <div class="menu">
@@ -202,7 +202,7 @@
                 <i class="fa-solid fa-wrench me-2"></i> Configurar
             </button>
             <ul class="dropdown-menu">
-                <li   onclick="createColumn({{projeto.id}})">
+                <li onclick="kanban.createColumn({{projeto.id}})">
                     <a class="dropdown-item" href="#">
                         <i class="fa-solid fa-square-plus me-2"></i> Adicionar coluna
                     </a>
@@ -212,11 +212,8 @@
                         <i class="fa-solid fa-backward me-2"></i> Voltar para painel
                     </a>
                 </li>
-              <!-- <li><a >Voltar</a></li> -->
-              <!-- <li><a class="dropdown-item" href="#">Another action</a></li> -->
-              <!-- <li><a class="dropdown-item" href="#">Something else here</a></li> -->
             </ul>
-          </div>
+        </div>
     </div>
 
     <div class="board" id="board"></div>
@@ -300,267 +297,281 @@
 {% endblock %}
 {% block scripts %}
 <script>
+class Kanban {
+    constructor(boardId, modalId, csrfToken) {
+        this.board = document.getElementById(boardId);
+        this.modal = new bootstrap.Modal(document.getElementById(modalId));
+        this.csrfToken = csrfToken;
+        this.activeCard = null;
+        this.draggedCard = null;
+        this.draggedColumn = null;
+        this.listColumns = [];
+        this.listCards = [];
+    }
 
-        const modal = new bootstrap.Modal(document.getElementById('tarefaModal'));
-        const board = document.getElementById('board');
-        // const modal = new bootstrap.Modal(document.getElementById('tarefaModal'), {'backdrop': true});
-        const cardTitle = document.getElementById('card-title');
-        const cardDescription = document.getElementById('card-description');
-        const cardAssignee = document.getElementById('card-assignee');
-        const cardDate = document.getElementById('card-date');
-        const subtasksContainer = document.getElementById('subtasks-container');
+    logActivity(activity) {
+        console.log(`Activity: ${activity}`);
+    }
 
-        let activeCard = null;
-        let draggedCard = null;
-        let draggedColumn = null;
+    createColumn(projectId) {
+        fetch('/projetos/api/criar-coluna/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': this.csrfToken
+            },
+            body: JSON.stringify({ nome: 'Nova coluna', projeto_id: projectId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                this.addColumn(data.coluna.id, data.coluna.nome);
+            } else {
+                console.error('Erro ao criar coluna:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro na requisição:', error);
+        });
+    }
 
-        function logActivity(activity) {
-            console.log(`Activity: ${activity}`);
+    addColumn(id, nome) {
+        const column = new Column(id, nome, this);
+        this.board.appendChild(column.element);
+        this.logActivity(`Added new column: ${id}`);
+        this.listColumns.push(column);
+    }
+
+    createCard(columnId) {
+        fetch('/projetos/api/criar-card/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': this.csrfToken
+            },
+            body: JSON.stringify({ nome: 'Nova tarefa', fase_id: columnId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                this.addCard(data.card.column_id, data.card.id, data.card.nome);
+            } else {
+                console.error('Erro ao criar card:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro na requisição:', error);
+        });
+    }
+
+    addCard(columnId, cardId, tarefa, completed = false) {
+        const column = document.querySelector(`.column[data-id="${columnId}"]`);
+        if (column) {
+            const card = new Card(cardId, tarefa, completed, this);
+            column.querySelector('.card-container').appendChild(card.element);
+            this.logActivity(`Added new card: ${cardId} in column: ${columnId}`);
+            this.listCards.push(card);
         }
+    }
+}
 
-        function createColumn(id){
-            fetch('/projetos/api/criar-coluna/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({ nome: 'Nova coluna', projeto_id: id })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status == 200) {
-                    addColumn(data.coluna.id, data.coluna.nome);
-                } else {
-                    console.error('Erro ao criar coluna:', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Erro na requisição:', error);
-            });
-        }
-        function addColumn(id = `new-${Date.now()}`, nome = 'Nova coluna') {
-            const columnId = Date.now();
-            const column = document.createElement('div');
-            column.className = 'column';
-            column.id = id;
-            column.dataset.columnId = columnId;
+class Column {
+    constructor(id, nome, kanban) {
+        this.id = id;
+        this.nome = nome;
+        this.kanban = kanban;
+        this.element = this.createElement();
+    }
 
-            column.innerHTML = `
-                <div class="column-header" data-id="${id}">
-                    <span class="drag-handle me-3" draggable="true">☰</span>
-                    <h3 contenteditable="true">${nome}</h3>                    
-                    <div class="btn-group" role="group">
-                        <button type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-caret-down"></i>    
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <button class="dropdown-item" onclick="createCard('${id}')">
-                                    <i class="fa-solid fa-circle-plus me-2"></i>
-                                    Nova tarefa
-                                </button>
-                            </li>
-                            <li>
-                                <button class="dropdown-item" onclick="">
-                                    <i class="fa-regular fa-pen-to-square me-2"></i>
-                                    Editar coluna
-                                </button>
-                            </li>                            
-                        </ul>
-                    </div>
-                </div>
-                <div class="card-container"></div>                
-            `;
+    createElement() {
+        const column = document.createElement('div');
+        column.className = 'column';
+        column.dataset.id = this.id;
 
-            const dragHandle = column.querySelector('.drag-handle');
+        column.innerHTML = `
+            <div class="column-header">
+                <span class="drag-handle" draggable="true">☰</span>
+                <h3 contenteditable="true">${this.nome}</h3>
+                <button onclick="kanban.createCard('${this.id}')"><i class="fa-solid fa-circle-plus"></i></button>
+            </div>
+            <div class="card-container" ondragover="event.preventDefault()" ondrop="kanban.dropCard(event)"></div>
+        `;
 
-            dragHandle.addEventListener('dragstart', (e) => {
-                draggedColumn = column;
-                e.dataTransfer.setData('text/plain', '');
-            });
+        const dragHandle = column.querySelector('.drag-handle');
+        dragHandle.addEventListener('dragstart', (e) => {
+            this.kanban.draggedColumn = column;
+            e.dataTransfer.setData('text/plain', '');
+        });
 
-            column.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                const draggingOver = document.elementFromPoint(e.clientX, e.clientY);
-                if (draggingOver && draggingOver.classList.contains('column') && draggedColumn) {
-                    const board = draggingOver.parentNode;
-                    board.insertBefore(draggedColumn, draggingOver.nextSibling);                    
-                    console.log(`Coluna ${id} movida para ${draggingOver.dataset.columnId}`);
-                    console.log(draggingOver);
-                }
-            });
-            
-            dragHandle.addEventListener('dragend', () => {                                
-                draggedColumn = null;
-            });
-          
-            column.querySelector('.card-container').addEventListener('dragover', (e) => {
-                e.preventDefault();
-            });
+        column.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const draggingOver = document.elementFromPoint(e.clientX, e.clientY);
+            if (draggingOver && draggingOver.classList.contains('column') && this.kanban.draggedColumn) {
+                const board = draggingOver.parentNode;
+                board.insertBefore(this.kanban.draggedColumn, draggingOver.nextSibling);
+            }
+        });
 
-            column.querySelector('.card-container').addEventListener('drop', (e) => {
-                e.preventDefault();
-                if (draggedCard) {
-                    console.log(draggedCard)
-                    const container = column.querySelector('.card-container');
-                    container.appendChild(draggedCard);
-                    console.log('Card movido:', draggedCard.dataset.cardId)
-                    console.log('Coluna de origem:', draggedCard.dataset.colunaOrigem)
-                    console.log('Movido para coluna:', id)
-                    draggedCard.dataset.colunaOrigem = id;
-                    logActivity(`Moved card: ${draggedCard.dataset.cardId} to column: ${column.dataset.columnId}`);
-                }
-            });
+        dragHandle.addEventListener('dragend', () => {
+            this.kanban.draggedColumn = null;
+        });
 
-            board.appendChild(column);
-            logActivity(`Added new column: ${columnId}`);
-        }
-        
-        function createCard(id){
-            fetch('/projetos/api/criar-card/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({ nome: 'Nova tarefa', fase_id: id })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status == 200) {
-                    console.log(data)
-                    addCard(data.card.column_id, data.card.id, data.card.nome);
-                } else {
-                    console.error('Erro ao criar card:', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Erro na requisição:', error);
-            });
-        }
-        function addCard(column_id, card_id = Date.now(), tarefa = 'Nova tarefa', completed = false) {
-            const column = document.querySelector(`.column-header[data-id="${column_id}"]`).closest('.column');
-            const cardId = card_id;
-            const card = document.createElement('div');             
-            // card.dataset.bsToggle = "modal";
-            // card.dataset.bsTarget = "#tarefaModal";
-            card.className = 'card';
-            card.draggable = true;
-            card.dataset.cardId = cardId;
-            card.dataset.colunaOrigem = column_id;
-            card.dataset.subtasks = JSON.stringify([]);
+        return column;
+    }
+}
 
-            card.innerHTML = `                
-                <input type="checkbox" ${completed ? 'checked' : ''} onclick="event.stopPropagation();">
-                <span>${tarefa}</span>
-                <button onclick="event.stopPropagation(); deleteCard(this)">x</button>                   
-            `;
+class Card {
+    constructor(id, tarefa, completed, kanban) {
+        this.id = id;
+        this.tarefa = tarefa;
+        this.completed = completed;
+        this.kanban = kanban;
+        this.element = this.createElement();
+    }
 
-            card.querySelector('input').addEventListener('click', (event) => event.stopPropagation());
-            card.querySelector('button').addEventListener('click', (event) => event.stopPropagation());
+    createElement() {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.draggable = true;
+        card.dataset.id = this.id;
 
-            card.addEventListener('click', () => openModal(card));
+        card.innerHTML = `
+            <input type="checkbox" ${this.completed ? 'checked' : ''}>
+            <span>${this.tarefa}</span>
+            <button>x</button>
+        `;
 
-            card.addEventListener('dragstart', () => {
-                draggedCard = card;
-            });
+        card.querySelector('button').addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            this.deleteCard();
+        });
 
-            card.addEventListener('dragend', () => {
-                draggedCard = null;
-            });
+        card.addEventListener('dragstart', () => {
+            this.kanban.draggedCard = card;
+        });
 
-            column.querySelector('.card-container').appendChild(card);
-            logActivity(`Added new card: ${cardId} in column: ${column.dataset.columnId}`);
-        }    
-        function deleteCard(button) {
-            const response = confirm(`Você tem certeza que deseja excluir a tarefa ${button.closest('.card').querySelector('span').textContent }?`);
-            if (response){        
-                cardId = button.closest('.card').dataset.cardId;        
-                removerCard(cardId);
-            }            
-        }
-        function removerCard(id, button){
+        card.addEventListener('dragend', () => {
+            this.kanban.draggedCard = null;
+        });
+
+        return card;
+    }
+
+    deleteCard() {
+        if (confirm(`Você tem certeza que deseja excluir a tarefa ${this.tarefa}?`)) {
             fetch('/projetos/api/deletar-card/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
+                    'X-CSRFToken': this.kanban.csrfToken
                 },
-                body: JSON.stringify({ card_id: id })                
+                body: JSON.stringify({ card_id: this.id })
             })
             .then(response => response.json())
             .then(data => {
-                if (data.status == 200) {
-                    const card = document.querySelector(`.card[data-card-id="${id}"]`);                    
-                    const column = card.closest('.column');
-                    card.remove();
-                    logActivity(`Deleted card: ${id} from column: ${column.dataset.columnId}`);
+                if (data.status === 200) {
+                    this.element.remove();
+                    this.kanban.listCards = this.kanban.listCards.filter(card => card.id !== this.id);
+                    this.kanban.logActivity(`Deleted card: ${this.id}`);
                 } else {
-                    console.error('Erro ao criar card:', data.error);
+                    console.error('Erro ao deletar card:', data.error);
                 }
             })
             .catch(error => {
                 console.error('Erro na requisição:', error);
             });
         }
-        function openModal(card) {
-            activeCard = card;
-            cardTitle.value = card.querySelector('span').textContent || '';
-            cardDescription.value = card.dataset.description || '';
-            cardAssignee.value = card.dataset.assignee || '';
-            // cardDate.value = card.dataset.date || '';
+    }
+    updateColumn(originalColumnId, newColumnId){
+        console.log(`Card: ${this.id} changed from column: ${originalColumnId} to column: ${newColumnId}`);
+        fetch('/projetos/api/mover-card/column/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.kanban.csrfToken
+                },
+                body: JSON.stringify({ card_id: this.id, original_column_id: originalColumnId, new_column_id: newColumnId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 200) {
+                    console.log(data)
 
-            subtasksContainer.innerHTML = '';
-            const subtasks = JSON.parse(card.dataset.subtasks || '[]');
-            subtasks.forEach(task => addSubtask(task.text, task.completed));
+                } else {
+                    console.error('Erro ao deletar card:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
 
-            modal.show();
+    }
+    updateLine(originalIndex, newIndex, newColumnId){
+        console.log(`Card: ${this.id} moved from position: ${originalIndex} to position: ${newIndex} in column: ${newColumnId}`);
+        fetch('/projetos/api/mover-card/line/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.kanban.csrfToken
+                },
+                body: JSON.stringify({ card_id: this.id, original_index: originalIndex, new_index: newIndex, new_column_id: newColumnId})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 200) {
+                    console.log(data)
+
+                } else {
+                    console.error('Erro ao deletar card:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
+    }
+}
+
+Kanban.prototype.dropCard = function(event) {
+    event.preventDefault();
+    const targetColumn = event.currentTarget;
+    if (this.draggedCard && targetColumn) {
+        const closestCard = document.elementFromPoint(event.clientX, event.clientY).closest('.card');
+        const originalColumnId = this.draggedCard.closest('.column').dataset.id;
+        const newColumnId = targetColumn.closest('.column').dataset.id;
+        const originalIndex = Array.from(this.draggedCard.parentNode.children).indexOf(this.draggedCard);
+
+        if (closestCard && closestCard !== this.draggedCard) {
+            targetColumn.insertBefore(this.draggedCard, closestCard);
+        } else {
+            targetColumn.appendChild(this.draggedCard);
         }
 
-        function closeModal() {            
-            activeCard = null;
-            modal.close()
+        const newIndex = Array.from(this.draggedCard.parentNode.children).indexOf(this.draggedCard);
+        
+        if (originalColumnId !== newColumnId) {            
+            card = this.listCards.find(card => card.id == this.draggedCard.dataset.id);
+            console.log(card);
+            card.updateColumn(originalColumnId, newColumnId);
         }
 
-        function saveCardDetails() {
-            if (activeCard) {
-                activeCard.querySelector('span').textContent = cardTitle.value;
-                activeCard.dataset.description = cardDescription.value;
-                activeCard.dataset.assignee = cardAssignee.value;
-                activeCard.dataset.date = cardDate.value;
-
-                const subtasks = [];
-                document.querySelectorAll('.subtask').forEach((subtask) => {
-                    const text = subtask.querySelector('input[type="text"]').value;
-                    const completed = subtask.querySelector('input[type="checkbox"]').checked;
-                    subtasks.push({ text, completed });
-                });
-
-                activeCard.dataset.subtasks = JSON.stringify(subtasks);
-                closeModal();
-                logActivity(`Updated card: ${activeCard.dataset.cardId}`);
-            }
+        if (originalIndex !== newIndex) {
+            card = this.listCards.find(card => card.id == this.draggedCard.dataset.id);
+            card.updateLine(originalIndex, newIndex, newColumnId);            
         }
+    }
+}
 
-        function addSubtask(text = 'Nova tarefa', completed = false) {
-            const subtask = document.createElement('div');
-            subtask.className = 'subtask mb-3';
-            subtask.innerHTML = `
-                <input type="checkbox" ${completed ? 'checked' : ''}>
-                <input type="text" value="${text}" style="border: none;">
-            `;
-            subtasksContainer.appendChild(subtask);
-        }
-        {% for fase in fases %}
-            addColumn({{fase.id}}, '{{fase.nome}}');
-            {% for tarefa in fase.get_tarefas %}
-                addCard({{fase.id}}, {{tarefa.id}}, '{{tarefa.nome}}', {% if tarefa.concluido %}true{% else %}false{% endif %});
-                {% for sub in tarefa.get_atividades %}
-                // addSubtask('{{sub.nome}}', false);
-                    // addSubtask('{{sub.nome}}', {{sub.concluido}});
-                {% endfor %}
-            {% endfor %}
-        {% endfor %}
+
+
+// Inicialização do Kanban
+const kanban = new Kanban('board', 'tarefaModal', '{{ csrf_token }}');
+{% for fase in fases %}
+    kanban.addColumn({{ fase.id }}, '{{ fase.nome }}');
+    {% for tarefa in fase.get_tarefas %}
+        kanban.addCard({{ fase.id }}, {{ tarefa.id }}, '{{ tarefa.nome }}', {{ tarefa.concluido|yesno:"true,false" }});
+    {% endfor %}
+{% endfor %}
+console.log(kanban.listColumns);
+console.log(kanban.listCards);  
 </script>
 {% endblock %}

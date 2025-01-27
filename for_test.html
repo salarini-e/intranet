@@ -1,53 +1,524 @@
+{% extends 'template.html' %}
+{% block main %}
+<style>
+    button:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
+    button:active {
+        transform: scale(0.98);
+    }
+    h3 {
+        margin: 0;
+        font-size: 1em;
+        font-weight: normal;
+    }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f9;
+    }
 
-        .hero {
-            background: url('https://www.portalmultiplix.com/rails/active_storage/representations/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaUFtIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--cf3fb2bbbb8d3acfa9b13586522730eba70f4c4f/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCam9MY21WemFYcGxTU0lKTVRBeU5BWTZCa1ZVIiwiZXhwIjpudWxsLCJwdXIiOiJ2YXJpYXRpb24ifX0=--225ee2b8fdfbf7a081fbd41b5290b3252f18a8c0/CORTADO%20O%20processo%20seletivo%20contar%C3%A1%20apenas%20com%20uma%20%C3%BAnica%20etapa%20de%20sele%C3%A7%C3%A3o%20%20Foto%20-%20Acervo%20Jo%C3%A3o%20Luccas%20Oliveira.jpg') no-repeat center center/cover;
-            height: 200px;
-            color: #000000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-        }
-        .hero h1 {
-            font-size: 3rem;
-            text-align: center;
-        }
-        .content {
-            padding: 2rem 1rem;
-        }
-    </style>
+    .menu {
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 10px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
 
-    <div id="noticia">
-        <!-- Hero Section -->
-    <div class="hero">
-        <!-- <h1>Decreto Nº 3.343 - Expediente Facultativo</h1> -->
+    .menu button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .menu button:hover {
+        background-color: #0056b3;
+    }
+
+    .board {
+        display: flex;
+        gap: 16px;
+        padding: 16px 0px;
+        overflow-x: auto;
+        min-height: 600px;
+    }
+
+    .column {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 16px;
+        min-width: 250px;
+        min-height: 136px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        margin-bottom: auto;
+    }
+
+    .column-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .column-header h3 {
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .column-header h3:hover {
+        text-decoration: underline;
+    }
+
+    .column-header .drag-handle {
+        cursor: grab;
+        margin-right: 8px;
+    }
+
+    .column-header button {
+        background-color: #33353400;
+        color: rgb(0, 0, 0);
+        border: none;
+        /* padding: 6px     12px; */
+        border-radius: 4px;
+        /* width: 24px; */
+        /* height: 24px; */
+        cursor: pointer;
+        margin: auto 0 auto auto;            
+    }
+
+    .column-header button:hover {
+        background-color: #21883700;
+    }
+    .column-header button:active {
+        transform: scale(0.98);
+        border: none;
+        background-color: #21883700;
+    }
+    button:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    .card {
+        background-color: #e3e4e8;
+        border-radius: 4px;
+        padding: 8px;
+        margin-top: 8px;
+        margin-bottom: 0px;
+        cursor: grab;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .card.dragging {
+        opacity: 0.5;
+    }
+
+    .card input[type="checkbox"] {
+        margin-right: 8px;
+    }
+    .card-container{
+        width: calc(100% - 12px);
+        min-height: 66px;
+        background-color: rgba(245, 245, 245, 0.363);
+        border-radius: 4px;
+        padding: 0px 8px 8px 8px;
+    }
+    .card-container button{
+        cursor: pointer;
+        margin-left: auto; 
+        border: none; 
+        padding: 4px 8px; 
+        border-radius: 4px;
+        background-color: #ffffff00;
+    }
+    .fake-card {
+        height: 50px;
+        background-color: transparent;
+      
+        display: none;
+    }
+
+  
+    .subtasks {
+        margin-top: 16px;
+    }
+
+    .subtasks input {
+        margin-right: 8px;
+    }
+
+    .hidden {
+        display: none;
+    }
+    @media (min-width: 1400px) {
+    .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+        max-width: 97.5%;
+        margin-left: 3%;
+    }
+}   
+.modal-body label{
+    font-weight: bold;
+}
+.btn-addsubtarefa{
+    background-color: #cfcfcf;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.progress {
+    width: 90%;
+    margin-right: 10px;
+    height: 10px; /* Altura da barra */
+    background-color: #acacac67; /* Cor de fundo da barra */
+    border-radius: 5px; /* Arredondamento das bordas */
+    }
+
+    .progress-bar {
+    background-color: #4CAF50; /* Cor da barra de progresso */
+    border-radius: 0px; /* Arredondamento das bordas */
+    }
+</style>
+</head>
+<body>
+    <div class="menu">
+        <h2>{{projeto.nome}}</h2>        
+        <div class="ms-2" class="dropdown">
+            <button class="btn btn-primary" style="background-color: white; color: black;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-wrench me-2"></i> Configurar
+            </button>
+            <ul class="dropdown-menu">
+                <li onclick="kanban.createColumn({{projeto.id}})">
+                    <a class="dropdown-item" href="#">
+                        <i class="fa-solid fa-square-plus me-2"></i> Adicionar coluna
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'projetos:index' %}">
+                        <i class="fa-solid fa-backward me-2"></i> Voltar para painel
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 
-    <!-- Content Section -->
-    <div class="container content">
-        <h2 class="mb-4">Resumo do Decreto</h2>
-        <p>No dia 17 de janeiro de 2025, o Prefeito Johnny Maycon publicou o Decreto Nº 3.343, que estabelece ponto facultativo em diversas datas e ajusta o expediente nas repartições públicas municipais de Nova Friburgo. O decreto exclui serviços essenciais como unidades de saúde 24 horas e atividades da Secretaria Municipal de Ordem e Mobilidade Urbana.</p>
+    <div class="board" id="board"></div>
 
-        <h3>Datas de Ponto Facultativo:</h3>
-        <ul>
-            <li>03/03 (segunda-feira)</li>
-            <li>05/03 (quarta-feira)</li>
-            <li>22/04 (terça-feira)</li>
-            <li>02/05 (sexta-feira)</li>
-            <li>20/06 (sexta-feira)</li>
-            <li>27/10 (segunda-feira)</li>
-            <li>21/11 (sexta-feira)</li>
-            <li>24/12 (quarta-feira, expediente de 09h às 13h)</li>
-            <li>26/12 (sexta-feira)</li>
-            <li>31/12 (quarta-feira, expediente de 09h às 13h)</li>
-        </ul>
+    <div class="modal fade" id="tarefaModal" tabindex="-1" aria-labelledby="tarefaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                <input type="text" id="card-title" placeholder="Enter card title" style="border: none; font-weight: bold;">
+              </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+               <div class="row">
+                    <div class="col px-5 d-flex flex-column pt-3">                                        
+                        <label for="card-description mt-3">Descrição:</label>
+                        <textarea id="card-description" placeholder="..." style="border: none; min-height: 100px;"></textarea>                                                            
 
-        <h3>Serviços Essenciais</h3>
-        <p>Os serviços da Secretaria Municipal de Ordem e Mobilidade Urbana, incluindo Guardas Municipais, Agentes de Trânsito e atividades relacionadas à liberação e apreensão de veículos, continuarão funcionando normalmente.</p>
-
-        <p>Para mais informações, consulte o <a href="https://plenussistemas.dioenet.com.br/uploads/view/25618?utm_edicao=2240">texto completo aqui</a> do decreto ou entre em contato com a Prefeitura de Nova Friburgo.</p>
+                        <div class="d-flex flex-column w-100">                            
+                                <label for=""><i class="fa-solid fa-paperclip me-2"></i>Anexos</label>
+                                <div id="listAnexo" class="w-100 px-3 pt-2 d-flex flex-column flex-wrap">
+                                    <a href="#">formulario.png</a>
+                                    <a href="#">formulario.png</a>
+                                    <a href="#">formulario.png</a>
+                                    <a href="#">formulario.png</a>
+                                </div>                                                   
+                        </div>  
+                        <div class="d-flex flex-column mt-auto" style="width: 90%;">
+                            <small class="mt-4">Enviar novo anexo</small><br>                                                                        
+                            <div class="input-group mb-3">
+                                <input type="file" class="form-control" style="border: none;">
+                                <button class="btn btn-addsubtarefa" type="button" id="button-addon1">Anexar</button>
+                              </div>
+                              
+                        </div>     
+                        
+                    </div>
+                    <div class="col px-5 d-flex flex-column">
+                        <label for="card-assignee" class="mt-3">Atribuição:</label>
+                        <select id="card-assignee" class="form-select" style="border: none;">
+                            <option value="" selected disabled>Selecione um usuário</option>
+                            <option value="user1">User 1</option>
+                            <option value="user2">User 2</option>
+                            <option value="user3">User 3</option>
+                        </select>
+            
+                        <label for="card-date" class="mt-2">Dt. prevista de execução:</label>
+                        <div class="w-100 d-flex mt-3">
+                            <div class="d-flex flex-column" style="width: 50%;">
+                                <small>Ínicio</small>
+                                <input type="date" id="data_inicio" class="form-control" name="data_inicio" style="border: none;">         
+                            </div>
+                            <div class="d-flex flex-column ms-3" style="width: 50%;">
+                                <small>Conclusão</small>
+                                <input type="date" id="data_fim" class="form-control" name="data_fim" style="border: none;">         
+                            </div>
+                        </div>
+                        <div class="subtasks">
+                            <label>Subtarefas:</label>
+                            <div class="mt-3" id="subtasks-container"></div>
+                            <button type="button" class="btn btn-addsubtarefa" onclick="addSubtask()"><i class="fa-solid fa-diagram-predecessor me-2"></i> Add Subtarefa</button>
+                        </div>
+                    </div>
+               </div>
+               <div class="row">
+                <div class="col px-5">
+                    
+                </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+              <button type="button" class="btn btn-primary" onclick="saveCardDetails()"  data-bs-dismiss="modal" style="color: white;">Salvar mudanças</button>
+            </div>
+          </div>
+        </div>
     </div>
-    </div>
+      
+        
+{% endblock %}
+{% block scripts %}
+<script>
+class Kanban {
+    constructor(boardId, modalId, csrfToken) {
+        this.board = document.getElementById(boardId);
+        this.modal = new bootstrap.Modal(document.getElementById(modalId));
+        this.csrfToken = csrfToken;
+        this.activeCard = null;
+        this.draggedCard = null;
+        this.draggedColumn = null;
+    }
+
+    logActivity(activity) {
+        console.log(`Activity: ${activity}`);
+    }
+
+    createColumn(projectId) {
+        fetch('/projetos/api/criar-coluna/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': this.csrfToken
+            },
+            body: JSON.stringify({ nome: 'Nova coluna', projeto_id: projectId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                this.addColumn(data.coluna.id, data.coluna.nome);
+            } else {
+                console.error('Erro ao criar coluna:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro na requisição:', error);
+        });
+    }
+
+    addColumn(id, nome) {
+        const column = new Column(id, nome, this);
+        this.board.appendChild(column.element);
+        this.logActivity(`Added new column: ${id}`);
+    }
+
+    createCard(columnId) {
+        fetch('/projetos/api/criar-card/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': this.csrfToken
+            },
+            body: JSON.stringify({ nome: 'Nova tarefa', fase_id: columnId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                this.addCard(data.card.column_id, data.card.id, data.card.nome);
+            } else {
+                console.error('Erro ao criar card:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro na requisição:', error);
+        });
+    }
+
+    addCard(columnId, cardId, tarefa, completed = false) {
+        const column = document.querySelector(`.column[data-id="${columnId}"]`);
+        if (column) {
+            const card = new Card(cardId, tarefa, completed, this);
+            column.querySelector('.card-container').appendChild(card.element);
+            this.logActivity(`Added new card: ${cardId} in column: ${columnId}`);
+        }
+    }
+}
+
+class Column {
+    constructor(id, nome, kanban) {
+        this.id = id;
+        this.nome = nome;
+        this.kanban = kanban;
+        this.element = this.createElement();
+    }
+
+    createElement() {
+        const column = document.createElement('div');
+        column.className = 'column';
+        column.dataset.id = this.id;
+
+        column.innerHTML = `
+            <div class="column-header">
+                <span class="drag-handle" draggable="true">☰</span>
+                <h3 contenteditable="true">${this.nome}</h3>
+                <button onclick="kanban.createCard('${this.id}')"><i class="fa-solid fa-circle-plus"></i></button>
+            </div>
+            <div class="card-container" ondragover="event.preventDefault()" ondrop="kanban.dropCard(event)"></div>
+        `;
+
+        const dragHandle = column.querySelector('.drag-handle');
+        dragHandle.addEventListener('dragstart', (e) => {
+            this.kanban.draggedColumn = column;
+            e.dataTransfer.setData('text/plain', '');
+        });
+
+        column.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const draggingOver = document.elementFromPoint(e.clientX, e.clientY);
+            if (draggingOver && draggingOver.classList.contains('column') && this.kanban.draggedColumn) {
+                const board = draggingOver.parentNode;
+                board.insertBefore(this.kanban.draggedColumn, draggingOver.nextSibling);
+            }
+        });
+
+        dragHandle.addEventListener('dragend', () => {
+            this.kanban.draggedColumn = null;
+        });
+
+        return column;
+    }
+}
+
+class Card {
+    constructor(id, tarefa, completed, kanban) {
+        this.id = id;
+        this.tarefa = tarefa;
+        this.completed = completed;
+        this.kanban = kanban;
+        this.element = this.createElement();
+    }
+
+    createElement() {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.draggable = true;
+        card.dataset.id = this.id;
+
+        card.innerHTML = `
+            <input type="checkbox" ${this.completed ? 'checked' : ''}>
+            <span>${this.tarefa}</span>
+            <button>x</button>
+        `;
+
+        card.querySelector('button').addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            this.deleteCard();
+        });
+
+        card.addEventListener('dragstart', () => {
+            this.kanban.draggedCard = card;
+        });
+
+        card.addEventListener('dragend', () => {
+            this.kanban.draggedCard = null;
+        });
+
+        return card;
+    }
+
+    deleteCard() {
+        if (confirm(`Você tem certeza que deseja excluir a tarefa ${this.tarefa}?`)) {
+            fetch('/projetos/api/deletar-card/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.kanban.csrfToken
+                },
+                body: JSON.stringify({ card_id: this.id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 200) {
+                    this.element.remove();
+                    this.kanban.logActivity(`Deleted card: ${this.id}`);
+                } else {
+                    console.error('Erro ao deletar card:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
+        }
+    }
+}
+
+// Adiciona a funcionalidade de soltar o card em uma nova coluna
+Kanban.prototype.dropCard = function(event) {
+    event.preventDefault();
+    const targetColumn = event.currentTarget;
+    if (this.draggedCard && targetColumn) {
+        targetColumn.appendChild(this.draggedCard);
+        const cardId = this.draggedCard.dataset.id;
+        const newColumnId = targetColumn.closest('.column').dataset.id;
+
+        // Atualiza a coluna do card no backend
+        fetch('/projetos/api/mover-card/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': this.csrfToken
+            },
+            body: JSON.stringify({ card_id: cardId, new_column_id: newColumnId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                this.logActivity(`Moved card: ${cardId} to column: ${newColumnId}`);
+            } else {
+                console.error('Erro ao mover card:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro na requisição:', error);
+        });
+    }
+};
+
+// Inicialização do Kanban
+const kanban = new Kanban('board', 'tarefaModal', '{{ csrf_token }}');
+{% for fase in fases %}
+    kanban.addColumn({{ fase.id }}, '{{ fase.nome }}');
+    {% for tarefa in fase.get_tarefas %}
+        kanban.addCard({{ fase.id }}, {{ tarefa.id }}, '{{ tarefa.nome }}', {{ tarefa.concluido|yesno:"true,false" }});
+    {% endfor %}
+{% endfor %}
+
+</script>
+{% endblock %}

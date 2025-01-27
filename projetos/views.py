@@ -99,3 +99,40 @@ def api_remover_card(request):
             return JsonResponse({'status': 400, 'error': 'Card não encontrado'})
     else:
         return JsonResponse({'status': 403, 'error': 'Método inválido'})
+    
+
+@login_required
+def api_mover_card_coluna(request):
+    if request.method == 'POST':
+        dados = json.loads(request.body)
+        card_id = dados['card_id']
+        tarefa = Tarefas.objects.get(id=card_id)
+        tarefa.fase = Fases.objects.get(id=dados['new_column_id'])
+        tarefa.save()
+        return JsonResponse({'status': 200, 'message': 'Card movido com sucesso', 'dados': dados})
+        # try:
+        #     Tarefas.objects.get(id=card_id).delete()
+        #     return JsonResponse({'status': 200, 'message': 'Card removido com sucesso', 'card_id': card_id})
+        # except:
+        #     return JsonResponse({'status': 400, 'error': 'Card não encontrado'})
+    else:
+        return JsonResponse({'status': 403, 'error': 'Método inválido'})
+    
+
+@login_required
+def api_mover_card_linha(request):
+    if request.method == 'POST':
+        dados = json.loads(request.body)
+        card_id = dados['card_id']
+        tarefa = Tarefas.objects.get(id=card_id)
+        tarefa.fase = Fases.objects.get(id=dados['new_column_id'])  
+        tarefa.orderm = dados['new_index']
+        tarefa.save()
+        return JsonResponse({'status': 200, 'message': 'Card movido com sucesso', 'dados': dados})
+        # try:
+        #     Tarefas.objects.get(id=card_id).delete()
+        #     return JsonResponse({'status': 200, 'message': 'Card removido com sucesso', 'card_id': card_id})
+        # except:
+        #     return JsonResponse({'status': 400, 'error': 'Card não encontrado'})
+    else:
+        return JsonResponse({'status': 403, 'error': 'Método inválido'})

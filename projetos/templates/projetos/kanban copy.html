@@ -1,0 +1,566 @@
+{% extends 'template.html' %}
+{% block main %}
+    <style>
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+        h3 {
+            margin: 0;
+            font-size: 1em;
+            font-weight: normal;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .menu {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .menu button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .menu button:hover {
+            background-color: #0056b3;
+        }
+
+        .board {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0px;
+            overflow-x: auto;
+            min-height: 600px;
+        }
+
+        .column {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 16px;
+            min-width: 250px;
+            min-height: 136px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            margin-bottom: auto;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .column-header h3 {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .column-header h3:hover {
+            text-decoration: underline;
+        }
+
+        .column-header .drag-handle {
+            cursor: grab;
+            margin-right: 8px;
+        }
+
+        .column-header button {
+            background-color: #33353400;
+            color: rgb(0, 0, 0);
+            border: none;
+            /* padding: 6px     12px; */
+            border-radius: 4px;
+            /* width: 24px; */
+            /* height: 24px; */
+            cursor: pointer;
+            margin: auto 0 auto auto;            
+        }
+
+        .column-header button:hover {
+            background-color: #21883700;
+        }
+        .column-header button:active {
+            transform: scale(0.98);
+            border: none;
+            background-color: #21883700;
+        }
+        button:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        .card {
+            background-color: #e3e4e8;
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 8px;
+            margin-bottom: 0px;
+            cursor: grab;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card.dragging {
+            opacity: 0.5;
+        }
+
+        .card input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .card-container{
+            width: calc(100% - 12px);
+            min-height: 66px;
+            background-color: rgba(245, 245, 245, 0.363);
+            border-radius: 4px;
+            padding: 0px 8px 8px 8px;
+        }
+        .card-container button{
+            cursor: pointer;
+            margin-left: auto; 
+            border: none; 
+            padding: 4px 8px; 
+            border-radius: 4px;
+            background-color: #ffffff00;
+        }
+        .fake-card {
+            height: 50px;
+            background-color: transparent;
+          
+            display: none;
+        }
+
+      
+        .subtasks {
+            margin-top: 16px;
+        }
+
+        .subtasks input {
+            margin-right: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+        @media (min-width: 1400px) {
+		.container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+			max-width: 97.5%;
+			margin-left: 3%;
+		}
+	}   
+    .modal-body label{
+        font-weight: bold;
+    }
+    .btn-addsubtarefa{
+        background-color: #cfcfcf;
+        color: rgb(0, 0, 0);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .progress {
+        width: 90%;
+        margin-right: 10px;
+        height: 10px; /* Altura da barra */
+        background-color: #acacac67; /* Cor de fundo da barra */
+        border-radius: 5px; /* Arredondamento das bordas */
+        }
+
+        .progress-bar {
+        background-color: #4CAF50; /* Cor da barra de progresso */
+        border-radius: 0px; /* Arredondamento das bordas */
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <h2>{{projeto.nome}}</h2>        
+        <div class="ms-2" class="dropdown">
+            <button class="btn btn-primary" style="background-color: white; color: black;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-wrench me-2"></i> Configurar
+            </button>
+            <ul class="dropdown-menu">
+                <li   onclick="createColumn({{projeto.id}})">
+                    <a class="dropdown-item" href="#">
+                        <i class="fa-solid fa-square-plus me-2"></i> Adicionar coluna
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'projetos:index' %}">
+                        <i class="fa-solid fa-backward me-2"></i> Voltar para painel
+                    </a>
+                </li>
+              <!-- <li><a >Voltar</a></li> -->
+              <!-- <li><a class="dropdown-item" href="#">Another action</a></li> -->
+              <!-- <li><a class="dropdown-item" href="#">Something else here</a></li> -->
+            </ul>
+          </div>
+    </div>
+
+    <div class="board" id="board"></div>
+
+    <div class="modal fade" id="tarefaModal" tabindex="-1" aria-labelledby="tarefaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                <input type="text" id="card-title" placeholder="Enter card title" style="border: none; font-weight: bold;">
+              </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+               <div class="row">
+                    <div class="col px-5 d-flex flex-column pt-3">                                        
+                        <label for="card-description mt-3">Descrição:</label>
+                        <textarea id="card-description" placeholder="..." style="border: none; min-height: 100px;"></textarea>                                                            
+
+                        <div class="d-flex flex-column w-100">                            
+                                <label for=""><i class="fa-solid fa-paperclip me-2"></i>Anexos</label>
+                                <div id="listAnexo" class="w-100 px-3 pt-2 d-flex flex-column flex-wrap">
+                                    <a href="#">formulario.png</a>
+                                    <a href="#">formulario.png</a>
+                                    <a href="#">formulario.png</a>
+                                    <a href="#">formulario.png</a>
+                                </div>                                                   
+                        </div>  
+                        <div class="d-flex flex-column mt-auto" style="width: 90%;">
+                            <small class="mt-4">Enviar novo anexo</small><br>                                                                        
+                            <div class="input-group mb-3">
+                                <input type="file" class="form-control" style="border: none;">
+                                <button class="btn btn-addsubtarefa" type="button" id="button-addon1">Anexar</button>
+                              </div>
+                              
+                        </div>     
+                        
+                    </div>
+                    <div class="col px-5 d-flex flex-column">
+                        <label for="card-assignee" class="mt-3">Atribuição:</label>
+                        <select id="card-assignee" class="form-select" style="border: none;">
+                            <option value="" selected disabled>Selecione um usuário</option>
+                            <option value="user1">User 1</option>
+                            <option value="user2">User 2</option>
+                            <option value="user3">User 3</option>
+                        </select>
+            
+                        <label for="card-date" class="mt-2">Dt. prevista de execução:</label>
+                        <div class="w-100 d-flex mt-3">
+                            <div class="d-flex flex-column" style="width: 50%;">
+                                <small>Ínicio</small>
+                                <input type="date" id="data_inicio" class="form-control" name="data_inicio" style="border: none;">         
+                            </div>
+                            <div class="d-flex flex-column ms-3" style="width: 50%;">
+                                <small>Conclusão</small>
+                                <input type="date" id="data_fim" class="form-control" name="data_fim" style="border: none;">         
+                            </div>
+                        </div>
+                        <div class="subtasks">
+                            <label>Subtarefas:</label>
+                            <div class="mt-3" id="subtasks-container"></div>
+                            <button type="button" class="btn btn-addsubtarefa" onclick="addSubtask()"><i class="fa-solid fa-diagram-predecessor me-2"></i> Add Subtarefa</button>
+                        </div>
+                    </div>
+               </div>
+               <div class="row">
+                <div class="col px-5">
+                    
+                </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+              <button type="button" class="btn btn-primary" onclick="saveCardDetails()"  data-bs-dismiss="modal" style="color: white;">Salvar mudanças</button>
+            </div>
+          </div>
+        </div>
+    </div>
+      
+        
+{% endblock %}
+{% block scripts %}
+<script>
+
+        const modal = new bootstrap.Modal(document.getElementById('tarefaModal'));
+        const board = document.getElementById('board');
+        // const modal = new bootstrap.Modal(document.getElementById('tarefaModal'), {'backdrop': true});
+        const cardTitle = document.getElementById('card-title');
+        const cardDescription = document.getElementById('card-description');
+        const cardAssignee = document.getElementById('card-assignee');
+        const cardDate = document.getElementById('card-date');
+        const subtasksContainer = document.getElementById('subtasks-container');
+
+        let activeCard = null;
+        let draggedCard = null;
+        let draggedColumn = null;
+
+        function logActivity(activity) {
+            console.log(`Activity: ${activity}`);
+        }
+
+        function createColumn(id){
+            fetch('/projetos/api/criar-coluna/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ nome: 'Nova coluna', projeto_id: id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 200) {
+                    addColumn(data.coluna.id, data.coluna.nome);
+                } else {
+                    console.error('Erro ao criar coluna:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
+        }
+        function addColumn(id = `new-${Date.now()}`, nome = 'Nova coluna') {
+            const columnId = Date.now();
+            const column = document.createElement('div');
+            column.className = 'column';
+            column.id = id;
+            column.dataset.columnId = columnId;
+
+            column.innerHTML = `
+                <div class="column-header" data-id="${id}">
+                    <span class="drag-handle me-3" draggable="true">☰</span>
+                    <h3 contenteditable="true">${nome}</h3>                    
+                    <div class="btn-group" role="group">
+                        <button type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-caret-down"></i>    
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <button class="dropdown-item" onclick="createCard('${id}')">
+                                    <i class="fa-solid fa-circle-plus me-2"></i>
+                                    Nova tarefa
+                                </button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item" onclick="">
+                                    <i class="fa-regular fa-pen-to-square me-2"></i>
+                                    Editar coluna
+                                </button>
+                            </li>                            
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-container"></div>                
+            `;
+
+            const dragHandle = column.querySelector('.drag-handle');
+
+            dragHandle.addEventListener('dragstart', (e) => {
+                draggedColumn = column;
+                e.dataTransfer.setData('text/plain', '');
+            });
+
+            column.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const draggingOver = document.elementFromPoint(e.clientX, e.clientY);
+                if (draggingOver && draggingOver.classList.contains('column') && draggedColumn) {
+                    const board = draggingOver.parentNode;
+                    board.insertBefore(draggedColumn, draggingOver.nextSibling);                    
+                    console.log(`Coluna ${id} movida para ${draggingOver.dataset.columnId}`);
+                    console.log(draggingOver);
+                }
+            });
+            
+            dragHandle.addEventListener('dragend', () => {                                
+                draggedColumn = null;
+            });
+          
+            column.querySelector('.card-container').addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            column.querySelector('.card-container').addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (draggedCard) {
+                    console.log(draggedCard)
+                    const container = column.querySelector('.card-container');
+                    container.appendChild(draggedCard);
+                    console.log('Card movido:', draggedCard.dataset.cardId)
+                    console.log('Coluna de origem:', draggedCard.dataset.colunaOrigem)
+                    console.log('Movido para coluna:', id)
+                    draggedCard.dataset.colunaOrigem = id;
+                    logActivity(`Moved card: ${draggedCard.dataset.cardId} to column: ${column.dataset.columnId}`);
+                }
+            });
+
+            board.appendChild(column);
+            logActivity(`Added new column: ${columnId}`);
+        }
+        
+        function createCard(id){
+            fetch('/projetos/api/criar-card/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ nome: 'Nova tarefa', fase_id: id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 200) {
+                    console.log(data)
+                    addCard(data.card.column_id, data.card.id, data.card.nome);
+                } else {
+                    console.error('Erro ao criar card:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
+        }
+        function addCard(column_id, card_id = Date.now(), tarefa = 'Nova tarefa', completed = false) {
+            const column = document.querySelector(`.column-header[data-id="${column_id}"]`).closest('.column');
+            const cardId = card_id;
+            const card = document.createElement('div');             
+            // card.dataset.bsToggle = "modal";
+            // card.dataset.bsTarget = "#tarefaModal";
+            card.className = 'card';
+            card.draggable = true;
+            card.dataset.cardId = cardId;
+            card.dataset.colunaOrigem = column_id;
+            card.dataset.subtasks = JSON.stringify([]);
+
+            card.innerHTML = `                
+                <input type="checkbox" ${completed ? 'checked' : ''} onclick="event.stopPropagation();">
+                <span>${tarefa}</span>
+                <button onclick="event.stopPropagation(); deleteCard(this)">x</button>                   
+            `;
+
+            card.querySelector('input').addEventListener('click', (event) => event.stopPropagation());
+            card.querySelector('button').addEventListener('click', (event) => event.stopPropagation());
+
+            card.addEventListener('click', () => openModal(card));
+
+            card.addEventListener('dragstart', () => {
+                draggedCard = card;
+            });
+            
+            card.addEventListener('dragend', () => {
+                draggedCard = null;
+            });
+
+            column.querySelector('.card-container').appendChild(card);
+            logActivity(`Added new card: ${cardId} in column: ${column.dataset.columnId}`);
+        }    
+        function deleteCard(button) {
+            const response = confirm(`Você tem certeza que deseja excluir a tarefa ${button.closest('.card').querySelector('span').textContent }?`);
+            if (response){        
+                cardId = button.closest('.card').dataset.cardId;        
+                removerCard(cardId);
+            }            
+        }
+        function removerCard(id, button){
+            fetch('/projetos/api/deletar-card/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ card_id: id })                
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 200) {
+                    const card = document.querySelector(`.card[data-card-id="${id}"]`);                    
+                    const column = card.closest('.column');
+                    card.remove();
+                    logActivity(`Deleted card: ${id} from column: ${column.dataset.columnId}`);
+                } else {
+                    console.error('Erro ao criar card:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
+        }
+        function openModal(card) {
+            activeCard = card;
+            cardTitle.value = card.querySelector('span').textContent || '';
+            cardDescription.value = card.dataset.description || '';
+            cardAssignee.value = card.dataset.assignee || '';
+            // cardDate.value = card.dataset.date || '';
+
+            subtasksContainer.innerHTML = '';
+            const subtasks = JSON.parse(card.dataset.subtasks || '[]');
+            subtasks.forEach(task => addSubtask(task.text, task.completed));
+
+            modal.show();
+        }
+
+        function closeModal() {            
+            activeCard = null;
+            modal.close()
+        }
+
+        function saveCardDetails() {
+            if (activeCard) {
+                activeCard.querySelector('span').textContent = cardTitle.value;
+                activeCard.dataset.description = cardDescription.value;
+                activeCard.dataset.assignee = cardAssignee.value;
+                activeCard.dataset.date = cardDate.value;
+
+                const subtasks = [];
+                document.querySelectorAll('.subtask').forEach((subtask) => {
+                    const text = subtask.querySelector('input[type="text"]').value;
+                    const completed = subtask.querySelector('input[type="checkbox"]').checked;
+                    subtasks.push({ text, completed });
+                });
+
+                activeCard.dataset.subtasks = JSON.stringify(subtasks);
+                closeModal();
+                logActivity(`Updated card: ${activeCard.dataset.cardId}`);
+            }
+        }
+
+        function addSubtask(text = 'Nova tarefa', completed = false) {
+            const subtask = document.createElement('div');
+            subtask.className = 'subtask mb-3';
+            subtask.innerHTML = `
+                <input type="checkbox" ${completed ? 'checked' : ''}>
+                <input type="text" value="${text}" style="border: none;">
+            `;
+            subtasksContainer.appendChild(subtask);
+        }
+        {% for fase in fases %}
+            addColumn({{fase.id}}, '{{fase.nome}}');
+            {% for tarefa in fase.get_tarefas %}
+                addCard({{fase.id}}, {{tarefa.id}}, '{{tarefa.nome}}', {% if tarefa.concluido %}true{% else %}false{% endif %});
+                {% for sub in tarefa.get_atividades %}
+                // addSubtask('{{sub.nome}}', false);
+                    // addSubtask('{{sub.nome}}', {{sub.concluido}});
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+</script>
+{% endblock %}
