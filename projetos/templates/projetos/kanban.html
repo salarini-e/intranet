@@ -236,10 +236,7 @@
                         <div class="d-flex flex-column w-100">                            
                                 <label for=""><i class="fa-solid fa-paperclip me-2"></i>Anexos</label>
                                 <div id="listAnexo" class="w-100 px-3 pt-2 d-flex flex-column flex-wrap">
-                                    <a href="#">formulario.png</a>
-                                    <a href="#">formulario.png</a>
-                                    <a href="#">formulario.png</a>
-                                    <a href="#">formulario.png</a>
+                                  <i>Não há anexos.</i>
                                 </div>                                                   
                         </div>  
                         <div class="d-flex flex-column mt-auto" style="width: 90%;">
@@ -363,11 +360,11 @@ class Kanban {
             console.error('Erro na requisição:', error);
         });
     }
-
-    addCard(columnId, cardId, tarefa, completed = false) {
+    // constructor(id, tarefa, descricao, completed, dt_inicio, dt_fim, prioridade, kanban, anexo) {
+    addCard(columnId, cardId, tarefa, descricao =  '', completed = false, dt_inicio = '', dt_fim = '', prioridade = '', anexo = '') {
         const column = document.querySelector(`.column[data-id="${columnId}"]`);
         if (column) {
-            const card = new Card(cardId, tarefa, completed, this);
+            const card = new Card(cardId, tarefa, descricao, completed, dt_inicio, dt_fim, prioridade, this, anexo);
             column.querySelector('.card-container').appendChild(card.element);
             this.logActivity(`Added new card: ${cardId} in column: ${columnId}`);
             this.listCards.push(card);
@@ -421,11 +418,16 @@ class Column {
 }
 
 class Card {
-    constructor(id, tarefa, completed, kanban) {
+    constructor(id, tarefa, descricao, completed, dt_inicio, dt_fim, prioridade, kanban, anexo) {
         this.id = id;
         this.tarefa = tarefa;
+        this.descricao = descricao;        
         this.completed = completed;
+        this.dt_inicio = dt_inicio;
+        this.dt_fim = dt_fim;
+        this.prioridade = prioridade;
         this.kanban = kanban;
+        this.anexo_url = anexo;
         this.element = this.createElement();
     }
 
@@ -441,6 +443,9 @@ class Card {
             <button>x</button>
         `;
 
+        card.addEventListener('click', () => {
+            this.openModalCard();
+        });
         card.querySelector('button').addEventListener('click', (e) => {
             e.stopPropagation(); 
             this.deleteCard();
@@ -448,7 +453,7 @@ class Card {
 
         card.addEventListener('dragstart', () => {
             this.kanban.draggedCard = card;
-        });
+        }); 
 
         card.addEventListener('dragend', () => {
             this.kanban.draggedCard = null;
@@ -456,7 +461,17 @@ class Card {
 
         return card;
     }
-
+    openModalCard(){
+        console.log(this)
+        this.kanban.modal.show();
+        document.getElementById('card-title').value = this.tarefa;
+        document.getElementById('card-description').value = this.descricao;
+        document.getElementById('data_inicio').value = this.dt_inicio;
+        document.getElementById('data_fim').value = this.dt_fim;
+        if (this.anexo_url){
+            document.getElementById('listAnexo').innerHTML = `<a href="${this.anexo_url}">${this.anexo_url}</a>`;        
+        }        
+    }
     deleteCard() {
         if (confirm(`Você tem certeza que deseja excluir a tarefa ${this.tarefa}?`)) {
             fetch('/projetos/api/deletar-card/', {
@@ -563,12 +578,12 @@ Kanban.prototype.dropCard = function(event) {
 
 
 
-// Inicialização do Kanban
+// Inicialização
 const kanban = new Kanban('board', 'tarefaModal', '{{ csrf_token }}');
 {% for fase in fases %}
     kanban.addColumn({{ fase.id }}, '{{ fase.nome }}');
     {% for tarefa in fase.get_tarefas %}
-        kanban.addCard({{ fase.id }}, {{ tarefa.id }}, '{{ tarefa.nome }}', {{ tarefa.concluido|yesno:"true,false" }});
+        kanban.addCard({{ fase.id }}, {{ tarefa.id }}, '{{ tarefa.nome }}', '{{tarefa.descricao}}',{{ tarefa.concluido|yesno:"true,false" }}, '{{ tarefa.data_inicio|date:"Y-m-d" }}', '{{ tarefa.data_fim|date:"Y-m-d" }}', '{{ tarefa.prioridade }}', '{% if tarefa.anexo %}{{ tarefa.anexo.url }}{% endif %}');
     {% endfor %}
 {% endfor %}
 console.log(kanban.listColumns);
