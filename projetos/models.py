@@ -74,11 +74,11 @@ class Projetos(models.Model):
         else:
             progresso = 0  
 
-        print('Projeto:', self.nome)
-        print('Total tarefas:',tarefas.count())
-        print('Total concluidas:' , tarefas.filter(concluido=True).count())
-        print('Total de atividades:', total_atividades)
-        print('Total atividades concluidas:', total_atividades_concluidas)
+        # print('Projeto:', self.nome)
+        # print('Total tarefas:',tarefas.count())
+        # print('Total concluidas:' , tarefas.filter(concluido=True).count())
+        # print('Total de atividades:', total_atividades)
+        # print('Total atividades concluidas:', total_atividades_concluidas)
         return round(progresso)
 
 
