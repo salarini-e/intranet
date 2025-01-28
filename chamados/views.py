@@ -1205,8 +1205,8 @@ def download_relatorio(request):
     chamados_ids = [chamado.id for chamado in chamados]
     
     chamados_queryset = Chamado.objects.filter(id__in=chamados_ids)    
-    finalizados = chamados_queryset.filter(status='4')
-
+    # finalizados = chamados_queryset.filter(status='4')
+    finalizados = chamados_queryset #gambiarra
     campos = ['n_protocolo', 
               'profissional_designado', 
               'tipo',
