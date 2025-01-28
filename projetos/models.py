@@ -3,6 +3,20 @@ from django.contrib.auth.models import User
 from instituicoes.models import Servidor
 from django.db.models import Count, Q
 
+class Grupo(models.Model):
+    nome = models.CharField(max_length=255)
+    membros = models.ManyToManyField(Servidor, related_name='grupos', blank=True)
+    
+    user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Usuário de inclusão')
+    dt_inclusao = models.DateField(auto_now_add=True)
+    dt_att  = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return self.nome
+    
+    class Meta:
+        verbose_name_plural = "Grupos de servidores"
+        verbose_name = "Grupo de servidores"
 
 class Projetos(models.Model):
     
@@ -13,6 +27,8 @@ class Projetos(models.Model):
         ('P', 'Parado'),
     )
     
+    responsavel = models.ForeignKey(Servidor, on_delete=models.SET_NULL, null=True, blank=True)
+    grupos = models.ManyToManyField(Grupo, related_name='grupos', blank=True)
     nome = models.CharField(max_length=255)
     descricao = models.TextField()
     data_inicio = models.DateField(null=True, blank=True)
@@ -23,6 +39,7 @@ class Projetos(models.Model):
     dt_inclusao = models.DateField(auto_now_add=True)
     dt_att  = models.DateField(auto_now=True)
 
+    
     def __str__(self):
         return self.nome
     

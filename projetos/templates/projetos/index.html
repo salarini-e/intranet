@@ -15,7 +15,7 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 10px 16px;
             display: flex;
-            justify-content: space-between;
+            /* justify-content: space-between; */
             align-items: center;
             position: sticky;
             top: 0;
@@ -23,7 +23,7 @@
             border-radius: 8px;
         }
 
-        .menu button {
+        .menu button{
             padding: 8px 16px;
             background-color: #007bff;
             color: white;
@@ -89,21 +89,46 @@
         background-color: #4CAF50; /* Cor da barra de progresso */
         border-radius: 0px; /* Arredondamento das bordas */
         }
+        .menudetalhes{
+            display: flex;;
+        }
+        .menudetalhes button, .menudetalhes a{
+            color: white;
+            margin-right: 5px;
+            border-radius: 0%;
+
+        }
+        #searchMembroResult.hidden{  
+            display: none;            
+        }
+        #searchMembroResult.show{  
+            display: block;
+        }
+        #searchMembroResult .d-flex:hover{
+            background-color: #034a572c;
+            cursor: pointer;
+            border-radius: 8px;
+        }
     </style>
 
     <div class="menu">
         <h2>Projetos</h2>
-        <button  type="button" style="background-color: white; color: black;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <button  type="button" class="ms-auto" style="background-color: white; color: black;" data-bs-toggle="modal" data-bs-target="#exampleModal">
             <i class="fa-solid fa-folder-plus me-2"></i>
              Adicionar projeto
         </button>
+        <button  type="button" style="background-color: white; color: black;" data-bs-toggle="modal" data-bs-target="#groupModal">
+            <i class="fa-solid fa-people-group me-2"></i>
+            Adicionar grupo
+        </button>
+        
     </div>
 
     <div class="board">
        <div class="projetos-container px-4">
         <table class="table">
             <thead>
-                <th></th>
+                <!-- <th></th> -->
                 <th>Nome do Projeto</th>
                 <th>Responsável</th>
                 <th>Progresso</th>
@@ -114,10 +139,10 @@
             </thead>
             <tbody>     
                 {% for projeto in projetos %}
-                <tr onclick="clickTable({{projeto.id}})">
-                    <td onclick="aux=1; getDetalhes({{projeto.id}})" style="max-width: 28px; color: #0056b3;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"> 
+                <tr onclick="toggleDetalhes({{projeto.id}})">
+                    <!-- <td onclick="aux=1; getDetalhes({{projeto.id}})" style="max-width: 28px; color: #0056b3;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"> 
                         <i class="fa-solid fa-eye"></i>
-                    </td>
+                    </td> -->
                     <td>{{projeto.nome}}</td>
                     <td>
                         <img class="mb-1 me-2" style="width: 18px; height: 18px;" src="/static/images/user.png" alt="">
@@ -142,91 +167,33 @@
                         {{projeto.get_status_display}}
                     </td>
                 </tr>
-                {% endfor %}
-                <!-- <tr onclick="window.location.href='/projetos/1/board/'">
-                    <td onclick="exibirDetalhes(1)" style="max-width: 28px; color: #0056b3;"> 
-                        <i class="fa-solid fa-eye"></i>
-                    </td>
-                    <td>Lorem ipsum dolor</td>
-                    <td>
-                        <img class="mb-1 me-2" style="width: 18px; height: 18px;" src="/static/images/user.png" alt="">
-                        Luis Eduardo Cordeiro Salarini
-                    </td>
-                    <td>
-                        <i class="fa-regular fa-clock me-3" style="color: #FCAA3D;"></i>01/01/22
-                    </td>
-                    <td style="max-width: 300px;">
-                        Lorem ipsum dolor sit amet...
-                    </td>
-                    <td style="text-align: center; background-color: #FCAA3D; color: white; max-width: 100px;">
-                        Em andamento
-                    </td>
-                </tr>
-                <tr onclick="window.location.href='/projetos/1/board/'">
-                    <td onclick="exibirDetalhes(1)" style="max-width: 28px; color: #0056b3;"> 
-                        <i class="fa-solid fa-eye"></i>
-                    </td>
-                    <td>Lorem ipsum dolor</td>
-                    <td>
-                        <img class="mb-1 me-2" style="width: 18px; height: 18px;" src="/static/images/user.png" alt="">
-                        Luis Eduardo Cordeiro Salarini
-                    </td>
-                    <td>
-                        <i class="fa-solid fa-circle-check me-lg-3" style="color: #00C875;"></i>01/01/22
-                    </td>
-                    <td style="max-width: 300px;">
-                        Lorem ipsum dolor sit amet...
-                    </td>
-                    <td style="text-align: center; background-color:#00C875; color: white; max-width: 100px;">
-                        Feito
-                    </td>
-                </tr>
-                <tr onclick="window.location.href='/projetos/1/board/'">
-                    <td onclick="exibirDetalhes(1)" style="max-width: 28px; color: #0056b3;"> 
-                        <i class="fa-solid fa-eye"></i>
-                    </td>
-                    <td>Lorem ipsum dolor</td>
-                    <td>
-                        <img class="mb-1 me-2" style="width: 18px; height: 18px;" src="/static/images/user.png" alt="">
-                        Luis Eduardo Cordeiro Salarini
-                    </td>
-                    <td>
-                        <i class="fa-solid fa-circle-pause me-3" style="color: #da2e48;"></i>01/01/22
-                    </td>
-                    <td style="max-width: 300px;">
-                        Lorem ipsum dolor sit amet...
-                    </td>
-                    <td style="text-align: center; background-color: #da2e48; color: white; max-width: 100px;">
-                        Parado
-                    </td>
-                </tr> -->
-
+                {% endfor %}               
             </tbody>
         </table>
        </div>
     </div>
       
-      <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-        <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div>
+        Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
         </div>
-        <div class="offcanvas-body">
-          <div>
-            Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
-          </div>
-          <div class="dropdown mt-3">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-              Dropdown button
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
-          </div>
+        <div class="dropdown mt-3">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            Dropdown button
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Action</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+        </ul>
         </div>
-      </div>
+    </div>
+    </div>
      
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -248,19 +215,201 @@
       </div>
     </div>
   </div>
+  <div class="modal fade" id="groupModal" tabindex="-1" aria-labelledby="groupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Novo projeto</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="nome">Nome do grupo</label>
+                        <input type="text" class="form-control" id="nome" name="nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nome">Adicionar membro <i class="ms-2 fa-solid fa-magnifying-glass"></i></label>
+                        <div class="d-flex">
+                            <input id="inputSearchMembros" type="text" onkeyup="buscaMembro(this)"  class="form-control" id="nome" name="nome" autocomplete="off">
+                            <!-- <button class="btn btn-dark my-auto ms-1" style="background-color: #3f3f3f; color: white;">
+                                
+                            </button> -->
+                        </div>
+                        <div id="searchMembroResult" class="hidden pt-2 pb-1 px-1" style="background-color: #5e5d5d18; border-bottom-right-radius: 8px; border-bottom-left-radius: 8px;">
+                           
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nome">Membros</label>
+                        <div id="membros" class="p-2" style="background-color: #5e5d5d11; width: 100%; min-height: 100px;">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="color: rgb(255, 108, 108);">
+          <button type="button" class="btn btn-primary w-100" style="color: white;" onclick="postCriarGrupo();">Criar grupo</button>
+        </div>
+      </div>
+    </div>
+  </div>
   
   <script>
-    let aux = 0;                    
-    function clickTable(id){
-        if (aux == 0){
-            window.location.href=`/projetos/${id}/board/`;                            
+    function postCriarGrupo(){
+        let membros = document.querySelectorAll('.membros-ids');
+        let membros_ids = [];
+        membros.forEach(membro => {
+            membros_ids.push(membro.dataset.id);
+        });
+        let nome = document.querySelector('#nome').value;
+
+        if (nome.length < 3) {
+            alert('O nome do grupo deve ter no mínimo 3 caracteres.');
+            return;
+        }
+        if (membros_ids.length < 1) {
+            alert('O grupo deve ter no mínimo 1x membros.');
+            return;
+        }
+        let formData = new FormData();
+        formData.append('nome', nome);
+        formData.append('membros', membros_ids);
+        formData.append('csrfmiddlewaretoken', document.querySelector('input[name="csrfmiddlewaretoken"]').value);
+        console.log(formData)
+        fetch('/projetos/api/criar-grupo/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                // Exibir o grupo na tela
+                console.log('Grupo criado:', data);
+                // fecha o modal de criação de grupo
+                document.querySelector('#groupModal').classList.remove('show');
+            } else {
+                console.error('Erro:', data.erros || 'Erro desconhecido');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao enviar dados:', error);
+        });
+    }
+    function addMembro(id, nome, img){
+        document.querySelector('#inputSearchMembros').value = '';
+        let membros = document.querySelector('#membros');
+        let div = document.createElement('div');
+        div.classList.add('d-flex', 'p-1');
+        div.innerHTML = `
+            <img class="me-2" style="width: 18px; height: 18px;" src="${img}" alt="">
+            <span class="membros-ids" data-id="${id}">${nome}</span>
+            <span style="color:rgb(255, 108, 108); font-size: 10pt; cursor: pointer;" class="ms-auto me-3" onclick="this.parentNode.remove();">
+                <i class="fa-solid fa-user-minus"></i>
+            </span>
+        `;
+        membros.appendChild(div);
+        document.querySelector('#searchMembroResult').classList.remove('show');
+        document.querySelector('#searchMembroResult').classList.add('hidden');
+    }
+    function buscaMembro(input){
+        console.log(input.value)
+        let search = input.value;
+        let searchResult = document.querySelector('#searchMembroResult');
+        if (search.length > 3){
+            fetch(`/projetos/api/busca-membros/?search=${search}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchResult.innerHTML = '';
+                    data.membros.forEach(membro => {
+                        searchResult.innerHTML += `
+                            <div class="d-flex p-1" onclick="addMembro(${membro.id}, '${membro.nome}', '${membro.img}')">
+                                <img class="me-2" style="width: 18px; height: 18px;" src="${membro.img}" alt="">
+                                <span data-id="${membro.id}">${membro.nome}</span>
+                                <span style="font-size: 10pt;" class="ms-auto">
+                                    <i class="fa-solid fa-user-plus"></i>
+                                </span>
+                            </div>
+                        `;
+                    });
+                })
+                .catch(error => {
+                    searchResult.innerHTML = `<p class="px-3">Erro ao buscar membros.</p>`;
+                    console.error('Erro:', error);
+                });
+            searchResult.classList.remove('hidden');
+            searchResult.classList.add('show');
+            searchResult.innerHTML = ''
         }else{
-            aux=0
+            searchResult.classList.remove('show');
+            searchResult.classList.add('hidden');
         }
     }
-    function getDetalhes(id){
-        console.log(id)
+    function toggleDetalhes(id) {
+        let row = document.querySelector(`tr[onclick="toggleDetalhes(${id})"]`);
+        let detailsRow = document.querySelector(`#detalhes-row-${id}`);
+
+        if (detailsRow) {
+            detailsRow.remove();
+        } else {
+            detailsRow = document.createElement('tr');
+            detailsRow.id = `detalhes-row-${id}`;
+            detailsRow.innerHTML = `
+                <td colspan="6">
+                    <div id="detalhes-${id}" style="padding: 0px 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 4px;">
+                        Carregando detalhes...
+                    </div>
+                </td>
+            `;
+            row.parentNode.insertBefore(detailsRow, row.nextSibling);
+
+            fetch(`/projetos/${id}/detalhes/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector(`#detalhes-${id}`).innerHTML = `
+                        <div class="row">
+                            <div class="col">
+                                <p><strong>Descrição:</strong> <br>${data.projeto.descricao}</p>
+                                <p><strong>Previsão execução:</strong> ${data.projeto.data_inicio}  <i class="fa-solid fa-arrow-right-long mx-4"></i> ${data.projeto.data_fim}</p>
+                            </div>
+                            <div class="col">
+                                <p><strong>Grupos:</strong><br>
+                                Fulano<br>
+                                Ciclano<br>
+                                </p>                                
+                            </div>
+                            <div class="col">
+                            </div
+                        </div>
+                        <div class="row pe-0" style="margin-top: 10px">
+                            <div class="col pe-0 menudetalhes" style="padding-bottom: 20px;">                                
+                                <a href='/projetos/${id}/board/' class="btn btn-primary"><i class="fa-solid fa-eye me-2"></i>Visualizar</a>
+                                <button class="btn btn-primary"><i class="fa-solid fa-comment me-2"></i>Comentarios</button>
+                                <button class="btn btn-secondary"><i class="fa-solid fa-file-pen me-2"></i>Editar</button>
+                            </div
+                        </div>
+
+                    `;
+                })
+                .catch(error => {
+                    document.querySelector(`#detalhes-${id}`).innerHTML = 'Erro ao carregar detalhes.';
+                    console.error('Erro:', error);
+                });
+        }
     }
+    // let aux = 0;                    
+    // function clickTable(id){
+    //     if (aux == 0){
+    //         window.location.href=`/projetos/${id}/board/`;                            
+    //     }else{
+    //         aux=0
+    //     }
+    // }
+    // function getDetalhes(id){
+    //     console.log(id)
+    // }
     function addNovoProjeto(id, nome, responsavel, dt_fim, descricao, status){
         let table = document.querySelector('table tbody');
         let tr = document.createElement('tr');

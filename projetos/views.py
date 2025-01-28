@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import Projetos, Fases, Tarefas, Atividades, Prioridade
+from .models import Projetos, Fases, Tarefas, Atividades, Prioridade, Grupo
 from .forms import ProjetosForm
 from django.http import JsonResponse
 from instituicoes.models import Servidor
@@ -21,14 +21,14 @@ def kanbanboard(request, id):
         'projeto': projeto,
         'fases': fases,        
     }
-    print(context)
+    # print(context)
     return render(request, 'projetos/kanban.html', context)
 
 @login_required
 def api_criar_projeto(request):
     if request.method == 'POST':
         form = ProjetosForm(request.POST)
-        print(request.POST)
+        # print(request.POST)
         if form.is_valid():
             projeto = form.save()
             return JsonResponse({'status': 200, 'message': 'Projeto criado com sucesso', 'projeto': {
@@ -159,4 +159,37 @@ def api_editar_tarefa(request):
         # tarefa.prioridade = Prioridade.objects.get(id=dados['prioridade'])
         tarefa.save()
         return JsonResponse({'status': 200, 'card': {'id': tarefa.id,'nome': tarefa.nome, 'descricao': tarefa.descricao, 'data_inicio': tarefa.data_inicio, 'data_fim': tarefa.data_fim}})
+    return JsonResponse({'status': 403, 'error': 'Método inválido'})
+
+def api_get_detalhes_projeto(request, id):
+        
+    projeto = Projetos.objects.get(id=id)
+    fases = Fases.objects.filter(projeto=projeto).order_by('ordem')
+    tarefas = Tarefas.objects.filter(fase__projeto=projeto).order_by('orderm')
+    return JsonResponse({'status': 200, 'projeto': {        
+        'nome': projeto.nome,
+        'descricao': projeto.descricao,
+        'data_inicio': projeto.data_inicio.strftime('%d/%m/%Y') if projeto.data_inicio else '',
+        'data_fim': projeto.data_fim.strftime('%d/%m/%Y') if projeto.data_fim else '',
+        'status': projeto.status,
+        'fases': [{'id': fase.id, 'nome': fase.nome, 'ordem': fase.ordem} for fase in fases],
+        'tarefas': [{'id': tarefa.id, 'nome': tarefa.nome, 'concluido': tarefa.concluido, 'fase_id': tarefa.fase.id, 'orderm': tarefa.orderm} for tarefa in tarefas]
+    }})
+    # return JsonResponse({'status': 403, 'error': 'Método inválido'})
+
+def api_busca_membros(request):
+    search = request.GET.get('search')
+    membros = Servidor.objects.filter(nome__icontains=search)
+    return JsonResponse({'status': 200, 'membros': [{'id': membro.id, 'nome': membro.nome, 'img': membro.get_avatar()} for membro in membros]})
+
+def api_criar_grupo(request):
+    if request.method == 'POST':
+        dados = request.POST
+        print(request.POST)
+        nome = dados['nome']
+        membros = dados['membros']
+        grupo = Grupo.objects.create(nome=nome, user_inclusao=request.user)
+        for membro in membros:
+            grupo.membros.add(Servidor.objects.get(id=membro))
+        return JsonResponse({'status': 200, 'message': 'Grupo criado com sucesso'})
     return JsonResponse({'status': 403, 'error': 'Método inválido'})

@@ -1,6 +1,11 @@
 from django.contrib import admin
-from .models import Projetos, Fases, Categorias, Prioridade, Tarefas, Atividades, Comentarios
+from .models import Projetos, Fases, Categorias, Prioridade, Tarefas, Atividades, Comentarios, Grupo
 
+@admin.register(Grupo)
+class GrupoAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'user_inclusao', 'dt_inclusao', 'dt_att')
+    search_fields = ('nome',)
+    readonly_fields = ('dt_inclusao', 'dt_att')
 
 @admin.register(Projetos)
 class ProjetosAdmin(admin.ModelAdmin):

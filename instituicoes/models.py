@@ -76,6 +76,12 @@ class Servidor(models.Model):
                 pass  # Se não houver objeto anterior, apenas passe
         super().save(*args, **kwargs)
     
+    def get_avatar(self):
+        if self.avatar:
+            return self.avatar.url
+        else:
+            return '/static/images/user.png'
+        
 class Meta_Servidores(models.Model):
     def __str__(self):
         return self.nome
