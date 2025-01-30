@@ -1,0 +1,24 @@
+{% autoescape off %}
+Olá {{chamado.requisitante.nome}},
+
+Uma nova mensagem foi adicionada ao seu chamado.
+
+Protocolo: {{chamado.n_protocolo}}  
+Título do Chamado: {{chamado.assunto}}  
+Data da Criação da Mensagem: {{mensagem.dt_inclusao}}  
+
+Mensagem:  
+{{mensagem.mensagem}}  
+
+{% if mensagem.anexo %}
+Há um anexo vinculado a esta mensagem. Acesse o chamado para visualizá-lo.  
+{% endif %}
+
+Link para seu chamado:  
+https://intranet.novafriburgo.rj.gov.br/chamados/{{chamado.hash}}/detalhes/
+
+Email gerado automaticamente pelo sistema {{site_name}}.
+
+Grato,  
+A equipe de TI.  
+{% endautoescape %}

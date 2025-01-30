@@ -28,6 +28,19 @@ class Email_Chamado:
         }
         email = render_to_string(email_template_name, c)
         return email
+    
+    def create_email_to_msg(self, email_to, email_template_name, mensagem):    
+        c = {
+            "email": email_to,
+            'domain': 'intranet.novafriburgo.rj.gov.br',
+            'chamado': self.chamado,
+            'mensagem': mensagem,
+            'site_name': 'Intranet',                            
+            'url': redirect('chamados:detalhes', hash=self.chamado.hash).url,
+            'protocol': 'https',
+        }
+        email = render_to_string(email_template_name, c)
+        return email
 
     def criar_notificacao(self, subject):
         pass
@@ -55,6 +68,18 @@ class Email_Chamado:
 
         msg = {
             'subject': 'Chamado criado com sucesso!',
+            'email_template': email_template,
+            'email_to': email_to
+        }
+        return self.enviar(msg)
+    
+    def mensagem_criada(self, mensagem): 
+        email_template = self.create_email_to_msg(self.chamado.requisitante.email, 'chamados/emails/mensagem_criada.txt', mensagem)   
+        email_to = self.chamado.requisitante.email
+        # print(email_template)
+
+        msg = {
+            'subject': f'Nova mensgem para o chamado {self.chamado.n_protocolo}!',
             'email_template': email_template,
             'email_to': email_to
         }
