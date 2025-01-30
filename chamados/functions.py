@@ -74,7 +74,7 @@ class Email_Chamado:
         return self.enviar(msg)
     
     def chamado_finalizado(self): 
-        email_template = self.create_email(self.chamado.requisitante.email, 'chamados/emails/chamado_finalizado.html')   
+        email_template = self.create_email(self.chamado.requisitante.email, 'chamados/emails/chamado_finalizado.txt')   
         email_to = self.chamado.requisitante.email
         # print(email_template)
         # self.criar_notificacao(f'Chamado {self.chamado.n_protocolo} finalizado!')
