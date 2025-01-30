@@ -3,8 +3,9 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.contrib.auth.decorators import login_required
 from chamados.models import Chamado, TipoChamado, chamadoSatisfacao
 from datetime import datetime, timedelta
-
+from instituicoes.models import Servidor
 from noticias.models import Carrousell, Noticias
+from notificacoes.models import Notificacao
 
 @xframe_options_exempt
 @login_required
@@ -62,7 +63,8 @@ def index(request):
         'total_chamados': total_chamados,
         'chamados_abertos_30dias': chamados_abertos_30dias-chamados_fechados_30dias,
         'chamados_fechados_30dias': chamados_fechados_30dias,
-        'media_diaria': "{:.1f}".format(media_diaria)
+        'media_diaria': "{:.1f}".format(media_diaria),
+        'notifications': Notificacao.objects.filter(user=Servidor.objects.get(user=request.user)).order_by('-data')[:2]
     }
     return render(request, 'index.html', context)
 

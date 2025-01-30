@@ -1,4 +1,6 @@
 {% extends 'template.html' %}
+{% load custom %}
+{% load custom_filters %}	
 {% block visao %}active{% endblock %}
 {% block main %}   
 
@@ -68,8 +70,7 @@
 							    </div>							    
 						    </div>
 						    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-					    </div>
-					    
+					    </div>					    
 				    </div>
 			    </div> -->
 				
@@ -78,32 +79,46 @@
 						text-align: justify;
 					}	
 				</style>
-				<h1 class="mt-4 mb-3">Bem vindo, servidor!</h1>				
-							
-				<div class="mb-5">
-					<div class="row pb-4">
-						<div class="col pb-4">
-							<div class="w-100 owl-carousel owl-theme">
-								{% for item in carrousel %}
-								<div class="item" style="background-image: url('{{item.imagem.url}}'); background-size: cover;">
-									<a href="{{item.link}}">
-										<img src="{{item.imagem.url}}" style="opacity: 0;" alt="{{item.alt}}">
-									</a>
-								</div>
-								{% endfor %}								
-							  </div>
+				<h1 class="mb-3">Bem vindo, servidor!</h1>			
+				<div class="row pb-4">
+					<div class="col pb-4">
+						<div class="w-100 owl-carousel owl-theme">
+							{% for item in carrousel %}
+							<div class="item" style="background-image: url('{{item.imagem.url}}'); background-size: cover;">
+								<a href="{{item.link}}">
+									<img src="{{item.imagem.url}}" style="opacity: 0;" alt="{{item.alt}}">
+								</a>
+							</div>
+							{% endfor %}								
 						</div>
 					</div>
-				<div id="mainNoticias" class="pt-4 pe-4 row g-4 app-card">
+				</div>								
+				<div class="mb-5">
+					
+				<div id="mainNoticias" class="pt-2 pe-4 row g-4 app-card">
 					
 				    <div class="col-12 col-lg-6">
-				        <div class="px-5 py-3 h-100">
-							<h1>Mural de Notícias</h1>
-							<p class="text-justify">
+				        <div class="pe-5 ps-4 pb-3 h-100">
+							<h3 class="mb-4">Últimas Notificações</h3>
+							{% if notifications %}							
+								{% for notification in notifications %}
+								<a class="w-100" style="height: auto !important;" href="{{ notification.link }}">
+									<div class="py-2" style="width: 100%; height: auto; text-align: center; background-color: #4ae2630e !important; color: #5e667a;">
+										{% if "fa-" in notification.icone %}
+										<i class="{{ notification.icone }} text-xl me-2"></i>
+										{% else %}
+										<img class="w-10 h-10 rounded-full me-2" src="{{ notification.icone }}" alt="Ícone">
+										{% endif %}
+										{{ notification.msg|safe }}
+									</div>
+								</a><br>
+								{% endfor %}	
+							{% endif %}
+							<p class="text-justify mx-3">
 								A Intranet é o nosso espaço exclusivo de comunicação interna, pensado para facilitar o acesso a informações, recursos e novidades sobre a organização. Aqui, você pode acompanhar as notícias mais recentes, conferir os documentos importantes e se conectar com outras áreas e equipes.
 							</p>
-								Explore nossos conteúdos e fique por dentro de tudo o que acontece. Este é o lugar onde a colaboração se transforma em resultados e onde o trabalho em equipe é fortalecido a cada clique.
-							</p>
+								<!-- Explore nossos conteúdos e fique por dentro de tudo o que acontece. Este é o lugar onde a colaboração se transforma em resultados e onde o trabalho em equipe é fortalecido a cada clique.
+							</p> -->
 							<!-- <button class="btn btn-primary text-white">
 								Lorem ipsum
 							</button> -->
@@ -111,6 +126,7 @@
 			        </div>					
 					<div class="col">
 						<div class="row">
+							<h3 class="mb-3">Notícias em Destaque</h3>
 							{% for destaque in destaques %}
 							<div class="col-lg-6 col-md-5 col-sm-12 mb-4 destaques">
 								<a href="#" class="app-card app-card-progress-list h-100 shadow-sm">
@@ -124,9 +140,11 @@
 				</div>
 					<div class="row app-card">
 						<div class="col">
-							{% for noticia in noticias %}
 							<hr>
-							<div class="row mt-3">
+							<h3 class="py-2 px-3">Últimas Notícias</h3>
+							{% for noticia in noticias %}
+							
+							<div class="row mt-4">
 								<a href="{% url 'noticias:detalhe' noticia.id %}" class="col-lg-4 col-sm-12 d-flex flex-column d-flex">							
 									<img src="{{noticia.imagem_capa.url}}" class="m-auto img-fluid" alt="{{noticia.alt_capa}}" style="border-radius: 10px;">									
 								</a>
