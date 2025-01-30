@@ -595,7 +595,12 @@ def api_mudar_status(request):
             chamado.status = data['status']
             chamado.dt_atualizacao = timezone.now()
             chamado.save()
-            chamado.notificar_status_alterado()
+            chamado.notificar_status_alterado() 
+            print(chamado.status)
+            if chamado.status == '4':
+                mensagem, status = Email_Chamado(chamado).chamado_finalizado()
+                if status == 400:
+                    message.error(request, mensagem)
             return JsonResponse({'status': 200, 'message': 'Status atualizado com sucesso!', 'display_status': chamado.get_status_display(), 'id': chamado.id})
         except:
             return JsonResponse({'status': 400, 'message': 'Erro ao atualizar status!'})

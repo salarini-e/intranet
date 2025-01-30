@@ -1,0 +1,29 @@
+{% autoescape off %}
+Olá {{chamado.requisitante.nome}},
+
+Informamos que seu CHAMADO foi FINALIZADO.
+
+Protocolo: {{chamado.n_protocolo}}  
+Título do Chamado: {{chamado.assunto}}  
+Data de Abertura: {{chamado.dt_inclusao}}  
+Data de Finalização: {{chamado.dt_fechamento|date:"d/m/Y H:i"}}  
+
+Você sabia?  
+Após a finalização do serviço solicitado, você receberá uma pesquisa de satisfação para avaliar o atendimento prestado.  
+
+Como você pode ajudar?  
+Reserve alguns segundos para responder à pesquisa. Sua participação contribui diretamente para a melhoria contínua dos nossos serviços, permitindo um atendimento cada vez mais ágil e eficaz.  
+
+Ajude-nos a melhorar!  
+Sua avaliação faz toda a diferença. Contamos com você!  
+
+Link para consulta do chamado:  
+https://intranet.novafriburgo.rj.gov.br/chamados/{{chamado.hash}}/detalhes/
+
+Link para avaliar o atendimento:
+https://intranet.novafriburgo.rj.gov.br/
+
+Email gerado automaticamente pelo sistema {{site_name}}.
+
+Grato,  
+A equipe de TI.
