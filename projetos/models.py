@@ -4,6 +4,7 @@ from instituicoes.models import Servidor
 from django.db.models import Count, Q
 
 class Grupo(models.Model):
+    responsavel = models.ForeignKey(Servidor, on_delete=models.SET_NULL, null=True, blank=True)
     nome = models.CharField(max_length=255)
     membros = models.ManyToManyField(Servidor, related_name='grupos', blank=True)
     
@@ -47,6 +48,13 @@ class Projetos(models.Model):
         verbose_name_plural = "Fases dos projetos"
         verbose_name = "Fase do projeto"
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.status = 'C'
+        if not self.responsavel:
+            self.responsavel = Servidor.objects.get(user=self.user_inclusao)
+        super(Projetos, self).save(*args, **kwargs)
+        
     def get_status_color(self):
         if self.status == 'C':
             return '#313131'

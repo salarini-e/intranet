@@ -98,6 +98,32 @@
             border-radius: 0%;
 
         }
+        .menudetalhes a.btn-primary{
+            background-color: #15a362;
+        }
+        .menudetalhes a.btn-primary:hover{
+            background-color: #38b17a;
+            color: white !important;
+        }
+        .menudetalhes button.btn-primary{
+            background-color: #15a362;
+        }
+        .menudetalhes button.btn-primary:hover{
+            background-color: #38b17a;
+            color: white !important;
+        }
+        button.btn-3{
+            background-color: #1587a3;
+        }
+        button.btn-3:hover{
+            background-color: #3899b1;
+            color: white !important;
+        }
+        .modal .btn-3{
+            color: white;
+            border-radius: 0%;
+            padding: 3px 8px;
+        }
         #searchMembroResult.hidden{  
             display: none;            
         }
@@ -109,6 +135,23 @@
             cursor: pointer;
             border-radius: 8px;
         }
+        .modal .grupo-membros .hidden{
+            display: none;
+        }
+        .modal .grupo-membros .grupo{
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .modal .grupo-membros .grupo-ativo{
+            background-color: #5e5d5d18;
+            border-bottom-right-radius: 0px;
+            border-bottom-left-radius: 0px;
+        }
+        .modal .grupo-membros .grupo-membros{
+            background-color: #5e5d5d18;  
+            border-bottom-right-radius: 8px;
+            border-bottom-left-radius: 8px;          
+        }
     </style>
 
     <div class="menu">
@@ -117,9 +160,9 @@
             <i class="fa-solid fa-folder-plus me-2"></i>
              Adicionar projeto
         </button>
-        <button  type="button" style="background-color: white; color: black;" data-bs-toggle="modal" data-bs-target="#groupModal">
+        <button  type="button" style="background-color: white; color: black;" data-bs-toggle="modal" onclick="getMeusGrupos()" data-bs-target="#myGroupsModal">
             <i class="fa-solid fa-people-group me-2"></i>
-            Adicionar grupo
+            Meus grupo
         </button>
         
     </div>
@@ -133,20 +176,20 @@
                 <th>Responsável</th>
                 <th>Progresso</th>
                 <th>Dt. prevista</th>
-                <th>Descrição</th>
+                <!-- <th>Descrição</th> -->
                 <th>Status</th>
 
             </thead>
             <tbody>     
                 {% for projeto in projetos %}
-                <tr onclick="toggleDetalhes({{projeto.id}})">
+                <tr id="tr-{{projeto.id}}" onclick="toggleDetalhes({{projeto.id}})">
                     <!-- <td onclick="aux=1; getDetalhes({{projeto.id}})" style="max-width: 28px; color: #0056b3;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"> 
                         <i class="fa-solid fa-eye"></i>
                     </td> -->
-                    <td>{{projeto.nome}}</td>
+                    <td class="nome_projeto">{{projeto.nome}}</td>
                     <td>
                         <img class="mb-1 me-2" style="width: 18px; height: 18px;" src="/static/images/user.png" alt="">
-                        {{projeto.servidor}}
+                        <span class="responsavel_projeto" data-id="{{projeto.responsavel.id}}">{{projeto.responsavel}}</span>
                     </td>
                     <td class="td-progress">
                         <div class="d-flex">
@@ -160,10 +203,10 @@
                         {{projeto.get_status_icon|safe}}{{projeto.data_fim|date:"d/m/y"}}
                     </td>
                   
-                    <td style="max-width: 300px;">
+                    <!-- <td style="max-width: 300px;">
                         {{projeto.descricao}}
-                    </td>
-                    <td style="text-align: center; background-color: {{projeto.get_status_color}}; color: white; max-width: 100px;">
+                    </td> -->
+                    <td id="projeto_status" data-status="{{projeto.status}}" style="text-align: center; background-color: {{projeto.get_status_color}}; color: white; max-width: 100px;">
                         {{projeto.get_status_display}}
                     </td>
                 </tr>
@@ -215,6 +258,81 @@
       </div>
     </div>
   </div>
+  <div class="modal fade" id="editarProjetoModal" tabindex="-1" aria-labelledby="editarProjetoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Editar projeto</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="editarProjetoModal" onclick="closeModal('editarProjetoModal')" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="form-editar-projeto">
+            {% csrf_token %}
+            <input type="hidden" name="id" id="id">
+            <div class="mb-3">
+                <label for="nome">Status do projeto</label>
+                <select class="form-select" id="id_status" name="status" required>
+                    <option value="C">Planejamento</option>
+                    <option value="E">Em andamento</option>
+                    <option value="F">Finalizado</option>
+                    <option value="P">Parado</option>
+                </select>                
+            </div>
+            <div class="mb-3">
+                <label for="nome">Nome do projeto</label>
+                <input type="text" class="form-control" id="nome_ed" name="nome_ed" required>
+            </div>
+            <div class="mb-3">
+                <label for="nome">Responsável</label>
+                <input type="text" class="form-control" id="responsavel" name="responsavel" required>
+                <input type="text" class="form-control" id="id_responsavel" name="id_responsavel" required>
+            </div>            
+            <div class="mb-3">
+                <label for="nome">Descrição</label>
+                <textarea class="form-control" id="descricao" name="descricao" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="nome">Data inicio</label>
+                <input type="date" class="form-control" id="data_inicio" name="data_inicio" required>
+            </div>
+            <div class="mb-3">
+                <label for="nome">Data fim</label>
+                <input type="date" class="form-control" id="data_fim" name="data_fim" required>
+            </div>            
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary w-100" style="color: white;" onclick="postEditarProjeto();" data-bs-dismiss="modal">Salvar alterações</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="myGroupsModal" tabindex="-1" aria-labelledby="myGroupsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="myGroupsModalLabel" style="color: #141f5a;"><i class="fa-solid fa-people-group me-2"></i>Meus grupos</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="myGroupsModal" onclick="closeModal('myGroupsModal')" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col">                        
+                    <div class="grupo-membros mb-3">
+                        <div id="meusgrupos" class="p-2" style="background-color: hsla(0, 1%, 37%, 0.067); width: 100%; min-height: 100px;">
+                                                                                  
+                        </div>
+                    </div>
+                    <button class="w-100 btn btn-3"  data-bs-toggle="modal" data-bs-target="#groupModal">
+                        <i class="fa-solid fa-users-rays me-2"></i>Criar novo grupo
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="modal-footer" style="color: rgb(255, 108, 108);">
+        </div> -->
+      </div>
+    </div>
+  </div>
   <div class="modal fade" id="groupModal" tabindex="-1" aria-labelledby="groupModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -232,7 +350,7 @@
                     <div class="mb-3">
                         <label for="nome">Adicionar membro <i class="ms-2 fa-solid fa-magnifying-glass"></i></label>
                         <div class="d-flex">
-                            <input id="inputSearchMembros" type="text" onkeyup="buscaMembro(this)"  class="form-control" id="nome" name="nome" autocomplete="off">
+                            <input id="inputSearchMembros" type="text" onkeyup="buscaMembro(this)"  class="form-control" autocomplete="off">
                             <!-- <button class="btn btn-dark my-auto ms-1" style="background-color: #3f3f3f; color: white;">
                                 
                             </button> -->
@@ -258,6 +376,117 @@
   </div>
   
   <script>
+    class Projeto {
+        constructor(id, nome, responsavel_id, responsavel_nome, responsavel_img, data_inicio, data_fim, descricao, status, status_display) {
+            this.id = id;
+            this.nome = nome;
+            this.responsavel = { id: responsavel_id, nome: responsavel_nome, img: responsavel_img };
+            this.data_inicio = data_inicio;
+            this.data_fim = data_fim;
+            this.descricao = descricao;
+            this.status = status;
+            this.status_display = status_display;
+        }
+
+        formatDate(date) {
+            return new Date(date).toLocaleDateString();
+        }
+
+        get dataInicioFormatada() {
+            return this.formatDate(this.data_inicio);
+        }
+
+        get dataFimFormatada() {
+            return this.formatDate(this.data_fim);
+        }
+        updateDisplay() {
+            const tr = document.querySelector(`#tr-${this.id}`);
+            tr.querySelector('.nome_projeto').textContent = this.nome;
+            tr.querySelector('.responsavel_projeto').textContent = this.responsavel.nome;            
+            tr.querySelector('.projeto_status').innerHTML = this.status_display;            
+        }
+    }
+
+    const projetos = [];
+    {% for projeto in projetos %}
+        projetos.push(new Projeto(
+            {{ projeto.id }},
+            "{{ projeto.nome|escapejs }}",
+            {% if projeto.responsavel %}{{ projeto.responsavel.id }}{% else %}null{% endif %},
+            "{{ projeto.responsavel.nome|escapejs }}",
+            "{{ projeto.responsavel.img|escapejs }}",
+            "{{ projeto.data_inicio|date:'Y-m-d' }}",
+            "{{ projeto.data_fim|date:'Y-m-d' }}",
+            "{{ projeto.descricao|escapejs }}",
+            "{{ projeto.status }}",
+            "{{ projeto.get_status_display }}"
+        ));
+    {% endfor %}
+
+    console.log(projetos)
+    function toggleMembros(element){        
+        let icon = document.querySelector(`#icon-down-${element.id.split('-')[1]}`);
+        let membros = document.querySelector(`#${element.id}-membros`);        
+        if (membros.classList.contains('hidden')){
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');            
+            element.classList.add('grupo-ativo');
+            membros.classList.remove('hidden');
+            membros.classList.add('show');
+        }else{
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');     ;
+            element.classList.remove('grupo-ativo');
+            membros.classList.remove('show');
+            membros.classList.add('hidden');
+        }
+    }
+    function getMeusGrupos(){
+        fetch('/projetos/api/meus-grupos/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status==200){
+                    grupos = data.grupos;
+                    let meusgrupos = document.querySelector('#meusgrupos');
+                    meusgrupos.innerHTML = '';
+                    grupos.forEach(grupo => {
+                        let divMembros = '';
+                        grupo.membros.forEach(membro => {
+                                divMembros += `
+                                    <div class="p-1">
+                                        <div class="d-flex">
+                                            <img class="me-2 my-auto" style="width: 18px; height: 18px;" src="${membro.img}" alt="">
+                                            <span>${membro.nome}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        meusgrupos.innerHTML += `
+                        <div class="mb-2">
+                            <div id="grupo-${grupo.id}" class="grupo d-flex py-2 ps-2" onclick="toggleMembros(this)">
+                                <i class="fa-solid fa-users-viewfinder mt-1 ms-1 me-2"></i>
+                                <span class="my-auto">${grupo.nome}</span>
+                                <span style="font-size: 10pt; cursor: pointer;" class="ms-auto me-3">
+                                    <i id="icon-down-${grupo.id}" class="fa-solid fa-chevron-down"></i>
+                                </span>
+                            </div>
+                            <div id="grupo-${grupo.id}-membros" class="grupo-membros py-1 px-3 hidden">
+                                <div class="p-1">
+                                        <div class="d-flex" style="color: #141f5a;">
+                                            <img class="me-2 my-auto" style="width: 18px; height: 18px;" src="${grupo.responsavel.img}" alt="">
+                                            <span>${grupo.responsavel.nome}</span>
+                                        </div>
+                                    </div>
+                                ${divMembros}
+                            </div> 
+                        </div>`                        
+                    })
+                };
+            })                    
+            .catch(error => {
+                console.error('Erro:', error);
+            });
+    }
     function postCriarGrupo(){
         let membros = document.querySelectorAll('.membros-ids');
         let membros_ids = [];
@@ -289,7 +518,7 @@
                 // Exibir o grupo na tela
                 console.log('Grupo criado:', data);
                 // fecha o modal de criação de grupo
-                document.querySelector('#groupModal').classList.remove('show');
+                closeModal('groupModal');
             } else {
                 console.error('Erro:', data.erros || 'Erro desconhecido');
             }
@@ -371,8 +600,8 @@
                     document.querySelector(`#detalhes-${id}`).innerHTML = `
                         <div class="row">
                             <div class="col">
-                                <p><strong>Descrição:</strong> <br>${data.projeto.descricao}</p>
-                                <p><strong>Previsão execução:</strong> ${data.projeto.data_inicio}  <i class="fa-solid fa-arrow-right-long mx-4"></i> ${data.projeto.data_fim}</p>
+                                <p><strong>Descrição:</strong> <br><pan class="descricao">${data.projeto.descricao}</span></p>
+                                <p><strong>Previsão execução:</strong> <br><span class="data_inicio">${data.projeto.data_inicio}</span>  <i class="fa-solid fa-arrow-right-long mx-3"></i> <span class="data_fim">${data.projeto.data_fim}</span></p>
                             </div>
                             <div class="col">
                                 <p><strong>Grupos:</strong><br>
@@ -386,8 +615,9 @@
                         <div class="row pe-0" style="margin-top: 10px">
                             <div class="col pe-0 menudetalhes" style="padding-bottom: 20px;">                                
                                 <a href='/projetos/${id}/board/' class="btn btn-primary"><i class="fa-solid fa-eye me-2"></i>Visualizar</a>
-                                <button class="btn btn-primary"><i class="fa-solid fa-comment me-2"></i>Comentarios</button>
-                                <button class="btn btn-secondary"><i class="fa-solid fa-file-pen me-2"></i>Editar</button>
+                                <button class="btn btn-3"><i class="fa-solid fa-people-line me-2"></i></i>Grupos</button>
+                                <button class="btn btn-3"><i class="fa-solid fa-comment me-2"></i>Comentarios</button>
+                                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editarProjetoModal" onclick="getProjetoInfo(${id})"><i class="fa-solid fa-file-pen me-2"></i>Editar</button>
                             </div
                         </div>
 
@@ -398,6 +628,50 @@
                     console.error('Erro:', error);
                 });
         }
+    }
+    function getProjetoInfo(id){
+        form = document.querySelector('#form-editar-projeto');
+        let projeto = projetos.find(projeto => projeto.id === id);
+
+        form.querySelector('#id').value = projeto.id;
+        form.querySelector('#nome_ed').value = projeto.nome;
+        form.querySelector('#responsavel').value = projeto.responsavel.nome;
+        form.querySelector('#id_responsavel').value = projeto.responsavel.id;
+        form.querySelector('#descricao').value = projeto.descricao;
+        form.querySelector('#data_inicio').value = projeto.data_inicio;
+        form.querySelector('#data_fim').value = projeto.data_fim;
+        form.querySelector('#id_status').value = projeto.status;
+
+
+    }
+    function postEditarProjeto(){
+        let form = document.querySelector('#form-editar-projeto');
+        let formData = new FormData(form);
+
+        fetch('/projetos/api/editar-projeto/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                // Atualizar o projeto na tela
+                let projeto = projetos.find(projeto => projeto.id === data.projeto.id);
+                projeto.nome = data.projeto.nome;
+                projeto.responsavel = data.projeto.responsavel;
+                projeto.data_inicio = data.projeto.data_inicio;
+                projeto.data_fim = data.projeto.data_fim;
+                projeto.descricao = data.projeto.descricao;
+                projeto.status = data.projeto.status;
+                projeto.status_display = data.projeto.status_display;
+                projeto.updateDisplay()
+            } else {
+                console.error('Erro:', data.erros || 'Erro desconhecido');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao enviar dados:', error);
+        });
     }
     // let aux = 0;                    
     // function clickTable(id){
@@ -410,6 +684,19 @@
     // function getDetalhes(id){
     //     console.log(id)
     // }
+    function closeModal(id) {
+        const modalElement = document.getElementById(id);
+        if (modalElement) {
+            const modalInstance = bootstrap.Modal.getInstance(modalElement);
+            if (modalInstance) {
+                modalInstance.hide();
+            } else {
+                // Criar instância se não existir e fechar
+                new bootstrap.Modal(modalElement).hide();
+            }
+        }
+    }
+
     function addNovoProjeto(id, nome, responsavel, dt_fim, descricao, status){
         let table = document.querySelector('table tbody');
         let tr = document.createElement('tr');

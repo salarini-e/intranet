@@ -187,9 +187,31 @@ def api_criar_grupo(request):
         dados = request.POST
         print(request.POST)
         nome = dados['nome']
-        membros = dados['membros']
-        grupo = Grupo.objects.create(nome=nome, user_inclusao=request.user)
+        responsavel = Servidor.objects.get(user = request.user)
+        membros = dados['membros'].split(',')
+        grupo = Grupo.objects.create(responsavel=responsavel ,nome=nome, user_inclusao=request.user)
         for membro in membros:
             grupo.membros.add(Servidor.objects.get(id=membro))
         return JsonResponse({'status': 200, 'message': 'Grupo criado com sucesso'})
+    return JsonResponse({'status': 403, 'error': 'Método inválido'})
+
+def api_meus_grupos(request):
+    grupos_1 = Grupo.objects.filter(responsavel__user=request.user)
+    grupos_2 = Grupo.objects.filter(membros__user__in=[request.user])
+    grupos = grupos_1 | grupos_2
+    return JsonResponse({'status': 200, 'grupos': [{'id': grupo.id, 'nome': grupo.nome, 'responsavel': {'id': grupo.responsavel.id, 'nome': grupo.responsavel.nome, 'img': grupo.responsavel.get_avatar()}, 'membros': [{'id': membro.id, 'nome': membro.nome, 'img': membro.get_avatar()} for membro in grupo.membros.all()]} for grupo in grupos]})
+
+def api_editar_projeto(request):
+    if request.method == 'POST':
+        dados = request.POST
+        print(dados)
+        projeto = Projetos.objects.get(id=dados['projeto_id'])
+        projeto.nome = dados['nome']
+        projeto.descricao = dados['descricao']
+        projeto.data_inicio = dados['data_inicio']
+        projeto.data_fim = dados['data_fim']
+        projeto.status = dados['status']
+        projeto.responsavel = Servidor.objects.get(id=dados['responsavel']) if dados['responsavel'] else None
+        projeto.save()
+        return JsonResponse({'status': 200, 'message': 'Projeto editado com sucesso'})
     return JsonResponse({'status': 403, 'error': 'Método inválido'})
