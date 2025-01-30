@@ -27,3 +27,4 @@ Email gerado automaticamente pelo sistema {{site_name}}.
 
 Grato,  
 A equipe de TI.
+{% endautoescape %}

@@ -602,7 +602,8 @@ def api_mudar_status(request):
                 if status == 400:
                     message.error(request, mensagem)
             return JsonResponse({'status': 200, 'message': 'Status atualizado com sucesso!', 'display_status': chamado.get_status_display(), 'id': chamado.id})
-        except:
+        except Exception as E:
+            print(E)
             return JsonResponse({'status': 400, 'message': 'Erro ao atualizar status!'})
     return JsonResponse({'status': 400, 'message': 'Método não permitido!'})
 
