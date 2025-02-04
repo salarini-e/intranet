@@ -1594,7 +1594,7 @@ def feedback_in_excel(request):
     feed_pendente = Chamado.objects.filter(status='4', pesquisa_satisfacao=False).order_by('-id')
     
     total_feedbacks = feedbacks.count()
-    total_feedbacks_positivos = feedbacks.filter(avaliacao__gte=3, cordialidade__gte=3).count()
+    total_feedbacks_positivos = feedbacks.filter(avaliacao__gte=2, cordialidade__gte=2).count()
     total_feedbacks_negativos = feedbacks.filter(Q(avaliacao__lt=2) | Q(cordialidade__lt=2)).count()
     total_feedbacks_pendentes = feed_pendente.count()
     
