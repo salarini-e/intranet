@@ -275,6 +275,17 @@ def alocar_servidor(request):
         context['servidores'] = Servidor.objects.filter(setor__secretaria=responsavel.secretaria).order_by('setor', 'nome')
     else:
         context['servidores'] = Servidor.objects.filter(setor=responsavel.setor).order_by('setor', 'nome')
+
+    anos_possiveis = (
+        Registro.objects.filter(user=request.user)
+        .values_list('data_registro__year', flat=True)
+        .distinct()
+        .order_by('data_registro__year')
+    )
+
+    agora = datetime.now()
+    context['ano_atual'] = agora.year
+    context['anos_possiveis'] = anos_possiveis
     return render(request, "controle_de_ponto/alocar_servidor.html", context)
 
 def gambiarra(request):

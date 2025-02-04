@@ -10,10 +10,10 @@ class ServidorWidget(s2forms.ModelSelect2Widget):
         "nome__icontains",        
     ]
 
-class SetorWidget(s2forms.ModelSelect2Widget):
-    search_fields = [
-        "nome__icontains",        
-    ]
+# class SetorWidget(s2forms.ModelSelect2Widget):
+#     search_fields = [
+#         "nome__icontains",        
+#     ]
 
 class SearchServidorForm(forms.Form):
     
@@ -30,8 +30,17 @@ class SearchServidorForm(forms.Form):
             queryset=Setor.objects.none(),
             required=False,
             label="Setor",
-            widget=SetorWidget(attrs={
+            widget=forms.Select(attrs={
                 "class": "form-control",
-                "data-placeholder": "Digite o nome do setor"
+                "data-placeholder": "Escolha o setor que você deseja alocar o servidor"
             })
         )
+
+    def __init__(self, *args, **kwargs):
+        responsavel = kwargs.pop('responsavel', None)
+        super(SearchServidorForm, self).__init__(*args, **kwargs)
+        
+        if responsavel:
+            self.fields['setor'].queryset = Setor.objects.filter(secretaria=responsavel.secretaria)
+        else:
+            self.fields['setor'].queryset = Setor.objects.none()

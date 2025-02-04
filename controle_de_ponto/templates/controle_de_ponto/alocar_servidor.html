@@ -49,8 +49,65 @@
 <div class="container">        
     <div class="row">
         <div class="col d-flex">
-            <h1>Servidores</h1>
-            <a href="{% url 'controle_de_ponto:painel' %}" class="btn btn-ponto px-3 py-2 ms-auto my-auto ">
+            <h1>Painel de Controle</h1>
+            <a href="{% url 'controle_de_ponto:painel' %}" class="btn btn-secondary px-3 me-2 my-auto py-2 ms-auto" style="background-color: black;">
+                <i class="fa-solid fa-list"></i> 
+            </a>
+            <button class="btn btn-primary my-auto me-2" style="color: white;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                <i class="fa-solid fa-file-lines me-2"></i> Arquivo
+            </button>   
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="offcanvasExampleLabel">Gerar relatório</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <form method="POST" action="{% url 'controle_de_ponto:export_excel' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="mb-2" for="arquivo">Tipo</label>
+                            <select onchange="mudarTextButton(this)" class="form-select" id="arquivo" name="arquivo" required>
+                                <option value="" disabled>Selecione o tipo</option>
+                                <option value="Excel">Excel</option>
+                                <option value="PDF" selected>PDF</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">                            
+                            <label for="mes" class="form-label">Mês</label>
+                            <select class="form-select" id="mes" name="mes" required>
+                                <option value="" disabled selected>Selecione o mês</option>
+                                <option value="1">Janeiro</option>
+                                <option value="2">Fevereiro</option>
+                                <option value="3">Março</option>
+                                <option value="4">Abril</option>
+                                <option value="5">Maio</option>
+                                <option value="6">Junho</option>
+                                <option value="7">Julho</option>
+                                <option value="8">Agosto</option>
+                                <option value="9">Setembro</option>
+                                <option value="10">Outubro</option>
+                                <option value="11">Novembro</option>
+                                <option value="12">Dezembro</option>
+                            </select>
+                        </div>
+                    
+                        <div class="mb-3">
+                            <label for="ano" class="form-label">Ano</label>
+                            <select class="form-select" id="ano" name="ano" required>
+                                <option value="" disabled selected>Selecione o ano</option>
+                                {% for ano in anos_possiveis %}
+                                    <option value="{{ ano }}" {% if ano == ano_atual %}selected{% endif %}>{{ ano }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    
+                        <button type="submit" class="btn btn-primary w-100 mt-3" style="color: white;">Gerar <span id="tipoBtn">PDF</span></button>
+                    </form>
+                    
+                    
+                </div>
+            </div>  
+            <a href="{% url 'controle_de_ponto:index' %}" class="btn btn-ponto px-3 py-2 my-auto ">
                 <i class="fa-solid fa-rotate-left me-2"></i> Voltar
             </a>
         </div>
