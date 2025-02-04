@@ -155,7 +155,12 @@
                 {% for servidor in servidores %}
                 <tr>
                     <td>{{ servidor.matricula }}</td>
-                    <td>{{ servidor.nome }}</td>
+                    <td>
+                        <img style="height: 20px; width: 20px;" class="rounded-circle my-auto" src="{{ servidor.get_avatar }}" alt="">
+                        <span class="ms-2">
+                            {{ servidor.nome }}
+                        </span>
+                    </td>
                     <td>{{ servidor.setor }}</td>
                 </tr>
                 {% endfor %}
@@ -163,6 +168,13 @@
         </table>
     </div>
 </div>
+<style>
+     .table thead th {
+        background-color: #1a73e8;
+        color: white;
+        font-weight: bold;
+    }
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 {{form.media.js}}
 {% endblock %}
