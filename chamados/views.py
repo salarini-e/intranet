@@ -1347,7 +1347,7 @@ def ajustar_tom(cor_hex, fator):
     return f'#{int(r*255):02X}{int(g*255):02X}{int(b*255):02X}'
 
 def painel_satisfacao(request):
-    feedbacks = chamadoSatisfacao.objects.filter(chamado__pesquisa_satisfacao=True).order_by('-id')[:90]
+    feedbacks = chamadoSatisfacao.objects.filter(chamado__pesquisa_satisfacao=True).order_by('-id')
 
     totais = {
         'geral': sum(int(feed.avaliacao) for feed in feedbacks),
@@ -1492,62 +1492,191 @@ def pesquisar_feedback(request):
     return JsonResponse({'status':405,'error': 'Método não permitido.'}, status=405)
 
 
+# def feedback_in_excel(request):
+#     # Criação do arquivo Excel
+#     workbook = openpyxl.Workbook()
+#     sheet = workbook.active
+#     hoje = datetime.now().strftime('%d/%m/%Y_%H:%M:%S')
+#     sheet.title = "Feedbacks"
+
+#     # Cabeçalhos
+#     headers = [
+#         "Chamado",
+#         "Técnico",
+#         "Avaliação",
+#         "Justificativa da Avaliação",
+#         "Cordialidade",
+#         "Justificativa da Cordialidade",
+#         "Resolução",
+#         "Receberia Novamente o Técnico",
+#         "Tempo de Espera",
+#         "Comentário",
+#         "Data de Inclusão"
+#     ]
+    
+#     # Estilo para o cabeçalho
+#     header_font = Font(bold=True)
+    
+#     for col_num, header in enumerate(headers, 1):
+#         cell = sheet.cell(row=1, column=col_num)
+#         cell.value = header
+#         cell.font = header_font
+
+#     # Dados dos feedbacks
+#     feedbacks = chamadoSatisfacao.objects.all()
+#     for row_num, feedback in enumerate(feedbacks, 2):
+#         sheet.cell(row=row_num, column=1).value = feedback.chamado.n_protocolo
+#         sheet.cell(row=row_num, column=2).value = feedback.chamado.profissional_designado.nome_servidor if feedback.chamado.profissional_designado else "N/H"
+#         sheet.cell(row=row_num, column=3).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.avaliacao, "N/A")
+#         sheet.cell(row=row_num, column=4).value = feedback.avaliacao_justificativa
+#         sheet.cell(row=row_num, column=5).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.cordialidade, "N/A")
+#         sheet.cell(row=row_num, column=6).value = feedback.cordialidade_justificativa
+#         sheet.cell(row=row_num, column=7).value = dict(chamadoSatisfacao.RESOLUCAO_CHOICES).get(feedback.resolucao, "N/A")
+#         sheet.cell(row=row_num, column=8).value = dict(chamadoSatisfacao.RECEBER_CHOICES).get(feedback.receberia_novamente_o_tecnico, "N/A")
+#         sheet.cell(row=row_num, column=9).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.tempo_espera, "N/A")
+#         sheet.cell(row=row_num, column=10).value = feedback.comentario
+#         sheet.cell(row=row_num, column=11).value = feedback.dt_inclusao.strftime('%d/%m/%Y %H:%M:%S')
+
+#     # Ajuste de largura das colunas (opcional)
+#     for col in sheet.columns:
+#         max_length = 0
+#         col_letter = col[0].column_letter  # Obter letra da coluna
+#         for cell in col:
+#             if cell.value:
+#                 max_length = max(max_length, len(str(cell.value)))
+#         adjusted_width = max_length + 2
+#         sheet.column_dimensions[col_letter].width = adjusted_width
+
+#     # Retorno como arquivo de download
+#     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+#     response['Content-Disposition'] = f'attachment; filename="feedbacks_{hoje}.xlsx"'
+#     workbook.save(response)
+#     return response
+
 def feedback_in_excel(request):
     # Criação do arquivo Excel
     workbook = openpyxl.Workbook()
-    sheet = workbook.active
-    hoje = datetime.now().strftime('%d/%m/%Y_%H:%M:%S')
-    sheet.title = "Feedbacks"
-
-    # Cabeçalhos
+    hoje = datetime.now().strftime('%d_%m_%Y_%H_%M_%S')
+    
+    # Aba principal
+    sheet_feedbacks = workbook.active
+    sheet_feedbacks.title = "Feedbacks"
+    
+    # Aba adicional
+    aba_pendentes = workbook.create_sheet("Pendentes")
+    aba_resumo = workbook.create_sheet("Resumo")
+    
+    # Cabeçalhos para Feedbacks
     headers = [
-        "Chamado",
-        "Técnico",
-        "Avaliação",
-        "Justificativa da Avaliação",
-        "Cordialidade",
-        "Justificativa da Cordialidade",
-        "Resolução",
-        "Receberia Novamente o Técnico",
-        "Tempo de Espera",
-        "Comentário",
-        "Data de Inclusão"
+        "Chamado", "Técnico", "Avaliação", "Justificativa da Avaliação", 
+        "Cordialidade", "Justificativa da Cordialidade", "Resolução", 
+        "Receberia Novamente o Técnico", "Tempo de Espera", "Comentário", "Data de Inclusão"
     ]
     
-    # Estilo para o cabeçalho
+    # Estilo para cabeçalhos
     header_font = Font(bold=True)
     
+    # Preenche cabeçalhos na aba principal
     for col_num, header in enumerate(headers, 1):
-        cell = sheet.cell(row=1, column=col_num)
+        cell = sheet_feedbacks.cell(row=1, column=col_num)
         cell.value = header
         cell.font = header_font
-
+    
     # Dados dos feedbacks
+    chamados = Chamado.objects.all()    
+    total_chamados_abertos_ou_pendentes = chamados.filter(status__in=['0', '2']).count()
+    total_chamados_fechados = chamados.filter(status='4').count()
+    total_chamados_cancelados_ou_mesclados = chamados.filter(status__in=['5', '6']).count()
+    total_dias = (timezone.now() - chamados.first().dt_inclusao).days    
+    total_dias = total_dias if total_dias > 0 else 1    
+    media_diaria_geral = round(chamados.count() / total_dias, 1)
     feedbacks = chamadoSatisfacao.objects.all()
-    for row_num, feedback in enumerate(feedbacks, 2):
-        sheet.cell(row=row_num, column=1).value = feedback.chamado.n_protocolo
-        sheet.cell(row=row_num, column=2).value = feedback.chamado.profissional_designado.nome_servidor if feedback.chamado.profissional_designado else "N/H"
-        sheet.cell(row=row_num, column=3).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.avaliacao, "N/A")
-        sheet.cell(row=row_num, column=4).value = feedback.avaliacao_justificativa
-        sheet.cell(row=row_num, column=5).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.cordialidade, "N/A")
-        sheet.cell(row=row_num, column=6).value = feedback.cordialidade_justificativa
-        sheet.cell(row=row_num, column=7).value = dict(chamadoSatisfacao.RESOLUCAO_CHOICES).get(feedback.resolucao, "N/A")
-        sheet.cell(row=row_num, column=8).value = dict(chamadoSatisfacao.RECEBER_CHOICES).get(feedback.receberia_novamente_o_tecnico, "N/A")
-        sheet.cell(row=row_num, column=9).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.tempo_espera, "N/A")
-        sheet.cell(row=row_num, column=10).value = feedback.comentario
-        sheet.cell(row=row_num, column=11).value = feedback.dt_inclusao.strftime('%d/%m/%Y %H:%M:%S')
+    feed_pendente = Chamado.objects.filter(status='4', pesquisa_satisfacao=False).order_by('-id')
+    
+    total_feedbacks = feedbacks.count()
+    total_feedbacks_positivos = feedbacks.filter(avaliacao__gte=3, cordialidade__gte=3).count()
+    total_feedbacks_negativos = feedbacks.filter(Q(avaliacao__lt=2) | Q(cordialidade__lt=2)).count()
+    total_feedbacks_pendentes = feed_pendente.count()
+    
+    chamados_ultimos30dias = chamados.filter(dt_inclusao__gte=timezone.now() - timedelta(days=30))
+    chamados_abertos_ou_pendentes_30dias = chamados_ultimos30dias.filter(status__in=['0', '2']).count()
+    chamados_fechados_30dias = chamados_ultimos30dias.filter(status='4').count()
+    chamados_cancelados_ou_mesclados_30dias = chamados_ultimos30dias.filter(status__in=['5', '6']).count()    
+    media_diaria_30dias = round(chamados_ultimos30dias.count() / 30, 1)
 
-    # Ajuste de largura das colunas (opcional)
-    for col in sheet.columns:
+    for row_num, feedback in enumerate(feedbacks, 2):
+        sheet_feedbacks.cell(row=row_num, column=1).value = feedback.chamado.n_protocolo
+        sheet_feedbacks.cell(row=row_num, column=2).value = feedback.chamado.profissional_designado.nome_servidor if feedback.chamado.profissional_designado else "N/H"
+        sheet_feedbacks.cell(row=row_num, column=3).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.avaliacao, "N/A")
+        sheet_feedbacks.cell(row=row_num, column=4).value = feedback.avaliacao_justificativa
+        sheet_feedbacks.cell(row=row_num, column=5).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.cordialidade, "N/A")
+        sheet_feedbacks.cell(row=row_num, column=6).value = feedback.cordialidade_justificativa
+        sheet_feedbacks.cell(row=row_num, column=7).value = dict(chamadoSatisfacao.RESOLUCAO_CHOICES).get(feedback.resolucao, "N/A")
+        sheet_feedbacks.cell(row=row_num, column=8).value = dict(chamadoSatisfacao.RECEBER_CHOICES).get(feedback.receberia_novamente_o_tecnico, "N/A")
+        sheet_feedbacks.cell(row=row_num, column=9).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.tempo_espera, "N/A")
+        sheet_feedbacks.cell(row=row_num, column=10).value = feedback.comentario
+        sheet_feedbacks.cell(row=row_num, column=11).value = feedback.dt_inclusao.strftime('%d/%m/%Y %H:%M:%S')
+    
+    for row_num, feed in enumerate(feed_pendente, 2):
+        #n_protocolo, requisitante, profissional_designado, tipo, dt_inclusao, dt_execucao, dt_fechamento
+        aba_pendentes.cell(row=row_num, column=1).value = feed.n_protocolo
+        aba_pendentes.cell(row=row_num, column=2).value = feed.requisitante.nome
+        aba_pendentes.cell(row=row_num, column=3).value = feed.profissional_designado.nome_servidor if feed.profissional_designado else "N/H"
+        aba_pendentes.cell(row=row_num, column=4).value = feed.tipo.nome
+        aba_pendentes.cell(row=row_num, column=5).value = feed.dt_inclusao.strftime('%d/%m/%Y %H:%M:%S')
+        aba_pendentes.cell(row=row_num, column=6).value = feed.dt_execucao.strftime('%d/%m/%Y %H:%M:%S') if feed.dt_execucao else ''
+        aba_pendentes.cell(row=row_num, column=7).value = feed.dt_fechamento.strftime('%d/%m/%Y %H:%M:%S') if feed.dt_fechamento else ''
+        
+    # Preenche conteúdo da aba adicional
+    aba_resumo.cell(row=1, column=1).value = "Feedbacks"
+    aba_resumo.cell(row=1, column=1).font = header_font
+
+    aba_resumo.cell(row=2, column=1).value = "Total de Feedbacks"
+    aba_resumo.cell(row=2, column=2).value = total_feedbacks
+    aba_resumo.cell(row=3, column=1).value = "Total de Feedbacks Positivos"
+    aba_resumo.cell(row=3, column=2).value = total_feedbacks_positivos
+    aba_resumo.cell(row=4, column=1).value = "Total de Feedbacks Negativos"
+    aba_resumo.cell(row=4, column=2).value = total_feedbacks_negativos
+    aba_resumo.cell(row=5, column=1).value = "Total de Feedbacks Pendentes"
+    aba_resumo.cell(row=5, column=2).value = total_feedbacks_pendentes
+
+    aba_resumo.cell(row=7, column=1).value = "Chamados nos Últimos 30 Dias"
+    aba_resumo.cell(row=7, column=1).font = header_font
+
+    aba_resumo.cell(row=8, column=1).value = "Total de Chamados"
+    aba_resumo.cell(row=8, column=2).value = chamados_ultimos30dias.count()
+    aba_resumo.cell(row=9, column=1).value = "Abertos ou Pendentes"
+    aba_resumo.cell(row=9, column=2).value = chamados_abertos_ou_pendentes_30dias
+    aba_resumo.cell(row=10, column=1).value = "Fechados"
+    aba_resumo.cell(row=10, column=2).value = chamados_fechados_30dias
+    aba_resumo.cell(row=11, column=1).value = "Cancelados ou Mesclados"
+    aba_resumo.cell(row=11, column=2).value = chamados_cancelados_ou_mesclados_30dias
+    aba_resumo.cell(row=12, column=1).value = "Média Diária"
+    aba_resumo.cell(row=12, column=2).value = media_diaria_30dias
+
+    aba_resumo.cell(row=14, column=1).value = "Chamados Totais"
+    aba_resumo.cell(row=14, column=1).font = header_font
+    aba_resumo.cell(row=15, column=1).value = "Total de Chamados"
+    aba_resumo.cell(row=15, column=2).value = chamados.count()
+    aba_resumo.cell(row=16, column=1).value = "Abertos ou Pendentes"
+    aba_resumo.cell(row=16, column=2).value = total_chamados_abertos_ou_pendentes
+    aba_resumo.cell(row=17, column=1).value = "Fechados"
+    aba_resumo.cell(row=17, column=2).value = total_chamados_fechados
+    aba_resumo.cell(row=18, column=1).value = "Cancelados ou Mesclados"
+    aba_resumo.cell(row=18, column=2).value = total_chamados_cancelados_ou_mesclados
+    aba_resumo.cell(row=19, column=1).value = "Média Diária"
+    aba_resumo.cell(row=19, column=2).value = media_diaria_geral
+    # Ajuste opcional da largura das colunas
+    for col in sheet_feedbacks.columns:
         max_length = 0
-        col_letter = col[0].column_letter  # Obter letra da coluna
+        col_letter = col[0].column_letter
         for cell in col:
             if cell.value:
                 max_length = max(max_length, len(str(cell.value)))
         adjusted_width = max_length + 2
-        sheet.column_dimensions[col_letter].width = adjusted_width
-
-    # Retorno como arquivo de download
+        sheet_feedbacks.column_dimensions[col_letter].width = adjusted_width
+    
+    # Retorno como arquivo para download
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = f'attachment; filename="feedbacks_{hoje}.xlsx"'
     workbook.save(response)
