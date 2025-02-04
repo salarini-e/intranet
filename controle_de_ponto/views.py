@@ -26,7 +26,7 @@ def obter_dias_do_mes(mes, ano):
 def index(request):
     agora = datetime.now()
 
-    registros = Registro.objects.filter(user=request.user).order_by('-data_registro', '-id')[:30]    
+    registros = Registro.objects.filter(user=request.user, data_registro__month=agora.month, data_registro__year=agora.year).order_by('-data_registro', '-id')
     registro_do_dia = Registro.objects.filter(user=request.user, data_registro=agora.date()).order_by('-id').first() if registros.exists() else None
 
     context = {
@@ -151,9 +151,10 @@ def painel(request):
     responsavel = Responsavel.objects.get(user=request.user)
     agora = datetime.now()
     if responsavel.geral:
-        registros = Registro.objects.filter(secretaria=responsavel.secretaria).order_by('-data_registro','-id')
+        registros = Registro.objects.filter(secretaria=responsavel.secretaria, data_registro__month=agora.month, data_registro__year=agora.year).order_by('-data_registro','-id')
     else:
-        registros = Registro.objects.filter(setor=responsavel.setor).order_by('-data_registro','-id')
+         
+        registros = Registro.objects.filter(setor=responsavel.setor, data_registro__month=agora.month, data_registro__year=agora.year).order_by('-data_registro','-id')
 
     anos_possiveis = (
         Registro.objects.filter(user=request.user)
