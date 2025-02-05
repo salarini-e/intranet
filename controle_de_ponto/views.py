@@ -326,11 +326,11 @@ def alocar_servidor(request):
     context['anos_possiveis'] = anos_possiveis
     return render(request, "controle_de_ponto/alocar_servidor.html", context)
 
-def gambiarra(request):
-    registros = Registro.objects.all()
-    responsavel = Responsavel.objects.get(user=request.user)
-    for registro in registros:
-        registro.secretaria = responsavel.secretaria
-        registro.setor = responsavel.setor
-        registro.save()
-    return render(request, "erro.html", {"mensagem": "Feito.", "submensagem": "Gambiarra aplicada."})
+# def gambiarra(request):
+#     registros = Registro.objects.all()
+#     responsavel = Responsavel.objects.get(user=request.user)
+#     for registro in registros:
+#         registro.secretaria = responsavel.secretaria
+#         registro.setor = responsavel.setor
+#         registro.save()
+#     return render(request, "erro.html", {"mensagem": "Feito.", "submensagem": "Gambiarra aplicada."})
