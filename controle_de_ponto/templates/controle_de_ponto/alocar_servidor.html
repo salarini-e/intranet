@@ -2,7 +2,7 @@
 {% load custom %}
 {% load custom_filters %}
 
-{% block title %}Painel de Controle de Ponto{% endblock %}
+{% block title %}Painel de Controle{% endblock %}
 
 {% block main %}
 {{ form.media.css }}
@@ -21,157 +21,339 @@
     }
     .btn-ponto:hover {
         background-color: #1558d6;
-        transform: scale(1.05);
+        /* transform: scale(1.05); */
     }
-    table {
+    .table-custom {
+        border-collapse: separate;
+        border-spacing: 0 10px;
         width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
+        background-color: #f8f9fa;
     }
-    thead th {
+    .table-custom th, .table-custom td {
+        padding: 12px 15px;
+        text-align: left;
+        vertical-align: middle;
+    }
+    .table-custom th {
         background-color: #1a73e8;
         color: white;
-        text-align: left;
-        padding: 10px;
-        border-bottom: 2px solid #1558d6;
+        font-weight: bold;
     }
-    tbody tr:nth-child(even) {
-        background-color: #f9f9f9;
+    .table-custom tbody tr {
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
-    tbody tr:hover {
-        background-color: #f1f1f1;
+    .table-custom tbody tr td {
+        border-top: 1px solid #dee2e6;
     }
-    tbody td {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-    }   
+    .badge-status {
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 0.9em;
+        color: white;
+    }
+    .badge-status.success {
+        background-color: #28a745;
+        width: 100%;
+    }
+    .badge-status.warning {
+        background-color: #ffc107;
+    }
+    .badge-status.danger {
+        background-color: #dc3545;
+    }
+    @media (min-width: 1400px) {
+		.container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+			max-width: 97.5%;
+		}
+    }
 </style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentMonth = new Date().getMonth() + 1;
+        document.getElementById('mes').value = currentMonth;
+    });
+
+    function filterTable() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById('registroTable');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let rowContainsFilter = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j].innerText.toLowerCase().includes(filter)) {
+                    rowContainsFilter = true;
+                    break;
+                }
+            }
+
+            rows[i].style.display = rowContainsFilter ? '' : 'none';
+        }
+    }
+
+    function mudarTextButton(select) {
+        const tipoBtn = document.getElementById('tipoBtn');
+        tipoBtn.innerText = select.value; 
+    }
+</script>
 <div class="container">        
     <div class="row">
         <div class="col d-flex">
             <h1>Painel de Controle</h1>
-            <a href="{% url 'controle_de_ponto:painel' %}" class="btn btn-secondary px-3 me-2 my-auto py-2 ms-auto" style="background-color: black;">
+            <!-- <a href="{% url 'controle_de_ponto:painel' %}" class="btn btn-secondary px-3 me-2 my-auto py-2 ms-auto" style="background-color: black;">
                 <i class="fa-solid fa-list"></i> 
-            </a>
-            <button class="btn btn-primary my-auto me-2" style="color: white;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
-                <i class="fa-solid fa-file-lines me-2"></i> Arquivo
-            </button>   
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-                <div class="offcanvas-header">
-                  <h5 class="offcanvas-title" id="offcanvasExampleLabel">Gerar relatório</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <form method="POST" action="{% url 'controle_de_ponto:export_excel' %}">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label class="mb-2" for="arquivo">Tipo</label>
-                            <select onchange="mudarTextButton(this)" class="form-select" id="arquivo" name="arquivo" required>
-                                <option value="" disabled>Selecione o tipo</option>
-                                <option value="Excel">Excel</option>
-                                <option value="PDF" selected>PDF</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">                            
-                            <label for="mes" class="form-label">Mês</label>
-                            <select class="form-select" id="mes" name="mes" required>
-                                <option value="" disabled selected>Selecione o mês</option>
-                                <option value="1">Janeiro</option>
-                                <option value="2">Fevereiro</option>
-                                <option value="3">Março</option>
-                                <option value="4">Abril</option>
-                                <option value="5">Maio</option>
-                                <option value="6">Junho</option>
-                                <option value="7">Julho</option>
-                                <option value="8">Agosto</option>
-                                <option value="9">Setembro</option>
-                                <option value="10">Outubro</option>
-                                <option value="11">Novembro</option>
-                                <option value="12">Dezembro</option>
-                            </select>
-                        </div>
-                    
-                        <div class="mb-3">
-                            <label for="ano" class="form-label">Ano</label>
-                            <select class="form-select" id="ano" name="ano" required>
-                                <option value="" disabled selected>Selecione o ano</option>
-                                {% for ano in anos_possiveis %}
-                                    <option value="{{ ano }}" {% if ano == ano_atual %}selected{% endif %}>{{ ano }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    
-                        <button type="submit" class="btn btn-primary w-100 mt-3" style="color: white;">Gerar <span id="tipoBtn">PDF</span></button>
-                    </form>
-                    
-                    
-                </div>
-            </div>  
-            <a href="{% url 'controle_de_ponto:index' %}" class="btn btn-ponto px-3 py-2 my-auto ">
-                <i class="fa-solid fa-rotate-left me-2"></i> Voltar
+            </a> -->                   
+            <a href="{% url 'controle_de_ponto:index' %}" class="btn btn-ponto px-3 py-2 ms-auto my-auto ">
+                <i class="fa-solid fa-rotate-left me-2"></i>Voltar
             </a>
         </div>
     </div>
-    <h3 class="mb-5">{{responsavel.secretaria}}</h3>    
-    <form method="post" class="p-4 rounded shadow" style="background-color: white;">
-        <h2 class="mb-3">Alocar servidor</h2>
-        {% csrf_token %}
-        <div class="mb-3">
-            {{ form.servidor.label_tag }}
-            {{ form.servidor }}
-            {% for error in form.servidor.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
+      
+    <form method="post" class="p-4 rounded mt-4" style="background-color: white;">
+        <div class="w-100 d-flex"  onclick="toggleAlocar(this)" style="cursor: pointer;">
+            <h4 class="my-auto"><i class="fa-solid fa-person-shelter me-4"></i>Alocar</h4>
+            <button class="btn ms-auto"><i class="fa-solid fa-caret-down fa-2x"></i></button>
         </div>
-        <div class="mb-3">
-            {{ form.setor.label_tag }}
-            {{ form.setor }}
-            {% for error in form.setor.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
-        {% if mensagem %}
-        <div class="alert alert-success">{{ mensagem }}</div>
-        {% if submensagem %}
-            <p class="text-muted">{{ submensagem|safe }}</p>
-        {% endif %}
-    {% endif %}
-        <div class="text-end">
-            <button type="submit" class="btn btn-primary" style="color: white;">Enviar</button>
+        <div id="alocar" class="row mt-3" style="display: none;">
+            <div class="col">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.servidor.label_tag }}
+                    {{ form.servidor }}
+                    {% for error in form.servidor.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="mb-3">
+                    {{ form.setor.label_tag }}
+                    {{ form.setor }}
+                    {% for error in form.setor.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                {% if mensagem %}
+                <div class="alert alert-success">{{ mensagem }}</div>
+                {% if submensagem %}
+                    <p class="text-muted">{{ submensagem|safe }}</p>
+                {% endif %}
+            {% endif %}
+                <div class="text-start">
+                    <button type="submit" class="btn btn-primary" style="color: white;">Enviar</button>
+                </div>
+            </div>
         </div>
     </form>
 
     <div class="mt-5">
-        <h3>Servidores alocados</h3>
-        <table class="table table-striped table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>Matrícula</th>
-                    <th>Nome</th>
-                    <th>Setor</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for servidor in servidores %}
-                <tr>
-                    <td>{{ servidor.matricula }}</td>
-                    <td>
-                        <img style="height: 20px; width: 20px;" class="rounded-circle my-auto" src="{{ servidor.get_avatar }}" alt="">
-                        <span class="ms-2">
-                            {{ servidor.nome }}
-                        </span>
-                    </td>
-                    <td>{{ servidor.setor }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="row">
+            <div class="col d-flex">
+                <h3>Servidores</h3>  
+                <input style="max-width: 250px;" type="text" id="searchInput" class="form-control w-50 ms-auto me-3 my-auto" placeholder="Pesquisar..." onkeyup="filterTable()">     
+                <button class="btn btn-primary my-auto me-2" style="color: white;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                    <i class="fa-solid fa-file-lines me-2"></i> Arquivo
+                </button>   
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                    <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Gerar relatório</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <form method="POST" action="{% url 'controle_de_ponto:export_excel' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="mb-2" for="arquivo">Tipo</label>
+                                <select onchange="mudarTextButton(this)" class="form-select" id="arquivo" name="arquivo" required>
+                                    <option value="" disabled>Selecione o tipo</option>
+                                    <option value="Excel">Excel</option>
+                                    <option value="PDF" selected>PDF</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">                            
+                                <label for="mes" class="form-label">Mês</label>
+                                <select class="form-select" id="mes" name="mes" required>
+                                    <option value="" disabled selected>Selecione o mês</option>
+                                    <option value="1">Janeiro</option>
+                                    <option value="2">Fevereiro</option>
+                                    <option value="3">Março</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Maio</option>
+                                    <option value="6">Junho</option>
+                                    <option value="7">Julho</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Setembro</option>
+                                    <option value="10">Outubro</option>
+                                    <option value="11">Novembro</option>
+                                    <option value="12">Dezembro</option>
+                                </select>
+                            </div>
+                        
+                            <div class="mb-3">
+                                <label for="ano" class="form-label">Ano</label>
+                                <select class="form-select" id="ano" name="ano" required>
+                                    <option value="" disabled selected>Selecione o ano</option>
+                                    {% for ano in anos_possiveis %}
+                                        <option value="{{ ano }}" {% if ano == ano_atual %}selected{% endif %}>{{ ano }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <script>
+                                mes_atual = {{mes_atual}}
+                                document.getElementById('mes').value = mes_atual
+                            </script>
+                            <button type="submit" class="btn btn-primary w-100 mt-3" style="color: white;">Gerar <span id="tipoBtn">PDF</span></button>
+                        </form>
+                        
+                        
+                    </div>
+                </div>  
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <table class="table-custom" id="registroTable">
+                    <thead>
+                        <tr>
+                            <th>Matrícula</th>
+                            <th>Nome</th>
+                            <th>Setor</th>                       
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for registro in servidores %}
+                        <tr class="tr-servidores" onclick="toggleDetails(this, '{{ registro.matricula }}')" style="cursor: pointer;">
+                            <td>{{ registro.matricula }}</td>
+                            <td>
+                                <img class="rounded-circle mb-1 me-1" style="width: 20px;" src="{{registro.get_avatar}}" alt="">
+                                {{ registro.nome }}
+                            </td>                                                
+                            <td>{{ registro.setor.nome }}</td>                        
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="10" class="text-center">Nenhum servidor encontrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+<script>
+    function toggleDetails(row, matricula) {
+        const detailsRowId = `details-${matricula}`;
+        let detailsRow = document.getElementById(detailsRowId);
+
+        if (detailsRow) {
+            // Remove a linha de detalhes se já existir (colapso)
+            detailsRow.remove();
+        } else {
+            // Cria a linha de detalhes se ainda não existir
+            detailsRow = document.createElement('tr');
+            detailsRow.id = detailsRowId;
+            detailsRow.classList.add('details-row');
+            const detailsCell = document.createElement('td');
+            detailsCell.colSpan = row.cells.length;
+            detailsCell.innerHTML = `<div>Carregando...</div>`; 
+            detailsRow.appendChild(detailsCell);
+            row.after(detailsRow);
+
+            // Fazer requisição à API para carregar registros de outros dias
+            fetch(`/ponto/api/detalhes-registro/${matricula}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        detailsCell.innerHTML = `
+                            <table class="table-custom w-100 table-horas">      
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Entrada 1</th>
+                                        <th>Saída 1</th>
+                                        <th>Entrada 2</th>
+                                        <th>Saída 2</th>
+                                        <th>Total Horas</th>
+                                    </tr>                         
+                                <tbody class="tbody-horas">
+                                    ${data.map(registro => `
+                                        <tr class="tr-horas">
+                                            <td>${registro.data}</td>
+                                            <td>${registro.entrada1}</td>
+                                            <td>${registro.saida1}</td>
+                                            <td>${registro.entrada2}</td>
+                                            <td>${registro.saida2}</td>
+                                            <td>
+                                                <span class="w-100 badge-status d-flex">
+                                                <i class="fa-solid fa-stopwatch me-auto my-auto"></i>
+                                                <span class="me-auto">${registro.total_horas}</span>
+                                            </span>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                    } else {
+                        detailsCell.innerHTML = `<div>Nenhum registro encontrado.</div>`;
+                    }
+                })
+                .catch(error => {
+                    detailsCell.innerHTML = `<div>Erro ao carregar detalhes.</div>`;
+                    console.error('Erro na requisição:', error);
+                });
+        }
+    }
+    function toggleAlocar(e){
+        const alocar = document.getElementById('alocar');
+        if(alocar.style.display === 'none'){
+            alocar.style.display = 'block';
+            e.querySelector('button').innerHTML = '<i class="fa-solid fa-caret-up fa-2x"></i>';
+        }else{
+            alocar.style.display = 'none';
+            e.querySelector('button').innerHTML = '<i class="fa-solid fa-caret-down fa-2x"></i>';
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentMonth = new Date().getMonth() + 1;
+        document.getElementById('mes').value = currentMonth;
+    });
+</script>
 <style>
-     .table thead th {
-        background-color: #1a73e8;
-        color: white;
+    .table-horas tr td, .table-horas thead tr th {
+        text-align: center !important;
+    }
+    .details-row, .tr-horas, .tbody-horas {
+        background-color: #ecf5fd !important;
+        box-shadow: none !important;        
+    }
+    .table-horas{
+        border-collapse: separate;
+        border-spacing: 10px 10px;
+        width: 100%;
+        background-color: #ecf5fd  !important;        
+    }
+    .tr-horas:hover{
+        cursor: pointer;
+        background-color: #1559d61d!important;
+
+    }
+    .tr-horas td{
+        padding: 5px 15px !important;
+    }
+    .badge-status{
+        background-color: #1559d61d;
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 0.9em;
+        color: rgb(93, 93, 93);
+    }
+    .tr-servidores:hover{
+        transform: scale(1.02);
         font-weight: bold;
     }
 </style>

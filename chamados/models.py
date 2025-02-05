@@ -45,7 +45,6 @@ class Atendente(models.Model):
         ('0', 'Nível 1 - Help Desk'),
         ('1', 'Nível 2 - Suporte Técnico'),
         ('2', 'Nível 3 - Administração'),
-
     )
     servidor = models.ForeignKey(Servidor, on_delete=models.SET_NULL, verbose_name='Servidor', null=True)
     nome_servidor = models.CharField(max_length=64, verbose_name='Nome de usuário', blank=True, null=True)

@@ -1,9 +1,7 @@
 {% extends 'template.html' %}
 {% load custom %}
 {% load custom_filters %}
-
 {% block title %}Painel de Controle de Ponto{% endblock %}
-
 {% block main %}
 <style>
     .btn-ponto {
@@ -64,7 +62,6 @@
 		}
     }
 </style>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const currentMonth = new Date().getMonth() + 1;
@@ -97,13 +94,10 @@
         tipoBtn.innerText = select.value; 
     }
 </script>
-
 <div class="container mt-4">
     <div class="row mb-3">
         <div class="col d-flex align-items-center">
-            <h1>Painel de Controle</h1>            
-            <input style="max-width: 250px;" type="text" id="searchInput" class="form-control w-50 ms-auto me-3" placeholder="Pesquisar..." onkeyup="filterTable()">
-                                                             
+            <h1>Painel de Controle</h1>                                                                                     
             <a href="{% url 'controle_de_ponto:alocar_servidor' %}" class="btn btn-ponto px-3 py-2">
                 <i class="fa-solid fa-rotate-left"></i>
             </a>
@@ -117,41 +111,22 @@
                     <tr>
                         <th>Matrícula</th>
                         <th>Nome</th>
-                        <!-- <th>Secretaria</th> -->
-                        <th>Setor</th>
-                        <th>Data</th>
-                        <th style="text-align: center;">Entrada 1</th>
-                        <th style="text-align: center;">Saída 1</th>
-                        <th style="text-align: center;">Entrada 2</th>
-                        <th style="text-align: center;">Saída 2</th>
-                        <th>Total Horas</th>
+                        <th>Setor</th>                       
                     </tr>
                 </thead>
                 <tbody>
-                    {% for registro in registros %}
-                    <tr>
+                    {% for registro in servidores %}
+                    <tr onclick="toggleDetails(this, '{{ registro.matricula }}')" style="cursor: pointer;">
                         <td>{{ registro.matricula }}</td>
                         <td>
-                            <img class="rounded-circle mb-1 me-1" style="width: 20px;" src="{{registro|get_avatar}}" alt="">
+                            <img class="rounded-circle mb-1 me-1" style="width: 20px;" src="{{registro.get_avatar}}" alt="">
                             {{ registro.nome }}
-                        </td>                        
-                        <!-- <td>{{ registro.secretaria.sigla }}</td> -->
-                        <td>{{ registro.servidor.setor.nome }}</td>
-                        <td>{{ registro.data_registro|date:"d/m/Y" }}</td>
-                        <td style="text-align: center;">{{ registro.entrada1|time }}</td>
-                        <td style="text-align: center;">{{ registro.saida1|time }}</td>
-                        <td style="text-align: center;">{{ registro.entrada2|time }}</td>
-                        <td style="text-align: center;">{{ registro.saida2|time }}</td>
-                        <td style="width: 130px; display: flex;">
-                            <span class="badge-status success d-flex">
-                                <i class="fa-solid fa-stopwatch me-auto my-auto"></i>
-                                {{ registro.total_horas }}
-                            </span>
-                        </td>
+                        </td>                                                
+                        <td>{{ registro.setor.nome }}</td>                        
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="10" class="text-center">Nenhum registro encontrado.</td>
+                        <td colspan="10" class="text-center">Nenhum servidor encontrado.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -159,4 +134,100 @@
         </div>
     </div>
 </div>
+<script>
+    function toggleDetails(row, matricula) {
+        const detailsRowId = `details-${matricula}`;
+        let detailsRow = document.getElementById(detailsRowId);
+
+        if (detailsRow) {
+            // Remove a linha de detalhes se já existir (colapso)
+            detailsRow.remove();
+        } else {
+            // Cria a linha de detalhes se ainda não existir
+            detailsRow = document.createElement('tr');
+            detailsRow.id = detailsRowId;
+            detailsRow.classList.add('details-row');
+            const detailsCell = document.createElement('td');
+            detailsCell.colSpan = row.cells.length;
+            detailsCell.innerHTML = `<div>Carregando...</div>`; 
+            detailsRow.appendChild(detailsCell);
+            row.after(detailsRow);
+
+            // Fazer requisição à API para carregar registros de outros dias
+            fetch(`/ponto/api/detalhes-registro/${matricula}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        detailsCell.innerHTML = `
+                            <table class="table-custom w-100 table-horas">      
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Entrada 1</th>
+                                        <th>Saída 1</th>
+                                        <th>Entrada 2</th>
+                                        <th>Saída 2</th>
+                                        <th>Total Horas</th>
+                                    </tr>                         
+                                <tbody class="tbody-horas">
+                                    ${data.map(registro => `
+                                        <tr class="tr-horas">
+                                            <td>${registro.data}</td>
+                                            <td>${registro.entrada1}</td>
+                                            <td>${registro.saida1}</td>
+                                            <td>${registro.entrada2}</td>
+                                            <td>${registro.saida2}</td>
+                                            <td>
+                                                <span class="w-100 badge-status d-flex">
+                                                <i class="fa-solid fa-stopwatch me-auto my-auto"></i>
+                                                <span class="me-auto">${registro.total_horas}</span>
+                                            </span>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                    } else {
+                        detailsCell.innerHTML = `<div>Nenhum registro encontrado.</div>`;
+                    }
+                })
+                .catch(error => {
+                    detailsCell.innerHTML = `<div>Erro ao carregar detalhes.</div>`;
+                    console.error('Erro na requisição:', error);
+                });
+        }
+    }
+</script>
+
+<style>
+    .table-horas tr td, .table-horas thead tr th {
+        text-align: center !important;
+    }
+    .details-row, .tr-horas, .tbody-horas {
+        background-color: #ecf5fd !important;
+        box-shadow: none !important;        
+    }
+    .table-horas{
+        border-collapse: separate;
+        border-spacing: 10px 10px;
+        width: 100%;
+        background-color: #ecf5fd  !important;        
+    }
+    .tr-horas:hover{
+        cursor: pointer;
+        background-color: #1559d61d!important;
+
+    }
+    .tr-horas td{
+        padding: 5px 15px !important;
+    }
+    .badge-status{
+        background-color: #1559d61d;
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 0.9em;
+        color: rgb(93, 93, 93);
+    }
+</style>
 {% endblock %}

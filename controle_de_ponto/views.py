@@ -143,29 +143,65 @@ def exportar_excel(request):
 
     return render(request, "erro.html", {"mensagem": "Método inválido."})
 
+from django.http import JsonResponse
+
+@staff_member_required
+def api_detalhes_registro(request, matricula):
+    if not Responsavel.is_responsavel(request.user):
+        return render(request, "erro.html", {"mensagem": "Acesso negado."})
+    
+    agora = datetime.now()
+    print(agora.month)
+    print(agora.year)
+    registros = Registro.objects.filter(matricula=matricula, data_registro__month=agora.month, data_registro__year=agora.year).order_by('-data_registro', '-id')
+    response = []
+    for registro in registros:
+        total_horas = registro.total_horas()
+        data = registro.data_registro.strftime('%d/%m/%Y')
+        entrada1 = registro.entrada1.strftime('%H:%M') if registro.entrada1 else '-'
+        saida1 = registro.saida1.strftime('%H:%M') if registro.saida1 else '-'
+        entrada2 = registro.entrada2.strftime('%H:%M') if registro.entrada2 else '-'
+        saida2 = registro.saida2.strftime('%H:%M') if registro.saida2 else '-'
+
+        response.append({
+            'data': data,
+            'entrada1': entrada1,
+            'saida1': saida1,
+            'entrada2': entrada2,
+            'saida2': saida2,
+            'total_horas': str(total_horas)
+        })
+
+    return JsonResponse(list(response), safe=False)
 
 @staff_member_required
 def painel(request):
     if not Responsavel.is_responsavel(request.user):
         return render(request, "erro.html", {"mensagem": "Acesso negado."})
-    responsavel = Responsavel.objects.get(user=request.user)
-    agora = datetime.now()
-    if responsavel.geral:
-        registros = Registro.objects.filter(secretaria=responsavel.secretaria, data_registro__month=agora.month, data_registro__year=agora.year).order_by('-data_registro','-id')
-    else:
-         
-        registros = Registro.objects.filter(setor=responsavel.setor, data_registro__month=agora.month, data_registro__year=agora.year).order_by('-data_registro','-id')
 
+    responsavel = Responsavel.objects.get(user=request.user)
+    
+    # Filtrar servidores conforme o nível de responsabilidade
+    if responsavel.geral:
+        servidores = Servidor.objects.filter(
+            user__is_active=True,
+            setor__secretaria=responsavel.secretaria
+        ).order_by('setor', 'nome')
+    else:
+        servidores = Servidor.objects.filter(
+            setor=responsavel.setor, ativo=True
+        ).order_by('setor', 'nome')
+    
     anos_possiveis = (
         Registro.objects.filter(user=request.user)
         .values_list('data_registro__year', flat=True)
         .distinct()
         .order_by('data_registro__year')
     )
-
+    
     context = {
-        'registros': registros,
-        'ano_atual': agora.year,
+        'servidores': servidores,
+        'ano_atual': datetime.now().year,
         'anos_possiveis': anos_possiveis,
     }
     return render(request, 'controle_de_ponto/painel.html', context)
@@ -273,9 +309,9 @@ def alocar_servidor(request):
     context["form"] = form
     context['responsavel'] = responsavel
     if responsavel.geral:
-        context['servidores'] = Servidor.objects.filter(setor__secretaria=responsavel.secretaria).order_by('setor', 'nome')
+        context['servidores'] = Servidor.objects.filter(user__is_active=True,setor__secretaria=responsavel.secretaria).order_by('setor', 'nome')
     else:
-        context['servidores'] = Servidor.objects.filter(setor=responsavel.setor).order_by('setor', 'nome')
+        context['servidores'] = Servidor.objects.filter(user__is_active=True,setor=responsavel.setor).order_by('setor', 'nome')
 
     anos_possiveis = (
         Registro.objects.filter(user=request.user)
@@ -285,6 +321,7 @@ def alocar_servidor(request):
     )
 
     agora = datetime.now()
+    context['mes_atual'] = agora.month
     context['ano_atual'] = agora.year
     context['anos_possiveis'] = anos_possiveis
     return render(request, "controle_de_ponto/alocar_servidor.html", context)
