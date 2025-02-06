@@ -104,6 +104,14 @@ def get_notifications(user):
 
 
 from chamados.models import Atendente
+from controle_de_ponto.models import Responsavel
+@register.filter
+def acessoPonto(servidor):
+
+    is_responsavel = Responsavel.is_responsavel(servidor.user) 
+    # has_controle_de_ponto = Responsavel.objects.filter(user=servidor.user).exists()
+    value = is_responsavel 
+    return value
 
 @register.filter
 def acesso_adm_or_helpdesk(chamado_id, user):

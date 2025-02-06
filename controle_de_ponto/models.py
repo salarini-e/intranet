@@ -18,6 +18,8 @@ class Responsavel(models.Model):
     def servidor_nome(self):
         return self.servidor().nome
     
+
+    @staticmethod
     def is_responsavel(user):
         return Responsavel.objects.filter(user=user).exists()
         
