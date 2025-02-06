@@ -3,7 +3,6 @@ from pathlib import Path
 from . import envvars
 from django.contrib.messages import constants as messages
 
-
 MESSAGE_TAGS = {
         messages.DEBUG: 'alert-secondary',
         messages.INFO: 'alert-info',
@@ -28,10 +27,6 @@ email_user = env_vars['email_sistema']
 email_pass = env_vars['email_pw']
 sqlite_mode = env_vars['sqlite_mode']
 
-# SMB_USER = env_vars['SMB_USER']
-# SMB_PASSWD = env_vars['SMB_PASSWD']
-# SMB_SERVER = env_vars['SMB_SERVER']
-# SMB_DOMAIN = env_vars['SMB_DOMAIN']
 DEBUG = debug_mode
 
 ALLOWED_HOSTS = ['*']
@@ -119,15 +114,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'settings.wsgi.application'
 ASGI_APPLICATION = 'settings.asgi.application'
-
-# CHANNEL_LAYERS = {
-#     'default':{
-#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#         'CONFIG':{
-#             'hosts':[('127.0.0.1', 6379)],
-#         }
-#     }
-# }
 
 if sqlite_mode:
     DATABASES = {
