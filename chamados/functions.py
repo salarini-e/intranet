@@ -11,11 +11,14 @@ from instituicoes.models import Servidor
 from .models import Chamado, TipoChamado
 from django.utils import timezone
 
+import threading
+from threading import Thread
 
-class Email_Chamado:
+class Email_Chamado(threading.Thread):
     def __init__(self, chamado):
         # self.servidor = servidor
         self.chamado = chamado
+        threading.Thread.__init__(self)
 
     def create_email(self, email_to, email_template_name):    
         c = {
@@ -59,7 +62,6 @@ class Email_Chamado:
         return self.enviar(msg)
     
     
-
     def chamado_criado(self): 
         email_template = self.create_email(self.chamado.requisitante.email, 'chamados/emails/criar_chamado.txt')   
         email_to = self.chamado.requisitante.email
@@ -72,7 +74,8 @@ class Email_Chamado:
             'email_to': email_to
         }
         return self.enviar(msg)
-    
+
+
     def chamado_finalizado(self): 
         email_template = self.create_email(self.chamado.requisitante.email, 'chamados/emails/chamado_finalizado.txt')   
         email_to = self.chamado.requisitante.email
@@ -86,7 +89,6 @@ class Email_Chamado:
         }
         return self.enviar(msg)
     
-
     def mensagem_criada(self, mensagem): 
         email_template = self.create_email_to_msg(self.chamado.requisitante.email, 'chamados/emails/mensagem_criada.txt', mensagem)   
         email_to = self.chamado.requisitante.email
@@ -120,7 +122,7 @@ class Email_Chamado:
                       (msg['email_to'],), 
                       fail_silently=False)
         except Exception as e:
-            print(e)
+            print(f"Erro ao enviar o email: {e}")
             return 'Falha ao enviar email.', 400
         return 'Email enviado com sucesso.', 200
 
@@ -521,3 +523,18 @@ def filtrar_chamados(request):
 #         queryset = Chamado.objects.filter(requisitante__user=request.user).order_by('-dt_atualizacao')
     
 #     return queryset
+
+# def email_chamado_finalizado(chamado_id):
+#         chamado = Chamado.objects.get(id=chamado_id)
+#         email_chamado = Email_Chamado(chamado)
+#         email_template = email_chamado.create_email(email_chamado.chamado.requisitante.email, 'chamados/emails/chamado_finalizado.txt')   
+#         email_to = email_chamado.chamado.requisitante.email
+#         # print(email_template)
+#         # self.criar_notificacao(f'Chamado {self.chamado.n_protocolo} finalizado!')
+
+#         msg = {
+#             'subject': f'Chamado {email_chamado.chamado.n_protocolo} finalizado!',
+#             'email_template': email_template,
+#             'email_to': email_to
+#         }
+#         return email_chamado.enviar(msg)

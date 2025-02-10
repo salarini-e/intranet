@@ -157,6 +157,11 @@
                 <button class="btn btn-primary my-auto me-2" style="color: white;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                     <i class="fa-solid fa-file-lines me-2"></i> Arquivo
                 </button>   
+                {% if responsavel.pode_alterar_registro %}                   
+                <a href="#" class="btn btn-warning my-auto me-2">
+                    <i class="fa-solid fa-clock-rotate-left"></i>   
+                </a>
+                {% endif %}
                 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
                     <div class="offcanvas-header">
                     <h5 class="offcanvas-title" id="offcanvasExampleLabel">Gerar relatório</h5>

@@ -597,8 +597,9 @@ def api_mudar_status(request):
             chamado.save()
             chamado.notificar_status_alterado() 
             print(chamado.status)
-            if chamado.status == '4':
+            if chamado.status == '4':                                
                 mensagem, status = Email_Chamado(chamado).chamado_finalizado()
+                # Email_Chamado(chamado).chamado_finalizado()
                 if status == 400:
                     message.error(request, mensagem)
             return JsonResponse({'status': 200, 'message': 'Status atualizado com sucesso!', 'display_status': chamado.get_status_display(), 'id': chamado.id})

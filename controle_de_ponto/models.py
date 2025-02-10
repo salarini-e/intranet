@@ -7,6 +7,7 @@ class Responsavel(models.Model):
     geral = models.BooleanField(default=False)
     secretaria = models.ForeignKey(Secretaria, on_delete=models.CASCADE, null=True, blank=True)
     setor = models.ForeignKey(Setor, on_delete=models.CASCADE, null=True, blank=True)
+    pode_alterar_registro = models.BooleanField(default=False)
     dt_inclusao = models.DateTimeField(auto_now_add=True)   
 
     def __str__(self):
