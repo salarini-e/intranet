@@ -1693,3 +1693,4 @@ def feedback_in_excel(request):
     response['Content-Disposition'] = f'attachment; filename="feedbacks_{hoje}.xlsx"'
     workbook.save(response)
     return response
+

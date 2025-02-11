@@ -41,7 +41,7 @@ class ResponsavelAdmin(admin.ModelAdmin):
     # Configuração dos campos no formulário de detalhes
     fieldsets = (
         ('Informações do Usuário', {
-            'fields': ('user', 'geral')
+            'fields': ('user', 'geral', 'pode_alterar_registro')
         }),
         ('Vinculação', {
             'fields': ('secretaria', 'setor')

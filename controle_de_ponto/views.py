@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from .models import Registro, Responsavel
+from django.shortcuts import render, redirect
+from .models import Registro, Responsavel, Log_Alteracao
 from instituicoes.models import Servidor, Setor
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -272,6 +272,7 @@ def api_registrar_ponto(request):
 
     return JsonResponse({'success': False, 'message': 'Método não permitido.'}, status=405)
 from .forms import SearchServidorForm
+from django.contrib import messages
 
 def alocar_servidor(request):
     context = {}
@@ -338,10 +339,72 @@ def alocar_servidor(request):
 def menu_acertar_ponto(request):
     if not Responsavel.is_responsavel(request.user):
         return render(request, "erro.html", {"mensagem": "Acesso negado."})
-
     responsavel = Responsavel.objects.get(user=request.user)
     context = {
         'responsavel': responsavel,
     }
+    if request.method == "POST":
+        if not responsavel.setor == Servidor.objects.filter(matricula = request.POST.get("matricula")).first().setor:
+            return render(request, "erro.html", {"mensagem": "Acesso negado.", "submensagem": "Você não tem autorização para alterar os registros desse servidor."})
+        matricula = request.POST.get("matricula")
+        data = request.POST.get("data")            
+        registros = Registro.objects.filter(matricula=matricula, data_registro=data)
+        registro = registros.first()
+        print(registro)
+        context = {
+            'data': datetime.strptime(data, '%Y-%m-%d').date(),
+            'matricula': registro.matricula,
+            'registros': [{
+                'matricula': registro.matricula,
+                'nome': registro.nome,
+                'data': registro.data_registro.strftime('%d/%m/%Y'),
+                'entrada1': f'<input type="time" name="entrada1" class="form-control" value="{registro.entrada1.strftime("%H:%M") if registro.entrada1 else ""}">',
+                'saida1': f'<input type="time" name="saida1" class="form-control" value="{registro.saida1.strftime("%H:%M") if registro.saida1 else ""}">',
+                'entrada2': f'<input type="time" name="entrada2" class="form-control" value="{registro.entrada2.strftime("%H:%M") if registro.entrada2 else ""}">',
+                'saida2': f'<input type="time" name="saida2" class="form-control" value="{registro.saida2.strftime("%H:%M") if registro.saida2 else ""}">',
+                'total_horas': str(registro.total_horas())
+            }],    
+            'responsavel': responsavel,        
+        }
+   
     return render(request, "controle_de_ponto/menu_acertar_ponto.html", context)
 
+def menu_acertar_ponto_update(request):
+    if not Responsavel.is_responsavel(request.user):
+        return render(request, "erro.html", {"mensagem": "Acesso negado."})
+    if request.method == "POST":
+        try:
+            matricula = request.POST.get("matricula")
+            data = request.POST.get("data")
+            entrada1 = request.POST.get("entrada1")
+            saida1 = request.POST.get("saida1")
+            entrada2 = request.POST.get("entrada2")
+            saida2 = request.POST.get("saida2")
+
+            registros = Registro.objects.filter(matricula=matricula, data_registro=data)
+            log = Log_Alteracao(
+                registro=registros.first(),            
+                responsavel=Responsavel.objects.get(user=request.user),            
+                entrada1_old=registros.first().entrada1,
+                entrada1 = datetime.strptime(entrada1, '%H:%M').time() if entrada1 else None,
+                saida1_old=registros.first().saida1,
+                saida1 = datetime.strptime(saida1, '%H:%M').time() if saida1 else None,
+                entrada2_old=registros.first().entrada2,
+                entrada2 = datetime.strptime(entrada2, '%H:%M').time() if entrada2 else None,
+                saida2_old=registros.first().saida2,            
+                saida2 = datetime.strptime(saida2, '%H:%M').time() if saida2 else None,            
+            )
+            registro = registros.first()
+            registro.entrada1 = datetime.strptime(entrada1, '%H:%M').time() if entrada1 else None
+            registro.saida1 = datetime.strptime(saida1, '%H:%M').time() if saida1 else None
+            registro.entrada2 = datetime.strptime(entrada2, '%H:%M').time() if entrada2 else None
+            registro.saida2 = datetime.strptime(saida2, '%H:%M').time() if saida2 else None
+            registro.save()
+            log.save()
+            messages.success(request, 'Registro atualizado com sucesso.')
+            return redirect('controle_de_ponto:menu_acertar_ponto')
+        except Exception as e:
+            print(e)
+            messages.error(request, f'Erro ao atualizar o registro: {e}')
+            return redirect('controle_de_ponto:menu_acertar_ponto')
+    return render(request, "erro.html", {"mensagem": "Método inválido."})

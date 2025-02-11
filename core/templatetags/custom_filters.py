@@ -110,7 +110,7 @@ def acessoPonto(servidor):
 
     is_responsavel = Responsavel.is_responsavel(servidor.user) 
     # has_controle_de_ponto = Responsavel.objects.filter(user=servidor.user).exists()
-    value = is_responsavel or servidor.setor.id in [5, 68]
+    value = is_responsavel or servidor.setor.id in [5, 68, 69]
     return value
 
 @register.filter

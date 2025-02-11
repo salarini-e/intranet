@@ -75,3 +75,15 @@ class Registro(models.Model):
         # print(result)
         return result
    
+class Log_Alteracao(models.Model):
+    registro = models.ForeignKey(Registro, on_delete=models.CASCADE, verbose_name="Registro alterado")
+    responsavel = models.ForeignKey(Responsavel, on_delete=models.CASCADE, verbose_name="Responsável pela alteração")
+    entrada1_old = models.TimeField(null=True, blank=True, verbose_name="Entrada 1 antiga")    
+    entrada1 = models.TimeField(null=True, blank=True, verbose_name="Entrada 1 nova")
+    saida1_old = models.TimeField(null=True, blank=True, verbose_name="Saída 1 antiga")
+    saida1 = models.TimeField(null=True, blank=True, verbose_name="Saída 1 nova")
+    entrada2_old = models.TimeField(null=True, blank=True, verbose_name="Entrada 2 antiga")
+    entrada2 = models.TimeField(null=True, blank=True, verbose_name="Entrada 2 nova")
+    saida2_old = models.TimeField(null=True, blank=True, verbose_name="Saída 2 antiga")
+    saida2 = models.TimeField(null=True, blank=True, verbose_name="Saída 2 nova")
+    dt_inclusao = models.DateTimeField(auto_now_add=True, verbose_name="Data da alteração")
