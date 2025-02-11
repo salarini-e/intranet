@@ -20,7 +20,7 @@ class AtendenteAdmin(admin.ModelAdmin):
 
 @admin.register(Chamado)
 class ChamadoAdmin(admin.ModelAdmin):
-    list_display = ('setor', 'telefone', 'requisitante', 'tipo', 'assunto', 'prioridade', 'status', 'atendente', 'profissional_designado', 'dt_inclusao', 'user_inclusao', 'dt_atualizacao', 'user_atualizacao', 'dt_execucao', 'dt_fechamento', 'n_protocolo')
+    list_display = ('n_protocolo', 'assunto','requisitante', 'profissional_designado', 'status',  'dt_inclusao', 'dt_execucao', 'dt_fechamento')
     list_filter = ('dt_inclusao', 'user_inclusao', 'dt_atualizacao', 'user_atualizacao', 'dt_execucao', 'dt_fechamento', 'prioridade', 'status')
     search_fields = ('setor__nome', 'telefone', 'requisitante__nome', 'assunto')
 
