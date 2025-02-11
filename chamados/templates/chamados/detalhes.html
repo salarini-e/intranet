@@ -302,11 +302,17 @@
 						</div>
 						
 						<span><strong>{{chamado.tipo.nome}}</strong></span>
-					</div>
-					<div class="content-chamado-messages-title">
+					</div>					
+					
+					<div class="content-chamado-messages-title" style="padding-bottom: 10px;">
 						<i class="fa-solid fa-globe"></i>
 						<span class="content-chamado-messages-title-text">{{ chamado.assunto }}</span>
 					</div>
+					{% if chamado.tipo.sigla == 'TEL' %}
+					<p class="content-chamado-messages-title" style="margin: 0; padding: 0px 0px 0px 4.7vw; color: rgb(255, 0, 0);">
+						<strong><i class="fa-solid fa-phone-slash me-2"></i></strong>{{ramais}}
+					</p>
+					{% endif %}
 					<!-- WRAPPER LISTAR MENSAGENS PRIMEIRA MENSAGEM -->
 					<div class="first-message-user-wrapper">
 						<div class="first-message-user-header">

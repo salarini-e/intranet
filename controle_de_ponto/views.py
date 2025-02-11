@@ -334,3 +334,14 @@ def alocar_servidor(request):
 #         registro.setor = responsavel.setor
 #         registro.save()
 #     return render(request, "erro.html", {"mensagem": "Feito.", "submensagem": "Gambiarra aplicada."})
+
+def menu_acertar_ponto(request):
+    if not Responsavel.is_responsavel(request.user):
+        return render(request, "erro.html", {"mensagem": "Acesso negado."})
+
+    responsavel = Responsavel.objects.get(user=request.user)
+    context = {
+        'responsavel': responsavel,
+    }
+    return render(request, "controle_de_ponto/menu_acertar_ponto.html", context)
+

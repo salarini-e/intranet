@@ -157,8 +157,8 @@
                 <button class="btn btn-primary my-auto me-2" style="color: white;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                     <i class="fa-solid fa-file-lines me-2"></i> Arquivo
                 </button>   
-                {% if not responsavel.pode_alterar_registro %}                   
-                <a href="{% url 'controle_de_ponto:menu_acertar_ponto' %}" class="btn btn-warning my-auto me-2">
+                {% if responsavel.pode_alterar_registro %}                   
+                <a href="#" class="btn btn-warning my-auto me-2">
                     <i class="fa-solid fa-clock-rotate-left"></i>   
                 </a>
                 {% endif %}

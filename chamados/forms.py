@@ -199,7 +199,10 @@ class OSTelefoniaForm(forms.ModelForm):
         fields = ['chamado', 'ramal']
         widgets = {
             'chamado': forms.HiddenInput(),
-            'ramal': forms.TextInput(attrs={'class': 'form-control mb-3'}),            
+            'ramal': forms.TextInput(attrs={'class': 'form-control mb-3', 'required': 'true'}),            
+        }
+        labels = {
+            'ramal': 'Qual ou quais os ramais com problema?',
         }
 
 class ServidorForm(forms.ModelForm):

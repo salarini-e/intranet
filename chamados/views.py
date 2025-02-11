@@ -154,8 +154,9 @@ def criarChamado(request, sigla):
     if request.POST:
         print(request.POST)
         form = CriarChamadoForm(request.POST, request.FILES, user=request.user)
-
-        if form.is_valid():
+        if sigla == 'TEL':
+            form_ext = OSTelefoniaForm(request.POST)
+        if form.is_valid() and (sigla != 'TEL' or form_ext.is_valid()):
             chamado = form.save(commit=False)
             chamado.user_inclusao = servidor
 
@@ -165,6 +166,12 @@ def criarChamado(request, sigla):
             chamado.save()
             chamado.gerar_hash()
             chamado.gerar_protocolo()
+            if sigla == 'TEL':
+                try:
+                    OSTelefonia.objects.create(chamado=chamado, ramal=request.POST['ramal'])
+                except Exception as e:
+                    print(e)
+
 
             message.success(request, 'Chamado {} criado com sucesso! Não esqueça de responder nossa pesquisa de satisfação quando seu chamado for finalizado!'.format(chamado.n_protocolo))
             mensagem, status = Email_Chamado(chamado).chamado_criado()
@@ -175,8 +182,7 @@ def criarChamado(request, sigla):
                 chamado.gerar_notificacoes()
             except ValueError as e:
                 message.error(request, str(e))
-            return redirect('chamados:tickets')
-
+            return redirect('chamados:tickets')        
     else:
         form = CriarChamadoForm(initial=initial_data, user=request.user)
 
@@ -186,7 +192,10 @@ def criarChamado(request, sigla):
         'form_setor': CriarSetorForm(prefix='setor', initial={'user_inclusao': request.user.id}),
         'form_user': ServidorForm(prefix='servidor', initial={'user_inclusao': request.user.id})
     }
-
+    if sigla == 'TEL' and request.method != 'POST':
+        context['form_ext'] = OSTelefoniaForm()
+    elif sigla == 'TEL' and request.method == 'POST':
+        context['form_ext'] = form_ext
     return render(request, template_name, context)
 
 @login_required
@@ -251,6 +260,8 @@ def detalhes(request, hash):
         'requisitante_telefone': requisitante_telefone,
         'form_relatorio': FormDetalhesDoChamado(instance=chamado)
     }
+    if chamado.tipo.sigla == 'TEL':
+        context['ramais'] = OSTelefonia.objects.get(chamado=chamado).ramal
     return render(request, 'chamados/detalhes.html', context)
 
 def editar_chamado(request, hash_chamado):
@@ -311,7 +322,7 @@ def gerar_relatorio(request):
         .annotate(total=Count('id'))
         .order_by('-total')
     )
-    print(chamados_por_tipo)
+    # print(chamados_por_tipo)
 
     # Chamados agrupados por prioridade
     chamados_por_prioridade = (
@@ -377,7 +388,7 @@ def api_relatorio(request, hash):
     chamado = Chamado.objects.get(hash=hash)
     if request.method == 'POST':
         form = FormDetalhesDoChamado(request.POST, instance=chamado)
-        print(request.POST)
+        # print(request.POST)
         if form.is_valid():
             form.save()
             return JsonResponse({'status': 200, 'message': 'Relatório salvo com sucesso!'})
@@ -596,7 +607,7 @@ def api_mudar_status(request):
             chamado.dt_atualizacao = timezone.now()
             chamado.save()
             chamado.notificar_status_alterado() 
-            print(chamado.status)
+            # print(chamado.status)
             if chamado.status == '4':                                
                 mensagem, status = Email_Chamado(chamado).chamado_finalizado()
                 # Email_Chamado(chamado).chamado_finalizado()
