@@ -1248,9 +1248,9 @@ def download_relatorio(request):
             'Protocolo': chamado.n_protocolo,
             'Técnico': chamado.profissional_designado.nome_servidor if chamado.profissional_designado else '',
             'Grupos': chamado.tipo.nome,
-            'Data de Inclusão': chamado.dt_inclusao.strftime('%d/%m/%Y %H:%M:%S'),
-            'Data de Execução': chamado.dt_execucao.strftime('%d/%m/%Y %H:%M:%S') if chamado.dt_execucao else '',
-            'Data de Fechamento': chamado.dt_fechamento.strftime('%d/%m/%Y %H:%M:%S') if chamado.dt_fechamento else '',
+            'Data de Inclusão': chamado.dt_inclusao.strftime('%d/%m/%Y'),
+            'Data de Execução': chamado.dt_execucao.strftime('%d/%m/%Y') if chamado.dt_execucao else '',
+            'Data de Fechamento': chamado.dt_fechamento.strftime('%d/%m/%Y') if chamado.dt_fechamento else '',
             'Serviços': chamado.subtipo,
             'Observação': chamado.relatorio ,
         }
