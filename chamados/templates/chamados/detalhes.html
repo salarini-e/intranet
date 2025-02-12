@@ -50,6 +50,11 @@
 					                    <div class="col-auto">
 					                        <a href="{% url 'chamados:imprimir' chamado.hash %}" target="_blank" class="btn app-btn-primary"><i class="fa-solid fa-print me-2"></i>Imprimir</a>
 					                    </div>
+										{% if chamado.status == '4' %}
+										<div class="col-auto">
+					                        <a href="{% url 'chamados:editar_detalhes' chamado.hash %}" class="btn app-btn-dark"><i class="fa-solid fa-file-signature me-2"></i>Relatório</a>
+					                    </div>
+										{% endif %}
 										<div class="col-auto">
 					                        <a href="{% url 'chamados:tickets' %}" class="my-auto btn app-btn-secondary" ><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
 					                    </div>

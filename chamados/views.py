@@ -9,7 +9,7 @@ from .forms import (CriarChamadoForm, OSInternetForm, OSImpressoraForm, OSSistem
                     Form_Motivo_Pausa, FormDetalhesDoChamado, FormEditarChamado)
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages as message
-from django.http import JsonResponse, HttpResponse, HttpResponseForbidden
+from django.http import JsonResponse, HttpResponse, HttpResponseForbidden, HttpResponseNotFound
 from django.utils import timezone
 from .functions import enviar_email_atendente, Email_Chamado
 from django.urls import reverse
@@ -1694,3 +1694,30 @@ def feedback_in_excel(request):
     workbook.save(response)
     return response
 
+# detalhes = relatorio do chamado
+def editar_detalhes_chamado(request, hash):
+    instance = Chamado.objects.filter(hash=hash)
+    
+    if not instance.exists():
+            return HttpResponseNotFound('Chamado não encontrado!')
+    instance = instance.first()
+    
+    if not request.user.is_superuser:               
+        if instance.profissional_designado != Atendente.objects.filter(servidor__user=request.user).first():
+            return HttpResponseForbidden('Você não tem permissão para editar este relatório!')
+        if instance.status != 4:
+            return HttpResponseForbidden('Apenas chamados finalizados podem ser editados!')
+        
+    if request.method == 'POST':
+        form = FormDetalhesDoChamado(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            return redirect('chamados:detalhes', hash=hash)        
+    else:
+        form = FormDetalhesDoChamado(instance=instance)
+    
+    context = {
+                'form': form,
+                'chamado': instance
+              }
+    return render(request, 'chamados/editar_detalhes_chamado.html', context)

@@ -16,6 +16,7 @@ urlpatterns = [
 
     path('<hash>/detalhes/', views.detalhes, name='detalhes'),    
     path('<hash_chamado>/detalhes/editar/', views.editar_chamado, name='editar'),    
+    path('<hash>/relatorio/editar/', views.editar_detalhes_chamado, name='editar_detalhes'),    
     path('<hash>/detalhes/att/', views.attChamado, name='attChamado'),    
     path('<hash>/iniciar-atendimento/', views.iniciar_atendimento, name='inicializar'),
     path('<hash>/pausar/', views.declarar_motivo_pausa, name='motivo'),

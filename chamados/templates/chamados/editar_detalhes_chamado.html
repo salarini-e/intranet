@@ -1,0 +1,69 @@
+{% extends 'template_chamados.html' %}
+{% block chamados %}active{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="/static/css/tickets.css">
+{% endblock %}
+{% block main %}   		    
+				{{ form.media.css }}
+				<style>
+					#message{
+						display: none;
+					}
+					#response-message{
+						font-weight: bold;
+						color: white;
+					}
+					.bg-gray{
+						background-color: rgba(128, 128, 128, 0.281) !important;
+					}
+					label{
+						margin-top: 15px;
+					}
+					#id_descricao{
+						height: 100px;
+					}					
+					.select2, .select2-container, .select2-container--default, .select2-container--below{
+						width: 100% !important;
+					}
+					li{
+						color: red;
+					}
+				</style>				
+				
+			    <div class="row g-3 mb-4 align-items-center justify-content-between">
+				    <div class="col-auto">
+			            <h1 class="app-page-title mb-0">Editar relatório</h1>
+				    </div>
+				    <div class="col-auto">
+					     <div class="page-utilities">
+						    <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+							    <div class="col-auto">
+								    <div class="table-search-form row gx-1 align-items-center">                                        
+					                    									
+					                    <div class="col-auto">
+					                        <a href="{% url 'chamados:index' %}" class="ms-auto me-1 my-auto btn app-btn-secondary" ><i class="fa-solid fa-rotate-left me-2"></i></i>Voltar</a>
+											
+					                    </div>																				
+					                </div>					                
+							    </div>
+						    </div>
+					    </div>
+				    </div>
+			    </div>
+				
+				<div id="div-form-chamado" class="app-card app-card-orders-table shadow-sm mb-5">
+				    <div class="app-card-body py-4 px-5">
+						<form method="POST" >
+							{% csrf_token %}
+							{{form}}							
+							<button id="enviar" class="btn app-btn-primary mt-3" onclick="evitarDeEnviarDuasVezes()">
+								Enviar
+							</button>
+						</form>
+						
+					</div>
+				</div>					
+				
+				<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+				{{ form.media.js }}						  
+{% endblock %}

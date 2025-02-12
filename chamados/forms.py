@@ -306,20 +306,46 @@ class Form_Motivo_Pausa(forms.ModelForm):
         return motivo
     
 
+# class FormDetalhesDoChamado(forms.ModelForm):
+#     def __init__(self, *args, **kwargs):
+#         super(FormDetalhesDoChamado, self).__init__(*args, **kwargs)
+#         if 'instance' in kwargs:
+#             chamado = kwargs['instance']
+#             self.fields['subtipo'].queryset = SubTipoChamado.objects.filter(tipo=chamado.tipo)  
+#             self.fields['dt_execucao'].initial = chamado.dt_execucao.date().isoformat()
+
+#             # self.fields['dt_execucao'].initial = chamado.dt_execucao.date()
+
+#     class Meta:
+#         model = Chamado
+#         fields = ['dt_execucao', 'subtipo', 'relatorio']
+#         widgets = {
+#             'dt_execucao': forms.DateInput(attrs={'class': 'form-control mb-3', 'type': 'date'}),
+#             'subtipo': forms.Select(attrs={'class': 'form-control mb-3'}),
+#             'relatorio': forms.Textarea(attrs={'class': 'form-control mb-3', 'style': 'height: 150px;'}),
+#         }
+from django import forms
+
 class FormDetalhesDoChamado(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(FormDetalhesDoChamado, self).__init__(*args, **kwargs)
         if 'instance' in kwargs:
             chamado = kwargs['instance']
-            self.fields['subtipo'].queryset = SubTipoChamado.objects.filter(tipo=chamado.tipo)              
+            if chamado.dt_execucao:
+                self.fields['dt_execucao'].initial = chamado.dt_execucao.strftime('%Y-%m-%d')
+
     class Meta:
         model = Chamado
         fields = ['dt_execucao', 'subtipo', 'relatorio']
         widgets = {
-            'dt_execucao': forms.DateInput(attrs={'class': 'form-control mb-3', 'type': 'date'}),
+            'dt_execucao': forms.DateInput(
+                attrs={'class': 'form-control mb-3', 'type': 'date'}, 
+                format='%Y-%m-%d'
+            ),
             'subtipo': forms.Select(attrs={'class': 'form-control mb-3'}),
             'relatorio': forms.Textarea(attrs={'class': 'form-control mb-3', 'style': 'height: 150px;'}),
         }
+
 
 class FormEditarChamado(forms.ModelForm):
     class Meta:
