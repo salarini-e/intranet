@@ -129,7 +129,7 @@ class Fases(models.Model):
         return self.nome
 
     class Meta:
-        unique_together = ('projeto', 'ordem')
+        # unique_together = ('projeto', 'ordem')
         verbose_name_plural = "Etapas dos projetos"
         verbose_name = "Etapa do projeto"
 

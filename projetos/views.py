@@ -215,3 +215,22 @@ def api_editar_projeto(request):
         projeto.save()
         return JsonResponse({'status': 200, 'message': 'Projeto editado com sucesso'})
     return JsonResponse({'status': 403, 'error': 'Método inválido'})
+
+def api_editar_nome_coluna(request):
+    if request.method == 'POST':        
+        dados = json.loads(request.body)        
+        coluna = Fases.objects.get(id=dados['column_id'])
+        coluna.nome = dados['nome']        
+        coluna.save()
+        return JsonResponse({'status': 200, 'message': 'Coluna editada com sucesso', 'coluna': {'id': coluna.id, 'nome': coluna.nome}})
+    return JsonResponse({'status': 403, 'error': 'Método inválido'})
+
+def api_mover_coluna(request):
+    if request.method == 'POST':        
+        dados = json.loads(request.body)   
+        for dado in dados:
+            coluna = Fases.objects.get(id=dado['id'])
+            coluna.ordem = dado['ordem']
+            coluna.save()        
+        return JsonResponse({'status': 200, 'message': 'Colunas alteradas'})
+    return JsonResponse({'status': 403, 'error': 'Método inválido'})

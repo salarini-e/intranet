@@ -341,8 +341,8 @@ class Kanban {
         });
     }
 
-    addColumn(id, nome) {
-        const column = new Column(id, nome, this);
+    addColumn(id, nome, ordem) {
+        const column = new Column(id, nome, ordem, this);
         this.board.appendChild(column.element);
         this.logActivity(`Added new column: ${id}`);
         this.listColumns.push(column);
@@ -382,10 +382,12 @@ class Kanban {
 }
 
 class Column {
-    constructor(id, nome, kanban) {
+    constructor(id, nome, ordem, kanban) {
         this.id = id;
         this.nome = nome;
+        this.ordem = ordem;
         this.kanban = kanban;
+        this.draggingOver;
         this.element = this.createElement();
     }
 
@@ -393,6 +395,7 @@ class Column {
         const column = document.createElement('div');
         column.className = 'column';
         column.dataset.id = this.id;
+        column.dataset.ordem = this.ordem;
 
         column.innerHTML = `
             <div class="column-header">
@@ -403,25 +406,154 @@ class Column {
             <div class="card-container" ondragover="event.preventDefault()" ondrop="kanban.dropCard(event)"></div>
         `;
 
+        // const dragHandle = column.querySelector('.drag-handle');
+        // dragHandle.addEventListener('dragstart', (e) => {
+        //     this.kanban.draggedColumn = column;
+        //     e.dataTransfer.setData('text/plain', '');
+        // });
+
+        // column.addEventListener('dragover', (e) => {
+        //     e.preventDefault();
+        //     const draggingOver = document.elementFromPoint(e.clientX, e.clientY);
+
+        //     if (draggingOver && draggingOver.classList.contains('column') && this.kanban.draggedColumn) {
+        //         this.draggingOver = draggingOver.nextSibling;
+        //         console.log(this.id)
+        //         console.log(this.draggingOver.dataset.id)
+        //         const board = draggingOver.parentNode;
+        //         board.insertBefore(this.kanban.draggedColumn, draggingOver.nextSibling);
+        //     }
+        // });
+
+        // dragHandle.addEventListener('dragend', () => {
+        //     console.log(this.id)
+        //     console.log(this.kanban.draggedColumn);
+        //     console.log(this.draggingOver);
+        //     this.kanban.draggedColumn = null;            
+        // });        
+
+        let initialOrder = null; // Variável para armazenar a ordem inicial da coluna
+
         const dragHandle = column.querySelector('.drag-handle');
+
         dragHandle.addEventListener('dragstart', (e) => {
             this.kanban.draggedColumn = column;
-            e.dataTransfer.setData('text/plain', '');
+            initialOrder = parseInt(this.kanban.draggedColumn.dataset.ordem, 10); // Armazena a ordem inicial
+            e.dataTransfer.setData('text/plain', ''); // Necessário para Firefox
         });
 
         column.addEventListener('dragover', (e) => {
             e.preventDefault();
-            const draggingOver = document.elementFromPoint(e.clientX, e.clientY);
-            if (draggingOver && draggingOver.classList.contains('column') && this.kanban.draggedColumn) {
+
+            const draggingOver = document.elementFromPoint(e.clientX, e.clientY)?.closest('.column');
+
+            if (draggingOver && draggingOver !== this.kanban.draggedColumn) {
                 const board = draggingOver.parentNode;
-                board.insertBefore(this.kanban.draggedColumn, draggingOver.nextSibling);
+
+                const draggedOrder = parseInt(this.kanban.draggedColumn.dataset.ordem, 10);
+                const overOrder = parseInt(draggingOver.dataset.ordem, 10);
+
+                this.draggingOver = draggingOver;
+
+                // Ajustar a ordem das colunas
+                if (draggedOrder < overOrder) {
+                    board.insertBefore(this.kanban.draggedColumn, draggingOver.nextSibling);
+                } else {
+                    board.insertBefore(this.kanban.draggedColumn, draggingOver);
+                }
+
+                // Atualiza a ordem da coluna arrastada para refletir a nova posição
+                atualizarOrdemColunas(board);
             }
         });
 
         dragHandle.addEventListener('dragend', () => {
+            console.log(`Finalizou movimentação. Coluna ID: ${this.kanban.draggedColumn.dataset.id}`);
+            
+            const finalOrder = parseInt(this.kanban.draggedColumn.dataset.ordem, 10); // Obtém a nova ordem
+
+            console.log(`Ordem inicial: ${initialOrder}, Ordem final: ${finalOrder}`);
+
+            // Verifica se a ordem mudou
+            if (initialOrder !== finalOrder) {
+                console.log("A ordem foi alterada!");
+
+                // Enviar para o banco a mudança da posição (exemplo de envio)
+                enviarMudancaParaOBanco({
+                    id: this.kanban.draggedColumn.dataset.id,
+                    ordemAntiga: initialOrder,
+                    novaOrdem: finalOrder
+                }, this.kanban.csrfToken);
+            } else {
+                console.log("A ordem não mudou.");
+            }
+
             this.kanban.draggedColumn = null;
+            this.draggingOver = null;
+            initialOrder = null; // Limpa a variável para a próxima movimentação
         });
 
+        // Função fictícia para enviar a mudança para o banco
+        function enviarMudancaParaOBanco(mudanca, csrfToken) {
+            // Aqui você pode fazer uma requisição para o seu backend
+            
+            const columns = board.querySelectorAll('.column');
+            const columnsData = Array.from(columns).map(column => ({
+                id: column.dataset.id,
+                ordem: column.dataset.ordem
+            }));
+            console.log(columnsData);
+
+            fetch('/projetos/api/mover-coluna/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(columnsData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 200) {
+                    console.log(data.message);
+                } else {
+                    console.error('Erro ao mover coluna:', data.error);
+                }
+            })
+        }
+
+        // Função para atualizar a ordem das colunas após a movimentação
+        function atualizarOrdemColunas(board) {
+            let ordem = 1; // A ordem começa em 1
+            board.querySelectorAll('.column').forEach((coluna) => {
+                coluna.dataset.ordem = ordem; // Atualiza a ordem da coluna
+                ordem++; // Incrementa a ordem
+            });
+        }
+
+        const h3Element = column.querySelector('h3');
+        h3Element.addEventListener("blur", (event) => {
+            fetch('/projetos/api/editar-nome-coluna/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.kanban.csrfToken
+                },
+                body: JSON.stringify({ column_id: this.id, nome: event.target.textContent })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 200) {
+                    this.nome = data.coluna.nome;
+                    this.kanban.logActivity(`Edited column: ${this.id}`);
+                } else {
+                    console.error('Erro ao editar coluna:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
+        });
         return column;
     }
 }
@@ -653,7 +785,7 @@ Kanban.prototype.dropCard = function(event) {
 // Inicialização
 const kanban = new Kanban('board', 'tarefaModal', '{{ csrf_token }}');
 {% for fase in fases %}
-    kanban.addColumn({{ fase.id }}, '{{ fase.nome }}');
+    kanban.addColumn({{ fase.id }}, '{{ fase.nome }}', {{ fase.ordem }});
     {% for tarefa in fase.get_tarefas %}
         kanban.addCard({{ fase.id }}, {{ tarefa.id }}, '{{ tarefa.nome }}', '{{tarefa.descricao}}',{{ tarefa.concluido|yesno:"true,false" }}, '{{ tarefa.data_inicio|date:"Y-m-d" }}', '{{ tarefa.data_fim|date:"Y-m-d" }}', '{{ tarefa.prioridade }}', '{% if tarefa.anexo %}{{ tarefa.anexo.url }}{% endif %}');
     {% endfor %}
