@@ -1208,6 +1208,15 @@ def mesclar_chamados(request):
         chamado_resultante.gerar_hash()
         chamado_resultante.gerar_protocolo()
 
+        if chamado_resultante.tipo.sigla == 'TEL':
+            dados_telefonia = OSTelefonia.objects.filter(chamado=primeiro_chamado)
+            if dados_telefonia.exists():
+                OSTelefonia.objects.create(
+                    chamado=chamado_resultante,
+                    ramal=dados_telefonia.first().ramal,                    
+                )
+
+
         for chamado in chamados_mesclados:
             Mensagem.objects.filter(chamado=chamado).update(chamado=chamado_resultante)
             chamado.mesclado = True

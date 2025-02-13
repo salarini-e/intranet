@@ -84,9 +84,10 @@ def date_chamados_por_atendente():
     # Contando chamados atendidos e pendentes
     chamados = (
         Chamado.objects
+        .filter(profissional_designado__ativo=True)
         .values("profissional_designado__nome_servidor")  # Agrupar pelos nomes dos atendentes
         .annotate(
-            total_atendidos=Count("id", filter=Q(status__in=[4, 5, 6])),   
+            total_atendidos=Count("id", filter=Q(status__in=[4])),   
             total_pendentes=Count("id", filter=~Q(status__in=[4, 5, 6])),  
         )
         .order_by("-total_atendidos")  # Ordenar por chamados atendidos em ordem decrescente
