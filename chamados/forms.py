@@ -331,6 +331,7 @@ class FormDetalhesDoChamado(forms.ModelForm):
         super(FormDetalhesDoChamado, self).__init__(*args, **kwargs)
         if 'instance' in kwargs:
             chamado = kwargs['instance']
+            self.fields['subtipo'].queryset = SubTipoChamado.objects.filter(tipo=chamado.tipo)
             if chamado.dt_execucao:
                 self.fields['dt_execucao'].initial = chamado.dt_execucao.strftime('%Y-%m-%d')
 
