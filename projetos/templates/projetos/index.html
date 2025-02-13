@@ -152,6 +152,29 @@
             border-bottom-right-radius: 8px;
             border-bottom-left-radius: 8px;          
         }
+        .responsavel-options{
+            cursor: pointer;
+        }
+        .responsavel-options:hover{
+            background-color: #034a572c;
+            /* border-radius: 8px; */
+        }
+        input.show{
+            display: block;
+        }
+        input.hidden{
+            display: none;
+        }
+        input[readonly] {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+        #searchResponsavelResult.hidden{
+            display: none;
+        }
+        #searchResponsavelResult.show{
+            display: block;
+        }
     </style>
 
     <div class="menu">
@@ -200,13 +223,13 @@
                         </div>                        
                     </td>
                     <td>
-                        {{projeto.get_status_icon|safe}}{{projeto.data_fim|date:"d/m/y"}}
+                        <span class="icone-status">{{projeto.get_status_icon|safe}}</span>{{projeto.data_fim|date:"d/m/y"}}
                     </td>
                   
                     <!-- <td style="max-width: 300px;">
                         {{projeto.descricao}}
                     </td> -->
-                    <td id="projeto_status" data-status="{{projeto.status}}" style="text-align: center; background-color: {{projeto.get_status_color}}; color: white; max-width: 100px;">
+                    <td class="projeto_status" data-status="{{projeto.status}}" style="text-align: center; background-color: {{projeto.get_status_color}}; color: white; max-width: 100px;">
                         {{projeto.get_status_display}}
                     </td>
                 </tr>
@@ -284,8 +307,18 @@
             </div>
             <div class="mb-3">
                 <label for="nome">Responsável</label>
-                <input type="text" class="form-control" id="responsavel" name="responsavel" required>
-                <input type="text" class="form-control" id="id_responsavel" name="id_responsavel" required>
+                <input type="text" class="form-control mb-3 hidden" id="id_projeto_responsavel_display" readonly>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="id_projeto_responsavel" name="projeto_responsavel" required>                    
+                    <div class="input-group-append">
+                      <button class="btn appt-btn-outline-secondary border" type="button" onclick="searchResponsavel()" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                      </button>
+                    </div>
+                  </div>                
+                <div id="searchResponsavelResult" class="w-100 hidden">
+                </div>
+                <input type="hidden" class="form-control" id="id_responsavel" name="responsavel" required>
             </div>            
             <div class="mb-3">
                 <label for="nome">Descrição</label>
@@ -385,7 +418,7 @@
             this.data_fim = data_fim;
             this.descricao = descricao;
             this.status = status;
-            this.status_display = status_display;
+            this.status_display = status_display;            
         }
 
         formatDate(date) {
@@ -401,9 +434,38 @@
         }
         updateDisplay() {
             const tr = document.querySelector(`#tr-${this.id}`);
+            if (!tr) return; 
+
             tr.querySelector('.nome_projeto').textContent = this.nome;
             tr.querySelector('.responsavel_projeto').textContent = this.responsavel.nome;            
-            tr.querySelector('.projeto_status').innerHTML = this.status_display;            
+            tr.querySelector('.projeto_status').innerHTML = this.status_display;   
+            tr.querySelector('.projeto_status').style.backgroundColor = this.getStatusColor();
+            tr.querySelector('.icone-status').innerHTML = this.getStatusIcon();
+
+        }
+        getStatusColor() {
+            switch (this.status) {
+                case 'C': return '#313131';
+                case 'E': return '#FCAA3D';
+                case 'F': return '#00C875';
+                case 'P': return '#da2e48';
+                default: return '#000000'; // Cor padrão caso o status não seja reconhecido
+            }
+        }
+
+        getStatusIcon() {
+            switch (this.status) {
+                case 'C':
+                    return '<i class="fa-solid fa-circle-notch me-3" style="color: #313131;"></i>';
+                case 'E':
+                    return '<i class="fa-regular fa-clock me-3" style="color: #FCAA3D;"></i>';
+                case 'F':
+                    return '<i class="fa-solid fa-circle-check me-lg-3" style="color: #00C875;"></i>';
+                case 'P':
+                    return '<i class="fa-solid fa-circle-pause me-3" style="color: #da2e48;"></i>';
+                default:
+                    return ''; // Caso o status não seja reconhecido
+            }
         }
     }
 
@@ -635,14 +697,56 @@
 
         form.querySelector('#id').value = projeto.id;
         form.querySelector('#nome_ed').value = projeto.nome;
-        form.querySelector('#responsavel').value = projeto.responsavel.nome;
+        form.querySelector('#id_projeto_responsavel').value = projeto.responsavel.nome;
         form.querySelector('#id_responsavel').value = projeto.responsavel.id;
         form.querySelector('#descricao').value = projeto.descricao;
         form.querySelector('#data_inicio').value = projeto.data_inicio;
         form.querySelector('#data_fim').value = projeto.data_fim;
         form.querySelector('#id_status').value = projeto.status;
-
-
+    }
+    function addResponsavel(id, nome){
+        intput_display=document.querySelector('#id_projeto_responsavel_display')
+        intput_display.value = nome;
+        intput_display.classList.remove('hidden');
+        intput_display.classList.add('show');
+        document.querySelector('#id_responsavel').value = id;
+        document.querySelector('#searchResponsavelResult').classList.remove('show');
+        document.querySelector('#searchResponsavelResult').classList.add('hidden');        
+    }
+    function searchResponsavel(){        
+        let search = document.querySelector('#id_projeto_responsavel').value;
+        let searchResult = document.querySelector('#searchResponsavelResult');
+        
+        if (search.length > 3){
+            fetch(`/projetos/api/busca-membros/?search=${search}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchResult.innerHTML = '';
+                    searchResult.classList.remove('hidden');
+                    searchResult.classList.add('show');
+                    
+                    data.membros.forEach(membro => {
+                        searchResult.innerHTML += `
+                            <div class="responsavel-options d-flex px-4 py-1" onclick="addResponsavel(${membro.id}, '${membro.nome}')">                                
+                                <span data-id="${membro.id}">${membro.nome}</span>
+                                <span style="font-size: 10pt;" class="ms-auto">
+                                    <i class="fa-solid fa-user-plus"></i>
+                                </span>
+                            </div>
+                        `;
+                    });
+                })
+                .catch(error => {
+                    searchResult.innerHTML = `<p class="px-3">Erro ao buscar membros.</p>`;
+                    console.error('Erro:', error);
+                });
+            searchResult.classList.remove('hidden');
+            searchResult.classList.add('show');
+            searchResult.innerHTML = ''
+        }else{
+            searchResult.classList.remove('show');
+            searchResult.classList.add('hidden');
+        }
     }
     function postEditarProjeto(){
         let form = document.querySelector('#form-editar-projeto');
@@ -655,6 +759,7 @@
         .then(response => response.json())
         .then(data => {
             if (data.status === 200) {
+                console.log('Projeto atualizado:', data);
                 // Atualizar o projeto na tela
                 let projeto = projetos.find(projeto => projeto.id === data.projeto.id);
                 projeto.nome = data.projeto.nome;
@@ -665,6 +770,9 @@
                 projeto.status = data.projeto.status;
                 projeto.status_display = data.projeto.status_display;
                 projeto.updateDisplay()
+                console.log(projeto.responsavel)   
+                toggleDetalhes(data.projeto.id);
+                toggleDetalhes(data.projeto.id);      
             } else {
                 console.error('Erro:', data.erros || 'Erro desconhecido');
             }

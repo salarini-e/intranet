@@ -202,18 +202,38 @@ def api_meus_grupos(request):
     return JsonResponse({'status': 200, 'grupos': [{'id': grupo.id, 'nome': grupo.nome, 'responsavel': {'id': grupo.responsavel.id, 'nome': grupo.responsavel.nome, 'img': grupo.responsavel.get_avatar()}, 'membros': [{'id': membro.id, 'nome': membro.nome, 'img': membro.get_avatar()} for membro in grupo.membros.all()]} for grupo in grupos]})
 
 def api_editar_projeto(request):
+    '''<QueryDict: 
+    {'csrfmiddlewaretoken': ['ulOfkecky5hILN9TPBbVcGOKDgvCGswJzwWrdALq2iXdD4EzG9vQAgrhi4VzCr19'], 
+    'id': ['1'], 'status': ['E'], 
+    'nome_ed': ['Desenvolve NF'], 
+    'responsavel': [''], 
+    'id_responsavel': [''], 
+    'descricao': ['Lorem ipsum dolor sit amet...'], 
+    'data_inicio': ['2025-01-14'], 
+    'data_fim': ['2025-01-31']}>
+'''
     if request.method == 'POST':
         dados = request.POST
         print(dados)
-        projeto = Projetos.objects.get(id=dados['projeto_id'])
-        projeto.nome = dados['nome']
+        projeto = Projetos.objects.get(id=dados['id'])
+        projeto.nome = dados['nome_ed']
         projeto.descricao = dados['descricao']
         projeto.data_inicio = dados['data_inicio']
         projeto.data_fim = dados['data_fim']
         projeto.status = dados['status']
-        projeto.responsavel = Servidor.objects.get(id=dados['responsavel']) if dados['responsavel'] else None
+        projeto.responsavel = Servidor.objects.get(id=dados['responsavel']) if dados['responsavel'] else projeto.responsavel
         projeto.save()
-        return JsonResponse({'status': 200, 'message': 'Projeto editado com sucesso'})
+        projeto_dict = {
+            'id': projeto.id,
+            'nome': projeto.nome,
+            'descricao': projeto.descricao,
+            'data_inicio': projeto.data_inicio if projeto.data_inicio is not None else '',
+            'data_fim': projeto.data_fim if projeto.data_fim is not None else '',
+            'status': projeto.status,
+            'status_display': projeto.get_status_display(),
+            'responsavel': {'id': projeto.responsavel.id, 'nome': projeto.responsavel.nome, 'img': projeto.responsavel.get_avatar()}
+        }
+        return JsonResponse({'status': 200, 'message': 'Projeto editado com sucesso', 'projeto': projeto_dict})
     return JsonResponse({'status': 403, 'error': 'Método inválido'})
 
 def api_editar_nome_coluna(request):
