@@ -262,110 +262,143 @@
     </div>
      
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Novo projeto</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Novo projeto</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <form id="form-projeto">
+                {% csrf_token %}
+                {{form_projetos}}
+            </form>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-primary w-100" style="color: white;" onclick="postCriarProjeto();" data-bs-dismiss="modal"    >Iniciar projeto</button>
+            </div>
         </div>
-        <div class="modal-body">
-          <form id="form-projeto">
-            {% csrf_token %}
-            {{form_projetos}}
-          </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary w-100" style="color: white;" onclick="postCriarProjeto();" data-bs-dismiss="modal"    >Iniciar projeto</button>
-        </div>
-      </div>
     </div>
-  </div>
-  <div class="modal fade" id="editarProjetoModal" tabindex="-1" aria-labelledby="editarProjetoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Editar projeto</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="editarProjetoModal" onclick="closeModal('editarProjetoModal')" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="form-editar-projeto">
-            {% csrf_token %}
-            <input type="hidden" name="id" id="id">
-            <div class="mb-3">
-                <label for="nome">Status do projeto</label>
-                <select class="form-select" id="id_status" name="status" required>
-                    <option value="C">Planejamento</option>
-                    <option value="E">Em andamento</option>
-                    <option value="F">Finalizado</option>
-                    <option value="P">Parado</option>
-                </select>                
+    <div class="modal fade" id="editarProjetoModal" tabindex="-1" aria-labelledby="editarProjetoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Editar projeto</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="editarProjetoModal" onclick="closeModal('editarProjetoModal')" aria-label="Close"></button>
             </div>
-            <div class="mb-3">
-                <label for="nome">Nome do projeto</label>
-                <input type="text" class="form-control" id="nome_ed" name="nome_ed" required>
-            </div>
-            <div class="mb-3">
-                <label for="nome">Responsável</label>
-                <input type="text" class="form-control mb-3 hidden" id="id_projeto_responsavel_display" readonly>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="id_projeto_responsavel" name="projeto_responsavel" required>                    
-                    <div class="input-group-append">
-                      <button class="btn appt-btn-outline-secondary border" type="button" onclick="searchResponsavel()" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                      </button>
-                    </div>
-                  </div>                
-                <div id="searchResponsavelResult" class="w-100 hidden">
+            <div class="modal-body">
+            <form id="form-editar-projeto">
+                {% csrf_token %}
+                <input type="hidden" name="id" id="id">
+                <div class="mb-3">
+                    <label for="nome">Status do projeto</label>
+                    <select class="form-select" id="id_status" name="status" required>
+                        <option value="C">Planejamento</option>
+                        <option value="E">Em andamento</option>
+                        <option value="F">Finalizado</option>
+                        <option value="P">Parado</option>
+                    </select>                
                 </div>
-                <input type="hidden" class="form-control" id="id_responsavel" name="responsavel" required>
-            </div>            
-            <div class="mb-3">
-                <label for="nome">Descrição</label>
-                <textarea class="form-control" id="descricao" name="descricao" required></textarea>
-            </div>
-            <div class="mb-3">
-                <label for="nome">Data inicio</label>
-                <input type="date" class="form-control" id="data_inicio" name="data_inicio" required>
-            </div>
-            <div class="mb-3">
-                <label for="nome">Data fim</label>
-                <input type="date" class="form-control" id="data_fim" name="data_fim" required>
-            </div>            
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary w-100" style="color: white;" onclick="postEditarProjeto();" data-bs-dismiss="modal">Salvar alterações</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal fade" id="myGroupsModal" tabindex="-1" aria-labelledby="myGroupsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="myGroupsModalLabel" style="color: #141f5a;"><i class="fa-solid fa-people-group me-2"></i>Meus grupos</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="myGroupsModal" onclick="closeModal('myGroupsModal')" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="row">
-                <div class="col">                        
-                    <div class="grupo-membros mb-3">
-                        <div id="meusgrupos" class="p-2" style="background-color: hsla(0, 1%, 37%, 0.067); width: 100%; min-height: 100px;">
-                                                                                  
+                <div class="mb-3">
+                    <label for="nome">Nome do projeto</label>
+                    <input type="text" class="form-control" id="nome_ed" name="nome_ed" required>
+                </div>
+                <div class="mb-3">
+                    <label for="nome">Responsável</label>
+                    <input type="text" class="form-control mb-3 hidden" id="id_projeto_responsavel_display" readonly>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="id_projeto_responsavel" name="projeto_responsavel" required>                    
+                        <div class="input-group-append">
+                        <button class="btn appt-btn-outline-secondary border" type="button" onclick="searchResponsavel()" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
                         </div>
+                    </div>                
+                    <div id="searchResponsavelResult" class="w-100 hidden">
                     </div>
-                    <button class="w-100 btn btn-3"  data-bs-toggle="modal" data-bs-target="#groupModal">
-                        <i class="fa-solid fa-users-rays me-2"></i>Criar novo grupo
-                    </button>
+                    <input type="hidden" class="form-control" id="id_responsavel" name="responsavel" required>
+                </div>            
+                <div class="mb-3">
+                    <label for="nome">Descrição</label>
+                    <textarea class="form-control" id="descricao" name="descricao" required></textarea>
                 </div>
+                <div class="mb-3">
+                    <label for="nome">Data inicio</label>
+                    <input type="date" class="form-control" id="data_inicio" name="data_inicio" required>
+                </div>
+                <div class="mb-3">
+                    <label for="nome">Data fim</label>
+                    <input type="date" class="form-control" id="data_fim" name="data_fim" required>
+                </div>            
+            </form>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-primary w-100" style="color: white;" onclick="postEditarProjeto();" data-bs-dismiss="modal">Salvar alterações</button>
             </div>
         </div>
-        <!-- <div class="modal-footer" style="color: rgb(255, 108, 108);">
-        </div> -->
-      </div>
+        </div>
     </div>
-  </div>
+    <div class="modal fade" id="myGroupsModal" tabindex="-1" aria-labelledby="myGroupsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="myGroupsModalLabel" style="color: #141f5a;"><i class="fa-solid fa-people-group me-2"></i>Meus grupos</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="myGroupsModal" onclick="closeModal('myGroupsModal')" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">                        
+                        <div class="grupo-membros mb-3">
+                            <div id="meusgrupos" class="p-2" style="background-color: hsla(0, 1%, 37%, 0.067); width: 100%; min-height: 100px;">
+                                                                                    
+                            </div>
+                        </div>
+                        <button class="w-100 btn btn-3"  data-bs-toggle="modal" data-bs-target="#groupModal">
+                            <i class="fa-solid fa-users-rays me-2"></i>Criar novo grupo
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="modal-footer" style="color: rgb(255, 108, 108);">
+            </div> -->
+        </div>
+        </div>
+    </div>
+    <div class="modal fade" id="groupsProjetoModal" tabindex="-1" aria-labelledby="groupsProjetoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="groupsProjetoModalLabel" style="color: #141f5a;"><i class="fa-solid fa-people-group me-2"></i>Grupos</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="groupsProjetoModal" onclick="closeModal('groupsProjetoModal')" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">                        
+                        <div class="grupo-membros mb-3">
+                            <p class="my-0">Selecione os grupos de acesso ao projeto:</p>
+                            <input type="hidden" id="projeto-grupo-selecionado" name="projeto-grupo-selecionado">
+                            <form id="projetosgrupos" class="p-2 d-flex flex-column" style="background-color: hsla(0, 1%, 37%, 0.067); width: 100%; min-height: 100px;">
+                                
+                                <div id="loading-grupos-projeto" class="loading m-auto pt-2">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <button class="w-100 btn app-btn-primary py-1" onclick="atualizarAutorizacoes()">
+                            Atualizar autorizações
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="modal-footer" style="color: rgb(255, 108, 108);">
+            </div> -->
+        </div>
+        </div>
+    </div>
   <div class="modal fade" id="groupModal" tabindex="-1" aria-labelledby="groupModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -409,6 +442,64 @@
   </div>
   
   <script>
+    function atualizarAutorizacoes() {
+        let id_projeto = document.querySelector('#projeto-grupo-selecionado').value;
+        let divGrupos = document.getElementById('projetosgrupos');
+        let inputs = divGrupos.querySelectorAll('input');
+
+        let data = {
+            'id_projeto': id_projeto,
+            'grupos': []
+        };
+
+        inputs.forEach(input => {
+            data.grupos.push({
+                'id': input.value,
+                'checked': input.checked
+            });
+        });
+
+        fetch('/projetos/api/atualizar-autorizacoes/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status == 200) {
+                console.log('Autorizações atualizadas com sucesso.');
+                closeModal('groupsProjetoModal');
+                toggleDetalhes(data.projeto.id);
+                toggleDetalhes(data.projeto.id);   
+            }
+        })
+        .catch(error => console.error('Erro ao atualizar autorizações:', error));
+    }
+
+    function get_grupos_projeto(id){
+        document.querySelector('#projeto-grupo-selecionado').value = id
+        divLoading = document.getElementById('loading-grupos-projeto')
+        divGrupos = divLoading.parentNode
+        divGrupos.innerHTML = ''
+        divLoading.style.display = 'block';
+        fetch(`/projetos/api/get-grupos-projeto/${id}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status==200){                    
+                    divLoading.style.display = 'none';                                    
+                    data.grupos.forEach(grupo => {                        
+                        check = grupo.status ? 'checked' : ''
+                        divGrupos.innerHTML += `<div class="grupos-projeto-selecao w-100">
+                                <input type="checkbox" ${check} name="projetos-grupos" value="${grupo.id}" class="me-2">${grupo.nome}
+                            </div>`
+                    });
+                }
+            });
+      
+    }
     class Projeto {
         constructor(id, nome, responsavel_id, responsavel_nome, responsavel_img, data_inicio, data_fim, descricao, status, status_display) {
             this.id = id;
@@ -659,6 +750,10 @@
             fetch(`/projetos/${id}/detalhes/`)
                 .then(response => response.json())
                 .then(data => {
+                    grupos = ''
+                    data.projeto.grupos.forEach(grupo => {
+                        grupos += `${grupo.nome}<br>`;
+                    });
                     document.querySelector(`#detalhes-${id}`).innerHTML = `
                         <div class="row">
                             <div class="col">
@@ -667,17 +762,14 @@
                             </div>
                             <div class="col">
                                 <p><strong>Grupos:</strong><br>
-                                Fulano<br>
-                                Ciclano<br>
+                                ${grupos}
                                 </p>                                
-                            </div>
-                            <div class="col">
-                            </div
+                            </div>                          
                         </div>
                         <div class="row pe-0" style="margin-top: 10px">
                             <div class="col pe-0 menudetalhes" style="padding-bottom: 20px;">                                
                                 <a href='/projetos/${id}/board/' class="btn btn-primary"><i class="fa-solid fa-eye me-2"></i>Visualizar</a>
-                                <button class="btn btn-3"><i class="fa-solid fa-people-line me-2"></i></i>Grupos</button>
+                                <button class="btn btn-3" data-bs-toggle="modal" data-bs-target="#groupsProjetoModal" onclick="console.log(get_grupos_projeto(${id}))"><i class="fa-solid fa-people-line me-2"></i></i>Grupos</button>
                                 <button class="btn btn-3"><i class="fa-solid fa-comment me-2"></i>Comentarios</button>
                                 <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editarProjetoModal" onclick="getProjetoInfo(${id})"><i class="fa-solid fa-file-pen me-2"></i>Editar</button>
                             </div

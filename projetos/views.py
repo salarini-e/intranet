@@ -173,7 +173,8 @@ def api_get_detalhes_projeto(request, id):
         'data_fim': projeto.data_fim.strftime('%d/%m/%Y') if projeto.data_fim else '',
         'status': projeto.status,
         'fases': [{'id': fase.id, 'nome': fase.nome, 'ordem': fase.ordem} for fase in fases],
-        'tarefas': [{'id': tarefa.id, 'nome': tarefa.nome, 'concluido': tarefa.concluido, 'fase_id': tarefa.fase.id, 'orderm': tarefa.orderm} for tarefa in tarefas]
+        'tarefas': [{'id': tarefa.id, 'nome': tarefa.nome, 'concluido': tarefa.concluido, 'fase_id': tarefa.fase.id, 'orderm': tarefa.orderm} for tarefa in tarefas],
+        'grupos': [{'id': grupo.id, 'nome': grupo.nome, 'responsavel': {'id': grupo.responsavel.id, 'nome': grupo.responsavel.nome, 'img': grupo.responsavel.get_avatar()}, 'membros': [{'id': membro.id, 'nome': membro.nome, 'img': membro.get_avatar()} for membro in grupo.membros.all()]} for grupo in projeto.grupos.all()]
     }})
     # return JsonResponse({'status': 403, 'error': 'Método inválido'})
 
@@ -253,4 +254,31 @@ def api_mover_coluna(request):
             coluna.ordem = dado['ordem']
             coluna.save()        
         return JsonResponse({'status': 200, 'message': 'Colunas alteradas'})
+    return JsonResponse({'status': 403, 'error': 'Método inválido'})
+
+def api_get_grupos_projeto(request, id):
+    projeto = Projetos.objects.get(id=id)
+    grupos = Grupo.objects.filter(responsavel__user = request.user)
+    grupos_dict = []
+    for grupo in grupos:
+        grupos_dict.append({
+            'id': grupo.id,
+            'nome': grupo.nome,
+            'responsavel': {'id': grupo.responsavel.id, 'nome': grupo.responsavel.nome, 'img': grupo.responsavel.get_avatar()},
+            'membros': [{'id': membro.id, 'nome': membro.nome, 'img': membro.get_avatar()} for membro in grupo.membros.all()],
+            'status': True if grupo in projeto.grupos.all() else False
+        })    
+    
+    return JsonResponse({'status': 200, 'grupos': grupos_dict})
+
+def api_atualizar_autorizacoes(request):
+    if request.method == 'POST':        
+        dados = json.loads(request.body)   
+        projeto = Projetos.objects.get(id=dados['id_projeto'])
+        grupos = dados['grupos']
+        projeto.grupos.clear()
+        for grupo in grupos:
+            if grupo['checked']:
+                projeto.grupos.add(Grupo.objects.get(id=grupo['id']))
+        return JsonResponse({'status': 200, 'message': 'Autorizações atualizadas'})
     return JsonResponse({'status': 403, 'error': 'Método inválido'})
