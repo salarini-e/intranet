@@ -215,12 +215,12 @@ def detalhes(request, hash):
             mensagem.notificar_nova_mensagem()
             chamado.dt_atualizacao = timezone.now() 
             chamado.save() 
-            try:
-                mensagem, status = Email_Chamado(chamado).mensagem_criada(mensagem)
-            except Exception as e:
-                print(e)
-            if status == 400:
-                message.error(request, mensagem)
+            # try:
+            #     mensagem, status = Email_Chamado(chamado).mensagem_criada(mensagem)
+            # except Exception as e:
+            #     print(e)
+            # if status == 400:
+            #     message.error(request, mensagem)
 
             message.success(request, 'Mensagem enviada com sucesso!')
         # else:
