@@ -171,7 +171,7 @@ def api_editar_tarefa(request):
         tarefa.atribuicao = Servidor.objects.get(id=dados['atribuicao']) if dados['atribuicao'] else None
         tarefa.prioridade = Prioridade.objects.get(id=dados['prioridade']) if dados['prioridade'] else None
         tarefa.save()
-        return JsonResponse({'status': 200, 'card': {'id': tarefa.id,'nome': tarefa.nome, 'descricao': tarefa.descricao, 'data_inicio': tarefa.data_inicio, 'data_fim': tarefa.data_fim, 'atribuicao': tarefa.atribuicao.id, 'prioridade': tarefa.prioridade.id}})
+        return JsonResponse({'status': 200, 'card': {'id': tarefa.id,'nome': tarefa.nome, 'descricao': tarefa.descricao, 'data_inicio': tarefa.data_inicio, 'data_fim': tarefa.data_fim, 'atribuicao': tarefa.atribuicao.id if tarefa.atribuicao else '', 'prioridade': tarefa.prioridade.id if tarefa.prioridade else ''}})
     return JsonResponse({'status': 403, 'error': 'Método inválido'})
 
 def api_get_detalhes_projeto(request, id):
