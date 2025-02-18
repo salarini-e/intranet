@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Projetos, Fases, Tarefas, Atividades, Prioridade, Grupo
@@ -7,19 +8,29 @@ from instituicoes.models import Servidor
 
 @login_required
 def index(request):
+    projetos_responsavel = Projetos.objects.filter(responsavel__user=request.user)
+    projetos_autorizado = Projetos.objects.filter(grupos__membros__user=request.user)
+    projetos = projetos_responsavel | projetos_autorizado
+    projetos = projetos.distinct()  
     context={
-        'projetos': Projetos.objects.all(),
+        'projetos': projetos,
         'form_projetos': ProjetosForm(initial={'user_inclusao': request.user})
     }
     return render(request, 'projetos/index.html', context)
 
 @login_required
 def kanbanboard(request, id):
+    
     projeto = Projetos.objects.get(id=id)
     fases = Fases.objects.filter(projeto=projeto).order_by('ordem')
+    servidores = [servidor for grupo in projeto.grupos.all() for servidor in grupo.membros.all()]
+    prioridades = Prioridade.objects.all()
+
     context = {
         'projeto': projeto,
-        'fases': fases,        
+        'fases': fases,     
+        'servidores': servidores,
+        'prioridades': prioridades,
     }
     # print(context)
     return render(request, 'projetos/kanban.html', context)
@@ -150,15 +161,17 @@ def api_check_card(request):
 def api_editar_tarefa(request):
     if request.method == 'POST':
         dados = json.loads(request.body)
+        print(dados)
         card_id = dados['card_id']
         tarefa = Tarefas.objects.get(id=card_id)
         tarefa.nome = dados['nome'] if dados['nome'] else None
         tarefa.descricao = dados['descricao'] if dados['descricao'] else None
         tarefa.data_inicio = dados['data_inicio'] if dados['data_inicio'] else None
         tarefa.data_fim = dados['data_fim'] if dados['data_fim'] else None
-        # tarefa.prioridade = Prioridade.objects.get(id=dados['prioridade'])
+        tarefa.atribuicao = Servidor.objects.get(id=dados['atribuicao']) if dados['atribuicao'] else None
+        tarefa.prioridade = Prioridade.objects.get(id=dados['prioridade'])
         tarefa.save()
-        return JsonResponse({'status': 200, 'card': {'id': tarefa.id,'nome': tarefa.nome, 'descricao': tarefa.descricao, 'data_inicio': tarefa.data_inicio, 'data_fim': tarefa.data_fim}})
+        return JsonResponse({'status': 200, 'card': {'id': tarefa.id,'nome': tarefa.nome, 'descricao': tarefa.descricao, 'data_inicio': tarefa.data_inicio, 'data_fim': tarefa.data_fim, 'atribuicao': tarefa.atribuicao.id, 'prioridade': tarefa.prioridade.id}})
     return JsonResponse({'status': 403, 'error': 'Método inválido'})
 
 def api_get_detalhes_projeto(request, id):
@@ -281,4 +294,15 @@ def api_atualizar_autorizacoes(request):
             if grupo['checked']:
                 projeto.grupos.add(Grupo.objects.get(id=grupo['id']))
         return JsonResponse({'status': 200, 'message': 'Autorizações atualizadas'})
+    return JsonResponse({'status': 403, 'error': 'Método inválido'})
+
+def api_enviar_anexo(request):
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        dados = request.FILES
+        card = Tarefas.objects.get(id=id)
+        card.anexo = dados['anexo']
+        card.save()
+        return JsonResponse({'status': 200, 'anexo': card.anexo.url, 'anexo_url': card.anexo.url})
+    
     return JsonResponse({'status': 403, 'error': 'Método inválido'})

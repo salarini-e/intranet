@@ -23,6 +23,7 @@ urlpatterns = [
     path('api/mover-coluna/', views.api_mover_coluna, name='api_mover_coluna'),
     path('api/get-grupos-projeto/<id>/', views.api_get_grupos_projeto, name='api_get_grupos_projeto'),
     path('api/atualizar-autorizacoes/', views.api_atualizar_autorizacoes, name='api_atualizar_autorizacoes'),
+    path('api/enviar-anexo/', views.api_enviar_anexo, name='api_enviar_anexo'),
     # path('project/<int:project_id>/', views.project_detail, name='project_detail'),
     # path('project/new/', views.new_project, name='new_project'),
     # path('project/<int:project_id>/edit/', views.edit_project, name='edit_project'),

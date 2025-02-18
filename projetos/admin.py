@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Projetos, Fases, Categorias, Prioridade, Tarefas, Atividades, Comentarios, Grupo
+from .models import Projetos, Fases, Categorias, Prioridade, Tarefas, Atividades, Comentarios, Grupo, Anexo
 
 @admin.register(Grupo)
 class GrupoAdmin(admin.ModelAdmin):
@@ -62,3 +62,8 @@ class ComentariosAdmin(admin.ModelAdmin):
     list_filter = ('atribuicao', 'dt_inclusao', 'dt_att')
     search_fields = ('descricao', 'tarefa__nome', 'atividade__nome')
     readonly_fields = ('dt_inclusao', 'dt_att')
+
+@admin.register(Anexo)
+class AnexoAdmin(admin.ModelAdmin):
+    list_display = ('arquivo', 'tarefa')        
+    search_fields = ('descricao', 'tarefa__nome')        

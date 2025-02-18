@@ -35,7 +35,7 @@ class Projetos(models.Model):
     data_inicio = models.DateField(null=True, blank=True)
     data_fim = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='C')
-    
+
     user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Usuário de inclusão')
     dt_inclusao = models.DateField(auto_now_add=True)
     dt_att  = models.DateField(auto_now=True)
@@ -175,6 +175,7 @@ class Tarefas(models.Model):
     data_fim = models.DateField(null=True, blank=True, verbose_name='Data de fim')
     categoria = models.ManyToManyField(Categorias)
     prioridade = models.ForeignKey(Prioridade, on_delete=models.SET_NULL, null=True, blank=True)
+    atribuicao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, null=True, blank=True, related_name='atribuicao')
     anexo = models.FileField(upload_to='projetos/anexos/', null=True, blank=True)
     
     user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Usuário de inclusão')
@@ -196,6 +197,13 @@ class Tarefas(models.Model):
         atividades = Atividades.objects.filter(tarefa=self).order_by('ordem')
         return atividades
     
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_instance = Tarefas.objects.get(pk=self.pk)
+            if old_instance.anexo and old_instance.anexo != self.anexo:
+                old_instance.anexo.delete(save=False)
+        super(Tarefas, self).save(*args, **kwargs)
+
 class Atividades(models.Model):
     
     tarefa = models.ForeignKey(Tarefas, on_delete=models.CASCADE)
@@ -242,3 +250,20 @@ class Comentarios(models.Model):
     class Meta:
         verbose_name_plural = "Comentários das tarefas"
         verbose_name = "Comentário da tarefa"
+
+class Anexo(models.Model):
+    tarefa = models.ForeignKey(Tarefas, on_delete=models.CASCADE, null=True, blank=True, related_name='anexos_tarefa')
+    atividade = models.ForeignKey(Atividades, on_delete=models.CASCADE, null=True, blank=True, related_name='anexos_atividade')
+    arquivo = models.FileField(upload_to='projetos/anexos/')
+    tipo = models.CharField(max_length=1, choices=(('t', 'Tarefa'), ('a', 'Atividade')))
+    
+    def __str__(self):
+        return self.arquivo.name
+    
+    class Meta:
+        verbose_name_plural = "Anexos das tarefas e das atividades"
+        verbose_name = "Anexo das tarefa ou das atividade"
+
+    def delete(self, *args, **kwargs):
+        self.arquivo.delete()
+        super().delete(*args, **kwargs)

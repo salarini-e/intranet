@@ -1,794 +1,826 @@
-{% extends 'template.html' %}
-{% block projetos %}active{% endblock %}
-{% block main %}
-<style>
-    button:focus {
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-    }
+    {% extends 'template.html' %}
+    {% block projetos %}active{% endblock %}
+    {% block main %}
+    <style>
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
 
-    button:active {
-        transform: scale(0.98);
-    }
-    h3 {
-        margin: 0;
-        font-size: 1em;
-        font-weight: normal;
-    }
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f9;
-    }
-    .menu {
-        background-color: #ffffff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        padding: 10px 16px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-    }
-    .menu button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+        button:active {
+            transform: scale(0.98);
+        }
+        h3 {
+            margin: 0;
+            font-size: 1em;
+            font-weight: normal;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .menu {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .menu button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
 
-    .menu button:hover {
-        background-color: #0056b3;
-    }
+        .menu button:hover {
+            background-color: #0056b3;
+        }
 
-    .board {
-        display: flex;
-        gap: 16px;
-        padding: 16px 0px;
-        overflow-x: auto;
-        min-height: 600px;
-    }
+        .board {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0px;
+            overflow-x: auto;
+            min-height: 600px;
+        }
 
-    .column {
-        background-color: #fff;
-        border-radius: 8px;
-        padding: 16px;
-        min-width: 250px;
-        min-height: 136px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-        margin-bottom: auto;
-    }
+        .column {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 16px;
+            min-width: 250px;
+            min-height: 136px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            margin-bottom: auto;
+        }
 
-    .column-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-    }
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
 
-    .column-header h3 {
-        margin: 0;
-        cursor: pointer;
-    }
+        .column-header h3 {
+            margin: 0;
+            cursor: pointer;
+        }
 
-    .column-header h3:hover {
-        text-decoration: underline;
-    }
+        .column-header h3:hover {
+            text-decoration: underline;
+        }
 
-    .column-header .drag-handle {
-        cursor: grab;
-        margin-right: 8px;
-    }
+        .column-header .drag-handle {
+            cursor: grab;
+            margin-right: 8px;
+        }
 
-    .column-header button {
-        background-color: #33353400;
+        .column-header button {
+            background-color: #33353400;
+            color: rgb(0, 0, 0);
+            border: none;
+            /* padding: 6px     12px; */
+            border-radius: 4px;
+            /* width: 24px; */
+            /* height: 24px; */
+            cursor: pointer;
+            margin: auto 0 auto auto;            
+        }
+
+        .column-header button:hover {
+            background-color: #21883700;
+        }
+        .column-header button:active {
+            transform: scale(0.98);
+            border: none;
+            background-color: #21883700;
+        }
+        button:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        .card {
+            background-color: #e3e4e8;
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 8px;
+            margin-bottom: 0px;
+            cursor: grab;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card.dragging {
+            opacity: 0.5;
+        }
+
+        .card input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .card-container{
+            width: calc(100% - 12px);
+            min-height: 66px;
+            background-color: rgba(245, 245, 245, 0.363);
+            border-radius: 4px;
+            padding: 0px 8px 8px 8px;
+        }
+        .card-container button{
+            cursor: pointer;
+            margin-left: auto; 
+            border: none; 
+            padding: 4px 8px; 
+            border-radius: 4px;
+            background-color: #ffffff00;
+        }
+        .fake-card {
+            height: 50px;
+            background-color: transparent;
+        
+            display: none;
+        }
+
+    
+        .subtasks {
+            margin-top: 16px;
+        }
+
+        .subtasks input {
+            margin-right: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+        @media (min-width: 1400px) {
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 97.5%;
+            margin-left: 3%;
+        }
+    }   
+    .modal-body label{
+        font-weight: bold;
+    }
+    .btn-addsubtarefa{
+        background-color: #cfcfcf;
         color: rgb(0, 0, 0);
         border: none;
-        /* padding: 6px     12px; */
         border-radius: 4px;
-        /* width: 24px; */
-        /* height: 24px; */
         cursor: pointer;
-        margin: auto 0 auto auto;            
     }
+    .progress {
+        width: 90%;
+        margin-right: 10px;
+        height: 10px; /* Altura da barra */
+        background-color: #acacac67; /* Cor de fundo da barra */
+        border-radius: 5px; /* Arredondamento das bordas */
+        }
 
-    .column-header button:hover {
-        background-color: #21883700;
-    }
-    .column-header button:active {
-        transform: scale(0.98);
-        border: none;
-        background-color: #21883700;
-    }
-    button:focus {
-        outline: none;
-        box-shadow: none;
-    }
-    .card {
-        background-color: #e3e4e8;
-        border-radius: 4px;
-        padding: 8px;
-        margin-top: 8px;
-        margin-bottom: 0px;
-        cursor: grab;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .card.dragging {
-        opacity: 0.5;
-    }
-
-    .card input[type="checkbox"] {
-        margin-right: 8px;
-    }
-    .card-container{
-        width: calc(100% - 12px);
-        min-height: 66px;
-        background-color: rgba(245, 245, 245, 0.363);
-        border-radius: 4px;
-        padding: 0px 8px 8px 8px;
-    }
-    .card-container button{
-        cursor: pointer;
-        margin-left: auto; 
-        border: none; 
-        padding: 4px 8px; 
-        border-radius: 4px;
-        background-color: #ffffff00;
-    }
-    .fake-card {
-        height: 50px;
-        background-color: transparent;
-      
-        display: none;
-    }
-
-  
-    .subtasks {
-        margin-top: 16px;
-    }
-
-    .subtasks input {
-        margin-right: 8px;
-    }
-
-    .hidden {
-        display: none;
-    }
-    @media (min-width: 1400px) {
-    .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
-        max-width: 97.5%;
-        margin-left: 3%;
-    }
-}   
-.modal-body label{
-    font-weight: bold;
-}
-.btn-addsubtarefa{
-    background-color: #cfcfcf;
-    color: rgb(0, 0, 0);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-.progress {
-    width: 90%;
-    margin-right: 10px;
-    height: 10px; /* Altura da barra */
-    background-color: #acacac67; /* Cor de fundo da barra */
-    border-radius: 5px; /* Arredondamento das bordas */
-    }
-
-    .progress-bar {
-    background-color: #4CAF50; /* Cor da barra de progresso */
-    border-radius: 0px; /* Arredondamento das bordas */
-    }
-</style>
-</head>
-<body>
-    <div class="menu">
-        <h2>{{projeto.nome}}</h2>        
-        <div class="ms-2" class="dropdown">
-            <button class="btn btn-primary" style="background-color: white; color: black;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-wrench me-2"></i> Configurar
-            </button>
-            <ul class="dropdown-menu">
-                <li onclick="kanban.createColumn({{projeto.id}})">
-                    <a class="dropdown-item" href="#">
-                        <i class="fa-solid fa-square-plus me-2"></i> Adicionar coluna
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item" href="{% url 'projetos:index' %}">
-                        <i class="fa-solid fa-backward me-2"></i> Voltar para painel
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="board" id="board"></div>
-
-    <div class="modal fade" id="tarefaModal" tabindex="-1" aria-labelledby="tarefaModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">
-                <input type="text" id="card-title" placeholder="Enter card title" style="border: none; font-weight: bold;">
-              </h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeModal()"></button>
+        .progress-bar {
+        background-color: #4CAF50; /* Cor da barra de progresso */
+        border-radius: 0px; /* Arredondamento das bordas */
+        }
+    </style>
+    </head>
+    <body>
+        <div class="menu">
+            <h2>{{projeto.nome}}</h2>        
+            <div class="ms-2" class="dropdown">
+                <button class="btn btn-primary" style="background-color: white; color: black;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-wrench me-2"></i> Configurar
+                </button>
+                <ul class="dropdown-menu">
+                    <li onclick="kanban.createColumn({{projeto.id}})">
+                        <a class="dropdown-item" href="#">
+                            <i class="fa-solid fa-square-plus me-2"></i> Adicionar coluna
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'projetos:index' %}">
+                            <i class="fa-solid fa-backward me-2"></i> Voltar para painel
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <div class="modal-body">
-               <div class="row">
-                    <div class="col px-5 d-flex flex-column pt-3">                                        
-                        <label for="card-description mt-3">Descrição:</label>
-                        <textarea id="card-description" placeholder="..." style="border: none; min-height: 100px;"></textarea>                                                            
+        </div>
 
-                        <div class="d-flex flex-column w-100">                            
-                                <label for=""><i class="fa-solid fa-paperclip me-2"></i>Anexos</label>
-                                <div id="listAnexo" class="w-100 px-3 pt-2 d-flex flex-column flex-wrap">
-                                  <i>Não há anexos.</i>
-                                </div>                                                   
-                        </div>  
-                        <div class="d-flex flex-column mt-auto" style="width: 90%;">
-                            <small class="mt-4">Enviar novo anexo</small><br>                                                                        
-                            <div class="input-group mb-3">
-                                <input type="file" class="form-control" style="border: none;">
-                                <button class="btn btn-addsubtarefa" type="button" id="button-addon1">Anexar</button>
-                              </div>
-                              
-                        </div>     
+        <div class="board" id="board"></div>
+
+        <div class="modal fade" id="tarefaModal" tabindex="-1" aria-labelledby="tarefaModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                    <input type="text" id="card-title" placeholder="Enter card title" style="border: none; font-weight: bold;">
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeModal()"></button>
+                </div>
+                <div class="modal-body">
+                <div class="row">
+                        <div class="col px-5 d-flex flex-column pt-3">                                        
+                            <label for="card-description mt-3">Descrição:</label>
+                            <textarea id="card-description" placeholder="..." style="border: none; min-height: 100px;"></textarea>                                                            
+
+                            <div class="d-flex flex-column w-100">                            
+                                    <label for=""><i class="fa-solid fa-paperclip me-2"></i>Anexos</label>
+                                    <div id="listAnexo" class="w-100 px-3 pt-2 d-flex flex-column flex-wrap">
+                                    <i>Não há anexos.</i>
+                                    </div>                                                   
+                            </div>  
+                            <form id="formAnexo" enctype="multipart/form-data"  class="d-flex flex-column mt-auto" style="width: 90%;">
+                                <small class="mt-4">Enviar novo anexo</small><br>                                                                        
+                                <div class="input-group mb-3">
+                                    <input type="file" name="anexo" class="form-control" style="border: none;">
+                                    <button id="btnAnexar" class="btn btn-addsubtarefa" type="button" id="button-addon1">Anexar</button>
+                                </div>
+                                
+                            </form>     
+                            
+                        </div>
+                        <div class="col px-5 d-flex flex-column">
+                            <label for="prioridade" class="mt-3">Prioridade:</label>
+                            <select id="prioridade" class="form-select" style="border: none;">
+                                <option value="" disabled>Selecione a prioridade</option>
+                                {% for prioridade in prioridades %}
+                                <option value="{{prioridade.id}}">{{prioridade.nome}}</option>
+                                {% endfor %}
+                            </select>
+                
+                            <label for="atribuicao" class="mt-3">Atribuição:</label>
+                            <select id="atribuicao" class="form-select" style="border: none;">
+                                <option value="" selected disabled>Selecione um usuário</option>
+                                {% for servidor in servidores %}
+                                <option value="{{servidor.id}}">{{servidor.nome}}</option>
+                                {% endfor %}                            
+                            </select>
+                
+                            <label for="card-date" class="mt-2">Dt. prevista de execução:</label>
+                            <div class="w-100 d-flex mt-3">
+                                <div class="d-flex flex-column" style="width: 50%;">
+                                    <small>Ínicio</small>
+                                    <input type="date" id="data_inicio" class="form-control" name="data_inicio" style="border: none;">         
+                                </div>
+                                <div class="d-flex flex-column ms-3" style="width: 50%;">
+                                    <small>Conclusão</small>
+                                    <input type="date" id="data_fim" class="form-control" name="data_fim" style="border: none;">         
+                                </div>
+                            </div>
+                            <div class="subtasks">
+                                <label>Subtarefas:</label>
+                                <div class="mt-3" id="subtasks-container"></div>
+                                <button type="button" class="btn btn-addsubtarefa" onclick="addSubtask()"><i class="fa-solid fa-diagram-predecessor me-2"></i> Add Subtarefa</button>
+                            </div>
+                        </div>
+                </div>
+                <div class="row">
+                    <div class="col px-5">
                         
                     </div>
-                    <div class="col px-5 d-flex flex-column">
-                        <label for="card-assignee" class="mt-3">Prioridade:</label>
-                        <select id="card-assignee" class="form-select" style="border: none;">
-                            <option value="" disabled>Selecione a prioridade</option>
-                            <option value="user1" selected>Normal</option>
-                            <option value="user2">Urgente</option>
-                            <option value="user3">Moderada</option>
-                        </select>
-            
-                        <label for="card-assignee" class="mt-3">Atribuição:</label>
-                        <select id="card-assignee" class="form-select" style="border: none;">
-                            <option value="" selected disabled>Selecione um usuário</option>
-                            <option value="user1">User 1</option>
-                            <option value="user2">User 2</option>
-                            <option value="user3">User 3</option>
-                        </select>
-            
-                        <label for="card-date" class="mt-2">Dt. prevista de execução:</label>
-                        <div class="w-100 d-flex mt-3">
-                            <div class="d-flex flex-column" style="width: 50%;">
-                                <small>Ínicio</small>
-                                <input type="date" id="data_inicio" class="form-control" name="data_inicio" style="border: none;">         
-                            </div>
-                            <div class="d-flex flex-column ms-3" style="width: 50%;">
-                                <small>Conclusão</small>
-                                <input type="date" id="data_fim" class="form-control" name="data_fim" style="border: none;">         
-                            </div>
-                        </div>
-                        <div class="subtasks">
-                            <label>Subtarefas:</label>
-                            <div class="mt-3" id="subtasks-container"></div>
-                            <button type="button" class="btn btn-addsubtarefa" onclick="addSubtask()"><i class="fa-solid fa-diagram-predecessor me-2"></i> Add Subtarefa</button>
-                        </div>
-                    </div>
-               </div>
-               <div class="row">
-                <div class="col px-5">
-                    
                 </div>
-               </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button id="btnEditarTarefa" type="button" class="btn btn-primary me-auto" onclick=""  data-bs-dismiss="modal" style="color: white;">Salvar mudanças</button>
+                </div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-              <button id="btnEditarTarefa" type="button" class="btn btn-primary me-auto" onclick=""  data-bs-dismiss="modal" style="color: white;">Salvar mudanças</button>
             </div>
-          </div>
         </div>
-    </div>
-      
         
-{% endblock %}
-{% block scripts %}
-<script>
-class Kanban {
-    constructor(boardId, modalId, csrfToken) {
-        this.board = document.getElementById(boardId);
-        this.modal = new bootstrap.Modal(document.getElementById(modalId));
-        this.csrfToken = csrfToken;
-        this.activeCard = null;
-        this.draggedCard = null;
-        this.draggedColumn = null;
-        this.listColumns = [];
-        this.listCards = [];
-    }
-
-    logActivity(activity) {
-        console.log(`Activity: ${activity}`);
-    }
-
-    createColumn(projectId) {
-        fetch('/projetos/api/criar-coluna/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': this.csrfToken
-            },
-            body: JSON.stringify({ nome: 'Nova coluna', projeto_id: projectId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 200) {
-                this.addColumn(data.coluna.id, data.coluna.nome);
-            } else {
-                console.error('Erro ao criar coluna:', data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Erro na requisição:', error);
-        });
-    }
-
-    addColumn(id, nome, ordem) {
-        const column = new Column(id, nome, ordem, this);
-        this.board.appendChild(column.element);
-        this.logActivity(`Added new column: ${id}`);
-        this.listColumns.push(column);
-    }
-
-    createCard(columnId) {
-        fetch('/projetos/api/criar-card/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': this.csrfToken
-            },
-            body: JSON.stringify({ nome: 'Nova tarefa', fase_id: columnId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 200) {
-                this.addCard(data.card.column_id, data.card.id, data.card.nome);
-            } else {
-                console.error('Erro ao criar card:', data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Erro na requisição:', error);
-        });
-    }
-    // constructor(id, tarefa, descricao, completed, dt_inicio, dt_fim, prioridade, kanban, anexo) {
-    addCard(columnId, cardId, tarefa, descricao =  '', completed = false, dt_inicio = '', dt_fim = '', prioridade = '', anexo = '') {
-        const column = document.querySelector(`.column[data-id="${columnId}"]`);
-        if (column) {
-            const card = new Card(cardId, tarefa, descricao, completed, dt_inicio, dt_fim, prioridade, this, anexo);
-            column.querySelector('.card-container').appendChild(card.element);
-            this.logActivity(`Added new card: ${cardId} in column: ${columnId}`);
-            this.listCards.push(card);
-        }
-    }
-}
-
-class Column {
-    constructor(id, nome, ordem, kanban) {
-        this.id = id;
-        this.nome = nome;
-        this.ordem = ordem;
-        this.kanban = kanban;
-        this.draggingOver;
-        this.element = this.createElement();
-    }
-
-    createElement() {
-        const column = document.createElement('div');
-        column.className = 'column';
-        column.dataset.id = this.id;
-        column.dataset.ordem = this.ordem;
-
-        column.innerHTML = `
-            <div class="column-header">
-                <span class="drag-handle" draggable="true">☰</span>
-                <h3 contenteditable="true">${this.nome}</h3>
-                <button onclick="kanban.createCard('${this.id}')"><i class="fa-solid fa-circle-plus"></i></button>
-            </div>
-            <div class="card-container" ondragover="event.preventDefault()" ondrop="kanban.dropCard(event)"></div>
-        `;
-
-        // const dragHandle = column.querySelector('.drag-handle');
-        // dragHandle.addEventListener('dragstart', (e) => {
-        //     this.kanban.draggedColumn = column;
-        //     e.dataTransfer.setData('text/plain', '');
-        // });
-
-        // column.addEventListener('dragover', (e) => {
-        //     e.preventDefault();
-        //     const draggingOver = document.elementFromPoint(e.clientX, e.clientY);
-
-        //     if (draggingOver && draggingOver.classList.contains('column') && this.kanban.draggedColumn) {
-        //         this.draggingOver = draggingOver.nextSibling;
-        //         console.log(this.id)
-        //         console.log(this.draggingOver.dataset.id)
-        //         const board = draggingOver.parentNode;
-        //         board.insertBefore(this.kanban.draggedColumn, draggingOver.nextSibling);
-        //     }
-        // });
-
-        // dragHandle.addEventListener('dragend', () => {
-        //     console.log(this.id)
-        //     console.log(this.kanban.draggedColumn);
-        //     console.log(this.draggingOver);
-        //     this.kanban.draggedColumn = null;            
-        // });        
-
-        let initialOrder = null; // Variável para armazenar a ordem inicial da coluna
-
-        const dragHandle = column.querySelector('.drag-handle');
-
-        dragHandle.addEventListener('dragstart', (e) => {
-            this.kanban.draggedColumn = column;
-            initialOrder = parseInt(this.kanban.draggedColumn.dataset.ordem, 10); // Armazena a ordem inicial
-            e.dataTransfer.setData('text/plain', ''); // Necessário para Firefox
-        });
-
-        column.addEventListener('dragover', (e) => {
-            e.preventDefault();
-
-            const draggingOver = document.elementFromPoint(e.clientX, e.clientY)?.closest('.column');
-
-            if (draggingOver && draggingOver !== this.kanban.draggedColumn) {
-                const board = draggingOver.parentNode;
-
-                const draggedOrder = parseInt(this.kanban.draggedColumn.dataset.ordem, 10);
-                const overOrder = parseInt(draggingOver.dataset.ordem, 10);
-
-                this.draggingOver = draggingOver;
-
-                // Ajustar a ordem das colunas
-                if (draggedOrder < overOrder) {
-                    board.insertBefore(this.kanban.draggedColumn, draggingOver.nextSibling);
-                } else {
-                    board.insertBefore(this.kanban.draggedColumn, draggingOver);
-                }
-
-                // Atualiza a ordem da coluna arrastada para refletir a nova posição
-                atualizarOrdemColunas(board);
-            }
-        });
-
-        dragHandle.addEventListener('dragend', () => {
-            console.log(`Finalizou movimentação. Coluna ID: ${this.kanban.draggedColumn.dataset.id}`);
             
-            const finalOrder = parseInt(this.kanban.draggedColumn.dataset.ordem, 10); // Obtém a nova ordem
+    {% endblock %}
+    {% block scripts %}
+    <script>
+    class Kanban {
+        constructor(boardId, modalId, csrfToken) {
+            this.board = document.getElementById(boardId);
+            this.modal = new bootstrap.Modal(document.getElementById(modalId));
+            this.csrfToken = csrfToken;
+            this.activeCard = null;
+            this.draggedCard = null;
+            this.draggedColumn = null;
+            this.listColumns = [];
+            this.listCards = [];
+        }
 
-            console.log(`Ordem inicial: ${initialOrder}, Ordem final: ${finalOrder}`);
+        logActivity(activity) {
+            console.log(`Activity: ${activity}`);
+        }
 
-            // Verifica se a ordem mudou
-            if (initialOrder !== finalOrder) {
-                console.log("A ordem foi alterada!");
+        createColumn(projectId) {
+            fetch('/projetos/api/criar-coluna/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.csrfToken
+                },
+                body: JSON.stringify({ nome: 'Nova coluna', projeto_id: projectId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 200) {
+                    this.addColumn(data.coluna.id, data.coluna.nome);
+                } else {
+                    console.error('Erro ao criar coluna:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
+        }
 
-                // Enviar para o banco a mudança da posição (exemplo de envio)
-                enviarMudancaParaOBanco({
-                    id: this.kanban.draggedColumn.dataset.id,
-                    ordemAntiga: initialOrder,
-                    novaOrdem: finalOrder
-                }, this.kanban.csrfToken);
-            } else {
-                console.log("A ordem não mudou.");
+        addColumn(id, nome, ordem) {
+            const column = new Column(id, nome, ordem, this);
+            this.board.appendChild(column.element);
+            this.logActivity(`Added new column: ${id}`);
+            this.listColumns.push(column);
+        }
+
+        createCard(columnId) {
+            fetch('/projetos/api/criar-card/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.csrfToken
+                },
+                body: JSON.stringify({ nome: 'Nova tarefa', fase_id: columnId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 200) {
+                    this.addCard(data.card.column_id, data.card.id, data.card.nome);
+                } else {
+                    console.error('Erro ao criar card:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
+        }
+        // constructor(id, tarefa, descricao, completed, dt_inicio, dt_fim, prioridade, kanban, anexo) {
+        addCard(columnId, cardId, tarefa, descricao =  '', completed = false, dt_inicio = '', dt_fim = '', prioridade = '', atribuicao = '', anexo = '') {
+            const column = document.querySelector(`.column[data-id="${columnId}"]`);
+            if (column) {
+                const card = new Card(cardId, tarefa, descricao, completed, dt_inicio, dt_fim, prioridade, atribuicao ,this, anexo);
+                column.querySelector('.card-container').appendChild(card.element);
+                this.logActivity(`Added new card: ${cardId} in column: ${columnId}`);
+                this.listCards.push(card);
+            }
+        }
+    }
+
+    class Column {
+        constructor(id, nome, ordem, kanban) {
+            this.id = id;
+            this.nome = nome;
+            this.ordem = ordem;
+            this.kanban = kanban;
+            this.draggingOver;
+            this.element = this.createElement();
+        }
+
+        createElement() {
+            const column = document.createElement('div');
+            column.className = 'column';
+            column.dataset.id = this.id;
+            column.dataset.ordem = this.ordem;
+
+            column.innerHTML = `
+                <div class="column-header">
+                    <span class="drag-handle" draggable="true">☰</span>
+                    <h3 contenteditable="true">${this.nome}</h3>
+                    <button onclick="kanban.createCard('${this.id}')"><i class="fa-solid fa-circle-plus"></i></button>
+                </div>
+                <div class="card-container" ondragover="event.preventDefault()" ondrop="kanban.dropCard(event)"></div>
+            `;
+
+            // const dragHandle = column.querySelector('.drag-handle');
+            // dragHandle.addEventListener('dragstart', (e) => {
+            //     this.kanban.draggedColumn = column;
+            //     e.dataTransfer.setData('text/plain', '');
+            // });
+
+            // column.addEventListener('dragover', (e) => {
+            //     e.preventDefault();
+            //     const draggingOver = document.elementFromPoint(e.clientX, e.clientY);
+
+            //     if (draggingOver && draggingOver.classList.contains('column') && this.kanban.draggedColumn) {
+            //         this.draggingOver = draggingOver.nextSibling;
+            //         console.log(this.id)
+            //         console.log(this.draggingOver.dataset.id)
+            //         const board = draggingOver.parentNode;
+            //         board.insertBefore(this.kanban.draggedColumn, draggingOver.nextSibling);
+            //     }
+            // });
+
+            // dragHandle.addEventListener('dragend', () => {
+            //     console.log(this.id)
+            //     console.log(this.kanban.draggedColumn);
+            //     console.log(this.draggingOver);
+            //     this.kanban.draggedColumn = null;            
+            // });        
+
+            let initialOrder = null; // Variável para armazenar a ordem inicial da coluna
+
+            const dragHandle = column.querySelector('.drag-handle');
+
+            dragHandle.addEventListener('dragstart', (e) => {
+                this.kanban.draggedColumn = column;
+                initialOrder = parseInt(this.kanban.draggedColumn.dataset.ordem, 10); // Armazena a ordem inicial
+                e.dataTransfer.setData('text/plain', ''); // Necessário para Firefox
+            });
+
+            column.addEventListener('dragover', (e) => {
+                e.preventDefault();
+
+                const draggingOver = document.elementFromPoint(e.clientX, e.clientY)?.closest('.column');
+
+                if (draggingOver && draggingOver !== this.kanban.draggedColumn) {
+                    const board = draggingOver.parentNode;
+
+                    const draggedOrder = parseInt(this.kanban.draggedColumn.dataset.ordem, 10);
+                    const overOrder = parseInt(draggingOver.dataset.ordem, 10);
+
+                    this.draggingOver = draggingOver;
+
+                    // Ajustar a ordem das colunas
+                    if (draggedOrder < overOrder) {
+                        board.insertBefore(this.kanban.draggedColumn, draggingOver.nextSibling);
+                    } else {
+                        board.insertBefore(this.kanban.draggedColumn, draggingOver);
+                    }
+
+                    // Atualiza a ordem da coluna arrastada para refletir a nova posição
+                    atualizarOrdemColunas(board);
+                }
+            });
+
+            dragHandle.addEventListener('dragend', () => {
+                console.log(`Finalizou movimentação. Coluna ID: ${this.kanban.draggedColumn.dataset.id}`);
+                
+                const finalOrder = parseInt(this.kanban.draggedColumn.dataset.ordem, 10); // Obtém a nova ordem
+
+                console.log(`Ordem inicial: ${initialOrder}, Ordem final: ${finalOrder}`);
+
+                // Verifica se a ordem mudou
+                if (initialOrder !== finalOrder) {
+                    console.log("A ordem foi alterada!");
+
+                    // Enviar para o banco a mudança da posição (exemplo de envio)
+                    enviarMudancaParaOBanco({
+                        id: this.kanban.draggedColumn.dataset.id,
+                        ordemAntiga: initialOrder,
+                        novaOrdem: finalOrder
+                    }, this.kanban.csrfToken);
+                } else {
+                    console.log("A ordem não mudou.");
+                }
+
+                this.kanban.draggedColumn = null;
+                this.draggingOver = null;
+                initialOrder = null; // Limpa a variável para a próxima movimentação
+            });
+
+            // Função fictícia para enviar a mudança para o banco
+            function enviarMudancaParaOBanco(mudanca, csrfToken) {
+                // Aqui você pode fazer uma requisição para o seu backend
+                
+                const columns = board.querySelectorAll('.column');
+                const columnsData = Array.from(columns).map(column => ({
+                    id: column.dataset.id,
+                    ordem: column.dataset.ordem
+                }));
+                console.log(columnsData);
+
+                fetch('/projetos/api/mover-coluna/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify(columnsData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 200) {
+                        console.log(data.message);
+                    } else {
+                        console.error('Erro ao mover coluna:', data.error);
+                    }
+                })
             }
 
-            this.kanban.draggedColumn = null;
-            this.draggingOver = null;
-            initialOrder = null; // Limpa a variável para a próxima movimentação
-        });
+            // Função para atualizar a ordem das colunas após a movimentação
+            function atualizarOrdemColunas(board) {
+                let ordem = 1; // A ordem começa em 1
+                board.querySelectorAll('.column').forEach((coluna) => {
+                    coluna.dataset.ordem = ordem; // Atualiza a ordem da coluna
+                    ordem++; // Incrementa a ordem
+                });
+            }
 
-        // Função fictícia para enviar a mudança para o banco
-        function enviarMudancaParaOBanco(mudanca, csrfToken) {
-            // Aqui você pode fazer uma requisição para o seu backend
+            const h3Element = column.querySelector('h3');
+            h3Element.addEventListener("blur", (event) => {
+                fetch('/projetos/api/editar-nome-coluna/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.kanban.csrfToken
+                    },
+                    body: JSON.stringify({ column_id: this.id, nome: event.target.textContent })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 200) {
+                        this.nome = data.coluna.nome;
+                        this.kanban.logActivity(`Edited column: ${this.id}`);
+                    } else {
+                        console.error('Erro ao editar coluna:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                });
+            });
+            return column;
+        }
+    }
+
+    class Card {
+        constructor(id, tarefa, descricao, completed, dt_inicio, dt_fim, prioridade, atribuicao, kanban, anexo) {
+            this.id = id;
+            this.tarefa = tarefa;
+            this.descricao = descricao;        
+            this.completed = completed;
+            this.dt_inicio = dt_inicio;
+            this.dt_fim = dt_fim;
+            this.prioridade = prioridade;
+            this.atribuicao = atribuicao;
+            this.kanban = kanban;
+            this.anexo_url = anexo;
+            this.element = this.createElement();
+        }
+
+        createElement() {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.draggable = true;
+            card.dataset.id = this.id;
+            const span = `<span id='card-title-${this.id}'>${this.tarefa}</span>`
+            card.innerHTML = `
+                <input type="checkbox" ${this.completed ? 'checked' : ''}>
+                ${span}
+                <button>x</button>
+            `;
+
+            card.addEventListener('click', () => {
+                this.openModalCard(this);
+            });
+            card.querySelector('input').addEventListener('click', (e) => {
+                e.stopPropagation(); 
+            });
+            card.querySelector('input').addEventListener('change', (e) => {
+                e.stopPropagation(); 
+                fetch('/projetos/api/check-card/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.kanban.csrfToken
+                    },
+                    body: JSON.stringify({ card_id: this.id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 200) {
+                        this.completed = data.concluida;
+                    } else {
+                        console.error('Erro ao deletar card:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                });            
+            });
+            card.querySelector('button').addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                this.deleteCard();
+            });
+
+            card.addEventListener('dragstart', () => {
+                this.kanban.draggedCard = card;
+            }); 
+
+            card.addEventListener('dragend', () => {
+                this.kanban.draggedCard = null;
+            });
+
+            return card;
+        }
+        openModalCard(e){
+            console.log(this)
+            this.kanban.modal.show();
+            document.getElementById('card-title').value = this.tarefa;
+            document.getElementById('card-description').value = this.descricao;
+            document.getElementById('data_inicio').value = this.dt_inicio;
+            document.getElementById('data_fim').value = this.dt_fim;
+            document.getElementById('prioridade').value = this.prioridade;
+            document.getElementById('atribuicao').value = this.atribuicao;            
+            if (this.anexo_url){                
+                document.getElementById('listAnexo').innerHTML = `<a href="${this.anexo_url}">${this.anexo_url}</a>`;        
+            }        
+            document.getElementById('btnEditarTarefa').onclick = (() => {
+                this.editarCard(e);
+            });
+            document.getElementById('btnAnexar').onclick = (() => {
+                this.enviarAnexo(this.id);
+                
+            });
+        }
+        enviarAnexo(id) {
+            const form = document.getElementById('formAnexo'); // Pega o formulário pelo ID
+            const formData = new FormData(form); // Cria o FormData com o conteúdo do formulário
+            formData.append('id', id); // Adiciona o ID do card ao FormData
+            fetch('/projetos/api/enviar-anexo/', {
+                method: 'POST',
+                body: formData, // Envia o FormData no corpo da requisição
+                headers: {
+                    'X-CSRFToken': this.kanban.csrfToken
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 200) {
+                    document.getElementById('listAnexo').innerHTML = `<a href="${data.anexo_url}">${data.anexo}</a>`;
+                    form.reset();
+                } else {
+                    console.error('Erro ao enviar o anexo:', data.message);
+                }
+            })
+            .catch(error => console.error('Erro de rede:', error));
+        }
+
+        deleteCard() {
+            if (confirm(`Você tem certeza que deseja excluir a tarefa ${this.tarefa}?`)) {
+                fetch('/projetos/api/deletar-card/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.kanban.csrfToken
+                    },
+                    body: JSON.stringify({ card_id: this.id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 200) {
+                        this.element.remove();
+                        this.kanban.listCards = this.kanban.listCards.filter(card => card.id !== this.id);
+                        this.kanban.logActivity(`Deleted card: ${this.id}`);
+                    } else {
+                        console.error('Erro ao deletar card:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                });
+            }
+        }
+        editarCard(e){
+            fetch('/projetos/api/editar-tarefa/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.kanban.csrfToken
+                    },
+                    body: JSON.stringify({ card_id: this.id,
+                        nome: document.getElementById('card-title').value,
+                        descricao: document.getElementById('card-description').value,
+                        data_inicio: document.getElementById('data_inicio').value,
+                        data_fim: document.getElementById('data_fim').value,
+                        atribuicao: document.getElementById('atribuicao').value,
+                        prioridade: document.getElementById('prioridade').value
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 200) {
+                        console.log(data)
+                        this.tarefa = data.card.nome;
+                        document.getElementById(`card-title-${data.card.id}`).textContent = data.card.nome;
+                        this.descricao = data.card.descricao;
+                        this.dt_inicio = data.card.data_inicio;
+                        this.dt_fim = data.card.data_fim;
+                        this.prioridade = data.card.prioridade;
+                        this.atribuicao = data.card.atribuicao;
+                        this.element.querySelector('span').textContent = this.tarefa;
+                        this.kanban.logActivity(`Edited card: ${this.id}`);
+                    } else {
+                        console.error('Erro ao deletar card:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                });
+        }
+        updateColumn(originalColumnId, newColumnId){
+            console.log(`Card: ${this.id} changed from column: ${originalColumnId} to column: ${newColumnId}`);
+            fetch('/projetos/api/mover-card/column/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.kanban.csrfToken
+                    },
+                    body: JSON.stringify({ card_id: this.id, original_column_id: originalColumnId, new_column_id: newColumnId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 200) {
+                        console.log(data)
+
+                    } else {
+                        console.error('Erro ao deletar card:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                });
+
+        }
+        updateLine(originalIndex, newIndex, newColumnId){
+            console.log(`Card: ${this.id} moved from position: ${originalIndex} to position: ${newIndex} in column: ${newColumnId}`);
+            fetch('/projetos/api/mover-card/line/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.kanban.csrfToken
+                    },
+                    body: JSON.stringify({ card_id: this.id, original_index: originalIndex, new_index: newIndex, new_column_id: newColumnId})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 200) {
+                        console.log(data)
+
+                    } else {
+                        console.error('Erro ao deletar card:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                });
+        }
+    }
+
+    Kanban.prototype.dropCard = function(event) {
+        event.preventDefault();
+        const targetColumn = event.currentTarget;
+        if (this.draggedCard && targetColumn) {
+            const closestCard = document.elementFromPoint(event.clientX, event.clientY).closest('.card');
+            const originalColumnId = this.draggedCard.closest('.column').dataset.id;
+            const newColumnId = targetColumn.closest('.column').dataset.id;
+            const originalIndex = Array.from(this.draggedCard.parentNode.children).indexOf(this.draggedCard);
+
+            if (closestCard && closestCard !== this.draggedCard) {
+                targetColumn.insertBefore(this.draggedCard, closestCard);
+            } else {
+                targetColumn.appendChild(this.draggedCard);
+            }
+
+            const newIndex = Array.from(this.draggedCard.parentNode.children).indexOf(this.draggedCard);
             
-            const columns = board.querySelectorAll('.column');
-            const columnsData = Array.from(columns).map(column => ({
-                id: column.dataset.id,
-                ordem: column.dataset.ordem
-            }));
-            console.log(columnsData);
+            if (originalColumnId !== newColumnId) {            
+                card = this.listCards.find(card => card.id == this.draggedCard.dataset.id);
+                console.log(card);
+                card.updateColumn(originalColumnId, newColumnId);
+            }
 
-            fetch('/projetos/api/mover-coluna/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify(columnsData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 200) {
-                    console.log(data.message);
-                } else {
-                    console.error('Erro ao mover coluna:', data.error);
-                }
-            })
-        }
-
-        // Função para atualizar a ordem das colunas após a movimentação
-        function atualizarOrdemColunas(board) {
-            let ordem = 1; // A ordem começa em 1
-            board.querySelectorAll('.column').forEach((coluna) => {
-                coluna.dataset.ordem = ordem; // Atualiza a ordem da coluna
-                ordem++; // Incrementa a ordem
-            });
-        }
-
-        const h3Element = column.querySelector('h3');
-        h3Element.addEventListener("blur", (event) => {
-            fetch('/projetos/api/editar-nome-coluna/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': this.kanban.csrfToken
-                },
-                body: JSON.stringify({ column_id: this.id, nome: event.target.textContent })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 200) {
-                    this.nome = data.coluna.nome;
-                    this.kanban.logActivity(`Edited column: ${this.id}`);
-                } else {
-                    console.error('Erro ao editar coluna:', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Erro na requisição:', error);
-            });
-        });
-        return column;
-    }
-}
-
-class Card {
-    constructor(id, tarefa, descricao, completed, dt_inicio, dt_fim, prioridade, kanban, anexo) {
-        this.id = id;
-        this.tarefa = tarefa;
-        this.descricao = descricao;        
-        this.completed = completed;
-        this.dt_inicio = dt_inicio;
-        this.dt_fim = dt_fim;
-        this.prioridade = prioridade;
-        this.kanban = kanban;
-        this.anexo_url = anexo;
-        this.element = this.createElement();
-    }
-
-    createElement() {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.draggable = true;
-        card.dataset.id = this.id;
-        const span = `<span id='card-title-${this.id}'>${this.tarefa}</span>`
-        card.innerHTML = `
-            <input type="checkbox" ${this.completed ? 'checked' : ''}>
-            ${span}
-            <button>x</button>
-        `;
-
-        card.addEventListener('click', () => {
-            this.openModalCard(this);
-        });
-        card.querySelector('input').addEventListener('click', (e) => {
-            e.stopPropagation(); 
-        });
-        card.querySelector('input').addEventListener('change', (e) => {
-            e.stopPropagation(); 
-            fetch('/projetos/api/check-card/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': this.kanban.csrfToken
-                },
-                body: JSON.stringify({ card_id: this.id })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 200) {
-                    this.completed = data.concluida;
-                } else {
-                    console.error('Erro ao deletar card:', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Erro na requisição:', error);
-            });            
-        });
-        card.querySelector('button').addEventListener('click', (e) => {
-            e.stopPropagation(); 
-            this.deleteCard();
-        });
-
-        card.addEventListener('dragstart', () => {
-            this.kanban.draggedCard = card;
-        }); 
-
-        card.addEventListener('dragend', () => {
-            this.kanban.draggedCard = null;
-        });
-
-        return card;
-    }
-    openModalCard(e){
-        console.log(this)
-        this.kanban.modal.show();
-        document.getElementById('card-title').value = this.tarefa;
-        document.getElementById('card-description').value = this.descricao;
-        document.getElementById('data_inicio').value = this.dt_inicio;
-        document.getElementById('data_fim').value = this.dt_fim;
-        if (this.anexo_url){
-            document.getElementById('listAnexo').innerHTML = `<a href="${this.anexo_url}">${this.anexo_url}</a>`;        
-        }        
-        document.getElementById('btnEditarTarefa').onclick = (() => {
-            this.editarCard(e);
-        });
-    }
-    deleteCard() {
-        if (confirm(`Você tem certeza que deseja excluir a tarefa ${this.tarefa}?`)) {
-            fetch('/projetos/api/deletar-card/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': this.kanban.csrfToken
-                },
-                body: JSON.stringify({ card_id: this.id })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 200) {
-                    this.element.remove();
-                    this.kanban.listCards = this.kanban.listCards.filter(card => card.id !== this.id);
-                    this.kanban.logActivity(`Deleted card: ${this.id}`);
-                } else {
-                    console.error('Erro ao deletar card:', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Erro na requisição:', error);
-            });
+            if (originalIndex !== newIndex) {
+                card = this.listCards.find(card => card.id == this.draggedCard.dataset.id);
+                card.updateLine(originalIndex, newIndex, newColumnId);            
+            }
         }
     }
-    editarCard(e){
-        fetch('/projetos/api/editar-tarefa/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': this.kanban.csrfToken
-                },
-                body: JSON.stringify({ card_id: this.id,
-                    nome: document.getElementById('card-title').value,
-                    descricao: document.getElementById('card-description').value,
-                    data_inicio: document.getElementById('data_inicio').value,
-                    data_fim: document.getElementById('data_fim').value,
-                    prioridade: document.getElementById('card-assignee').value
-                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 200) {
-                    console.log(data)
-                    this.tarefa = data.card.nome;
-                    document.getElementById(`card-title-${data.card.id}`).textContent = data.card.nome;
-                    this.descricao = data.card.descricao;
-                    this.dt_inicio = data.card.data_inicio;
-                    this.dt_fim = data.card.data_fim;
-                    this.prioridade = data.card.prioridade;
-                    this.element.querySelector('span').textContent = this.tarefa;
-                    this.kanban.logActivity(`Edited card: ${this.id}`);
-                } else {
-                    console.error('Erro ao deletar card:', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Erro na requisição:', error);
-            });
-    }
-    updateColumn(originalColumnId, newColumnId){
-        console.log(`Card: ${this.id} changed from column: ${originalColumnId} to column: ${newColumnId}`);
-        fetch('/projetos/api/mover-card/column/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': this.kanban.csrfToken
-                },
-                body: JSON.stringify({ card_id: this.id, original_column_id: originalColumnId, new_column_id: newColumnId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 200) {
-                    console.log(data)
-
-                } else {
-                    console.error('Erro ao deletar card:', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Erro na requisição:', error);
-            });
-
-    }
-    updateLine(originalIndex, newIndex, newColumnId){
-        console.log(`Card: ${this.id} moved from position: ${originalIndex} to position: ${newIndex} in column: ${newColumnId}`);
-        fetch('/projetos/api/mover-card/line/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': this.kanban.csrfToken
-                },
-                body: JSON.stringify({ card_id: this.id, original_index: originalIndex, new_index: newIndex, new_column_id: newColumnId})
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 200) {
-                    console.log(data)
-
-                } else {
-                    console.error('Erro ao deletar card:', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Erro na requisição:', error);
-            });
-    }
-}
-
-Kanban.prototype.dropCard = function(event) {
-    event.preventDefault();
-    const targetColumn = event.currentTarget;
-    if (this.draggedCard && targetColumn) {
-        const closestCard = document.elementFromPoint(event.clientX, event.clientY).closest('.card');
-        const originalColumnId = this.draggedCard.closest('.column').dataset.id;
-        const newColumnId = targetColumn.closest('.column').dataset.id;
-        const originalIndex = Array.from(this.draggedCard.parentNode.children).indexOf(this.draggedCard);
-
-        if (closestCard && closestCard !== this.draggedCard) {
-            targetColumn.insertBefore(this.draggedCard, closestCard);
-        } else {
-            targetColumn.appendChild(this.draggedCard);
-        }
-
-        const newIndex = Array.from(this.draggedCard.parentNode.children).indexOf(this.draggedCard);
-        
-        if (originalColumnId !== newColumnId) {            
-            card = this.listCards.find(card => card.id == this.draggedCard.dataset.id);
-            console.log(card);
-            card.updateColumn(originalColumnId, newColumnId);
-        }
-
-        if (originalIndex !== newIndex) {
-            card = this.listCards.find(card => card.id == this.draggedCard.dataset.id);
-            card.updateLine(originalIndex, newIndex, newColumnId);            
-        }
-    }
-}
 
 
 
-// Inicialização
-const kanban = new Kanban('board', 'tarefaModal', '{{ csrf_token }}');
-{% for fase in fases %}
-    kanban.addColumn({{ fase.id }}, '{{ fase.nome }}', {{ fase.ordem }});
-    {% for tarefa in fase.get_tarefas %}
-        kanban.addCard({{ fase.id }}, {{ tarefa.id }}, '{{ tarefa.nome }}', '{{tarefa.descricao}}',{{ tarefa.concluido|yesno:"true,false" }}, '{{ tarefa.data_inicio|date:"Y-m-d" }}', '{{ tarefa.data_fim|date:"Y-m-d" }}', '{{ tarefa.prioridade }}', '{% if tarefa.anexo %}{{ tarefa.anexo.url }}{% endif %}');
+    // Inicialização
+    const kanban = new Kanban('board', 'tarefaModal', '{{ csrf_token }}');
+    {% for fase in fases %}
+        kanban.addColumn({{ fase.id }}, '{{ fase.nome }}', {{ fase.ordem }});
+        {% for tarefa in fase.get_tarefas %}
+            kanban.addCard({{ fase.id }}, {{ tarefa.id }}, '{{ tarefa.nome }}', '{{tarefa.descricao}}',{{ tarefa.concluido|yesno:"true,false" }}, '{{ tarefa.data_inicio|date:"Y-m-d" }}', '{{ tarefa.data_fim|date:"Y-m-d" }}', '{{ tarefa.prioridade.id }}', '{{tarefa.atribuicao.id}}','{% if tarefa.anexo %}{{ tarefa.anexo.url }}{% endif %}');
+        {% endfor %}
     {% endfor %}
-{% endfor %}
-console.log(kanban.listColumns);
-console.log(kanban.listCards);  
-</script>
-{% endblock %}
+    console.log(kanban.listColumns);
+    console.log(kanban.listCards);  
+    </script>
+    {% endblock %}
