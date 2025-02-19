@@ -916,9 +916,6 @@
         }
 
         tr.innerHTML = `
-            <td onclick="aux=1; getDetalhse(${id})" style="max-width: 28px; color: #0056b3;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"> 
-                <i class="fa-solid fa-eye"></i>
-            </td>
             <td>${nome}</td>
             <td>
                 <img class="mb-1 me-2" style="width: 18px; height: 18px;" src="/static/images/user.png" alt="">
@@ -926,10 +923,7 @@
             </td>
             <td>
                 ${icone}${dt_fim}
-            </td>
-            <td style="max-width: 300px;">
-                ${descricao}
-            </td>
+            </td>            
             ${td_status}
         `;
         table.appendChild(tr);
