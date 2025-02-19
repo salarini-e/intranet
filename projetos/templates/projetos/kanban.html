@@ -197,7 +197,13 @@
         <div class="menu">
             <h2>{{projeto.nome}}</h2>        
             <div class="ms-2" class="dropdown">
-                <button class="btn btn-primary" style="background-color: white; color: black;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-primary" onclick="kanban.createColumn({{projeto.id}})" style="background-color: white; color: black;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-square-plus me-2"></i> Coluna
+                </button>
+                <a class="btn btn-primary" style="background-color: white; color: black;" href="{% url 'projetos:index' %}">
+                    <i class="fa-solid fa-backward me-2"></i> Voltar
+                </a>
+                <!-- <button class="btn btn-primary" style="background-color: white; color: black;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-wrench me-2"></i> Configurar
                 </button>
                 <ul class="dropdown-menu">
@@ -205,13 +211,8 @@
                         <a class="dropdown-item" href="#">
                             <i class="fa-solid fa-square-plus me-2"></i> Adicionar coluna
                         </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{% url 'projetos:index' %}">
-                            <i class="fa-solid fa-backward me-2"></i> Voltar para painel
-                        </a>
-                    </li>
-                </ul>
+                    </li>                
+                </ul> -->
             </div>
         </div>
 

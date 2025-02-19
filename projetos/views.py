@@ -23,7 +23,8 @@ def kanbanboard(request, id):
     
     projeto = Projetos.objects.get(id=id)
     fases = Fases.objects.filter(projeto=projeto).order_by('ordem')
-    servidores = [servidor for grupo in projeto.grupos.all() for servidor in grupo.membros.all()]
+    servidores = [servidor for grupo in projeto.grupos.all() for servidor in grupo.membros.all()]    
+    servidores.append(projeto.responsavel)
     prioridades = Prioridade.objects.all()
 
     context = {
@@ -271,7 +272,10 @@ def api_mover_coluna(request):
 
 def api_get_grupos_projeto(request, id):
     projeto = Projetos.objects.get(id=id)
-    grupos = Grupo.objects.filter(responsavel__user = request.user)
+    grupos_responsavel = Grupo.objects.filter(responsavel__user = request.user)
+    grupos_membro = Grupo.objects.filter(membros__user__in=[request.user])
+    grupos = grupos_responsavel | grupos_membro
+    grupos = grupos.distinct()
     grupos_dict = []
     for grupo in grupos:
         grupos_dict.append({
