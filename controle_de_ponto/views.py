@@ -349,6 +349,10 @@ def menu_acertar_ponto(request):
         matricula = request.POST.get("matricula")
         data = request.POST.get("data")            
         registros = Registro.objects.filter(matricula=matricula, data_registro=data)
+        if not registros.exists():
+            messages.error(request, 'Nenhum registro encontrado.')
+            return redirect('controle_de_ponto:menu_acertar_ponto')
+
         registro = registros.first()
         print(registro)
         context = {
