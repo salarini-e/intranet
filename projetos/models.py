@@ -59,7 +59,7 @@ class Projetos(models.Model):
         if self.status == 'C':
             return '#313131'
         elif self.status == 'E':
-            return '#FCAA3D'
+            return '#1c8f1a'
         elif self.status == 'F':
             return '#00C875'
         elif self.status == 'P':
@@ -69,7 +69,7 @@ class Projetos(models.Model):
         if self.status == 'C':
             return '<i class="fa-solid fa-circle-notch me-3" style="color: #313131;"></i>'
         elif self.status == 'E':
-            return '<i class="fa-regular fa-clock me-3" style="color: #FCAA3D;"></i>'
+            return '<i class="fa-regular fa-clock me-3" style="color: #1c8f1a;"></i>'
         elif self.status == 'F':
             return ' <i class="fa-solid fa-circle-check me-lg-3" style="color: #00C875;"></i>'
         elif self.status == 'P':

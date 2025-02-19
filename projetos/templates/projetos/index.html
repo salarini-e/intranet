@@ -537,7 +537,7 @@
         getStatusColor() {
             switch (this.status) {
                 case 'C': return '#313131';
-                case 'E': return '#3dfc63';
+                case 'E': return '#1c8f1a';
                 case 'F': return '#00C875';
                 case 'P': return '#da2e48';
                 default: return '#000000'; // Cor padrão caso o status não seja reconhecido
@@ -549,7 +549,7 @@
                 case 'C':
                     return '<i class="fa-solid fa-circle-notch me-3" style="color: #313131;"></i>';
                 case 'E':
-                    return '<i class="fa-regular fa-clock me-3" style="color: #3dfc63;"></i>';
+                    return '<i class="fa-regular fa-clock me-3" style="color: #1c8f1a;"></i>';
                 case 'F':
                     return '<i class="fa-solid fa-circle-check me-lg-3" style="color: #00C875;"></i>';
                 case 'P':
@@ -905,8 +905,8 @@
             var td_status = `<td style="text-align: center; background-color: #313131; color: white; max-width: 100px;">Planejamento</td>`;
             var icone = `<i class="fa-solid fa-circle-notch me-3" style="color: #313131;"></i>`;
         }else if (status == 'E'){
-            var td_status = `<td style="text-align: center; background-color: #3dfc63; color: white; max-width: 100px;">Em andamento</td>`;
-            var icone = `<i class="fa-regular fa-clock me-3" style="color: #3dfc63;"></i>`;
+            var td_status = `<td style="text-align: center; background-color: #1c8f1a; color: white; max-width: 100px;">Em andamento</td>`;
+            var icone = `<i class="fa-regular fa-clock me-3" style="color: #1c8f1a;"></i>`;
         }else if (status == 'F'){
             var td_status = `<td style="text-align: center; background-color: #00C875;; color: white; max-width: 100px;">Finalizado</td>`;
             var icone = `<i class="fa-solid fa-circle-check me-lg-3" style="color: #00C875;"></i>`;
