@@ -1,7 +1,7 @@
 import os
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import Projetos, Fases, Tarefas, Atividades, Prioridade, Grupo
+from .models import Projetos, Fases, Tarefas, Atividades, Prioridade, Grupo, Comentarios
 from .forms import ProjetosForm
 from django.http import JsonResponse
 from instituicoes.models import Servidor
@@ -315,5 +315,28 @@ def api_enviar_anexo(request):
         card.anexo = dados['anexo']
         card.save()
         return JsonResponse({'status': 200, 'anexo': card.anexo.url, 'anexo_url': card.anexo.url})
+    
+    return JsonResponse({'status': 403, 'error': 'Método inválido'})
+
+# /projetos/api/get-projeto-comentarios/${id}/
+def api_get_projeto_comentarios(request, id):
+    projeto = Projetos.objects.get(id=id)
+    comentarios = Comentarios.objects.filter(projeto=projeto)
+    comentarios_dict = []
+    for comentario in comentarios:
+        comentarios_dict.append({
+            'nome': comentario.servidor(),            
+            'data': comentario.dt_inclusao.strftime('%d/%m/%Y'),
+            'hora': comentario.dt_inclusao.strftime('%H:%M'),
+            'comentario': comentario.descricao,            
+        })
+    return JsonResponse({'status': 200, 'comentarios': comentarios_dict})
+
+def api_enviar_comentario(request):
+    if request.method == 'POST':
+        dados = json.loads(request.body)
+        projeto = Projetos.objects.get(id=dados['projeto_id'])
+        Comentarios.objects.create(atribuicao='p', projeto=projeto, descricao=dados['comentario'], user_inclusao=request.user)
+        return JsonResponse({'status': 200, 'message': 'Comentário enviado com sucesso'})
     
     return JsonResponse({'status': 403, 'error': 'Método inválido'})

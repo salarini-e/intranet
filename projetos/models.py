@@ -232,21 +232,27 @@ class Atividades(models.Model):
 class Comentarios(models.Model):
     
     ATRIBUICAO_CHOICES = (
+        ('p', 'Projeto'),
         ('t', 'Tarefa'),
         ('a', 'Atividade'),
     )
     atribuicao = models.CharField(max_length=1, choices=ATRIBUICAO_CHOICES)
+    projeto = models.ForeignKey(Projetos, on_delete=models.CASCADE, null=True, blank=True)
     tarefa = models.ForeignKey(Tarefas, on_delete=models.CASCADE, null=True, blank=True)
     atividade = models.ForeignKey(Atividades, on_delete=models.CASCADE, null=True, blank=True)
     descricao = models.TextField()
     
     user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Usuário de inclusão')
-    dt_inclusao = models.DateField(auto_now_add=True)
+    dt_inclusao = models.DateTimeField(auto_now_add=True)
     dt_att  = models.DateField(auto_now=True)
 
     def __str__(self):
         return f"{self.descricao[:30]}..."
     
+    def servidor(self):
+        servidor=Servidor.objects.get(user=self.user_inclusao)
+        return servidor.nome.title()
+        
     class Meta:
         verbose_name_plural = "Comentários das tarefas"
         verbose_name = "Comentário da tarefa"

@@ -238,29 +238,112 @@
         </table>
        </div>
     </div>
-      
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Comentários</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <div>
-        Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+        <div class="d-flex w-100">
+            <button id="btnComentario" onclick="toggleComentario()" class="btn app-btn-primary py-1 ms-auto">
+                <i class="fa-regular fa-square-plus me-2"></i>Novo
+            </button>
         </div>
-        <div class="dropdown mt-3">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-            Dropdown button
-        </button>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-        </ul>
+        <div id="divComentario" style="display: none;">
+            <div class="form-floating mt-3">
+                <input type="hidden" name="comentario_projeto_id" id="comentario_projeto_id">
+                <textarea class="form-control" id="id_comentario" name="comentario"></textarea>
+                <label for="floatingTextarea">Novo comentário</label>
+            </div>
+            <div class="d-flex w-100 mt-2">                
+                <button class="btn btn-dark ms-auto" onclick="toggleComentario()">Cancelar</button>
+                <button class="btn app-btn-primary ms-2" onclick="postComentario()">Enviar</button>                
+            </div>
         </div>
+        <div id="divComentarios">
+            <div class="mt-3" style="padding: 1px 15px; background-color: rgba(128, 128, 128, 0.096); border-radius: 8px;">
+                <p class="mb-0 pb-0" style="line-height: auto;"><strong>Luis Eduardo Cordeiro Salarini</strong></p>
+                <p class="my-0 py-0" style="line-height: auto;">
+                    <small style="color: #505050;"><strong>19/02/2025 <span class="ms-3">13:44</span></strong></small>
+                </p>
+                <p class="mt-2 pt-0" style="line-height: auto;">Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.</p>        
+            </div>
+            <div class="mt-3" style="padding: 1px 15px; background-color: rgba(128, 128, 128, 0.096); border-radius: 8px;">
+                <p class="mb-0 pb-0" style="line-height: auto;"><strong>Luis Eduardo Cordeiro Salarini</strong></p>
+                <p class="my-0 py-0" style="line-height: auto;">
+                    <small style="color: #505050;"><strong>19/02/2025 <span class="ms-3">13:44</span></strong></small>
+                </p>
+                <p class="mt-2 pt-0" style="line-height: auto;">Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.</p>        
+            </div>
+        </div>
+       
     </div>
     </div>
-     
+     <script>
+        function toggleComentario(){
+            let divComentario = document.getElementById('divComentario');
+            let btnComentario = document.getElementById('btnComentario');
+            if (divComentario.style.display == 'none'){
+                divComentario.style.display = 'block';
+                btnComentario.style.display = 'none';
+
+            }else{
+                divComentario.style.display = 'none';
+                btnComentario.style.display = 'block';
+            }
+        }
+        function postComentario(){
+            let projeto_id = document.getElementById('comentario_projeto_id').value;
+            let comentario = document.getElementById('id_comentario').value;
+
+            fetch('/projetos/api/enviar-comentario/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+                },
+                body: JSON.stringify({
+                    'projeto_id': projeto_id,
+                    'comentario': comentario
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 200) {
+                    get_projeto_comentarios(projeto_id);
+                    toggleComentario();
+                }
+            })
+            .catch(error => console.error('Erro ao enviar comentário:', error));            
+        }
+        function get_projeto_comentarios(id){
+            document.getElementById('comentario_projeto_id').value = id;
+            document.getElementById('id_comentario').value = '';            
+
+            fetch(`/projetos/api/get-projeto-comentarios/${id}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 200) {
+                        data.comentarios.forEach(comentario => {
+                            addComentario(comentario.nome, comentario.data, comentario.hora, comentario.comentario);
+                        });
+                    }
+                });
+        }
+        function addComentario(nome, data, hora, comentario){
+            let divComentarios = document.getElementById('divComentarios');
+            novoComentario = `
+                <div class="mt-3" style="padding: 1px 15px; background-color: rgba(128, 128, 128, 0.096); border-radius: 8px;">
+                    <p class="mb-0 pb-0" style="line-height: auto;"><strong>${nome}</strong></p>
+                    <p class="my-0 py-0" style="line-height: auto;">
+                        <small style="color: #505050;"><strong>${data} <span class="ms-3">${hora}</span></strong></small>
+                    </p>
+                    <p class="mt-2 pt-0" style="line-height: auto;">${comentario}</p>        
+                </div>
+            `;
+            divComentarios.innerHTML = novoComentario + divComentarios.innerHTML;
+        }
+     </script>
 <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -770,7 +853,7 @@
                             <div class="col pe-0 menudetalhes" style="padding-bottom: 20px;">                                
                                 <a href='/projetos/${id}/board/' class="btn btn-primary"><i class="fa-solid fa-eye me-2"></i>Visualizar</a>
                                 <button class="btn btn-3" data-bs-toggle="modal" data-bs-target="#groupsProjetoModal" onclick="console.log(get_grupos_projeto(${id}))"><i class="fa-solid fa-people-line me-2"></i></i>Grupos</button>
-                                <button class="btn btn-3"><i class="fa-solid fa-comment me-2"></i>Comentarios</button>
+                                <button class="btn btn-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" onclick="get_projeto_comentarios(${id})"><i class="fa-solid fa-comment me-2"></i>Comentários</button>
                                 <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editarProjetoModal" onclick="getProjetoInfo(${id})"><i class="fa-solid fa-file-pen me-2"></i>Editar</button>
                             </div
                         </div>
