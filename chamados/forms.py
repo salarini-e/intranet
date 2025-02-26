@@ -115,7 +115,7 @@ class CriarChamadoForm(forms.ModelForm):
         fields = [
             'requisitante', 'assunto', 'secretaria', 
             'endereco', 'telefone', 'tipo', 'descricao', 
-            'user_inclusao', 'anexo'
+            'user_inclusao', 'anexo', 'criado_pelo_servidor'
         ]
         widgets = {                                    
             # 'setor': forms.Select(attrs={'class': 'form-select'}),
@@ -129,6 +129,7 @@ class CriarChamadoForm(forms.ModelForm):
             'descricao': forms.Textarea(attrs={'class': 'form-control'}),  
             'user_inclusao': forms.HiddenInput(),
             'anexo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'criado_pelo_servidor': forms.HiddenInput(),
         }
 
         labels = {

@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'noticias',
     'projetos',
     'controle_de_ponto',
+    # 'django_logwatcher',
 ]
 
 MIDDLEWARE = [

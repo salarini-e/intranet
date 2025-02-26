@@ -136,6 +136,7 @@ def criarChamado(request, sigla):
             'tipo': tipo,
             'user_inclusao': servidor.id,
             'setor_id': '-',
+            'criado_pelo_servidor': '0',
         }
     else:
         template_name = 'chamados/chamado-criar-servidor.html'
@@ -148,7 +149,8 @@ def criarChamado(request, sigla):
             'telefone': telefone_formatado,  # Usa o telefone formatado
             'tipo': tipo,
             'requisitante': servidor.id, 
-            'user_inclusao': servidor.id
+            'user_inclusao': servidor.id,
+            'criado_pelo_servidor': '1',
         }
 
     if request.POST:
@@ -1236,11 +1238,14 @@ def download_relatorio(request):
         return HttpResponseForbidden('Você não tem autorização para acessar esta página!')
     
     chamados = filtrar_chamados(request)
+    print(chamados.count())
     chamados_ids = [chamado.id for chamado in chamados]
-    
+    print(chamados_ids.count())
     chamados_queryset = Chamado.objects.filter(id__in=chamados_ids)    
+    print(chamados_queryset.count())
     # finalizados = chamados_queryset.filter(status='4')
     finalizados = chamados_queryset #gambiarra
+    print(finalizados.count())
     campos = ['n_protocolo', 
               'profissional_designado', 
               'tipo',

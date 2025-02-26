@@ -1,0 +1,31 @@
+{% extends "template.html" %}
+
+{% block main %}
+<h1 class="mb-4">Logs de Erro Apache</h1>
+
+<!-- Tabela de Logs de Erro -->
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Data e Hora</th>
+            <th>Nível</th>
+            <th>IP Cliente</th>
+            <th>Mensagem de Erro</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.timestamp|date:"d/m/Y H:i" }}</td>
+            <td>{{ log.level }}</td>
+            <td>{{ log.client_ip }}:{{ log.client_port }}</td>
+            <td>{{ log.message }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" class="text-center">Nenhum log de erro encontrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

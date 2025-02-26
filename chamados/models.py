@@ -100,6 +100,12 @@ class Chamado(models.Model):
         ('6', 'Mesclado')
     )
 
+    CRIADO_PELO_SERVIDOR_CHOICES = (
+        ('0', 'Não'),
+        ('1', 'Sim'),
+        ('2', 'Origem desconhecida') #Isso se aplica a todos os chamados criados antes da implementação do campo
+    )
+
     setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, verbose_name='Para qual setor é o chamado?', null=True, blank=True)
     secretaria = models.ForeignKey(Secretaria, on_delete=models.SET_NULL, verbose_name='Para qual setor é o chamado?', null=True)
     telefone=models.CharField(max_length=15, verbose_name='Qual telefone para contato?')
@@ -129,6 +135,7 @@ class Chamado(models.Model):
     mesclado = models.BooleanField(default=False, verbose_name='Chamado mesclado')
     motivo_cancelamento = models.TextField(verbose_name='Motivo do cancelamento', null=True, blank=True)
     pesquisa_satisfacao = models.BooleanField(verbose_name='Pesquisa de satisfação', default=False)
+    criado_pelo_servidor = models.CharField(max_length=1, choices=CRIADO_PELO_SERVIDOR_CHOICES, default='2')
     
     class Meta:
         verbose_name = 'Chamado'

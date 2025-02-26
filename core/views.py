@@ -113,3 +113,8 @@ def post_satisfacao(request):
 
 def termos_de_uso(request):
     return render(request, 'termos_de_uso.html')
+
+def swot(request):
+    if request.user.is_superuser:
+        return render(request, 'swot.html')
+    return render(request, '403.html', status=403)
