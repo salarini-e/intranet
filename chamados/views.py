@@ -1238,14 +1238,14 @@ def download_relatorio(request):
         return HttpResponseForbidden('Você não tem autorização para acessar esta página!')
     
     chamados = filtrar_chamados(request)
-    print(chamados.count())
+    # print(chamados.count())
     chamados_ids = [chamado.id for chamado in chamados]
-    print(chamados_ids.count())
+    # print(chamados_ids.count())
     chamados_queryset = Chamado.objects.filter(id__in=chamados_ids)    
-    print(chamados_queryset.count())
+    # print(chamados_queryset.count())
     # finalizados = chamados_queryset.filter(status='4')
     finalizados = chamados_queryset #gambiarra
-    print(finalizados.count())
+    # print(finalizados.count())
     campos = ['n_protocolo', 
               'profissional_designado', 
               'tipo',

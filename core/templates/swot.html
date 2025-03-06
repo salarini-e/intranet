@@ -3,26 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SWOT Analysis</title>
+    <title>Matriz SWOT</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" /> 
+    <style>
+        .col-md-6, .card {
+            height: 43vh;
+        }
+        .col-md-6, .card .card-header {
+          font-weight: 600;
+        }         
+        .col-md-6, .card .card-body {
+            overflow-y: auto;
+        }
+        .hidden {
+            display: none;
+        }
+        ul{
+            list-style-type: none;
+            padding: 0px;
+        }
+        ul li {
+            cursor: pointer;
+            padding-bottom: 10px;
+            display: flex;
+            flex-direction: column;            
+            margin: 0px;
+            padding: 5px;
+            font-weight: 500;
+        }
+        ul li span {
+            padding: 10px;
+            border-radius: 4px;     
+            text-align: justify;
+            width: 100%;     
+            font-weight: 400;
+        }
+        ul li:hover{
+            border-radius: 4px;
+        }        
+        .forca li:hover{
+            background-color: #007bff38;
+        }
+        .fraqueza li:hover{
+            background-color: #28a74538;
+        }
+        .oportunidades li:hover{
+            background-color: #ffc10738;
+        }
+        .ameacas li:hover{
+            background-color: #dc354538;
+        }        
+        .forca li span{
+            background-color: #007bff;
+            color: white;
+        }
+        .fraqueza li span{
+            background-color: #28a745;
+            color: white;
+        }
+        .oportunidades li span{
+            background-color: #ffc107;
+            color: black;
+        }
+        .ameacas li span{
+            background-color: #dc3545;
+            color: white;
+        }
+        span .disbled{
+            color: #ccc !important; 
+        }
+        .divTitle {
+            background-color: #dfe9ff;        
+            color: rgb(80, 79, 79);
+            padding-left: 10px;
+        }
+        .divTitle button{
+            background-color: #2b2c2c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 15px;
+        }
+        body{
+            background-color: #dfe9ff;
+        }
+        .divTitle button:disabled {
+            color: #ccc !important;
+            background-color: #9d9fa0 !important;
+            border-color: #ccc !important;  
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center">SWOT Analysis</h1>
-        <div class="row mt-4">
+    <div id="page1" class="container-fluid page">
+        <div class="row divTitle">
+            <div class="col d-flex">
+                <h1 class="title my-4">Aspectos Gerais</h1>
+                <span class="ml-auto my-auto mr-3">
+                    <button class="btnPrevious" onclick="previousPage()"><i class="fa-solid fa-caret-left"></i></button>
+                    <button class="btnNext" onclick="nextPage()" class="ml-3"><i class="fa-solid fa-caret-right"></i></button>
+                </span>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header bg-primary text-white">
-                        <i class="fas fa-plus-circle"></i> Strengths
+                        <i class="fas fa-plus-circle mr-1"></i> Forças
                     </div>
                     <div class="card-body">
-                        <ul>
-                            <li>Strength 1</li>
-                            <li>Strength 2</li>
-                            <li>Strength 3</li>
+                        <ul class="forca">
+                            <li onclick="toggleItem(this)">Equipe técnica<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Proatividade da equipe<br>
+                                <span class="hidden"></span>
+                            </li>                            
+                            <li onclick="toggleItem(this)">Reconhecimento interno<br>
+                                <span class="hidden"></span>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -30,13 +132,43 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header bg-success text-white">
-                        <i class="fas fa-minus-circle"></i> Weaknesses
+                        <i class="fas fa-minus-circle mr-1"></i> Fraquezas
                     </div>
                     <div class="card-body">
-                        <ul>
-                            <li>Weakness 1</li>
-                            <li>Weakness 2</li>
-                            <li>Weakness 3</li>
+                        <ul class="fraqueza">
+                            <li onclick="toggleItem(this)">A STI é vista como uma unidade de apoio, quando deveria ser vista como um parceiro estratégico<br>  
+                                <span class="hidden"></span>
+                            </li>                                                        
+                            <li onclick="toggleItem(this)">Falta de comunicação interna para a padronização de procedimentos<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Ausência de itinerário de serviços<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Quantitative insatisfatório dos cursos de capacitação de TIC<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Cultura de planejamento e métricas ainda em aceitação<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Equipe reduzida<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Pouca divulgação dos trabalhos e resultados obtidos
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Dificuldade no estabelecimento de prioridades<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Deficiência no suporte a pesquisa e desenvolvimento de novas tecnologias<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Falta de capacitação da equipe em novas tecnologias<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Inadequação dos perfis profissionais de TI no Plano de Cargos e Salários<br>
+                                <span class="hidden"></span>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -46,13 +178,25 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header bg-warning text-white">
-                        <i class="fas fa-lightbulb"></i> Opportunities
+                        <i class="fas fa-lightbulb mr-1"></i> Oportunidades
                     </div>
                     <div class="card-body">
-                        <ul>
-                            <li>Opportunity 1</li>
-                            <li>Opportunity 2</li>
-                            <li>Opportunity 3</li>
+                        <ul class="oportunidades">
+                            <li onclick="toggleItem(this)">Cumprimento do planejamento aprovado pelo PDTI vigente ou elaboração de atualizado<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Realização de capacitações em novas tecnologias
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Disponibilidade de padrões e melhores práticas de mercado em Governança de TI
+                                <br><span class="hidden">A implementação de soluções de análise de dados pode melhorar a tomada de decisões e a gestão pública. O uso de Big Data pode ser útil, por exemplo, para melhorar a gestão de recursos, otimizar a alocação de orçamento e até mesmo monitorar a eficácia de programas públicos.</span>
+                            </li>
+                            <li onclick="toggleItem(this)">Reconhecimento da TI como área estratégica na Administração Pública 
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Estabelecimento de parcerias com órgãos da APF e da iniciativa privada, visando ações sinérgicas
+                                <br><span class="hidden"></span>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -60,22 +204,310 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header bg-danger text-white">
-                        <i class="fas fa-exclamation-triangle"></i> Threats
+                        <i class="fas fa-exclamation-triangle mr-1"></i> Ameaças
                     </div>
                     <div class="card-body">
-                        <ul>
-                            <li>Threat 1</li>
-                            <li>Threat 2</li>
-                            <li>Threat 3</li>
+                        <ul class="ameacas">
+                            <li onclick="toggleItem(this)">Aumento das demandas por serviços de TI
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Ausência de protagonismo da STI como parte na gestão institucional
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Necessidade de atualização tecnológica constante
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Frequentes mudanças nas regras de negócio relacionadas às demandas de TI
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Dificuldade na captação e retenção de pessoal qualificado
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Ações criando demandas não programadas
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Riscos cada vez maiores de violação de segurança da informação
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Falta de novos recursos para investimentos em TI
+                                <br><span class="hidden"></span>
+                            </li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div id="page2" class="container-fluid page hidden">
+        <div class="row divTitle">
+            <div class="col d-flex">
+                <h1 class="title my-4">Cenário Político</h1>
+                <span class="ml-auto my-auto mr-3">
+                    <button class="btnPrevious" onclick="previousPage()"><i class="fa-solid fa-caret-left"></i></button>
+                    <button class="btnNext" onclick="nextPage()" class="ml-3"><i class="fa-solid fa-caret-right"></i></button>
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-plus-circle mr-1"></i> Forças
+                    </div>
+                    <div class="card-body">
+                        <ul class="forca">
+                            <!-- <li onclick="toggleItem(this)">Strength 1<br><span class="hidden"></span></li>
+                            <li onclick="toggleItem(this)">Strength 2<br><span class="hidden"></span></li>
+                            <li onclick="toggleItem(this)">Strength 3<br><span class="hidden"></span></li> -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <i class="fas fa-minus-circle mr-1"></i> Fraquezas
+                    </div>
+                    <div class="card-body">
+                        <ul class="fraqueza">
+                            <li onclick="toggleItem(this)">Orçamento Limitado <br>  
+                                <span class="hidden">Recursos financeiros restritos, o que pode dificultar investimentos em novas tecnologias e manutenção de sistemas.</span>
+                            </li>                            
+                            <li onclick="toggleItem(this)">Dependência de Terceirização<br><span class="hidden"></span></li>
+                            <li onclick="toggleItem(this)">Legislação e Burocracia<br><span class="hidden"></span></li>
+                            <li onclick="toggleItem(this)">Capacitação Contínua<br><span class="hidden"></span></li>
+                            <li onclick="toggleItem(this)">Falta de Plano de Carreira<br><span class="hidden"></span></li>
+                            <li onclick="toggleItem(this)">Incentivos Políticos Volúveis<br><span class="hidden"></span></li>
+                            <li onclick="toggleItem(this)">Capacitação sem Garantia de Recompensa<br><span class="hidden"></span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-warning text-white">
+                        <i class="fas fa-lightbulb mr-1"></i> Oportunidades
+                    </div>
+                    <div class="card-body">
+                        <ul class="oportunidades">
+                            <li onclick="toggleItem(this)">Engajamento Cidadão
+                                <br><span class="hidden">Criar plataformas de comunicação mais diretas e transparentes com os cidadãos, como aplicativos web móveis ou portais web, pode aumentar o engajamento da população e promover uma maior confiança na administração pública.</span>
+                            </li>
+                            <li onclick="toggleItem(this)">Crescimento do Uso de Dados e Big Data 
+                                <br><span class="hidden">A implementação de soluções de análise de dados pode melhorar a tomada de decisões e a gestão pública. O uso de Big Data pode ser útil, por exemplo, para melhorar a gestão de recursos, otimizar a alocação de orçamento e até mesmo monitorar a eficácia de programas públicos.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <i class="fas fa-exclamation-triangle mr-1"></i> Ameaças
+                    </div>
+                    <div class="card-body">
+                        <ul class="ameacas">
+                            <li onclick="toggleItem(this)">Resistência à Mudança
+                                <br><span class="hidden">A resistência por parte de servidores públicos e da população em adotar novas soluções tecnológicas pode prejudicar a implementação de inovações.</span>
+                            </li>
+                            <li onclick="toggleItem(this)">Obsolescência Tecnológica
+                                <br><span class="hidden">O risco de sistemas e equipamentos se tornarem desatualizados, impactando a eficiência e segurança das operações.</span>
+                            </li>
+                            <li onclick="toggleItem(this)">Gestão Política Instável
+                                <br><span class="hidden">Mudanças políticas podem afetar a continuidade de projetos de TI ou gerar novos desafios para a execução das estratégias tecnológicas.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <div id="page3" class="container-fluid page hidden">
+        <div class="row divTitle">
+            <div class="col d-flex">
+                <h1 class="title my-4">Gestão de Pessoas</h1>
+                <span class="ml-auto my-auto mr-3">
+                    <button class="btnPrevious" onclick="previousPage()"><i class="fa-solid fa-caret-left"></i></button>
+                    <button class="btnNext" onclick="nextPage()" class="ml-3"><i class="fa-solid fa-caret-right"></i></button>
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-plus-circle mr-1"></i> Forças
+                    </div>
+                    <div class="card-body">
+                        <ul class="forca">
+                            <li onclick="toggleItem(this)">Decisões estratégicas tomadas em equipe<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <!-- <li onclick="toggleItem(this)">Strength 1<br><span class="hidden"></span></li>
+                            <li onclick="toggleItem(this)">Strength 2<br><span class="hidden"></span></li>
+                            <li onclick="toggleItem(this)">Strength 3<br><span class="hidden"></span></li> -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <i class="fas fa-minus-circle mr-1"></i> Fraquezas
+                    </div>
+                    <div class="card-body">
+                        <ul class="fraqueza">
+                            <li onclick="toggleItem(this)">Treinamento<br>  
+                                <span class="hidden"></span>
+                            </li>                            
+                            <li onclick="toggleItem(this)">Processo de comunicação<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Falta de feedback<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Falta de reconhecimento<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Falta de plano de carreira<br>
+                                <span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Falta de incentivo<br>
+                                <span class="hidden"></span>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-warning text-white">
+                        <i class="fas fa-lightbulb mr-1"></i> Oportunidades
+                    </div>
+                    <div class="card-body">
+                        <ul class="oportunidades">
+                            <li onclick="toggleItem(this)">Utilização de mão de obra de TI especializada existente no mercado
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Disposição para contratação de capacitação
+                                <br><span class="hidden"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <i class="fas fa-exclamation-triangle mr-1"></i> Ameaças
+                    </div>
+                    <div class="card-body">
+                        <ul class="ameacas">
+                            <li onclick="toggleItem(this)">Orçamento para treinamento.
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Processo de contratação
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Processo de autorização para capacitação e participação em eventos
+                                <br><span class="hidden"></span>
+                            </li>
+                            <li onclick="toggleItem(this)">Progressão funcional por merecimento
+                                <br><span class="hidden"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        let n_pages = document.querySelectorAll('.page').length;
+        let current_page = 1;
+
+        function nextPage() {
+            if (current_page === n_pages) {
+                return;
+            }
+            
+            document.querySelector('#page' + current_page).classList.add('hidden');
+            current_page++;
+
+            // Se estamos na última página, podemos ocultar ou desabilitar o botão "next" se houver
+            if (current_page === n_pages) {
+                const btns = document.getElementsByClassName('btnNext');
+                for (let btn of btns) {
+                    btn.setAttribute('disabled', 'true');
+                }
+                if (n_pages === 2){
+                    const btns = document.getElementsByClassName('btnPrevious');
+                    for (let btn of btns) {
+                        btn.removeAttribute('disabled');
+                    }
+                }   
+            }else{
+                const btns = document.getElementsByClassName('btnPrevious');
+                for (let btn of btns) {
+                    btn.removeAttribute('disabled');
+                }
+            }
+
+            document.querySelector('#page' + current_page).classList.remove('hidden');
+        }
+
+        function previousPage() {
+            if (current_page === 1) {
+                return;
+            }
+
+            document.querySelector('#page' + current_page).classList.add('hidden');
+            current_page--;
+
+            // Se estamos na primeira página, podemos ocultar ou desabilitar o botão "previous" se houver
+            if (current_page === 1) {
+                const btns = document.getElementsByClassName('btnPrevious');
+                for (let btn of btns) {
+                    btn.setAttribute('disabled', 'true');
+                }
+                if (n_pages === 2){
+                    const btns = document.getElementsByClassName('btnNext');
+                    for (let btn of btns) {
+                        btn.removeAttribute('disabled');
+                    }
+                }
+            }else{
+                const btns = document.getElementsByClassName('btnNext');
+                for (let btn of btns) {
+                    btn.removeAttribute('disabled');
+                }
+            }
+
+            document.querySelector('#page' + current_page).classList.remove('hidden');
+        }
+        
+        function toggleItem(element) {
+            const hiddenElement = element.querySelector('span');
+            if (hiddenElement.classList.contains('hidden')) {
+                hiddenElement.classList.remove('hidden');
+            } else {
+                hiddenElement.classList.add('hidden');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const btns = document.getElementsByClassName('btnPrevious');
+            for (let btn of btns) {
+                btn.setAttribute('disabled', 'true');
+            }
+        });
+    </script>
 </body>
 </html></div></html>
