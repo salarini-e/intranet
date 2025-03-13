@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Projetos, Fases, Tarefas, Atividades, Prioridade, Grupo, Comentarios
 from .forms import ProjetosForm
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from instituicoes.models import Servidor
 
 @login_required
@@ -12,6 +12,18 @@ def index(request):
     projetos_autorizado = Projetos.objects.filter(grupos__membros__user=request.user)
     projetos = projetos_responsavel | projetos_autorizado
     projetos = projetos.distinct()  
+    context={
+        'projetos': projetos,
+        'form_projetos': ProjetosForm(initial={'user_inclusao': request.user})
+    }
+    return render(request, 'projetos/index.html', context)
+
+
+@login_required
+def todos_projetos(request):
+    if not request.user.is_superuser:
+        return HttpResponse('Acesso negado')
+    projetos = Projetos.objects.all()
     context={
         'projetos': projetos,
         'form_projetos': ProjetosForm(initial={'user_inclusao': request.user})

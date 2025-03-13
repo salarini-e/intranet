@@ -4,6 +4,7 @@ from . import views
 app_name = 'projetos'
 urlpatterns = [
     path('', views.index, name='index'),
+    path('all/', views.todos_projetos, name='all'),
     path('<id>/board/', views.kanbanboard, name='index'),
 
     path('api/criar-projeto/', views.api_criar_projeto, name='api_criar_projeto'),
