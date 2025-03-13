@@ -8,8 +8,8 @@ from instituicoes.models import Servidor
 
 @login_required
 def index(request):
-    projetos_responsavel = Projetos.objects.filter(responsavel__user=request.user)
-    projetos_autorizado = Projetos.objects.filter(grupos__membros__user=request.user)
+    projetos_responsavel = Projetos.objects.filter(responsavel__user=request).exclude(status="A")
+    projetos_autorizado = Projetos.objects.filter(grupos__membros__user=request.user).exclude(status="A")
     projetos = projetos_responsavel | projetos_autorizado
     projetos = projetos.distinct()  
     context={
@@ -23,7 +23,7 @@ def index(request):
 def todos_projetos(request):
     if not request.user.is_superuser:
         return HttpResponse('Acesso negado')
-    projetos = Projetos.objects.all()
+    projetos = Projetos.objects.all().exclude(status="A")
     context={
         'projetos': projetos,
         'form_projetos': ProjetosForm(initial={'user_inclusao': request.user})

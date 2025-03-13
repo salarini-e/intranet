@@ -26,6 +26,7 @@ class Projetos(models.Model):
         ('E', 'Em andamento'),        
         ('F', 'Finalizado'),
         ('P', 'Parado'),
+        ('A', 'Arquivado'),
     )
     
     responsavel = models.ForeignKey(Servidor, on_delete=models.SET_NULL, null=True, blank=True)
