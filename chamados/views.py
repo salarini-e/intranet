@@ -1249,6 +1249,7 @@ def download_relatorio(request):
     campos = ['n_protocolo', 
               'profissional_designado', 
               'tipo',
+              'secretaria'
               'dt_inclusao',
               'dt_execucao',
               'dt_fechamento',
@@ -1262,6 +1263,7 @@ def download_relatorio(request):
             'Protocolo': chamado.n_protocolo,
             'Técnico': chamado.profissional_designado.nome_servidor if chamado.profissional_designado else '',
             'Grupos': chamado.tipo.nome,
+            'Secretaria': chamado.secretaria.nome,
             'Data de Inclusão': chamado.dt_inclusao.strftime('%d/%m/%Y'),
             'Data de Execução': chamado.dt_execucao.strftime('%d/%m/%Y') if chamado.dt_execucao else '',
             'Data de Fechamento': chamado.dt_fechamento.strftime('%d/%m/%Y') if chamado.dt_fechamento else '',
