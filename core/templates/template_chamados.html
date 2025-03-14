@@ -250,7 +250,8 @@
     
     <!-- Page Specific JS -->
     <script src="/static/js/app.js"></script> 
-
+	<!-- aqui -->
+	{% comment %}
 	{% if request.user|check_satisfacao %}
 	<script>
 		let chamado_id = {{request.user|check_satisfacao_chamado}};
@@ -552,6 +553,7 @@
 	</style>
 	<script src="/static/js/openModal.js"></script>		
 	{% endif %}
+	{% endcomment %}
 	<script>
 		const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 		const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
@@ -576,9 +578,10 @@
 			var preloader = document.getElementById('preloader');
 			preloader.style.display = 'none';
 		};
-		{% if request.user|check_satisfacao %}
-		openModal('modalSatisfacao');
-		{% endif %}
+		// aqui
+		// {% if request.user|check_satisfacao %}
+		// openModal('modalSatisfacao');
+		// {% endif %}
 	</script>
 	
 </body>
