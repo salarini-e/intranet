@@ -251,7 +251,6 @@
     <!-- Page Specific JS -->
     <script src="/static/js/app.js"></script> 
 	<!-- aqui -->
-	{% comment %}
 	{% if request.user|check_satisfacao %}
 	<script>
 		let chamado_id = {{request.user|check_satisfacao_chamado}};
@@ -370,7 +369,7 @@
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'X-CSRFToken': csrfToken
+					'X-CSRFToken': '{{csrf_token|safe}}'
 				},
 				body: JSON.stringify(data)
 			})
@@ -551,9 +550,8 @@
 			border-color: gray;
 		}
 	</style>
-	<script src="/static/js/openModal.js"></script>		
+	<!-- <script src="/static/js/openModal.js"></script>		 -->
 	{% endif %}
-	{% endcomment %}
 	<script>
 		const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 		const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
@@ -577,11 +575,12 @@
 		window.onload = function() {
 			var preloader = document.getElementById('preloader');
 			preloader.style.display = 'none';
+			{% if request.user|check_satisfacao %}
+			openModal('modalSatisfacao');
+			{% endif %}
 		};
 		// aqui
-		// {% if request.user|check_satisfacao %}
-		// openModal('modalSatisfacao');
-		// {% endif %}
+		
 	</script>
 	
 </body>
