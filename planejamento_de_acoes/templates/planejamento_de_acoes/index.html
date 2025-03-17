@@ -1,0 +1,55 @@
+{% extends 'template.html' %}
+{% block projetos %}active{% endblock %}
+{% block main %}
+    <style>
+        /* Estilos gerais */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .menu {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px 16px;
+            display: flex;
+            /* justify-content: space-between; */
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-radius: 8px;
+        }
+
+        .menu button{
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .menu button:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+    <div class="menu">
+        <h2>Planejamento de ações</h2>
+        <button  type="button" class="ms-auto" style="background-color: white; color: black;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <i class="fa-solid fa-folder-plus me-2"></i>
+             Adicionar projeto
+        </button>
+        <button  type="button" style="background-color: white; color: black;" data-bs-toggle="modal" onclick="getMeusGrupos()" data-bs-target="#myGroupsModal">
+            <i class="fa-solid fa-people-group me-2"></i>
+            Meus grupo
+        </button>
+        
+    </div>
+
+   
+</script>      
+{% endblock %}

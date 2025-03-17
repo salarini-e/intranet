@@ -20,6 +20,7 @@ urlpatterns = [
     path('notificacoes/', include('notificacoes.urls')),
     path('noticias/', include('noticias.urls')),
     path('projetos/', include('projetos.urls')),
+    path('planejamento-de-acoes/', include('planejamento_de_acoes.urls')),
     # path('logwatcher/', include('django_logwatcher.urls')),
 ]   
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

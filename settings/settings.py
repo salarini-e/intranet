@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'noticias',
     'projetos',
     'controle_de_ponto',
+    'planejamento_de_acoes',
     # 'django_logwatcher',
 ]
 
