@@ -1,67 +1,74 @@
 {% extends 'template.html' %}
 {% block formfacil %}active{% endblock %}
 {% block main %}   
-			    <div class="app-page-title">
-                    <img src="/static/images/forms-like.svg" style="height: 40px;" alt="">
-                    <span style="color: black;">Form Fácil</span>
-                </div>
-			    
-			  {% if request.user.is_superuser %}
-                <div class="row g-4 mb-4" style="padding: 0 5px;">
-					<div class="col app-card app-card-stats-table h-100 shadow-sm " style="padding: 0.5rem !important;">                        
-						<table class="table table-borderless mb-0">
-							<thead>
-								<tr>
-									<th class="meta">Formulário</th>
-									<th class="meta">Solicitante</th>
-									<th class="meta">Status</th>
-									<th class="meta">Qnt. registros</th>
-									<th class="meta text-center d-none d-md-table-cell">Ações</th>
-								</tr>
-							</thead>
-							<tbody>
-								
-								<tr>
-									<td class="meta">Decretos e Portaria Atos do Prefeito</td>
-									<td class="meta">Roberto Calvano</td>
-									<td class="meta">Ativo</td>
-									<td class="meta">{{ registros.decretos_protaria_e_atos_do_prefeito_total }}</td>
-									<td class="meta text-center d-none d-md-table-cell">
-										<a href="{% url 'formfacil:cadastros-decretos-portaria-atos-prefeito' %}" class="btn btn-sm btn-primary text-white">Visualizar</a>
-									</td>
-								</tr>
-								
-							</tbody>
-						</table>
-					</div>
-				</div>
-				{% endif %}
-				<div class="row g-4 mb-4" style="padding: 0 5px;">
-					<div class="col app-card app-card-stats-table h-100 shadow-sm " style="padding: 0.5rem !important;">                        
-						<table class="table table-borderless mb-0">
-							<thead>
-								<tr>
-									<th class="meta">Formulário(s)</th>																
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>
-										<a href="{% url 'formfacil:inscricao-ato-prefeito' %}">
-											Decretos e Portaria Atos do Prefeito
-										</a>
-									</td>									
-									<td class="text-end">
-										<a class="btn btn-primary text-white" href="{% url 'formfacil:inscricao-ato-prefeito' %}">
-											Inscrever-se
-										</a>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
+<div class="app-page-title">
+    <img src="/static/images/forms-like.svg" style="height: 40px;" alt="">
+    <span style="color: black;">Form Fácil</span>
+</div>
+
+{% if request.user.is_superuser %}
+<div class="row g-4 mb-4" style="padding: 0 5px;">
+    <div class="col app-card app-card-stats-table h-100 shadow-sm " style="padding: 0.5rem !important;">                        
+        <table class="table table-borderless mb-0">
+            <thead>
+                <tr>
+                    <th class="meta">Formulário</th>
+                    <th class="meta">Solicitante</th>
+                    <th class="meta">Status</th>
+                    <th class="meta">Qnt. registros</th>
+                    <th class="meta text-center d-none d-md-table-cell">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="meta">Decretos e Portaria Atos do Prefeito</td>
+                    <td class="meta">Roberto Calvano</td>
+                    <td class="meta">Ativo</td>
+                    <td class="meta">{{ registros.decretos_protaria_e_atos_do_prefeito_total }}</td>
+                    <td class="meta text-center d-none d-md-table-cell">
+                        <a href="{% url 'formfacil:cadastros-decretos-portaria-atos-prefeito' %}" class="btn btn-sm btn-primary text-white">Visualizar</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="meta">Cadastro de Almoxarifado</td>
+                    <td class="meta">Rômulo Rodrigues</td>
+                    <td class="meta">Restrito</td>
+                    <td class="meta">{{ registros.cadastros_almoxarifado_total }}</td>
+                    <td class="meta text-center d-none d-md-table-cell">
+                        <a href="{% url 'formfacil:visualizar_cadastros_almoxarifado' %}" class="btn btn-sm btn-primary text-white">Visualizar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+<div class="row g-4 mb-4" style="padding: 0 5px;">
+    <div class="col app-card app-card-stats-table h-100 shadow-sm " style="padding: 0.5rem !important;">                        
+        <table class="table table-borderless mb-0">
+            <thead>
+                <tr>
+                    <th class="meta">Formulário(s)</th>                                                                
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <a href="{% url 'formfacil:inscricao-ato-prefeito' %}">
+                            Decretos e Portaria Atos do Prefeito
+                        </a>
+                    </td>                                    
+                    <td class="text-end">
+                        <a class="btn btn-primary text-white" href="{% url 'formfacil:inscricao-ato-prefeito' %}">
+                            Inscrever-se
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 <script>
 
 

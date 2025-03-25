@@ -165,3 +165,16 @@ class Inscricao_Decretos_Portaria_E_Atos_Do_Prefeito(models.Model):
     
     def get_total(self):
         return self.objects.all().count()
+
+#Cadastro de Almoxarifado
+class Cadastro_de_Almoxarifado(models.Model):
+    nome_requisitante = models.CharField(max_length=150, verbose_name='Nome de quem pode requisitar')
+    matricula = models.CharField(max_length=10, verbose_name='Matrícula')
+    cpf = models.CharField(max_length=14, verbose_name='CPF')
+    secretaria = models.CharField(max_length=250, verbose_name='Secretaria')
+    autorizador = models.CharField(max_length=150, verbose_name='Quem autoriza a solicitação')
+    responsavel_material = models.CharField(max_length=150, verbose_name='Quem pega os materiais')
+    dt_registro = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.nome_requisitante} - {self.secretaria}'

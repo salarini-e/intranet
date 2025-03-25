@@ -1,0 +1,65 @@
+{% extends 'template.html' %}
+{% block formfacil %}active{% endblock %}
+{% block main %}
+<div class="app-page-title">
+    <img src="/static/images/forms-like.svg" style="height: 40px;" alt="">
+    <span style="color: black;">Visualizar Cadastros de Almoxarifado</span>
+</div>
+
+<div class="row g-4 mb-4" style="padding: 0 5px;">
+    <div class="col app-card app-card-stats-table h-100 shadow-sm" style="padding: 0.5rem !important;">
+        <div class="d-flex justify-content-between mb-3">
+            <div class="d-flex">
+                <i class="fa-solid fa-link me-2 my-auto"></i>                
+                <a class="my-auto" href="#" onclick="copyLink(this)">https://intranet.novafriburgo.rj.gov.br{% url 'formfacil:cadastro_almoxarifado' %}</a>                
+            </div>
+            <a href="{% url 'formfacil:exportar_cadastros_almoxarifado' %}" class="btn btn-success" style="color: white;">
+                <i class="fa-solid fa-file-excel me-2"></i>Exportar para Excel
+            </a>
+        </div>
+        <table class="table table-bordered mb-0">
+            <thead>
+                <tr>
+                    <th>Nome do Requisitante</th>
+                    <th>Matrícula</th>
+                    <th>CPF</th>
+                    <th>Secretaria</th>
+                    <th>Autorizador</th>
+                    <th>Responsável pelo Material</th>
+                    <th>Data de Registro</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cadastro in cadastros %}
+                <tr>
+                    <td>{{ cadastro.nome_requisitante }}</td>
+                    <td>{{ cadastro.matricula }}</td>
+                    <td>{{ cadastro.cpf }}</td>
+                    <td>{{ cadastro.secretaria }}</td>
+                    <td>{{ cadastro.autorizador }}</td>
+                    <td>{{ cadastro.responsavel_material }}</td>
+                    <td>{{ cadastro.dt_registro|date:"d/m/Y H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">Nenhum cadastro encontrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function copyLink(e) {
+    const link = e;
+    const textArea = document.createElement('textarea');
+    textArea.value = link.innerText;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    alert('Link copiado para a área de transferência!');
+}
+</script>
+{% endblock %}

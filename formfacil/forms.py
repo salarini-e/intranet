@@ -153,4 +153,17 @@ class CadastroDecretos2024Form(forms.ModelForm):
     def clean_telefone(self):
         telefone = clear_tel(self.cleaned_data["telefone"])
         return telefone
-    
+
+class CadastroDeAlmoxarifadoForm(forms.ModelForm):
+    class Meta:
+        model = Cadastro_de_Almoxarifado
+        fields = ['nome_requisitante', 'matricula', 'cpf', 'secretaria', 'autorizador', 'responsavel_material']
+        widgets = {
+            'nome_requisitante': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'matricula': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'cpf': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'secretaria': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'autorizador': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'responsavel_material': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+        }
+
