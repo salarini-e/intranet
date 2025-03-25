@@ -40,3 +40,12 @@ class InscricaoDecretosAdmin(admin.ModelAdmin):
     ordering = ('-dt_registro', 'nome')
 
 admin.site.register(Inscricao_Decretos_Portaria_E_Atos_Do_Prefeito, InscricaoDecretosAdmin)
+
+class CadastroAlmoxarifadoAdmin(admin.ModelAdmin):
+    list_display = ('nome_requisitante', 'matricula', 'cpf', 'secretaria', 'autorizador', 'responsavel_material', 'dt_registro')
+    search_fields = ('nome_requisitante', 'matricula', 'cpf', 'secretaria', 'autorizador', 'responsavel_material')
+    list_filter = ('secretaria',)
+    ordering = ('-dt_registro', 'nome_requisitante')
+
+admin.site.register(Cadastro_de_Almoxarifado, CadastroAlmoxarifadoAdmin)
+
