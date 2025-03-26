@@ -23,6 +23,7 @@ class Noticias(models.Model):
     conteudo = models.TextField()
     resumo = models.TextField(default='')
     destaque = models.BooleanField(default=False)
+    ativo = models.BooleanField(default=True)
     dt_inclusao = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

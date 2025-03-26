@@ -128,7 +128,7 @@
 							<h3 class="mb-3">Notícias em Destaque</h3>
 							{% for destaque in destaques %}
 							<div class="col-lg-6 col-md-5 col-sm-12 mb-4 destaques">
-								<a href="#" class="app-card app-card-progress-list h-100 shadow-sm">
+								<a href="{% url 'noticias:detalhe' destaque.id %}" class="app-card app-card-progress-list h-100 shadow-sm">
 									<img src="{{destaque.imagem_capa.url}}" class="img-fluid" alt="{{destaque.alt_capa}}" style="border-radius: 10px;">
 								</a>
 							</div>
