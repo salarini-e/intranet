@@ -50,8 +50,8 @@ def index(request):
 
     context = {                
         'carrousel': Carrousell.objects.all(),
-        'destaques': Noticias.objects.filter(destaque=True).order_by('-dt_inclusao')[:4],
-        'noticias': Noticias.objects.filter().order_by('-dt_inclusao')[:5],
+        'destaques': Noticias.objects.filter(destaque=True, ativo=True).order_by('-dt_inclusao')[:4],
+        'noticias': Noticias.objects.filter(ativo=True).order_by('-dt_inclusao')[:5],
         'count_abertos': count_abertos,
         'count_em_atendimento': count_em_atendimento,
         'count_pendentes': count_pendentes,
