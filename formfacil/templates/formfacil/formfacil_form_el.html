@@ -35,11 +35,11 @@
             <div class="row d-flex flex-column">
                 <div class="col-md-6 mb-3 mx-auto">
 					<label>Seu nome</label>
-                    <input type="text" name="usuario_nome" class="form-control" placeholder="Seu nome" required>
+                    <input type="text" name="usuario_nome" class="form-control" value="{{request.servidor}}" placeholder="Seu nome" required>
                 </div>
                 <div class="col-md-6 mx-auto">
                     <label>Sua matrícula</label>
-                    <input type="text" name="usuario_matricula" class="form-control" placeholder="Sua matrícula" required>
+                    <input type="text" name="usuario_matricula" class="form-control" value="{{request.servidor.matricula}}" placeholder="Sua matrícula" required>
                 </div>
             </div>
         </div>
