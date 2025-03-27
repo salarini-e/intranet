@@ -49,3 +49,11 @@ class CadastroAlmoxarifadoAdmin(admin.ModelAdmin):
 
 admin.site.register(Cadastro_de_Almoxarifado, CadastroAlmoxarifadoAdmin)
 
+class AvaliacaoSistemaELAdmin(admin.ModelAdmin):
+    list_display = ('sistema', 'usuario_nome', 'usuario_matricula', 'satisfacao', 'houve_lentidao', 'sugestao', 'data_avaliacao', 'usuario_inclusao')
+    search_fields = ('sistema', 'usuario_nome', 'usuario_matricula', 'sugestao')
+    list_filter = ('sistema', 'satisfacao', 'houve_lentidao', 'data_avaliacao')
+    ordering = ('-data_avaliacao', 'sistema')
+
+admin.site.register(AvaliacaoSistemaEL, AvaliacaoSistemaELAdmin)
+

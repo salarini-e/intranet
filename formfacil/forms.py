@@ -54,7 +54,7 @@ class CadastroELForm(forms.ModelForm):
             'cpf': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'email': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'matricula': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'pdf_memorando': forms.FileInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'sistemas': forms.CheckboxSelectMultiple(),
@@ -165,5 +165,18 @@ class CadastroDeAlmoxarifadoForm(forms.ModelForm):
             'secretaria': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'autorizador': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'responsavel_material': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+        }
+
+class AvaliacaoSistemaELForm(forms.ModelForm):
+    class Meta:
+        model = AvaliacaoSistemaEL
+        fields = ['sistema', 'usuario_nome', 'usuario_matricula', 'satisfacao', 'houve_lentidao', 'sugestao']
+        widgets = {
+            'sistema': forms.HiddenInput(),  # Hidden input for the system name
+            'usuario_nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'usuario_matricula': forms.TextInput(attrs={'class': 'form-control'}),
+            'satisfacao': forms.RadioSelect(choices=[(i, str(i)) for i in range(1, 6)]),
+            'houve_lentidao': forms.RadioSelect(choices=[(1, 'Sim'), (0, 'Não')]),
+            'sugestao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
