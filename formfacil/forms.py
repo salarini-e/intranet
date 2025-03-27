@@ -170,7 +170,7 @@ class CadastroDeAlmoxarifadoForm(forms.ModelForm):
 class AvaliacaoSistemaELForm(forms.ModelForm):
     class Meta:
         model = AvaliacaoSistemaEL
-        fields = ['sistema', 'usuario_nome', 'usuario_matricula', 'satisfacao', 'houve_lentidao', 'sugestao']
+        fields = ['sistema', 'usuario_nome', 'usuario_matricula', 'satisfacao', 'houve_lentidao', 'sugestao', 'usuario_inclusao']
         widgets = {
             'sistema': forms.HiddenInput(),  # Hidden input for the system name
             'usuario_nome': forms.TextInput(attrs={'class': 'form-control'}),

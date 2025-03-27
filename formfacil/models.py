@@ -184,11 +184,11 @@ class AvaliacaoSistemaEL(models.Model):
     usuario_nome = models.CharField(max_length=150, verbose_name='Nome do Usuário')
     usuario_matricula = models.CharField(max_length=10, verbose_name='Matrícula do Usuário')    
     satisfacao = models.IntegerField(verbose_name='Nível de Satisfação (1 a 5)', null=True, blank=True)
-    houve_lentidao = models.IntegerField(verbose_name='Já houve algum problema?', null=True, blank=True)    
+    houve_lentidao = models.IntegerField(verbose_name='Avaliação o tempo de resposta do sistema ', null=True, blank=True)    
     sugestao = models.TextField(verbose_name='Sugestão', blank=True, null=True)
 
     data_avaliacao = models.DateTimeField(auto_now_add=True)
-    usuario_inclusao = models.CharField(max_length=150, verbose_name='Usuário que incluiu', blank=True)
+    usuario_inclusao = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='Usuário que incluiu', null=True, blank=True) 
 
     def __str__(self):
         return f'{self.sistema} - {self.usuario_nome}'
