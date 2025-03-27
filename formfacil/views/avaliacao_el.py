@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from ..models import AvaliacaoSistemaEL
 from ..forms import AvaliacaoSistemaELForm
 from django.utils.text import slugify
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def avaliacao_sistemas_el(request):
     sistemas = [
         {'nome': 'Protocolo', 'slug': slugify('Protocolo')},
