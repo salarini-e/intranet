@@ -65,7 +65,7 @@
 <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 <div id="login-screen">    
     <h3 class="text-center">INTRANET</h3>
-    <form action="." method="post">
+    <form method="post">
         
         {% if messages %}
         <div class="messages mb-3 mt-4">
@@ -83,7 +83,7 @@
         <!-- <p class="bg-danger text-white mb-4 py-2 text-center">Usuário ou senha não conferem.</p> -->
         <p class="bg-danger text-white mb-3 mt-4 py-2 text-center px-1">{{msg}}</p>
         {% endif %}
-        
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
             {% csrf_token %}
             <div class="form-group">
                 <label for="id_username">Matrícula:</label>

@@ -155,10 +155,13 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            try:
-                return redirect(request.GET['next'])
-            except Exception as E:
-                print(E)
+            next_url = request.POST.get('next')
+            
+            # Verifica se a URL é segura
+            if url_has_allowed_host_and_scheme(next_url, allowed_hosts=request.get_host()):
+                return redirect(next_url)
+            else:
+                print("URL não segura, redirecionando para a página inicial.")
                 return redirect('/')
         else:
             if User.objects.filter(username=username).exists():
