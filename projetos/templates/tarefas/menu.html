@@ -1,0 +1,201 @@
+<div class="list-group mt-1" style="border: none;">
+    <a href="#" class="list-group-item list-group-item-action text-primary" style="border: none;" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+        <i class="fa fa-plus me-2"></i>Adicionar Tarefa
+    </a>
+    <!-- <a href="#" class="list-group-item list-group-item-action {% if active_page == 'buscar' %}active{% endif %}" style="border: none;">
+        <i class="fa fa-search me-2"></i>Buscar
+    </a> -->
+    <a href="{% url 'projetos:definir_data_demandas_nao_agendadas' %}" class="list-group-item list-group-item-action {% if active_page == 'nao_agendadas' %}active{% endif %}" style="border: none;">
+        <i class="fa-solid fa-clipboard-list me-2"></i>Não agendadas 
+        {% if has_demandas_without_date %}
+        <small style="color: #dc3545;">
+            <strong>
+                <i class="fa-solid fa-bell ms-2 bell-icon"></i>
+            </strong>
+        </small>
+        {% endif %}
+    </a>    
+    <a href="{% url 'projetos:atrasados' %}" class="list-group-item list-group-item-action {% if active_page == 'atrasados' %}active{% endif %}" style="border: none;">
+        <i class="fa fa-exclamation-circle me-2"></i>Fora do Prazo
+    </a>
+    <a href="{% url 'projetos:tarefas' %}" class="list-group-item list-group-item-action {% if active_page == 'hoje' %}active{% endif %}" style="border: none;">
+        <i class="fa fa-sun me-2"></i>Hoje
+    </a>
+    <a href="{% url 'projetos:em_breve' %}" class="list-group-item list-group-item-action {% if active_page == 'em_breve' %}active{% endif %}" style="border: none;">
+        <i class="fa fa-calendar-alt me-2"></i>Em Breve
+    </a>
+    
+    <a href="{% url 'projetos:tarefas_concluidas' %}" class="list-group-item list-group-item-action {% if active_page == 'concluidos' %}active{% endif %}" style="border: none;">
+        <i class="fa fa-check me-2"></i>Concluído
+    </a>
+    <a onclick="alert('Ainda estamos para implementar essa função!')" href="#" class="list-group-item list-group-item-action {% if active_page == 'etiquetas' %}active{% endif %}" style="border: none;" data-bs-toggle="modal" data-bs-target="#filtersModal">
+        <i class="fa fa-tags me-2"></i>Etiquetas
+    </a>
+
+    
+</div>
+
+<!-- Add Task Modal -->
+<div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTaskModalLabel">Adicionar Tarefa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Add Task Form -->
+                <form id="addTaskForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="taskName" class="form-label">Nome da Tarefa</label>
+                        <input type="text" class="form-control" id="taskName" placeholder="Digite o nome da tarefa">
+                    </div>
+                    <div class="mb-3">
+                        <label for="taskDescription" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="taskDescription" rows="3" placeholder="Digite a descrição"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="taskPriority" class="form-label">Prioridade</label>
+                        <select class="form-select" id="taskPriority">
+                            <option value="0">Regular</option>
+                            <option value="1">Médio</option>
+                            <option value="2">Importante</option>
+                            <option value="3">Urgente</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="taskDate" class="form-label">Data Prevista de Execução</label>
+                        <input type="date" class="form-control" id="taskDate">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addTask()">Salvar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addTask() {
+        const name = document.getElementById('taskName').value;
+        const description = document.getElementById('taskDescription').value;
+        const priority = document.getElementById('taskPriority').value;
+        const date = document.getElementById('taskDate').value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        if (!name || !date) {
+            alert('Por favor, preencha o nome e a data prevista de execução.');
+            return;
+        }
+
+        fetch("{% url 'projetos:tarefas' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nome: name,
+                descricao: description,
+                prioridade: priority,
+                data_prevista_execucao: date,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                // Add the new task dynamically to the page
+                const taskList = document.querySelector('#my-day'); // Adjust selector if necessary
+                const newTask = document.createElement('div');
+                newTask.className = 'd-flex justify-content-between align-items-center py-3 px-3';
+                newTask.style.backgroundColor = '#f9f9f9'; // Adjust cycle logic if needed
+                newTask.innerHTML = `
+                    <div class="w-100 ms-3">
+                        <h5 class="card-title mb-1 d-flex justify-content-between align-items-center">
+                            <div class="form-check my-auto" style="font-size: 12pt;">
+                                <input class="form-check-input" type="checkbox" id="demanda-${data.demanda.id}">
+                            </div>
+                            ${data.demanda.nome}
+                            <span class="ms-auto">
+                                <a href="#" class="text-primary me-2" title="Editar" style="font-size: 0.8rem;" 
+                                   onclick="openEditModal(${data.demanda.id}, '${data.demanda.nome}', '${data.demanda.descricao}', '${data.demanda.prioridade}', '${data.demanda.data_prevista_execucao}')">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a href="#" class="text-danger" title="Excluir" style="font-size: 0.8rem;" 
+                                   onclick="openDeleteModal(${data.demanda.id}, '${data.demanda.nome}', '${data.demanda.descricao}', '${data.demanda.prioridade}', '${data.demanda.data_prevista_execucao}')">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </span>
+                        </h5>
+                        <p class="card-text mb-1" style="color: #495057;">${data.demanda.descricao}</p>
+                        <div class="w-100 d-flex">
+                            <select class="badge priority-select mt-2" data-id="${data.demanda.id}">
+                                <option value="0" ${data.demanda.prioridade == 0 ? 'selected' : ''} style="background-color: #6c757d; color: white;">Regular</option>
+                                <option value="1" ${data.demanda.prioridade == 1 ? 'selected' : ''} style="background-color: #ffc107; color: black;">Médio</option>
+                                <option value="2" ${data.demanda.prioridade == 2 ? 'selected' : ''} style="background-color: #dc3545; color: white;">Importante</option>
+                                <option value="3" ${data.demanda.prioridade == 3 ? 'selected' : ''} style="background-color: #6f42c1; color: white;">Urgente</option>
+                            </select>
+                            <small class="ms-auto mt-2" style="color: #495057;">
+                                <strong>Data Prevista:</strong> ${data.demanda.data_prevista_execucao}
+                            </small>
+                        </div>
+                    </div>
+                `;
+                taskList.appendChild(newTask);
+
+                // Close the modal and reset the form
+                const addTaskModal = bootstrap.Modal.getInstance(document.getElementById('addTaskModal'));
+                addTaskModal.hide();
+                document.getElementById('addTaskForm').reset();
+            } else {
+                alert('Erro ao adicionar tarefa: ' + data.error);
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+</script>
+
+<style>
+    .form-check-input {
+        border-color: black;
+    }
+    .priority-select {
+        width: auto;
+        font-size: 0.9rem;
+        padding: 0.2rem 0.5rem;
+        border: none;
+        background-color: #6c757d;
+        color: white;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        appearance: none; /* Removes the arrow */
+        -moz-appearance: none; /* Removes the arrow in Firefox */
+        -webkit-appearance: none; /* Removes the arrow in Safari */
+    }
+    .priority-select:hover {
+        opacity: 0.9;
+    }
+    @keyframes rotateBell {
+        0% {
+            transform: rotate(0deg);
+        }
+        25% {
+            transform: rotate(15deg);
+        }
+        50% {
+            transform: rotate(-15deg);
+        }
+        75% {
+            transform: rotate(15deg);
+        }
+        100% {
+            transform: rotate(0deg);
+        }
+    }
+
+    .bell-icon {
+        display: inline-block;
+        animation: rotateBell 2s ease-in-out infinite;
+        animation-delay: 10s;
+    }
+</style>

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Projetos
+from .models import Projetos, Demandas
 
 class ProjetosForm(forms.ModelForm):
     class Meta:
@@ -15,8 +15,18 @@ class ProjetosForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProjetosForm, self).__init__(*args, **kwargs)
-        # Alterar o widget para exibir status como uma lista suspensa (dropdown)
         self.fields['status'].widget = forms.Select(choices=Projetos.STATUS_CHOICES)
 
-        # Opcionalmente, você pode adicionar validação personalizada aqui, se necessário
+class DemandasForm(forms.ModelForm):
+    class Meta:
+        model = Demandas
+        fields = ['nome', 'descricao', 'prioridade', 'data_prevista_execucao', 'rotina', 'ordem_dia']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'descricao': forms.Textarea(attrs={'rows': 3, 'class': 'form-control mb-3'}),
+            'prioridade': forms.Select(attrs={'class': 'form-select mb-3'}),
+            'data_prevista_execucao': forms.DateInput(attrs={'type': 'date', 'class': 'form-control mb-3'}),
+            'rotina': forms.CheckboxInput(attrs={'class': 'form-check-input mb-3'}),
+            'ordem_dia': forms.NumberInput(attrs={'class': 'form-control mb-3'}),
+        }
 

@@ -1,15 +1,18 @@
 import os
-from django.shortcuts import render
+import datetime
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Projetos, Fases, Tarefas, Atividades, Prioridade, Grupo, Comentarios
+from django.views.decorators.csrf import csrf_exempt
+from .models import Projetos, Fases, Tarefas, Atividades, Prioridade, Grupo, Comentarios, Demandas
 from .forms import ProjetosForm
 from django.http import JsonResponse, HttpResponse
 from instituicoes.models import Servidor
+import json
 
 @login_required
 def index(request):
-    projetos_responsavel = Projetos.objects.filter(responsavel__user=request).exclude(status="A")
     projetos_autorizado = Projetos.objects.filter(grupos__membros__user=request.user).exclude(status="A")
+    projetos_responsavel = Projetos.objects.filter(responsavel__user=request.user).exclude(status="A")
     projetos = projetos_responsavel | projetos_autorizado
     projetos = projetos.distinct()  
     context={
@@ -96,27 +99,6 @@ def api_criar_coluna(request):
             return JsonResponse({'status': False, 'error': 'Dados incompletos'})
     else:
         return JsonResponse({'status': False, 'error': 'Método inválido'})
-    
-@login_required
-def api_criar_card(request):
-    if request.method == 'POST':
-        dados = json.loads(request.body)
-        nome = dados['nome']
-        fase_id = dados['fase_id']
-        ordem = Tarefas.objects.filter(fase__id=fase_id).count() + 1
-
-        if nome and fase_id and ordem:
-            fase = Fases.objects.get(id=fase_id)
-            nova_tarefa = Tarefas.objects.create(fase=fase, orderm=ordem, nome=nome, descricao='n/h', user_inclusao=request.user)
-            return JsonResponse({'status': 200, 'message': 'Card criada com sucesso', 'card': {
-                'column_id': fase_id,
-                'id': nova_tarefa.id,
-                'nome': nova_tarefa.nome,
-            }})
-        else:
-            return JsonResponse({'status': 400, 'error': 'Dados incompletos'})
-    else:
-        return JsonResponse({'status': 403, 'error': 'Método inválido'})
     
 @login_required
 def api_remover_card(request):
@@ -352,3 +334,208 @@ def api_enviar_comentario(request):
         return JsonResponse({'status': 200, 'message': 'Comentário enviado com sucesso'})
     
     return JsonResponse({'status': 403, 'error': 'Método inválido'})
+
+@login_required
+def tarefas(request):
+    today = datetime.date.today()
+    demandas = Demandas.objects.filter(atribuicao__user=request.user).order_by('ordem_dia', 'data_prevista_execucao', 'nome')
+
+    my_day = []
+    for demanda in demandas:
+        if demanda.rotina or demanda.data_prevista_execucao == today:
+            if demanda.data_inicio and demanda.data_fim:
+                if demanda.data_fim < today and not demanda.concluido:
+                    demanda.status = 'Atrasada'
+                elif not demanda.concluido:
+                    demanda.status = 'Em andamento'
+                else:
+                    demanda.status = 'Concluída'
+            my_day.append(demanda)
+
+    # Check for demandas without data_prevista_execucao
+    has_demandas_without_date = demandas.filter(data_prevista_execucao__isnull=True).exists()
+
+    if request.method == 'POST':
+        # Handle new demanda creation
+        data = json.loads(request.body)
+        nome = data.get('nome')
+        descricao = data.get('descricao', '')
+        prioridade = data.get('prioridade', 0)
+        data_prevista_execucao = data.get('data_prevista_execucao')
+        rotina = data.get('rotina', False)
+        ordem_dia = data.get('ordem_dia', None)
+
+        if nome and (data_prevista_execucao or rotina):
+            Demandas.objects.create(
+                nome=nome,
+                descricao=descricao,
+                prioridade=prioridade,
+                data_prevista_execucao=data_prevista_execucao,
+                rotina=rotina,
+                ordem_dia=ordem_dia,
+                atribuicao=request.servidor
+            )
+            return JsonResponse({'status': 200, 'message': 'Demanda criada com sucesso'})
+        else:
+            return JsonResponse({'status': 400, 'error': 'Dados incompletos'})
+
+    context = {
+        'demandas': demandas,
+        'my_day': my_day,
+        'has_demandas_without_date': has_demandas_without_date,
+    }
+    return render(request, 'tarefas/index.html', context)
+
+@login_required
+@csrf_exempt
+def definir_data_demandas_nao_agendadas(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        demanda_id = data.get('demanda_id')
+        data_prevista_execucao = data.get('data_prevista_execucao')
+
+        try:
+            demanda = Demandas.objects.get(id=demanda_id, atribuicao__user=request.user)
+            demanda.data_prevista_execucao = data_prevista_execucao
+            demanda.save()
+            return JsonResponse({'status': 200, 'message': 'Data definida com sucesso'})
+        except Demandas.DoesNotExist:
+            return JsonResponse({'status': 404, 'error': 'Demanda não encontrada'})
+        except Exception as e:
+            return JsonResponse({'status': 500, 'error': str(e)})
+
+    demandas_nao_agendadas = Demandas.objects.filter(atribuicao__user=request.user, data_prevista_execucao__isnull=True)
+    context = {
+        'demandas_nao_agendadas': demandas_nao_agendadas,
+    }
+    return render(request, 'tarefas/definir_data.html', context)
+
+def toggle_task_completion(request):
+    if request.method == 'POST':
+        tarefa_id = request.POST.get('tarefa_id')
+        tarefa = get_object_or_404(Tarefas, id=tarefa_id)
+        tarefa.concluido = not tarefa.concluido
+        tarefa.save()
+        return JsonResponse({'status': 200, 'message': 'Tarefa atualizada com sucesso'})
+    return JsonResponse({'status': 400, 'error': 'Método inválido'})
+
+@csrf_exempt
+@login_required
+def change_demanda_priority(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        task_id = data.get('task_id')
+        new_priority = data.get('new_priority')
+
+        try:
+            task = Demandas.objects.get(id=task_id, atribuicao__user=request.user)
+            task.prioridade = new_priority
+            task.save()
+            return JsonResponse({'status': 200, 'message': 'Prioridade atualizada com sucesso'})
+        except Demandas.DoesNotExist:
+            return JsonResponse({'status': 404, 'error': 'Tarefa não encontrada'})
+    return JsonResponse({'status': 400, 'error': 'Método inválido'})
+
+@login_required
+def atrasados(request):
+    has_demandas_without_date = Demandas.objects.filter(atribuicao__user=request.user, data_prevista_execucao__isnull=True).exists()
+    today = datetime.date.today()
+    overdue_tasks = Demandas.objects.filter(
+        atribuicao__user=request.user,
+        data_prevista_execucao__lt=today,
+        concluido=False  # Exclude completed tasks
+    ).order_by('data_prevista_execucao')
+    context = {'overdue_tasks': overdue_tasks, 'has_demandas_without_date': has_demandas_without_date}
+    return render(request, 'tarefas/atrasados.html', context)
+
+@login_required
+def em_breve(request):
+    has_demandas_without_date = Demandas.objects.filter(atribuicao__user=request.user, data_prevista_execucao__isnull=True).exists()
+    today = datetime.date.today()
+    upcoming_tasks = Demandas.objects.filter(
+        atribuicao__user=request.user,
+        data_prevista_execucao__gt=today
+    ).order_by('data_prevista_execucao')
+    context = {'upcoming_tasks': upcoming_tasks, 'has_demandas_without_date': has_demandas_without_date,}
+    return render(request, 'tarefas/em_breve.html', context)
+
+@login_required
+def toggle_demanda_completion(request):
+    if request.method == 'POST':
+        print('opa')
+        data_json = request.body.decode('utf-8')
+        data = json.loads(data_json)
+        print(data)        
+        demanda_id = data.get('tarefa_id')
+        # print(demanda_id)
+        demandas = Demandas.objects.filter(atribuicao__user=request.user, id=demanda_id)
+        for dem in Demandas.objects.all():
+            print(dem.id)
+            print(int(dem.id) == int(demanda_id))
+        if not demandas.exists():
+            return JsonResponse({'status': 404, 'error': 'Demanda não encontrada'})
+        demanda = demandas.first()
+        print(demanda)
+        demanda.concluido = not demanda.concluido
+        demanda.save()
+        return JsonResponse({'status': 200, 'message': 'Tarefa atualizada com sucesso'})
+    return JsonResponse({'status': 400, 'error': 'Método inválido'})
+
+@login_required
+@csrf_exempt
+def editar_demanda(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        demanda_id = data.get('demanda_id')
+        nome = data.get('nome')
+        descricao = data.get('descricao')
+        prioridade = data.get('prioridade')
+        data_prevista_execucao = data.get('data_prevista_execucao')
+
+        try:
+            demanda = Demandas.objects.get(id=demanda_id, atribuicao__user=request.user)
+            demanda.nome = nome
+            demanda.descricao = descricao
+            demanda.prioridade = prioridade
+            demanda.data_prevista_execucao = data_prevista_execucao
+            demanda.save()
+            return JsonResponse({'status': 200, 'message': 'Demanda atualizada com sucesso'})
+        except Demandas.DoesNotExist:
+            return JsonResponse({'status': 404, 'error': 'Demanda não encontrada'})
+    return JsonResponse({'status': 400, 'error': 'Método inválido'})
+
+@login_required
+@csrf_exempt
+def excluir_demanda(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        demanda_id = data.get('demanda_id')
+
+        try:
+            demanda = Demandas.objects.get(id=demanda_id, atribuicao__user=request.user)
+            demanda.delete()
+            return JsonResponse({'status': 200, 'message': 'Demanda excluída com sucesso'})
+        except Demandas.DoesNotExist:
+            return JsonResponse({'status': 404, 'error': 'Demanda não encontrada'})
+    return JsonResponse({'status': 400, 'error': 'Método inválido'})
+
+def concluidos(request):
+    completed_tasks = Demandas.objects.filter(concluido=True).order_by('-dt_concluido')
+    return render(request, 'tarefas/concluidos.html', {'completed_tasks': completed_tasks})
+
+@csrf_exempt
+@login_required
+def save_task_order(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        try:
+            for task_data in data:
+                task = Demandas.objects.get(id=task_data['id'], atribuicao__user=request.user)
+                task.ordem_dia = task_data['ordem_dia']
+                task.save()
+            return JsonResponse({'status': 200, 'message': 'Ordenamento salvo com sucesso'})
+        except Demandas.DoesNotExist:
+            return JsonResponse({'status': 404, 'error': 'Demanda não encontrada'})
+        except Exception as e:
+            return JsonResponse({'status': 500, 'error': str(e)})
+    return JsonResponse({'status': 400, 'error': 'Método inválido'})

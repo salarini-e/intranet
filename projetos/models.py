@@ -3,6 +3,57 @@ from django.contrib.auth.models import User
 from instituicoes.models import Servidor
 from django.db.models import Count, Q
 
+# A demanda poderá vir da tareja de um projeto, da subtarefa de um projeto, do futuro agendamento de ações que será desenvolvido, ou pode ser demandas criadas ali avulsas mesmo:
+class Demandas(models.Model):
+    
+    REFERENCIA_CHOICES = {
+        ('t', 'Gestão de Projetos'),
+        ('a', 'Gestão de Projetos'),
+        ('n', 'Nenhuma'),
+    }
+    PRIORIDADE_CHOICES = {
+        (0, 'Regular'),
+        (1, 'Média'),
+        (2, 'Importante'),
+        (3, 'Urgente'),        
+
+    }
+    nome = models.CharField(max_length=255)
+    descricao = models.TextField(verbose_name='Descrição')
+    prioridade = models.IntegerField(choices=PRIORIDADE_CHOICES, default=0)
+    data_prevista_execucao = models.DateField(null=True, blank=True)
+    rotina = models.BooleanField(default=False, verbose_name="É uma rotina?")
+    ordem_dia = models.IntegerField(null=True, blank=True, verbose_name="Ordem do dia")
+    ##########
+    concluido = models.BooleanField(default=False)
+    dt_concluido = models.DateField(null=True, blank=True)
+
+    data_inicio = models.DateField(null=True, blank=True)
+    data_fim = models.DateField(null=True, blank=True)
+        
+    atribuicao = models.ForeignKey(Servidor, on_delete=models.SET_NULL, null=True, blank=True, related_name='demandas')
+    dt_inclusao = models.DateField(auto_now_add=True)
+    dt_att  = models.DateField(auto_now=True)
+
+    referencia = models.CharField(max_length=1, choices=REFERENCIA_CHOICES, default='n')
+    id_referencia = models.IntegerField(null=True, blank=True)
+    user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Usuário de inclusão')
+
+    def __str__(self):
+        return self.nome
+    
+    class Meta:
+        verbose_name_plural = "Demandas"
+        verbose_name = "Demanda"
+        ordering = ['ordem_dia', 'data_prevista_execucao', 'nome']  # Order by ordem_dia, then date, then name
+
+    def save(self, *args, **kwargs):        
+        if not self.atribuicao:
+            self.atribuicao = Servidor.objects.get(user=self.user_inclusao)
+        if self.concluido:
+            self.dt_concluido = self.dt_att
+        super(Demandas, self).save(*args, **kwargs)
+
 class Grupo(models.Model):
     responsavel = models.ForeignKey(Servidor, on_delete=models.SET_NULL, null=True, blank=True)
     nome = models.CharField(max_length=255)
@@ -58,11 +109,11 @@ class Projetos(models.Model):
         
     def get_status_color(self):
         if self.status == 'C':
-            return '#313131'
+            return '#8B8000'  # Dark mustard
         elif self.status == 'E':
             return '#1c8f1a'
         elif self.status == 'F':
-            return '#00C875'
+            return '#000000'  # Black
         elif self.status == 'P':
             return '#da2e48'
     
@@ -203,8 +254,53 @@ class Tarefas(models.Model):
             old_instance = Tarefas.objects.get(pk=self.pk)
             if old_instance.anexo and old_instance.anexo != self.anexo:
                 old_instance.anexo.delete(save=False)
+            if old_instance.atribuicao != self.atribuicao and self.atribuicao:
+                if self.exist_demanda():
+                    self.att_demanda()
+                else:
+                    self.cria_demanda()
+        if self.concluido and self.exist_demanda():
+            self.att_demanda()
+            
         super(Tarefas, self).save(*args, **kwargs)
 
+    def cria_demanda(self):
+        demanda = Demandas.objects.create(
+            nome=self.nome,
+            descricao=self.descricao,
+            prioridade=self.prioridade if self.prioridade else 0,
+            data_inicio=self.data_inicio,
+            data_fim=self.data_fim,
+            atribuicao=self.atribuicao,
+            concluido=self.concluido,
+            referencia='t',
+            id_referencia=self.id,
+            user_inclusao=self.user_inclusao,
+        )
+        return demanda
+    
+    def exist_demanda(self):
+        try:
+            demanda = Demandas.objects.get(id_referencia=self.id, referencia='t')
+            return True
+        except Demandas.DoesNotExist:
+            return False
+    
+    def att_demanda(self):
+        try:
+            demanda = Demandas.objects.get(id_referencia=self.id, referencia='t')
+            demanda.nome = self.nome
+            demanda.descricao = self.descricao
+            demanda.data_inicio = self.data_inicio
+            demanda.data_fim = self.data_fim
+            demanda.atribuicao = self.atribuicao
+            demanda.concluido = self.concluido
+            demanda.save()
+        except Demandas.DoesNotExist:            
+            demanda = None
+        return demanda
+    
+    
 class Atividades(models.Model):
     
     tarefa = models.ForeignKey(Tarefas, on_delete=models.CASCADE)
@@ -230,6 +326,42 @@ class Atividades(models.Model):
         comentarios = Comentarios.objects.filter(atribuicao='a', atividade=self.id)
         return comentarios 
 
+    def cria_demanda(self):
+        demanda = Demandas.objects.create(
+            nome=self.nome,
+            descricao=self.descricao,
+            prioridade=self.tarefa.prioridade if self.tarefa.prioridade else 0,
+            data_inicio=self.data_inicio,
+            data_fim=self.data_fim,
+            atribuicao=self.atribuicao,
+            concluido=self.concluido,            
+            referencia='a',
+            id_referencia=self.id,
+            user_inclusao=self.user_inclusao,
+        )
+        return demanda
+    
+    def exist_demanda(self):
+        try:
+            demanda = Demandas.objects.get(id_referencia=self.id, referencia='t')
+            return True
+        except Demandas.DoesNotExist:
+            return False
+    
+    def att_demanda(self):
+        try:
+            demanda = Demandas.objects.get(id_referencia=self.id, referencia='t')
+            demanda.nome = self.nome
+            demanda.descricao = self.descricao
+            demanda.data_inicio = self.data_inicio
+            demanda.data_fim = self.data_fim
+            demanda.atribuicao = self.atribuicao
+            demanda.concluido = self.concluido
+            demanda.save()
+        except Demandas.DoesNotExist:
+            demanda = None
+        return demanda
+    
 class Comentarios(models.Model):
     
     ATRIBUICAO_CHOICES = (

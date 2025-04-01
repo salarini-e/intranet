@@ -1,0 +1,299 @@
+{% extends 'template.html' %}
+{% block gestao %}active{% endblock %}
+{% block showgestao %}show{% endblock %}
+{% block tarefas %}active{% endblock %}
+{% block main %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-start">Minhas tarefas</h1>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row">
+                <!-- Main Content -->
+                <div class="col-md-9 ps-md-5 pb-4">
+                    <h2 id="my-day" class="mb-4">Fora do prazo previsto</h2>
+                    {% if overdue_tasks %}
+                        {% for demanda in overdue_tasks %}
+                        <div class="thediv d-flex justify-content-between align-items-center py-3 px-3" style="background-color: {% cycle '#f9f9f9' '#ffffff' %}; border: none;">
+                            <div class="w-100 ms-3">
+                                <h5 class="card-title mb-1 d-flex justify-content-between align-items-center">
+                                    <div class="form-check my-auto" style="font-size: 12pt;">
+                                        <input class="form-check-input" type="checkbox" id="demanda-{{ demanda.id }}" {% if demanda.concluido %}checked{% endif %} 
+                                            onclick="toggleTaskCompletion({{ demanda.id }}, this.checked)">
+                                    </div>
+                                    {{ demanda.nome }}
+                                    <span class="ms-auto">
+                                        <a href="#" class="text-primary me-2" title="Editar" style="font-size: 0.8rem;" 
+                                           onclick="openEditModal({{ demanda.id }}, '{{ demanda.nome }}', '{{ demanda.descricao }}', '{{ demanda.prioridade }}', '{{ demanda.data_prevista_execucao|date:'Y-m-d' }}')">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="text-danger" title="Excluir" style="font-size: 0.8rem;">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </span>
+                                </h5>
+                                <p class="card-text" style="color: #495057;">{{ demanda.descricao }}</p>
+                                {% if demanda.referencia and demanda.referencia != 'n' %}
+                                    <small style="color: #495057;">
+                                        <strong>Origem:</strong> {{ demanda.get_referencia_display }}<br>                                        
+                                    </small>
+                                {% else %}
+                                    <br>
+                                {% endif %}
+                                <div class="w-100 d-flex">
+                                    {% if demanda.status %}
+                                        {% if demanda.status == 'Atrasada' %}
+                                        <span class="me-1 badge bg-danger text-white mt-2">Em atraso</span>
+                                        {% elif demanda.status == 'Em andamento' %}
+                                        <span class="me-1 badge bg-warning text-dark mt-2">Em andamento</span>
+                                        {% elif demanda.status == 'Concluída' %}
+                                        <span class="me-1 badge bg-success text-white mt-2">Concluída</span>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if demanda.concluido %}
+                                        <span class="me-1 badge bg-primary text-white mt-2 concluido-badge">Concluído</span>
+                                    {% endif %}
+                                    <select class="badge priority-select mt-2" data-id="{{ demanda.id }}">
+                                        <option value="0" {% if demanda.prioridade == 0 %}selected{% endif %} style="background-color: #6c757d; color: white;">Regular</option>
+                                        <option value="1" {% if demanda.prioridade == 1 %}selected{% endif %} style="background-color: #ffc107; color: black;">Médio</option>
+                                        <option value="2" {% if demanda.prioridade == 2 %}selected{% endif %} style="background-color: #dc3545; color: white;">Importante</option>
+                                        <option value="3" {% if demanda.prioridade == 3 %}selected{% endif %} style="background-color: #6f42c1; color: white;">Urgente</option>
+                                    </select>
+                                    <small class="ms-auto mt-2" style="color: #495057;">
+                                        {% if demanda.data_prevista_execucao %}
+                                            <strong><i class="fa-solid fa-calendar-day me-2"></i></strong> {{ demanda.data_prevista_execucao|date:"d/m/Y" }}
+                                        {% endif %}
+                                        {% if demanda.data_inicio and demanda.data_fim %}
+                                        <i class="fa-solid fa-calendar-days ms-4 me-2"></i>{{ demanda.data_inicio|date:"d/m/Y" }} <i class="fa-solid fa-arrow-right-long mx-2"></i> {{ demanda.data_fim|date:"d/m/Y" }}
+                                        {% elif demanda.data_inicio and not demanda.data_fim %}
+                                        <i class="fa-solid fa-calendar-days ms-4 me-2"></i>{{ demanda.data_inicio|date:"d/m/Y" }} <i class="fa-solid fa-arrow-right-long mx-2"></i> 
+                                            <i class="fa fa-exclamation-circle text-warning" title="Sem data de fim"></i>
+                                        {% elif not demanda.data_inicio and demanda.data_fim %}
+                                            <i class="fa fa-exclamation-circle text-warning" title="Sem data de início"></i> <i class="fa-solid fa-arrow-right-long mx-2"></i> 
+                                            {{ demanda.data_fim|date:"d/m/Y" }}
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Nenhuma tarefa atrasada.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col pe-md-5 pt-5">
+                    {% include 'tarefas/menu.html' with active_page='atrasados' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Task Modal -->
+<div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTaskModalLabel">Editar Tarefa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editTaskForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="editTaskId">
+                    <div class="mb-3">
+                        <label for="editTaskName" class="form-label">Nome da Tarefa</label>
+                        <input type="text" class="form-control" id="editTaskName" placeholder="Digite o nome da tarefa">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTaskDescription" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="editTaskDescription" rows="3" placeholder="Digite a descrição"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTaskPriority" class="form-label">Prioridade</label>
+                        <select class="form-select" id="editTaskPriority">
+                            <option value="0">Regular</option>
+                            <option value="1">Médio</option>
+                            <option value="2">Importante</option>
+                            <option value="3">Urgente</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTaskDate" class="form-label">Data Prevista de Execução</label>
+                        <input type="date" class="form-control" id="editTaskDate">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="saveTask()">Salvar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selects = document.querySelectorAll('.priority-select');
+        selects.forEach(select => {
+            // Apply initial styles
+            const selectedOption = select.options[select.selectedIndex];
+            select.style.backgroundColor = selectedOption.style.backgroundColor;
+            select.style.color = selectedOption.style.color;
+
+            // Update styles on change
+            select.addEventListener('change', function () {
+                const selectedOption = this.options[this.selectedIndex];
+                this.style.backgroundColor = selectedOption.style.backgroundColor;
+                this.style.color = selectedOption.style.color;
+
+                // Send priority change to the server
+                const taskId = this.getAttribute('data-id');
+                const newPriority = this.value;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                fetch("{% url 'projetos:change_demanda_priority' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        task_id: taskId,
+                        new_priority: newPriority,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status !== 200) {
+                        alert('Erro ao atualizar prioridade: ' + data.error);
+                    }
+                })
+                .catch(error => console.error('Erro:', error));
+            });
+        });
+    });
+
+    function openEditModal(id, name, description, priority, date) {
+        document.getElementById('editTaskId').value = id;
+        document.getElementById('editTaskName').value = name;
+        document.getElementById('editTaskDescription').value = description;
+        document.getElementById('editTaskPriority').value = priority;
+        document.getElementById('editTaskDate').value = date;
+        const editTaskModal = new bootstrap.Modal(document.getElementById('editTaskModal'));
+        editTaskModal.show();
+    }
+
+    function saveTask() {
+        const id = document.getElementById('editTaskId').value;
+        const name = document.getElementById('editTaskName').value;
+        const description = document.getElementById('editTaskDescription').value;
+        const priority = document.getElementById('editTaskPriority').value;
+        const date = document.getElementById('editTaskDate').value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch("{% url 'projetos:editar_demanda' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                demanda_id: id,
+                nome: name,
+                descricao: description,
+                prioridade: priority,
+                data_prevista_execucao: date,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                alert('Demanda atualizada com sucesso!');
+                location.reload();
+            } else {
+                alert('Erro ao atualizar demanda: ' + data.error);
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    function toggleTaskCompletion(taskId, isChecked) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch("{% url 'projetos:toggle_demanda_completion' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ tarefa_id: taskId }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                const taskElement = document.querySelector(`#demanda-${taskId}`).closest('.thediv');
+                if (isChecked) {
+                    // Add "Concluído" badge dynamically
+                    addBadge(taskId);
+
+                    // Animate and remove the task
+                    animateAndRemove(taskElement);
+                } else {
+                    // Remove "Concluído" badge dynamically
+                    removeBadge(taskId);
+                }
+            } else {
+                alert('Erro ao atualizar tarefa: ' + data.error);
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    function addBadge(taskId) {
+        const taskElement = document.querySelector(`#demanda-${taskId}`).closest('.thediv');
+        const badgesContainer = taskElement.querySelector('.w-100.d-flex');
+        if (!badgesContainer.querySelector('.concluido-badge')) {
+            const badge = document.createElement('span');
+            badge.className = 'me-1 badge bg-primary text-white mt-2 concluido-badge';
+            badge.textContent = 'Concluído';
+            badgesContainer.prepend(badge);
+        }
+    }
+
+    function removeBadge(taskId) {
+        const taskElement = document.querySelector(`#demanda-${taskId}`).closest('.thediv');
+        const badgesContainer = taskElement.querySelector('.w-100.d-flex');
+        const badge = badgesContainer.querySelector('.concluido-badge');
+        if (badge) {
+            badge.remove();
+        }
+    }
+
+    function animateAndRemove(element) {
+        element.classList.add('fade-out');
+        setTimeout(() => element.remove(), 500);
+    }
+
+    function showFireworks() {
+        // ...existing code for fireworks...
+    }
+</script>
+
+<style>
+    .fade-out {
+        animation: fadeOut 0.5s forwards;
+    }
+
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+    }
+</style>
+{% endblock %}

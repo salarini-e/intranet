@@ -1,4 +1,6 @@
 {% extends 'template.html' %}
+{% block gestao %}active{% endblock %}
+{% block showgestao %}show{% endblock %}
 {% block projetos %}active{% endblock %}
 {% block main %}
     <style>
@@ -174,6 +176,12 @@
         }
         #searchResponsavelResult.show{
             display: block;
+        }
+        .projeto_status[data-status="C"] {
+            background-color: #8B8000; /* Dark mustard */
+        }
+        .projeto_status[data-status="F"] {
+            background-color: #000000; /* Black */
         }
     </style>
 

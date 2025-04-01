@@ -4,12 +4,17 @@ from . import views
 app_name = 'projetos'
 urlpatterns = [
     path('', views.index, name='index'),
+    path('tarefas/', views.tarefas, name='tarefas'),
+    path('tarefas/definir-data/', views.definir_data_demandas_nao_agendadas, name='definir_data_demandas_nao_agendadas'),
+    path('tarefas/atrasados/', views.atrasados, name='atrasados'),
+    path('tarefas/em-breve/', views.em_breve, name='em_breve'),
+    path('tarefas/concluidos/', views.concluidos, name='tarefas_concluidas'),
+    
     path('all/', views.todos_projetos, name='all'),
     path('<id>/board/', views.kanbanboard, name='index'),
 
     path('api/criar-projeto/', views.api_criar_projeto, name='api_criar_projeto'),
     path('api/criar-coluna/', views.api_criar_coluna, name='api_criar_coluna'),
-    path('api/criar-card/', views.api_criar_card, name='api_criar_card'),
     path('api/deletar-card/', views.api_remover_card, name='api_remover_card'),
     path('api/mover-card/column/', views.api_mover_card_coluna, name='api_mover_card_coluna'),
     path('api/mover-card/line/', views.api_mover_card_linha, name='api_mover_card_linha'),
@@ -27,6 +32,12 @@ urlpatterns = [
     path('api/enviar-anexo/', views.api_enviar_anexo, name='api_enviar_anexo'),
     path('api/get-projeto-comentarios/<id>/', views.api_get_projeto_comentarios, name='api_get_projeto_comentarios'),
     path('api/enviar-comentario/', views.api_enviar_comentario, name='api_enviar_comentario'),
+    path('api/change-priority/', views.change_demanda_priority, name='change_demanda_priority'),
+    path('api/save-task-order/', views.save_task_order, name='save_task_order'),
+    path('toggle-task-completion/', views.toggle_task_completion, name='toggle_task_completion'),
+    path('api/editar-demanda/', views.editar_demanda, name='editar_demanda'),
+    path('api/excluir-demanda/', views.excluir_demanda, name='excluir_demanda'),
+    path('toggle-demanda-completion/', views.toggle_demanda_completion, name='toggle_demanda_completion'),
     # path('project/<int:project_id>/', views.project_detail, name='project_detail'),
     # path('project/new/', views.new_project, name='new_project'),
     # path('project/<int:project_id>/edit/', views.edit_project, name='edit_project'),

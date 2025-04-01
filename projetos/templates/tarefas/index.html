@@ -1,0 +1,698 @@
+{% extends 'template.html' %}
+{% block gestao %}active{% endblock %}
+{% block showgestao %}show{% endblock %}
+{% block tarefas %}active{% endblock %}
+{% block main %}
+
+<div class="container mt-4">
+    <!-- Tool Title -->
+    <h1 class="mb-4 text-start">Minhas tarefas</h1>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row">
+                <!-- Main Content -->
+                <div class="col-md-9 ps-md-5 pb-4">
+                    <!-- My Day Section -->
+                    <div class="row">
+                        <div class="col d-flex">
+                            <h2 id="my-day" class="mb-4">Hoje</h2>                            
+                        </div>
+                    </div>
+                    {% if my_day %}
+                        {% for demanda in my_day %}
+                        <div class="thediv d-flex justify-content-between align-items-center py-3 ps-3 pe-1" style="background-color: {% cycle '#f9f9f9' '#ffffff' %}; border: none;">                            
+                            <div class="w-100 ms-3">
+                                <h5 class="card-title d-flex justify-content-between align-items-center">
+                                    <div class="form-check my-auto" style="font-size: 12pt;">
+                                        <input class="form-check-input" type="checkbox" id="demanda-{{ demanda.id }}" {% if demanda.concluido %}checked{% endif %} 
+                                            onclick="toggleTaskCompletion({{ demanda.id }}, this.checked)">
+                                    </div>
+                                    {{ demanda.nome }}
+                                    <span class="ms-auto">
+                                        <a href="#" class="text-primary me-2" title="Editar" style="font-size: 0.8rem;" 
+                                           onclick="openEditModal({{ demanda.id }}, '{{ demanda.nome }}', '{{ demanda.descricao }}', '{{ demanda.prioridade }}', '{{ demanda.data_prevista_execucao|date:'Y-m-d' }}')">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="text-danger me-2" title="Excluir" style="font-size: 0.8rem;" 
+                                           onclick="openDeleteModal({{ demanda.id }}, '{{ demanda.nome }}', '{{ demanda.descricao }}', '{{ demanda.prioridade }}', '{{ demanda.data_prevista_execucao|date:'d/m/Y' }}')">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                        <i onclick="moveUp({{demanda.id}})" class="fa-solid fa-caret-up move-icon" title="Mover para cima"></i>
+                                    </span>
+                                </h5>
+                                <p class="card-text" style="margin: 0; color: #495057;">{{ demanda.descricao }}</p>
+                                {% if demanda.referencia and demanda.referencia != 'n' %}
+                                    <small style="color: #495057;">
+                                        <strong>Origem:</strong> {{ demanda.get_referencia_display }}<br>                                        
+                                    </small>
+                                {% else %}
+                                    <br>
+                                {% endif %}
+                                <div class="statusbadges w-100 d-flex">
+                                    {% if demanda.rotina %}
+                                        <span class="me-1 badge bg-info text-white mt-2">Rotina</span>
+                                    {% endif %}
+                                    {% if demanda.status %}
+                                        {% if demanda.status == 'Atrasada' %}
+                                        <span class="me-1 badge bg-danger text-white mt-2">Em atraso</span>
+                                        {% elif demanda.status == 'Em andamento' %}
+                                        <span class="me-1 badge bg-warning text-dark mt-2">Em andamento</span>
+                                        {% elif demanda.status == 'Concluída' %}
+                                        <span class="me-1 badge bg-success text-white mt-2">Concluída</span>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if demanda.concluido %}
+                                        <span class="me-1 badge bg-primary text-white mt-2 concluido-badge">Concluído</span>
+                                    {% endif %}
+                                    <select class="badge priority-select mt-2" data-id="{{ demanda.id }}">
+                                        <option value="0" {% if demanda.prioridade == 0 %}selected{% endif %} style="background-color: #6c757d; color: white;">Regular</option>
+                                        <option value="1" {% if demanda.prioridade == 1 %}selected{% endif %} style="background-color: #ffc107; color: black;">Médio</option>
+                                        <option value="2" {% if demanda.prioridade == 2 %}selected{% endif %} style="background-color: #dc3545; color: white;">Importante</option>
+                                        <option value="3" {% if demanda.prioridade == 3 %}selected{% endif %} style="background-color: #6f42c1; color: white;">Urgente</option>
+                                    </select>
+                                    <div id="waitingResponse-{{demanda.id}}" class="waiting-response ms-5 mt-auto" style="display: none;">                                        
+                                        <div class="loading my-auto">
+                                            <div class="spinner-border text-primary" role="status" style="height: 20px; width: 20px;">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <span class="ms-2">
+                                                Atualizando...
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <small class="ms-auto mt-2" style="color: #495057;">
+                                        {% if demanda.data_prevista_execucao %}
+                                            <strong><i class="fa-solid fa-calendar-day me-2"></i></strong> {{ demanda.data_prevista_execucao|date:"d/m/Y" }}
+                                        {% endif %}
+                                        <i onclick="moveDown({{demanda.id}})" class="fa-solid fa-caret-down move-icon ms-2" title="Mover para baixo"></i>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Nenhuma demanda para hoje.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Divider -->
+                <div class="vr mx-auto" style="background-color: #ffffff00;"></div>
+
+                <!-- Sidebar -->
+                <div class="col pe-md-5 pt-5">
+                    {% include 'tarefas/menu.html' with active_page='hoje' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Task Modal -->
+<div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTaskModalLabel">Adicionar Tarefa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Add Task Form -->
+                <form id="addTaskForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="taskName" class="form-label">Nome da Tarefa</label>
+                        <input type="text" class="form-control" id="taskName" placeholder="Digite o nome da tarefa">
+                    </div>
+                    <div class="mb-3">
+                        <label for="taskDescription" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="taskDescription" rows="3" placeholder="Digite a descrição"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="taskPriority" class="form-label">Prioridade</label>
+                        <select class="form-select" id="taskPriority">
+                            <option value="0">Regular</option>
+                            <option value="1">Médio</option>
+                            <option value="2">Importante</option>
+                            <option value="3">Urgente</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="taskDate" class="form-label">Data Prevista de Execução</label>
+                        <input type="date" class="form-control" id="taskDate">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="taskRoutine">
+                        <label class="form-check-label" for="taskRoutine">É uma rotina?</label>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addTask()">Salvar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Task Modal -->
+<div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTaskModalLabel">Editar Tarefa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editTaskForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="editTaskId">
+                    <div class="mb-3">
+                        <label for="editTaskName" class="form-label">Nome da Tarefa</label>
+                        <input type="text" class="form-control" id="editTaskName" placeholder="Digite o nome da tarefa">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTaskDescription" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="editTaskDescription" rows="3" placeholder="Digite a descrição"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTaskPriority" class="form-label">Prioridade</label>
+                        <select class="form-select" id="editTaskPriority">
+                            <option value="0">Regular</option>
+                            <option value="1">Médio</option>
+                            <option value="2">Importante</option>
+                            <option value="3">Urgente</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTaskDate" class="form-label">Data Prevista de Execução</label>
+                        <input type="date" class="form-control" id="editTaskDate">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="editTaskRoutine">
+                        <label class="form-check-label" for="editTaskRoutine">É uma rotina?</label>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="saveTask(event)">Salvar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteTaskModalLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza de que deseja excluir a seguinte demanda?</p>
+                <ul>
+                    <li><strong>Nome:</strong> <span id="deleteTaskName"></span></li>
+                    <li><strong>Descrição:</strong> <span id="deleteTaskDescription"></span></li>
+                    <li><strong>Prioridade:</strong> <span id="deleteTaskPriority"></span></li>
+                    <li><strong>Data Prevista:</strong> <span id="deleteTaskDate"></span></li>
+                </ul>
+                <input type="hidden" id="deleteTaskId">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="deleteTask()">Excluir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters and Tags Modal -->
+<div class="modal fade" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filtersModalLabel">Filtros e Etiquetas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Filters and Tags Content -->
+                <form>
+                    <div class="mb-3">
+                        <label for="filterPriority" class="form-label">Filtrar por Prioridade</label>
+                        <select class="form-select" id="filterPriority">
+                            <option value="">Todas</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Médio">Médio</option>
+                            <option value="Importante">Importante</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="filterTags" class="form-label">Etiquetas</label>
+                        <input type="text" class="form-control" id="filterTags" placeholder="Digite as etiquetas">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selects = document.querySelectorAll('.priority-select');
+        selects.forEach(select => {
+            select.addEventListener('change', function () {
+                const selectedOption = this.options[this.selectedIndex];
+                this.style.backgroundColor = selectedOption.style.backgroundColor;
+                this.style.color = selectedOption.style.color;
+
+                // Send priority change to the server
+                const taskId = this.getAttribute('data-id');
+                const newPriority = this.value;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                fetch("{% url 'projetos:change_demanda_priority' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        task_id: taskId,
+                        new_priority: newPriority,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status !== 200) {
+                        alert('Erro ao atualizar prioridade: ' + data.error);
+                    }
+                })
+                .catch(error => console.error('Erro:', error));
+            });
+
+            // Set initial styles
+            const selectedOption = select.options[select.selectedIndex];
+            select.style.backgroundColor = selectedOption.style.backgroundColor;
+            select.style.color = selectedOption.style.color;
+        });
+    });
+
+    function addTask() {
+        const name = document.getElementById('taskName').value;
+        const description = document.getElementById('taskDescription').value;
+        const priority = document.getElementById('taskPriority').value;
+        const date = document.getElementById('taskDate').value;
+        const routine = document.getElementById('taskRoutine').checked;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        if (!name || !date) {
+            alert('Por favor, preencha o nome e a data prevista de execução.');
+            return;
+        }
+
+        fetch("{% url 'projetos:tarefas' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nome: name,
+                descricao: description,
+                prioridade: priority,
+                data_prevista_execucao: date,
+                rotina: routine,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                alert('Tarefa adicionada com sucesso!');
+                location.reload();
+            } else {
+                alert('Erro ao adicionar tarefa: ' + data.error);
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    function openEditModal(id, name, description, priority, date, routine) {
+        document.getElementById('editTaskId').value = id;
+        document.getElementById('editTaskName').value = name;
+        document.getElementById('editTaskDescription').value = description;
+        document.getElementById('editTaskPriority').value = priority;
+        document.getElementById('editTaskDate').value = date;
+        document.getElementById('editTaskRoutine').checked = routine === 'true';
+        const editTaskModal = new bootstrap.Modal(document.getElementById('editTaskModal'));
+        editTaskModal.show();
+    }
+
+    function saveTask(event) {
+        const id = document.getElementById('editTaskId').value;
+        const name = document.getElementById('editTaskName').value;
+        const description = document.getElementById('editTaskDescription').value;
+        const priority = document.getElementById('editTaskPriority').value;
+        const date = document.getElementById('editTaskDate').value;
+        const routine = document.getElementById('editTaskRoutine').checked;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch("{% url 'projetos:editar_demanda' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                demanda_id: id,
+                nome: name,
+                descricao: description,
+                prioridade: priority,
+                data_prevista_execucao: date,
+                rotina: routine,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                const editTaskModal = bootstrap.Modal.getInstance(document.getElementById('editTaskModal'));
+                editTaskModal.hide();
+                location.reload();
+            } else {
+                alert('Erro ao atualizar demanda: ' + data.error);
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    function getPriorityColor(priority) {
+        switch (priority) {
+            case '0': return '#6c757d';
+            case '1': return '#ffc107';
+            case '2': return '#dc3545';
+            case '3': return '#6f42c1';
+            default: return '#6c757d';
+        }
+    }
+
+    function getPriorityTextColor(priority) {
+        switch (priority) {
+            case '0': return 'white';
+            case '1': return 'black';
+            case '2': return 'white';
+            case '3': return 'white';
+            default: return 'white';
+        }
+    }
+
+    function openDeleteModal(id, name, description, priority, date) {
+        document.getElementById('deleteTaskId').value = id;
+        document.getElementById('deleteTaskName').textContent = name;
+        document.getElementById('deleteTaskDescription').textContent = description;
+        document.getElementById('deleteTaskPriority').textContent = getPriorityLabel(priority);
+        document.getElementById('deleteTaskDate').textContent = date;
+        const deleteTaskModal = new bootstrap.Modal(document.getElementById('deleteTaskModal'));
+        deleteTaskModal.show();
+    }
+
+    function getPriorityLabel(priority) {
+        switch (priority) {
+            case '0': return 'Regular';
+            case '1': return 'Médio';
+            case '2': return 'Importante';
+            case '3': return 'Urgente';
+            default: return 'Desconhecida';
+        }
+    }
+    function openLoading(id) {
+        console.log(`open waitingResponse-${id}`);
+        document.getElementById(`waitingResponse-${id}`).style.display = 'd-flex';
+    }
+    function closeLoading(id) {
+        console.log(`close waitingResponse-${id}`);
+        document.getElementById(`waitingResponse-${id}`).style.display = 'none';   
+    }
+    function deleteTask() {
+        const id = document.getElementById('deleteTaskId').value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch("{% url 'projetos:excluir_demanda' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ demanda_id: id }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                alert('Demanda excluída com sucesso!');
+                location.reload();
+            } else {
+                alert('Erro ao excluir demanda: ' + data.error);
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    function toggleTaskCompletion(taskId, isChecked) {
+        openLoading(taskId);
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+        fetch("{% url 'projetos:toggle_demanda_completion' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ tarefa_id: taskId }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                closeLoading(taskId);                
+                if (isChecked) {
+                    addBadge(taskId);
+                    showFireworks() 
+                } else {
+                    removeBadge(taskId);
+                }
+            } else {
+                alert('Erro ao atualizar tarefa: ' + data.error);
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    function addBadge(taskId) {
+        const taskElement = document.querySelector(`#demanda-${taskId}`);
+        const badgesContainer = taskElement.closest('.thediv').querySelector('.statusbadges');
+        if (!badgesContainer.querySelector('.concluido-badge')) {
+            const badge = document.createElement('span');
+            badge.className = 'me-1 badge bg-primary text-white mt-2 concluido-badge';
+            badge.textContent = 'Concluído';
+            badgesContainer.prepend(badge);
+        }
+    }
+
+    function removeBadge(taskId) {
+        const taskElement = document.querySelector(`#demanda-${taskId}`);
+        const badgesContainer = taskElement.closest('.thediv').querySelector('.statusbadges');
+        const badge = badgesContainer.querySelector('.concluido-badge');
+        if (badge) {
+            badge.remove();
+        }
+    }
+
+    function updateTaskDate(taskId, newDate) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch("{% url 'projetos:definir_data_demandas_nao_agendadas' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ demanda_id: taskId, data_prevista_execucao: newDate }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                const taskElement = document.querySelector(`#demanda-${taskId}`).closest('.thediv');
+                taskElement.remove();
+                alert('Data alterada com sucesso!');
+            } else {
+                alert('Erro ao alterar a data: ' + data.error);
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+    function showFireworks() {
+    const fireworksContainer = document.createElement('div');
+    fireworksContainer.className = 'fireworks-container';
+    fireworksContainer.style.position = 'fixed';
+    fireworksContainer.style.top = '0';
+    fireworksContainer.style.left = '0';
+    fireworksContainer.style.width = '100vw';
+    fireworksContainer.style.height = '100vh';
+    fireworksContainer.style.overflow = 'hidden';
+    fireworksContainer.style.pointerEvents = 'none'; // Prevent interaction
+    document.body.appendChild(fireworksContainer);
+
+    const colors = ['#ffcc00', '#ff5733', '#33ff57', '#3357ff', '#ff33a8', '#a833ff', '#00ffff', '#ff0000'];
+    const numParticles = 80; // Increased for full-screen effect
+
+    for (let i = 0; i < numParticles; i++) {
+        const firework = document.createElement('div');
+        firework.className = 'firework';
+        
+        // Random position across the entire screen
+        firework.style.left = `${Math.random() * 100}%`;
+        firework.style.top = `${Math.random() * 100}%`;
+        
+        // Random color
+        firework.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        
+        // Random animation delay for staggered effect
+        firework.style.animationDelay = `${Math.random() * 0.3}s`;
+        
+        // Random size variation
+        firework.style.width = `${Math.random() * 12 + 6}px`;
+        firework.style.height = firework.style.width;
+        
+        // Randomized animation duration for smoother spread
+        firework.style.animationDuration = `${Math.random() * 1 + 0.8}s`;
+        
+        fireworksContainer.appendChild(firework);
+    }
+
+    setTimeout(() => {
+        fireworksContainer.style.transition = 'opacity 1s ease-in-out';
+        fireworksContainer.style.opacity = '0'; // Smooth fade out
+        setTimeout(() => fireworksContainer.remove(), 1000); // Remove after fade out
+    }, 2500);
+}
+
+
+    function reOrdenar() {
+        const tasks = document.querySelectorAll('.thediv');
+        const orderData = Array.from(tasks).map((task, index) => {
+            const taskId = task.querySelector('.form-check-input').id.split('-')[1];
+            return { id: taskId, ordem_dia: index + 1 };
+        });
+
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch("{% url 'projetos:save_task_order' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(orderData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status !== 200) {
+                console.error('Erro ao salvar ordenamento:', data.error);
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    function moveUp(taskId) {
+        const taskElement = document.querySelector(`#demanda-${taskId}`).closest('.thediv');
+        const previousElement = taskElement.previousElementSibling;
+
+        if (previousElement) {
+            taskElement.parentNode.insertBefore(taskElement, previousElement);
+            reOrdenar();
+        } else {
+            console.warn('Não é possível mover para cima. Já está no topo.');
+        }
+    }
+
+    function moveDown(taskId) {
+        const taskElement = document.querySelector(`#demanda-${taskId}`).closest('.thediv');
+        const nextElement = taskElement.nextElementSibling;
+
+        if (nextElement) {
+            taskElement.parentNode.insertBefore(nextElement, taskElement);
+            reOrdenar();
+        } else {
+            console.warn('Não é possível mover para baixo. Já está na última posição.');
+        }
+    }
+</script>
+
+<style>
+    .fade-out {
+        animation: fadeOut 0.5s forwards;
+    }
+
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+    }
+
+    .fireworks-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 9999;
+    }
+
+    .firework {
+        position: absolute;
+        bottom: 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        animation: firework 1s ease-out forwards;
+    }
+
+    @keyframes firework {
+        0% {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: translateY(-50vh) scale(1.5);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-100vh) scale(0);
+            opacity: 0;
+        }
+    }
+
+    .move-icon {
+        font-size: 1.2rem;
+        color: #6c757d;
+        transition: color 0.2s ease, transform 0.2s ease;
+        cursor: pointer;
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    .move-icon:hover {
+        color: #007bff;
+        transform: scale(1.2);
+    }
+
+    .order-control {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: 100%;
+    }
+</style>
+{% endblock %}

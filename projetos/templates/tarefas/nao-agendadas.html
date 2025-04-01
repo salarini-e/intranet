@@ -1,0 +1,230 @@
+{% extends 'template.html' %}
+{% block gestao %}active{% endblock %}
+{% block showgestao %}show{% endblock %}
+{% block tarefas %}active{% endblock %}
+{% block main %}
+<div class="container mt-4">
+    <!-- Tool Title -->
+    <h1 class="mb-4 text-start">Minha Lista de Tarefas</h1>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row">
+                <!-- Main Content -->
+                <div class="col-md-9 ps-md-5 pb-4">
+                    <!-- My Day Section -->
+                    <h2 id="my-day" class="mb-4">Hoje</h2>
+                    {% if my_day %}
+                        {% for demanda in my_day %}
+                        <div class="d-flex justify-content-between align-items-center py-3 px-3" style="background-color: {% cycle '#f9f9f9' '#ffffff' %}; border: none;">
+                            <div class="w-100 ms-3">
+                                <h5 class="card-title mb-1 d-flex justify-content-between align-items-center">
+                                    <div class="form-check my-auto" style="font-size: 12pt;">
+                                        <input class="form-check-input" type="checkbox" id="demanda-{{ demanda.id }}" {% if demanda.concluido %}checked{% endif %}>
+                                    </div>
+                                    {{ demanda.nome }}
+                                    <span class="ms-auto">
+                                        <a href="#" class="text-primary me-2" title="Editar" style="font-size: 0.8rem;">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="text-danger" title="Excluir" style="font-size: 0.8rem;">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </span>
+                                </h5>
+                                <p class="card-text mb-1" style="color: #495057;">{{ demanda.descricao }}</p>
+                                {% if demanda.referencia %}
+                                    <small style="color: #495057;">Origem: {{ demanda.get_referencia_display }}</small>
+                                {% endif %}                                    
+                                <div class="w-100 d-flex">                                        
+                                    {% if demanda.status == 'Atrasada' %}
+                                    <span class="me-1 badge bg-danger text-white mt-2">Em atraso</span>
+                                    {% elif demanda.status == 'Em andamento' %}
+                                    <span class="me-1 badge bg-warning text-dark mt-2">Em andamento</span>
+                                    {% endif %}
+                                    <select class="badge priority-select mt-2" data-id="{{ demanda.id }}">
+                                        <option value="0" {% if demanda.prioridade == 0 %}selected{% endif %} style="background-color: #6c757d; color: white;">Regular</option>
+                                        <option value="1" {% if demanda.prioridade == 1 %}selected{% endif %} style="background-color: #ffc107; color: black;">Médio</option>
+                                        <option value="2" {% if demanda.prioridade == 2 %}selected{% endif %} style="background-color: #dc3545; color: white;">Importante</option>
+                                        <option value="3" {% if demanda.prioridade == 3 %}selected{% endif %} style="background-color: #d9534f; color: white;">Urgente</option>
+                                    </select>
+                                    <small class="ms-auto mt-2" style="color: #495057;">Vencimento: {{ demanda.data_fim|date:"d/m/Y" }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Nenhuma demanda para hoje.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Divider -->
+                <div class="vr mx-auto" style="background-color: #ffffff00;"></div>
+
+                <!-- Sidebar -->
+                <div class="col pe-md-5 pt-5">
+                    <div class="list-group mt-1" style="border: none;">
+                        <a href="#" class="list-group-item list-group-item-action text-primary" style="border: none;" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                            <i class="fa fa-plus me-2"></i>Adicionar Tarefa
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" style="border: none;">
+                            <i class="fa fa-search me-2"></i>Buscar
+                        </a>
+                        <a href="#my-day" class="list-group-item list-group-item-action" style="border: none;">
+                            <i class="fa fa-exclamation-circle me-2"></i>Atrasadas
+                        </a>
+                        <a href="#my-day" class="list-group-item list-group-item-action active" style="border: none;">
+                            <i class="fa fa-sun me-2"></i>Hoje
+                        </a>
+                        <a href="#planned" class="list-group-item list-group-item-action" style="border: none;">
+                            <i class="fa fa-calendar-alt me-2"></i>Em Breve
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" style="border: none;" data-bs-toggle="modal" data-bs-target="#filtersModal">
+                            <i class="fa fa-tags me-2"></i>Etiquetas
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" style="border: none;">
+                            <i class="fa-solid fa-clipboard-list me-2"></i>Não agendadas 
+                            {% if has_demandas_without_date %}
+                            <small style="color: #dc3545;">
+                                <strong>
+                                    <i class="fa-solid fa-bell ms-2 bell-icon"></i>
+                                </strong>
+                            </small>
+                            {% endif %}
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" style="border: none;">
+                            <i class="fa fa-check me-2"></i>Concluído
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Task Modal -->
+<div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTaskModalLabel">Adicionar Tarefa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Add Task Form -->
+                <form>
+                    <div class="mb-3">
+                        <label for="taskName" class="form-label">Nome da Tarefa</label>
+                        <input type="text" class="form-control" id="taskName" placeholder="Digite o nome da tarefa">
+                    </div>
+                    <div class="mb-3">
+                        <label for="taskDescription" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="taskDescription" rows="3" placeholder="Digite a descrição"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="taskPriority" class="form-label">Prioridade</label>
+                        <select class="form-select" id="taskPriority">
+                            <option value="Regular">Regular</option>
+                            <option value="Médio">Médio</option>
+                            <option value="Importante">Importante</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters and Tags Modal -->
+<div class="modal fade" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filtersModalLabel">Filtros e Etiquetas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Filters and Tags Content -->
+                <form>
+                    <div class="mb-3">
+                        <label for="filterPriority" class="form-label">Filtrar por Prioridade</label>
+                        <select class="form-select" id="filterPriority">
+                            <option value="">Todas</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Médio">Médio</option>
+                            <option value="Importante">Importante</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="filterTags" class="form-label">Etiquetas</label>
+                        <input type="text" class="form-control" id="filterTags" placeholder="Digite as etiquetas">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-check-input {
+        border-color: black;
+    }
+    .priority-select {
+        width: auto;
+        font-size: 0.9rem;
+        padding: 0.2rem 0.5rem;
+        border: none;
+        background-color: #6c757d;
+        color: white;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        appearance: none; /* Removes the arrow */
+        -moz-appearance: none; /* Removes the arrow in Firefox */
+        -webkit-appearance: none; /* Removes the arrow in Safari */
+    }
+    .priority-select:hover {
+        opacity: 0.9;
+    }
+    @keyframes rotateBell {
+        0% {
+            transform: rotate(0deg);
+        }
+        25% {
+            transform: rotate(15deg);
+        }
+        50% {
+            transform: rotate(-15deg);
+        }
+        75% {
+            transform: rotate(15deg);
+        }
+        100% {
+            transform: rotate(0deg);
+        }
+    }
+
+    .bell-icon {
+        display: inline-block;
+        animation: rotateBell 2s ease-in-out infinite;
+        animation-delay: 10s;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selects = document.querySelectorAll('.priority-select');
+        selects.forEach(select => {
+            select.addEventListener('change', function () {
+                const selectedOption = this.options[this.selectedIndex];
+                this.style.backgroundColor = selectedOption.style.backgroundColor;
+                this.style.color = selectedOption.style.color;
+            });
+            // Set initial styles
+            const selectedOption = select.options[select.selectedIndex];
+            select.style.backgroundColor = selectedOption.style.backgroundColor;
+            select.style.color = selectedOption.style.color;
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,172 @@
+{% extends 'template.html' %}
+{% block gestao %}active{% endblock %}
+{% block showgestao %}show{% endblock %}
+{% block tarefas %}active{% endblock %}
+{% block main %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="text-start">Tarefas não agendadas</h1>
+                <a href="{% url 'projetos:tarefas' %}" class="btn">
+                    <i class="fa fa-arrow-left me-2"></i>Voltar
+                </a>
+            </div>
+            <div class="row">
+                <!-- Main Content -->
+                <div class="col-md-9">
+                    {% if demandas_nao_agendadas %}
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Tarefa</th>
+                                    <th scope="col">Descrição</th>
+                                    <th scope="col">Origem</th>
+                                    <th scope="col">Definir Data</th>
+                                    <th scope="col" class="text-center">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for demanda in demandas_nao_agendadas %}
+                                <tr id="row-{{ demanda.id }}">
+                                    <td>{{ demanda.nome }}</td>
+                                    <td>{{ demanda.descricao }}</td>
+                                    <td>
+                                        {% if demanda.referencia and demanda.referencia != 'n' %}
+                                            {{ demanda.get_referencia_display }}
+                                        {% else %}
+                                            <span class="text-muted">Nenhuma</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <input type="date" id="data-{{ demanda.id }}" class="form-control" value="{{ demanda.data_prevista_execucao|date:'Y-m-d' }}">
+                                        {% if demanda.concluido %}
+                                            <span class="me-1 badge bg-primary text-white mt-2 concluido-badge">Concluído</span>
+                                        {% endif %}
+                                        <small style="color: #495057;">
+                                            {% if demanda.data_prevista_execucao %}
+                                                <strong><i class="fa-solid fa-calendar-day me-2"></i></strong> {{ demanda.data_prevista_execucao|date:"d/m/Y" }}
+                                            {% endif %}
+                                            {% if demanda.data_inicio and demanda.data_fim %}
+                                            <i class="fa-solid fa-calendar-days ms-4 me-2"></i>{{ demanda.data_inicio|date:"d/m/Y" }} <i class="fa-solid fa-arrow-right-long mx-2"></i> {{ demanda.data_fim|date:"d/m/Y" }}
+                                            {% elif demanda.data_inicio and not demanda.data_fim %}
+                                            <i class="fa-solid fa-calendar-days ms-4 me-2"></i>{{ demanda.data_inicio|date:"d/m/Y" }} <i class="fa-solid fa-arrow-right-long mx-2"></i> 
+                                                <i class="fa fa-exclamation-circle text-warning" title="Sem data de fim"></i>
+                                            {% elif not demanda.data_inicio and demanda.data_fim %}
+                                                <i class="fa fa-exclamation-circle text-warning" title="Sem data de início"></i> <i class="fa-solid fa-arrow-right-long mx-2"></i> 
+                                                {{ demanda.data_fim|date:"d/m/Y" }}
+                                            {% endif %}
+                                        </small>
+                                    </td>
+                                    <td class="text-center">
+                                        <button class="btn btn-primary btn-sm" onclick="setDate({{ demanda.id }})">
+                                            Salvar
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted">Nenhuma tarefa sem data definida.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-md-3">
+                    {% include 'tarefas/menu.html' with active_page='nao_agendadas' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setDate(demandaId) {
+        const dateInput = document.getElementById(`data-${demandaId}`);
+        const selectedDate = dateInput.value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        if (!selectedDate) {
+            alert('Por favor, selecione uma data.');
+            return;
+        }
+
+        fetch("{% url 'projetos:definir_data_demandas_nao_agendadas' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                demanda_id: demandaId,
+                data_prevista_execucao: selectedDate,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                // Remove the row dynamically
+                const row = document.getElementById(`row-${demandaId}`);
+                row.remove();
+                alert('Data definida com sucesso!');
+            } else {
+                alert('Erro ao definir data: ' + data.error);
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    function toggleTaskCompletion(taskId, isChecked) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch("{% url 'projetos:toggle_demanda_completion' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ tarefa_id: taskId }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                if (isChecked) {
+                    // Add "Concluído" badge dynamically
+                    addBadge(taskId);
+                } else {
+                    // Remove "Concluído" badge dynamically
+                    removeBadge(taskId);
+                }
+            } else {
+                alert('Erro ao atualizar tarefa: ' + data.error);
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    function addBadge(taskId) {
+        const taskElement = document.querySelector(`#row-${taskId}`);
+        const badgesContainer = taskElement.querySelector('td');
+        if (!badgesContainer.querySelector('.concluido-badge')) {
+            const badge = document.createElement('span');
+            badge.className = 'me-1 badge bg-primary text-white mt-2 concluido-badge';
+            badge.textContent = 'Concluído';
+            badgesContainer.prepend(badge);
+        }
+    }
+
+    function removeBadge(taskId) {
+        const taskElement = document.querySelector(`#row-${taskId}`);
+        const badgesContainer = taskElement.querySelector('td');
+        const badge = badgesContainer.querySelector('.concluido-badge');
+        if (badge) {
+            badge.remove();
+        }
+    }
+
+    function showFireworks() {
+        // ...existing code for fireworks...
+    }
+</script>
+{% endblock %}

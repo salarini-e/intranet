@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Projetos, Fases, Categorias, Prioridade, Tarefas, Atividades, Comentarios, Grupo, Anexo
+from .models import Projetos, Fases, Categorias, Prioridade, Tarefas, Atividades, Comentarios, Grupo, Anexo, Demandas
 
 @admin.register(Grupo)
 class GrupoAdmin(admin.ModelAdmin):
@@ -66,4 +66,11 @@ class ComentariosAdmin(admin.ModelAdmin):
 @admin.register(Anexo)
 class AnexoAdmin(admin.ModelAdmin):
     list_display = ('arquivo', 'tarefa')        
-    search_fields = ('descricao', 'tarefa__nome')        
+    search_fields = ('descricao', 'tarefa__nome')
+
+@admin.register(Demandas)
+class DemandasAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'prioridade', 'concluido', 'data_inicio', 'data_fim', 'atribuicao', 'user_inclusao', 'dt_inclusao', 'dt_att')
+    list_filter = ('prioridade', 'concluido', 'dt_inclusao', 'dt_att')
+    search_fields = ('nome', 'descricao', 'atribuicao__nome')
+    readonly_fields = ('dt_inclusao', 'dt_att')
