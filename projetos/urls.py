@@ -13,6 +13,7 @@ urlpatterns = [
     path('all/', views.todos_projetos, name='all'),
     path('<id>/board/', views.kanbanboard, name='index'),
 
+    path('api/criar-card/', views.api_criar_card, name='api_criar_card'),
     path('api/criar-projeto/', views.api_criar_projeto, name='api_criar_projeto'),
     path('api/criar-coluna/', views.api_criar_coluna, name='api_criar_coluna'),
     path('api/deletar-card/', views.api_remover_card, name='api_remover_card'),

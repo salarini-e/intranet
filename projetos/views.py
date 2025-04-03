@@ -101,6 +101,27 @@ def api_criar_coluna(request):
         return JsonResponse({'status': False, 'error': 'Método inválido'})
     
 @login_required
+def api_criar_card(request):
+    if request.method == 'POST':
+        dados = json.loads(request.body)
+        nome = dados['nome']
+        fase_id = dados['fase_id']
+        ordem = Tarefas.objects.filter(fase__id=fase_id).count() + 1
+
+        if nome and fase_id and ordem:
+            fase = Fases.objects.get(id=fase_id)
+            nova_tarefa = Tarefas.objects.create(fase=fase, orderm=ordem, nome=nome, descricao='n/h', user_inclusao=request.user)
+            return JsonResponse({'status': 200, 'message': 'Card criada com sucesso', 'card': {
+                'column_id': fase_id,
+                'id': nova_tarefa.id,
+                'nome': nova_tarefa.nome,
+            }})
+        else:
+            return JsonResponse({'status': 400, 'error': 'Dados incompletos'})
+    else:
+        return JsonResponse({'status': 403, 'error': 'Método inválido'})
+    
+@login_required
 def api_remover_card(request):
     if request.method == 'POST':
         dados = json.loads(request.body)
