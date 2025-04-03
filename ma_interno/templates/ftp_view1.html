@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTP View</title>
+</head>
+<body>
+    <h1>Arquivos do Processo</h1>
+    <p><strong>Tipo:</strong> {{ tipo }}</p>
+    <p><strong>Processo:</strong> {{ processo }}</p>
+    <p><strong>Pasta:</strong> {{ pasta }}</p>
+
+    <h2>Arquivos:</h2>
+    {{data}}
+    <ul>
+        {% for resultado in data %}
+        {% for arquivo in resultado.arquivos %}
+            <li>
+                <a href="ftp://{{resultado.servidor}}{{resultado.pasta_ftp}}/{{proc}}{{arquivo}}" target="_blank">{{ arquivo }}</a>
+            </li>
+        {% endfor %}
+        {% endfor %}
+    </ul>
+</body>
+</html>
