@@ -128,3 +128,7 @@ def index(request):
         }
     }
     return render(request, 'formfacil/index.html', context)
+
+def form_augusto(request):
+    # formulario solicitado pel secretaria de habitação
+    return render(request, 'formfacil/form_augusto.html', {})

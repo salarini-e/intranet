@@ -33,4 +33,5 @@ urlpatterns = [
     path('visualizar/cadastros-almoxarifado/', visualizar_cadastros_almoxarifado, name='visualizar_cadastros_almoxarifado'),
     path('exportar/cadastros-almoxarifado/', exportar_cadastros_almoxarifado, name='exportar_cadastros_almoxarifado'),
     path('avaliacao-sistemas-el/', avaliacao_sistemas_el, name='avaliacao_sistemas_el'),
+    path('habitacao/', views.form_augusto, name='form_augusto'),
 ]
