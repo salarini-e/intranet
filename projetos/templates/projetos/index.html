@@ -202,21 +202,17 @@
        <div class="projetos-container px-4">
         <table class="table">
             <thead>
-                <!-- <th></th> -->
-                <th>Nome do Projeto</th>
-                <th>Responsável</th>
-                <th>Progresso</th>
-                <th>Dt. prevista</th>
-                <!-- <th>Descrição</th> -->
-                <th>Status</th>
-
+                <tr>
+                    <th onclick="sortTable(0)">Nome do Projeto</th>
+                    <th onclick="sortTable(1)">Responsável</th>
+                    <th onclick="sortTable(2)">Progresso</th>
+                    <th onclick="sortTable(3)">Dt. prevista</th>
+                    <th onclick="sortTable(4)">Status</th>
+                </tr>
             </thead>
             <tbody>     
                 {% for projeto in projetos %}
                 <tr id="tr-{{projeto.id}}" onclick="toggleDetalhes({{projeto.id}})">
-                    <!-- <td onclick="aux=1; getDetalhes({{projeto.id}})" style="max-width: 28px; color: #0056b3;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"> 
-                        <i class="fa-solid fa-eye"></i>
-                    </td> -->
                     <td class="nome_projeto">{{projeto.nome}}</td>
                     <td>
                         <img class="mb-1 me-2" style="width: 18px; height: 18px;" src="/static/images/user.png" alt="">
@@ -233,10 +229,6 @@
                     <td>
                         <span class="icone-status">{{projeto.get_status_icon|safe}}</span>{{projeto.data_fim|date:"d/m/y"}}
                     </td>
-                  
-                    <!-- <td style="max-width: 300px;">
-                        {{projeto.descricao}}
-                    </td> -->
                     <td class="projeto_status" data-status="{{projeto.status}}" style="text-align: center; background-color: {{projeto.get_status_color}}; color: white; max-width: 100px;">
                         {{projeto.get_status_display}}
                     </td>
@@ -337,6 +329,26 @@
                 </div>
             `;
             divComentarios.innerHTML = novoComentario + divComentarios.innerHTML;
+        }
+        function sortTable(columnIndex) {
+            const table = document.querySelector('.table tbody');
+            const rows = Array.from(table.rows);
+            const isAscending = table.getAttribute('data-sort-order') === 'asc';
+            const newOrder = isAscending ? 'desc' : 'asc';
+
+            rows.sort((a, b) => {
+                const cellA = a.cells[columnIndex].textContent.trim();
+                const cellB = b.cells[columnIndex].textContent.trim();
+
+                if (!isNaN(cellA) && !isNaN(cellB)) {
+                    return isAscending ? cellA - cellB : cellB - cellA;
+                }
+                return isAscending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+            });
+
+            table.innerHTML = '';
+            rows.forEach(row => table.appendChild(row));
+            table.setAttribute('data-sort-order', newOrder);
         }
      </script>
 <!-- Modal -->
