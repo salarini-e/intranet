@@ -43,8 +43,9 @@
                                 </h5>
                                 <p class="card-text" style="margin: 0; color: #495057;">{{ demanda.descricao }}</p>
                                 {% if demanda.referencia and demanda.referencia != 'n' %}
-                                    <small style="color: #495057;">
-                                        <strong>Origem:</strong> {{ demanda.get_referencia_display }}<br>                                        
+                                    <small style="color: #ff0000;">
+                                        <strong><i class="fa-brands fa-diaspora me-1"></i>{{ demanda.get_referencia_display }}</strong> 
+                                        <br>                                        
                                     </small>
                                 {% else %}
                                     <br>
