@@ -818,7 +818,18 @@
     {% for fase in fases %}
         kanban.addColumn({{ fase.id }}, '{{ fase.nome }}', {{ fase.ordem }});
         {% for tarefa in fase.get_tarefas %}
-            kanban.addCard({{ fase.id }}, {{ tarefa.id }}, '{{ tarefa.nome }}', '{{tarefa.descricao}}',{{ tarefa.concluido|yesno:"true,false" }}, '{{ tarefa.data_inicio|date:"Y-m-d" }}', '{{ tarefa.data_fim|date:"Y-m-d" }}', '{{ tarefa.prioridade.id }}', '{{tarefa.atribuicao.id}}','{% if tarefa.anexo %}{{ tarefa.anexo.url }}{% endif %}');
+        kanban.addCard(
+            {{ fase.id }},
+            {{ tarefa.id }},
+            '{{ tarefa.nome }}',
+            `{{ tarefa.descricao|escapejs }}`, 
+            {{ tarefa.concluido|yesno:"true,false" }},
+            '{{ tarefa.data_inicio|date:"Y-m-d" }}',
+            '{{ tarefa.data_fim|date:"Y-m-d" }}',
+            '{{ tarefa.prioridade.id }}',
+            '{{ tarefa.atribuicao.id }}',
+            '{% if tarefa.anexo %}{{ tarefa.anexo.url }}{% endif %}'
+        );
         {% endfor %}
     {% endfor %}
     console.log(kanban.listColumns);
