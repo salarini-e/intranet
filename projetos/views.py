@@ -11,7 +11,9 @@ import json
 
 @login_required
 def index(request):
-    projetos_autorizado = Projetos.objects.filter(grupos__membros__user=request.user).exclude(status="A")
+    projetos_grupo_membro = Projetos.objects.filter(grupos__membros__user=request.user).exclude(status="A")
+    projetos_grupo_responsavel = Projetos.objects.filter(grupos__responsavel__user=request.user).exclude(status="A")
+    projetos_autorizado = projetos_grupo_membro | projetos_grupo_responsavel
     projetos_responsavel = Projetos.objects.filter(responsavel__user=request.user).exclude(status="A")
     projetos = projetos_responsavel | projetos_autorizado
     projetos = projetos.distinct()  
