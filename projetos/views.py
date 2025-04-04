@@ -541,7 +541,7 @@ def excluir_demanda(request):
     return JsonResponse({'status': 400, 'error': 'Método inválido'})
 
 def concluidos(request):
-    completed_tasks = Demandas.objects.filter(concluido=True).order_by('-dt_concluido')
+    completed_tasks = Demandas.objects.filter(concluido=True, atribuicao__user=request.user ).order_by('-dt_concluido')
     return render(request, 'tarefas/concluidos.html', {'completed_tasks': completed_tasks})
 
 @csrf_exempt

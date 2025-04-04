@@ -32,3 +32,15 @@ class Noticias(models.Model):
     class meta:
         verbose_name = 'Notícia'
         verbose_name_plural = 'Notícias'
+
+class Imagens(models.Model):    
+    identificacao = models.CharField(max_length=100, default='')
+    imagem = models.ImageField(upload_to='noticias/imagens/')
+    
+    
+    def __str__(self):
+        return self.identificacao
+    
+    class meta:
+        verbose_name = 'Imagem'
+        verbose_name_plural = 'Banco de Imagens'
