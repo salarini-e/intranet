@@ -183,6 +183,15 @@
         .projeto_status[data-status="F"] {
             background-color: #000000; /* Black */
         }
+        th {
+            cursor: pointer;
+        }
+        .sort-arrow {
+            visibility: hidden;
+        }
+        th.active .sort-arrow {
+            visibility: visible;
+        }
     </style>
 
     <div class="menu">
@@ -203,11 +212,11 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th onclick="sortTable(0)">Nome do Projeto</th>
-                    <th onclick="sortTable(1)">Responsável</th>
-                    <th onclick="sortTable(2)">Progresso</th>
-                    <th onclick="sortTable(3)">Dt. prevista</th>
-                    <th onclick="sortTable(4)">Status</th>
+                    <th onclick="sortTable(0)" class="sortable">Nome do Projeto <span class="sort-arrow" data-column="0">▲</span></th>
+                    <th onclick="sortTable(1)" class="sortable">Responsável <span class="sort-arrow" data-column="1">▲</span></th>
+                    <th onclick="sortTable(2)" class="sortable">Progresso <span class="sort-arrow" data-column="2">▲</span></th>
+                    <th onclick="sortTable(3)" class="sortable">Dt. prevista <span class="sort-arrow" data-column="3">▲</span></th>
+                    <th onclick="sortTable(4)" class="sortable">Status <span class="sort-arrow" data-column="4">▲</span></th>
                 </tr>
             </thead>
             <tbody>     
@@ -340,15 +349,42 @@
                 const cellA = a.cells[columnIndex].textContent.trim();
                 const cellB = b.cells[columnIndex].textContent.trim();
 
-                if (!isNaN(cellA) && !isNaN(cellB)) {
-                    return isAscending ? cellA - cellB : cellB - cellA;
+                if (columnIndex === 2) {
+                    // Ordenar por progresso (numérico)
+                    const progressA = parseFloat(cellA.replace('%', '')) || 0;
+                    const progressB = parseFloat(cellB.replace('%', '')) || 0;
+                    return isAscending ? progressA - progressB : progressB - progressA;
+                } else if (columnIndex === 3) {
+                    // Ordenar por data prevista (dia, mês, ano)
+                    const dateA = parseDate(cellA);
+                    const dateB = parseDate(cellB);
+                    return isAscending ? dateA - dateB : dateB - dateA;
+                } else {
+                    // Ordenar por texto (padrão)
+                    if (!isNaN(cellA) && !isNaN(cellB)) {
+                        return isAscending ? cellA - cellB : cellB - cellA;
+                    }
+                    return isAscending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
                 }
-                return isAscending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
             });
 
             table.innerHTML = '';
             rows.forEach(row => table.appendChild(row));
             table.setAttribute('data-sort-order', newOrder);
+
+            // Atualizar direção da seta e visibilidade
+            document.querySelectorAll('th').forEach(th => th.classList.remove('active'));
+            const activeHeader = document.querySelector(`th:nth-child(${columnIndex + 1})`);
+            activeHeader.classList.add('active');
+
+            const activeArrow = activeHeader.querySelector('.sort-arrow');
+            activeArrow.textContent = newOrder === 'asc' ? '▲' : '▼';
+        }
+
+        function parseDate(dateString) {
+            // Converter data no formato "dd/mm/yy" para um objeto Date
+            const [day, month, year] = dateString.split('/').map(Number);
+            return new Date(year + 2000, month - 1, day); // Ajustar ano para 4 dígitos
         }
      </script>
 <!-- Modal -->
