@@ -1,7 +1,5 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import PlanejamentoAcao, Responsavel
-
+from .models import PlanejamentoAcao
 admin.site.register(PlanejamentoAcao)
-admin.site.register(Responsavel)

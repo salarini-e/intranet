@@ -1,5 +1,5 @@
 from django.db import models
-from instituicoes import Servidor as Responsavel
+from instituicoes.models import Servidor as Responsavel
 # Create your models here
     
 class PlanejamentoAcao(models.Model):
