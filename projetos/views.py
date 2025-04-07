@@ -492,7 +492,7 @@ def toggle_demanda_completion(request):
         demanda_id = data.get('tarefa_id')
         # print(demanda_id)
         demandas = Demandas.objects.filter(atribuicao__user=request.user, id=demanda_id)
-        for dem in Demandas.objects.all():
+        # for dem in Demandas.objects.all():
             # print(dem.id)
             # print(int(dem.id) == int(demanda_id))
         if not demandas.exists():
