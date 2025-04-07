@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     'projetos',
     'controle_de_ponto',
     'planejamento_de_acoes',
+    'gestao_acao',
     'ma_interno'
     # 'django_logwatcher',
 ]

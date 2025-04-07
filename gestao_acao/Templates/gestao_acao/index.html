@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planejamento de Ações</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+   <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .task {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #ddd;
+        }
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .task input[type="checkbox"] {
+            transform: scale(1.2);
+        }
+        .task-details {
+            display: flex;
+            flex-direction: column;
+        }
+        .task-title {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .task-meta {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        .task-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .task-status {
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .bg-color-c { background-color: #28a745; color: white; }
+        .bg-color-p { background-color: #ffc107; color: black; }
+        .bg-color-e { background-color: #00c3ff; color: black; }
+        .bg-color-x { background-color: #ff0000; color: black; }
+        .icon {
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .table-style {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+        .table-style th, .table-style td {
+            border: 1px solid #ddd;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col d-flex">
+                <h2 class="my-auto">Planejamento de Ações</h2>
+                <a class="my-auto ms-auto btn btn-link" href="{% url 'gestao_acao:adicionar_acao' %}">
+                    Adicionar Tarefa
+                </a>
+            </div>
+        </div>
+        <h3 id="ola">ola</h3>
+        <table class="table table-borderless mt-4 table-style">
+            <thead class="table-light">
+                <tr>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                    <th>Horário</th>
+                    <th>Local</th>
+                    <th>Responsável</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="task-list">
+                {% for planejamento_acao in planejamento_acoes %}
+               
+                {% empty %}
+                <tr class="align-middle">
+                    <td colspan="8" class="text-center">Nenhum planejamento encontrado!</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Alterar Data</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <form id="change-date-form" type="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="new-date" class="form-label">Nova Data</label>
+                    <input type="date" class="form-control" id="new-date" name="new-date" required>
+                </div>
+                <input type="hidden" id="acao-id" name="acao-id">
+            </form>
+        
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="saveDate()"  data-bs-dismiss="modal">Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.min.js" integrity="sha384-Re460s1NeyAhufAM5JwfIGWosokaQ7CH15ti6W5Y4wC/m4eJ5opJ2ivohxVM05Wd" crossorigin="anonymous"></script>
+     <script>
+        class Acao {
+            constructor(id, data, descricao, horario, local, responsavel, status) {
+                this.id = id;
+                this.data = data;
+                this.descricao = descricao;
+                this.horario = horario;
+                this.local = local;
+                this.responsavel = responsavel;
+                this.status = status;
+                this.csrfToken = '{{ csrf_token }}'
+                this.render(); 
+                this.elemento = document.getElementById(`task-${this.id}`); // Adicionando o ID da tarefa ao elemento
+            }
+
+            get_status() {
+                const display_map = {
+                    'p': 'Pendente',
+                    'e': 'Em Andamento',
+                    'c': 'Concluída',
+                    'x': 'Cancelada'
+                };
+                return display_map[this.status];
+            }
+
+            atualizarData(data){
+
+               this.data = data;
+               this.fetch_data();
+            }
+            renderData(){
+                let el = this.elemento.querySelector('.data')
+                el.innerHTML = this.data;
+            }
+            fetch_data() {
+                const url = "{% url 'gestao_acao:atualizar_data' %}";
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.csrfToken
+                    },
+                    body: JSON.stringify({ id: this.id, data: this.get_data() })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error(`Erro ao atualizar data: ${response.statusText}`);
+                    }
+                })
+                .then(data => {
+                    this.renderData(); // Call renderData to update the displayed date
+                    console.log('Data atualizada com sucesso:', data);
+
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                });
+            }
+            get_data() {
+                const [day, month, year] = this.data.split('/'); // Adjusting split order
+                return `${year}-${month}-${day}`; // Return in YYYY-MM-DD format
+
+            }
+            render() {
+                // Create table row
+                const tr = document.createElement('tr');
+                tr.className = 'align-middle';
+                tr.id = `task-${this.id}`;
+
+                // Create data cell
+                const dataTd = document.createElement('td');
+                dataTd.className = 'data';
+                dataTd.textContent = this.data;
+
+                // Create description cell
+                const descricaoTd = document.createElement('td');
+                descricaoTd.textContent = this.descricao;
+
+                // Create horario cell
+                const horarioTd = document.createElement('td');
+                horarioTd.textContent = this.horario;
+
+                // Create local cell
+                const localTd = document.createElement('td');
+                localTd.textContent = this.local;
+
+                // Create responsavel cell
+                const responsavelTd = document.createElement('td');
+                responsavelTd.textContent = this.responsavel;
+
+                // Create status cell
+                const statusTd = document.createElement('td');
+                statusTd.className = 'text-center';
+
+                const statusSelect = document.createElement('select');
+                statusSelect.className = `form-select form-select-sm`;
+                this.applyStatusStyles(statusSelect, this.status);
+
+                statusSelect.innerHTML = `
+                    <option value="p" ${this.status === 'p' ? 'selected' : ''}>Pendente</option>
+                    <option value="e" ${this.status === 'e' ? 'selected' : ''}>Em Andamento</option>
+                    <option value="c" ${this.status === 'c' ? 'selected' : ''}>Concluída</option>
+                    <option value="x" ${this.status === 'x' ? 'selected' : ''}>Cancelada</option>
+                `;
+                statusSelect.onchange = () => {
+                    this.updateStatus(statusSelect.value);
+                    this.applyStatusStyles(statusSelect, statusSelect.value);
+                };
+                statusTd.appendChild(statusSelect);
+
+                // Create actions cell
+                const actionsTd = document.createElement('td');
+                actionsTd.className = 'acao_style';
+                const calendarIcon = document.createElement('i');
+                calendarIcon.className = 'fas fa-calendar-alt icon';
+                calendarIcon.onclick = () => modalCalendario(this.id);
+                calendarIcon.setAttribute('data-bs-toggle', 'modal');
+                calendarIcon.setAttribute('data-bs-target', '#exampleModal');
+                const trashIcon = document.createElement('i');
+                trashIcon.className = 'fas fa-trash icon';
+                actionsTd.appendChild(calendarIcon);
+                actionsTd.appendChild(trashIcon);
+
+                // Append all cells to the row
+                tr.appendChild(dataTd);
+                tr.appendChild(descricaoTd);
+                tr.appendChild(horarioTd);
+                tr.appendChild(localTd);
+                tr.appendChild(responsavelTd);
+                tr.appendChild(statusTd);
+                tr.appendChild(actionsTd);
+
+                // Append the row to the table body
+                document.getElementById('task-list').appendChild(tr);
+
+                // Save the row element for later updates
+                this.elemento = tr;
+            }
+
+            applyStatusStyles(element, status) {
+                const styles = {
+                    p: { color: 'black', backgroundColor: '#ffc107' },
+                    e: { color: 'black', backgroundColor: '#00c3ff' },
+                    c: { color: 'white', backgroundColor: '#28a745' },
+                    x: { color: 'black', backgroundColor: '#ff0000' }
+                };
+                element.style.color = styles[status].color;
+                element.style.backgroundColor = styles[status].backgroundColor;
+                element.style.appearance = 'none';
+                element.style.border = 'none';
+                element.style.padding = '0';
+                element.style.fontSize = '12px';
+                element.style.fontWeight = 'bold';
+                element.style.textAlign = 'center';
+                element.style.backgroundImage = 'none'; // Remove dropdown arrow
+            }
+
+            updateStatus(newStatus) {
+                this.status = newStatus;
+                // Uncomment the following line to enable server-side status updates
+                // this.fetchStatusUpdate();
+            }
+
+            // Uncomment and implement this method if server-side updates are required
+            /*
+            fetchStatusUpdate() {
+                const url = "";
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.csrfToken
+                    },
+                    body: JSON.stringify({ id: this.id, status: this.status })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Erro ao atualizar status: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => console.log('Status atualizado com sucesso:', data))
+                .catch(error => console.error('Erro na requisição:', error));
+            }
+            */
+        }
+
+        function modalCalendario(id){
+            const acao = lista_de_acoes.find(acao => acao.id === id);
+            if (acao) {
+                document.getElementById('new-date').value = acao.get_data();
+                document.getElementById('acao-id').value = acao.id;
+                document.getElementById('ola').innerHTML = acao.get_data();
+            }
+        }
+        function saveDate() {
+            const newDate = document.getElementById('new-date').value;
+            const [year, month, day] = newDate.split('-'); // Adjusting split order
+            const formattedDate = `${day}/${month}/${year}`; // Convert to DD/MM/YYYY
+            const acaoId = document.getElementById('acao-id').value;
+            const acao = lista_de_acoes.find(acao => acao.id == acaoId);
+            if (acao) {
+                acao.atualizarData(formattedDate); // Use formatted date
+            }else {
+                console.error('Ação não encontrada!');
+            }
+        }
+        const  lista_de_acoes = []; 
+
+        {% for planejamento_acao in planejamento_acoes %}
+        
+        lista_de_acoes.push(new Acao(
+            {{ planejamento_acao.id }},
+            "{{ planejamento_acao.data|date:'d/m/Y' }}",
+            "{{ planejamento_acao.descricao }}",
+            "{{ planejamento_acao.horario }}",
+            "{{ planejamento_acao.local }}",
+            "{{ planejamento_acao.responsavel }}",
+            "{{ planejamento_acao.status }}"
+        ));
+        {% endfor %}
+    </script>
+</body>
+</html>

@@ -21,6 +21,7 @@ urlpatterns = [
     path('noticias/', include('noticias.urls')),
     path('projetos/', include('projetos.urls')),
     path('planejamento-de-acoes/', include('planejamento_de_acoes.urls')),
+    path('gestao-acao/', include('gestao_acao.urls')),
     path('ma/', include('ma_interno.urls')),
     # path('logwatcher/', include('django_logwatcher.urls')),
 ]   
