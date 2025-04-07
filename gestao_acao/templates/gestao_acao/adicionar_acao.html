@@ -1,55 +1,26 @@
 {% extends 'template.html' %}
 {% block main %}
+<style>
+    .select2, .select2-container, .select2-container--default, .select2-container--below{
+						width: 100% !important;
+					}
+</style>
     <h1 class="mt-4 mb-4">Planejamento de ações</h1>
     <div class="container-acao">
         <div class="col d-flex">
             <h2 class="my-auto">Adicionar Nova Ação</h2>
-            <a class="my-auto ms-auto text-primary" href="{% url 'gestao_acao:index'%}">
+            <a class="my-auto ms-auto text-primary" href="{% url 'gestao_acao:index' %}">
                 Voltar
             </a>
         </div>
         <form method="POST" class="mt-4">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="descricao" class="form-label">Descrição da Atividade</label>
-                <input type="text" id="descricao" name="descricao" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="data" class="form-label">Data</label>
-                <input type="date" id="data" name="data" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="horario" class="form-label">Horário</label>
-                <input type="time" id="horario" name="horario" class="form-control" step="60" required>
-            </div>
-            <div class="form-group">
-                <label for="local" class="form-label">Local</label>
-                <input type="text" id="local" name="local" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="responsavel" class="form-label">Responsável</label>
-                <select id="responsavel" name="responsavel" class="form-control" required>
-                    {% for responsavel in responsaveis %}
-                    <option value="{{ responsavel.id }}">{{ responsavel.nome }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="status" class="form-label">Status</label>
-                <select id="status" name="status" class="form-control" required>
-                    <option value="p">Pendente</option>
-                    <option value="e">Em andamento</option>
-                    <option value="c">Concluído</option>
-                    <option value="x">Cancelado</option>
-                </select>
-            </div>
+            {{ form.as_p }}
             <button type="submit" class="btn app-btn-primary">Salvar</button>
         </form>
     </div>
     <style>
         .container-acao {
-            /* max-width: 600px;
-            margin: auto; */
             background: white;
             padding: 20px;
             border-radius: 10px;
@@ -73,4 +44,11 @@
             border-color: #007bff;
         }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#id_responsavel').select2();
+        });
+    </script>
 {% endblock %}
