@@ -1,50 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adicionar Ação</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-label {
-            font-weight: bold;
-        }
-        .form-control {
-            border-radius: 5px;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
+{% extends 'template.html' %}
+{% block main %}
+    <h1 class="mt-4 mb-4">Planejamento de ações</h1>
+    <div class="container-acao">
         <div class="col d-flex">
             <h2 class="my-auto">Adicionar Nova Ação</h2>
-            <a class="my-auto ms-auto btn btn-link" href="{% url 'gestao_acao:index'%}">
+            <a class="my-auto ms-auto text-primary" href="{% url 'gestao_acao:index'%}">
                 Voltar
             </a>
         </div>
@@ -83,8 +43,34 @@
                     <option value="x">Cancelado</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Salvar</button>
+            <button type="submit" class="btn app-btn-primary">Salvar</button>
         </form>
     </div>
-</body>
-</html>
+    <style>
+        .container-acao {
+            /* max-width: 600px;
+            margin: auto; */
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .form-control {
+            border-radius: 5px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+    </style>
+{% endblock %}

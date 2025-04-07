@@ -1,103 +1,15 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planejamento de Ações</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
-   <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        .task {
-            background: #fff;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid #ddd;
-        }
-        .task-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .task input[type="checkbox"] {
-            transform: scale(1.2);
-        }
-        .task-details {
-            display: flex;
-            flex-direction: column;
-        }
-        .task-title {
-            font-weight: bold;
-            font-size: 16px;
-        }
-        .task-meta {
-            font-size: 12px;
-            color: #6c757d;
-        }
-        .task-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .task-status {
-            font-size: 12px;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .bg-color-c { background-color: #28a745; color: white; }
-        .bg-color-p { background-color: #ffc107; color: black; }
-        .bg-color-e { background-color: #00c3ff; color: black; }
-        .bg-color-x { background-color: #ff0000; color: black; }
-        .icon {
-            cursor: pointer;
-            color: #6c757d;
-        }
-
-        .table-style {
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-        }
-        .table-style th, .table-style td {
-            border: 1px solid #ddd;
-        }
-
-
-    </style>
-</head>
-<body>
-    <div class="container">
+{% extends 'template.html' %}
+{% block main %}
+    <h1 class="mt-4 mb-4">Planejamento de ações</h1>
+    <div class="container-acao">
         <div class="row">
             <div class="col d-flex">
-                <h2 class="my-auto">Planejamento de Ações</h2>
-                <a class="my-auto ms-auto btn btn-link" href="{% url 'gestao_acao:adicionar_acao' %}">
-                    Adicionar Tarefa
+                <h2 class="my-auto">Minhas ações</h2>
+                <a class="my-auto ms-auto text-primary" href="{% url 'gestao_acao:adicionar_acao' %}">
+                    <i class="fa-solid fa-plus me-2"></i> Adicionar Tarefa
                 </a>
             </div>
         </div>
-        <h3 id="ola">ola</h3>
         <table class="table table-borderless mt-4 table-style">
             <thead class="table-light">
                 <tr>
@@ -264,14 +176,19 @@
                 // Create actions cell
                 const actionsTd = document.createElement('td');
                 actionsTd.className = 'acao_style';
+                const calendarButton = document.createElement('button');
+                calendarButton.className = 'btn btn-light';
+                calendarButton.onclick = () => modalCalendario(this.id);
                 const calendarIcon = document.createElement('i');
                 calendarIcon.className = 'fas fa-calendar-alt icon';
-                calendarIcon.onclick = () => modalCalendario(this.id);
+                
                 calendarIcon.setAttribute('data-bs-toggle', 'modal');
                 calendarIcon.setAttribute('data-bs-target', '#exampleModal');
                 const trashIcon = document.createElement('i');
                 trashIcon.className = 'fas fa-trash icon';
-                actionsTd.appendChild(calendarIcon);
+
+                calendarButton.appendChild(calendarIcon);
+                actionsTd.appendChild(calendarButton);
                 actionsTd.appendChild(trashIcon);
 
                 // Append all cells to the row
@@ -340,10 +257,10 @@
 
         function modalCalendario(id){
             const acao = lista_de_acoes.find(acao => acao.id === id);
+            console.log(acao);
             if (acao) {
-                document.getElementById('new-date').value = acao.get_data();
-                document.getElementById('acao-id').value = acao.id;
-                document.getElementById('ola').innerHTML = acao.get_data();
+                document.getElementById('new-date').value = acao.get_data();                            
+                document.getElementById('acao-id').value = id;
             }
         }
         function saveDate() {
@@ -373,5 +290,78 @@
         ));
         {% endfor %}
     </script>
-</body>
-</html>
+    <style>
+        .container-acao {
+            /* max-width: 900px; */
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .container-acao h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .task {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #ddd;
+        }
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .task input[type="checkbox"] {
+            transform: scale(1.2);
+        }
+        .task-details {
+            display: flex;
+            flex-direction: column;
+        }
+        .task-title {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .task-meta {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        .task-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .task-status {
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .bg-color-c { background-color: #28a745; color: white; }
+        .bg-color-p { background-color: #ffc107; color: black; }
+        .bg-color-e { background-color: #00c3ff; color: black; }
+        .bg-color-x { background-color: #ff0000; color: black; }
+        .icon {
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .table-style {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+        .table-style th, .table-style td {
+            border: 1px solid #ddd;
+        }
+
+
+    </style>
+{% endblock %}

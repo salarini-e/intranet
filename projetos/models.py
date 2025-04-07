@@ -9,6 +9,7 @@ class Demandas(models.Model):
     REFERENCIA_CHOICES = {
         ('t', 'Gestão de Projetos'),
         ('a', 'Gestão de Projetos'),
+        ('p', 'Ação planejada'),
         ('n', 'Nenhuma'),
     }
     PRIORIDADE_CHOICES = {

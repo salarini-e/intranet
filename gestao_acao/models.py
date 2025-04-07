@@ -16,6 +16,7 @@ class PlanejamentoAcao(models.Model):
     horario = models.TimeField()
     responsavel = models.ForeignKey(Responsavel, on_delete=models.DO_NOTHING)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='p')
+    user_inclusao = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='acao_user_inclusao', null=True)
     
     class Meta:
         ordering = ['data', 'horario']

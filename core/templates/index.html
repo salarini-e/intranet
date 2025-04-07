@@ -94,7 +94,7 @@
 					</div>
 				</div>								
 				<div class="mb-5">
-					
+				{% comment %}	
 				<div id="mainNoticias" class="pt-2 pe-4 row g-4 app-card">
 					
 				    <div class="col-12 col-lg-6">
@@ -124,7 +124,7 @@
 				        </div>
 			        </div>					
 					<div class="col">
-						<div class="row">
+						<div class="row">	
 							<h3 class="mb-3">Notícias em Destaque</h3>
 							{% for destaque in destaques %}
 							<div class="col-lg-6 col-md-5 col-sm-12 mb-4 destaques">
@@ -137,9 +137,10 @@
 						
 					</div>
 				</div>
+				{% endcomment %}
 					<div class="row app-card">
 						<div class="col">
-							<hr>
+							<br>
 							<h3 class="py-2 px-3">Últimas Notícias</h3>
 							{% for noticia in noticias %}
 							
