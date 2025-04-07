@@ -271,6 +271,7 @@
 					        </a>
 					        <div id="submenu-gestao" class="collapse {% block showgestao %}{% endblock %} submenu submenu-gestao" data-bs-parent="#menu-accordion">
 						        <ul class="submenu-list list-unstyled">
+									<li class="submenu-item"><a class="submenu-link {% block acoes %}{% endblock %}" href="{% url 'gestao_acao:index' %}"><i class="fa-solid fa-flag me-2"></i>Ações</a></li>							        
 							        <li class="submenu-item"><a class="submenu-link {% block projetos %}{% endblock %}" href="{% url 'projetos:index' %}">
 										<span class="nav-link-text"><i class="mt-2 fa-solid fa-diagram-project me-2"></i>Projetos<span class="ms-5" style="font-style: italic; color: rgb(168, 130, 5);"></span></span>
 									</a></li>

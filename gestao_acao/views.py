@@ -31,6 +31,7 @@ def adicionar_acao(request):
                 nome=acao.descricao,
                 descricao=f'{acao.horario} {acao.local} - Ação planejada e atribuída a ' + acao.responsavel.nome,
                 referencia='p',
+                id_referencia=acao.id,
                 data_inicio=acao.data,
                 atribuicao=acao.responsavel,
             )

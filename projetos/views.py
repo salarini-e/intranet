@@ -186,7 +186,7 @@ def api_check_card(request):
 def api_editar_tarefa(request):
     if request.method == 'POST':
         dados = json.loads(request.body)
-        print(dados)
+        # print(dados)
         card_id = dados['card_id']
         tarefa = Tarefas.objects.get(id=card_id)
         tarefa.nome = dados['nome'] if dados['nome'] else None
@@ -224,7 +224,7 @@ def api_busca_membros(request):
 def api_criar_grupo(request):
     if request.method == 'POST':
         dados = request.POST
-        print(request.POST)
+        # print(request.POST)
         nome = dados['nome']
         responsavel = Servidor.objects.get(user = request.user)
         membros = dados['membros'].split(',')
@@ -253,7 +253,7 @@ def api_editar_projeto(request):
 '''
     if request.method == 'POST':
         dados = request.POST
-        print(dados)
+        # print(dados)
         projeto = Projetos.objects.get(id=dados['id'])
         projeto.nome = dados['nome_ed']
         projeto.descricao = dados['descricao']
@@ -485,20 +485,20 @@ def em_breve(request):
 @login_required
 def toggle_demanda_completion(request):
     if request.method == 'POST':
-        print('opa')
+        # print('opa')
         data_json = request.body.decode('utf-8')
         data = json.loads(data_json)
-        print(data)        
+        # print(data)        
         demanda_id = data.get('tarefa_id')
         # print(demanda_id)
         demandas = Demandas.objects.filter(atribuicao__user=request.user, id=demanda_id)
         for dem in Demandas.objects.all():
-            print(dem.id)
-            print(int(dem.id) == int(demanda_id))
+            # print(dem.id)
+            # print(int(dem.id) == int(demanda_id))
         if not demandas.exists():
             return JsonResponse({'status': 404, 'error': 'Demanda não encontrada'})
         demanda = demandas.first()
-        print(demanda)
+        # print(demanda)
         demanda.concluido = not demanda.concluido
         demanda.save()
         return JsonResponse({'status': 200, 'message': 'Tarefa atualizada com sucesso'})

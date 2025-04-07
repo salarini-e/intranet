@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from instituicoes.models import Servidor
 from django.db.models import Count, Q
+from gestao_acao.models import PlanejamentoAcao
 
 # A demanda poderá vir da tareja de um projeto, da subtarefa de um projeto, do futuro agendamento de ações que será desenvolvido, ou pode ser demandas criadas ali avulsas mesmo:
 class Demandas(models.Model):
@@ -53,7 +54,24 @@ class Demandas(models.Model):
             self.atribuicao = Servidor.objects.get(user=self.user_inclusao)
         if self.concluido:
             self.dt_concluido = self.dt_att
+        self.conclui()
         super(Demandas, self).save(*args, **kwargs)
+
+    def conclui(self):
+        if self.referencia:
+            if self.referencia == 't':
+                tarefa = Tarefas.objects.get(id=self.id_referencia)
+                tarefa.concluido = True
+                tarefa.save()
+            elif self.referencia == 'a':
+                atividade = Atividades.objects.get(id=self.id_referencia)
+                atividade.concluido = True
+                atividade.save()
+            elif self.referencia == 'p':
+                acao = PlanejamentoAcao.objects.get(id=self.id_referencia)
+                acao.status = 'c'
+                acao.save()
+        
 
 class Grupo(models.Model):
     responsavel = models.ForeignKey(Servidor, on_delete=models.SET_NULL, null=True, blank=True)
