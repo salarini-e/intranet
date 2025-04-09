@@ -54,7 +54,7 @@ class Demandas(models.Model):
             self.atribuicao = Servidor.objects.get(user=self.user_inclusao)
         if self.concluido:
             self.dt_concluido = self.dt_att
-        self.conclui()
+        # self.conclui()
         super(Demandas, self).save(*args, **kwargs)
 
     def conclui(self):
