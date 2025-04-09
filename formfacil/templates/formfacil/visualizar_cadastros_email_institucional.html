@@ -1,0 +1,47 @@
+{% extends 'template.html' %}
+{% block formfacil %}active{% endblock %}
+{% block main %}
+<div class="app-page-title d-flex justify-content-between align-items-center">
+    <div>
+        <img src="/static/images/forms-like.svg" style="height: 40px;" alt="">
+        <span style="color: black;">Visualizar Solicitações de E-mail Institucional</span>
+    </div>
+    <div>
+        <a href="{% url 'formfacil:exportar_solicitacao_email_institucional' %}" class="btn btn-success me-2"><i class="fa fa-file-download me-2"></i>  Baixar Excel</a>
+        <a href="{% url 'formfacil:index' %}" class="btn btn-secondary">Voltar</a>
+    </div>
+</div>
+
+<div class="row g-4 mb-4" style="padding: 0 5px;">
+    <div class="col app-card app-card-stats-table h-100 shadow-sm" style="padding: 0.5rem !important;">
+        <table class="table table-bordered mb-0">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Matrícula</th>
+                    <th>CPF</th>
+                    <th>Secretaria</th>
+                    <th>E-mail Institucional Sugerido</th>
+                    <th>Data de Registro</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cadastro in cadastros %}
+                <tr>
+                    <td>{{ cadastro.nome }}</td>
+                    <td>{{ cadastro.matricula }}</td>
+                    <td>{{ cadastro.cpf }}</td>
+                    <td>{{ cadastro.secretaria }}</td>
+                    <td>{{ cadastro.email_institucional }}</td>
+                    <td>{{ cadastro.dt_registro|date:"d/m/Y H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">Nenhum registro encontrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

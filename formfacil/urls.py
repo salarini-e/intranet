@@ -2,6 +2,11 @@ from django.urls import path, include
 from . import views
 from .views.cadastro_de_almoxarifado import cadastro_de_almoxarifado, visualizar_cadastros_almoxarifado, exportar_cadastros_almoxarifado
 from .views.avaliacao_el import avaliacao_sistemas_el
+from .views.solicitacao_email_institucional import (
+    cadastro_solicitacao_email_institucional,
+    visualizar_cadastros_solicitacao_email_institucional,
+    exportar_cadastros_solicitacao_email_institucional
+)
 
 app_name = 'formfacil'
 urlpatterns = [
@@ -34,4 +39,7 @@ urlpatterns = [
     path('exportar/cadastros-almoxarifado/', exportar_cadastros_almoxarifado, name='exportar_cadastros_almoxarifado'),
     path('avaliacao-sistemas-el/', avaliacao_sistemas_el, name='avaliacao_sistemas_el'),
     path('habitacao/', views.form_augusto, name='form_augusto'),
+    path('cadastro-solicitacao-email-institucional/', cadastro_solicitacao_email_institucional, name='cadastro_solicitacao_email_institucional'),
+    path('visualizar/solicitacao-email-institucional/', visualizar_cadastros_solicitacao_email_institucional, name='visualizar_solicitacao_email_institucional'),
+    path('exportar/solicitacao-email-institucional/', exportar_cadastros_solicitacao_email_institucional, name='exportar_solicitacao_email_institucional'),
 ]

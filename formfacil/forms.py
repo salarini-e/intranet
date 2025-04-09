@@ -180,3 +180,21 @@ class AvaliacaoSistemaELForm(forms.ModelForm):
             'sugestao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
+
+class SolicitacaoEmailInstitucionalForm(forms.ModelForm):
+    class Meta:
+        model = SolicitacaoEmailInstitucional
+        fields = ['nome', 'matricula', 'cpf', 'secretaria', 'email_institucional']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),            
+            'matricula': forms.TextInput(attrs={'class': 'form-control'}),
+            'cpf': forms.TextInput(attrs={'class': 'form-control', 'onkeydown': 'mascara(this, icpf)'}),
+            'secretaria': forms.TextInput(attrs={'class': 'form-control'}),                       
+            'email_institucional': forms.EmailInput(attrs={'class': 'form-control'}),            
+        }
+    def clean_cpf(self):
+        cpf = self.cleaned_data["cpf"].replace('.', '').replace('-', '').strip()
+        cpf = validate_cpf(cpf)
+        if SolicitacaoEmailInstitucional.objects.filter(cpf=cpf).exists():
+            raise forms.ValidationError("Este CPF já está cadastrado no sistema. Por favor, verifique.")
+        return cpf
