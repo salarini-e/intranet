@@ -57,3 +57,10 @@ class AvaliacaoSistemaELAdmin(admin.ModelAdmin):
 
 admin.site.register(AvaliacaoSistemaEL, AvaliacaoSistemaELAdmin)
 
+class SolicitacaoEmailInstitucionalAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'matricula', 'cpf', 'secretaria', 'email_institucional', 'dt_registro')
+    search_fields = ('nome', 'matricula', 'cpf', 'email_institucional', 'secretaria')
+    list_filter = ('secretaria',)
+    ordering = ('-dt_registro', 'nome')
+
+admin.site.register(SolicitacaoEmailInstitucional, SolicitacaoEmailInstitucionalAdmin)
