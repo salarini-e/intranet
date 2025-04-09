@@ -50,7 +50,7 @@
                     <td>Solicitação de E-mail Institucional</td>
                     <td>Equipe de TI</td>
                     <td>
-                        <span class="badge bg-success fs-6">Ativo</span>
+                        <span class="badge bg-warning fs-6">Restrito</span>
                     </td>
                     <td>{{ registros.solicitacao_email_institucional_total }}</td>
                     <td class="text-center d-none d-md-table-cell">
@@ -85,19 +85,7 @@
                             <i class="bi bi-box-arrow-in-right"></i> Acessar
                         </a>
                     </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a target="_blank" href="{% url 'formfacil:cadastro_solicitacao_email_institucional' %}" class="text-decoration-none">
-                            Solicitação de E-mail Institucional
-                        </a>
-                    </td>                                    
-                    <td class="text-end">
-                        <a target="_blank" class="btn btn-primary text-white" href="{% url 'formfacil:cadastro_solicitacao_email_institucional' %}" data-bs-toggle="tooltip" title="Acessar">
-                            <i class="bi bi-box-arrow-in-right"></i> Acessar
-                        </a>
-                    </td>
-                </tr>
+                </tr>                
             </tbody>
         </table>
     </div>
