@@ -173,7 +173,7 @@
         <h1>Painel de Pesquisa de Satisfação</h1>
         <a href="{% url 'chamados:download_excel_feedback' %}" class="my-auto ms-3" style="color: #3ea126"><i class="fa-solid fa-file-arrow-down fa-2x"></i></a>
 		<p class="my-auto ms-auto">Feedbacks pendentes: {{feed_pendentes.count}}</p>
-        <button id="btnToogle-avpendente" style="color: #ffae00;" class="btn" onclick="toogleFeedback('avpendente')"><i class="fa-regular fa-eye-slash"></i></button>  
+        <button id="btnToogle-avpendente" style="color: #ffae00;" class="btn" onclick="toogleFeedback('avpendente')"><i class="fa-regular fa-eye"></i></button>  
     </header>
 	<div class="row">
 		<div class="col">
@@ -199,7 +199,7 @@
                 <p>{{qnt_negativos_cordialidade}}</p>
             </div>
         </div>        				
-        <div id="avpendente" class="feedbacks">
+        <div id="avpendente" class="feedbacks" style="display: none;">
             <div class="row">
 				<div class="col d-flex">
 					<h2 class="my-auto">Feedbacks Pendentes ({{feed_pendentes.count}})</h2>
@@ -431,8 +431,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     function toogleFeedback(id){
-        document.getElementById(id).style.display = document.getElementById(id).style.display === 'none' ? 'block' : 'none';
-        document.getElementById(`btnToogle-${id}`).innerHTML = document.getElementById(id).style.display === 'none' ? '<i class="fa-regular fa-eye"></i>' : '<i class="fa-regular fa-eye-slash"></i>';
+        const element = document.getElementById(id);
+        const button = document.getElementById(`btnToogle-${id}`);
+        element.style.display = element.style.display === 'none' ? 'block' : 'none';
+        button.innerHTML = element.style.display === 'none' ? '<i class="fa-regular fa-eye"></i>' : '<i class="fa-regular fa-eye-slash"></i>';
     }
 	function pesquisarFeedback() {
         // Pega o valor do protocolo no campo de pesquisa
