@@ -198,6 +198,7 @@ class SolicitacaoEmailInstitucional(models.Model):
     nome = models.CharField(max_length=150, verbose_name='Nome completo')
     matricula = models.CharField(max_length=10, verbose_name='Matrícula')
     cpf = models.CharField(max_length=14, verbose_name='CPF')    
+    telefone = models.CharField(max_length=15, verbose_name='Telefone', null=True)
     secretaria = models.CharField(max_length=250, verbose_name='Secretaria')
     email_institucional = models.EmailField(verbose_name='E-mail institucional sugerido. Sugestão no formato: nome.sobrenome@prefeituradenovafriburgo.rj.gov.br')
     dt_registro = models.DateTimeField(auto_now_add=True)

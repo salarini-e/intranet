@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <title>PMNF - Form Fácil</title>
+    
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="description" content="Portal - Bootstrap 5 Admin Dashboard Template For Developers">
+    <meta name="author" content="Xiaoying Riley at 3rd Wave Media">    
+    <link rel="shortcut icon" href="/static/favicon.ico"> 
+    
+    <!-- FontAwesome JS-->
+    <script defer src="/static/plugins/fontawesome/js/all.min.js"></script>
+    
+    <!-- App CSS -->  
+    <link id="theme-style" rel="stylesheet" href="/static/css/template-intranet.css">
+</head> 
+
+<body class="app">   	
+    <header class="app-header fixed-top">	   	            
+        <div class="app-header-inner">  
+            <div class="container-fluid py-2">
+                <div class="app-header-content"> 
+                    <div class="row justify-content-between align-items-center">
+                        <div class="search-mobile-trigger d-sm-none col">
+                            <img class="logo-icon me-3" style="height: 25px;" src="/static/brasao.ico" alt="logo">
+                            <span class="logo-text text-uppercase">Prefeitura Municipal de Nova Friburgo</span>
+                        </div><!--//col-->
+                        <div class="app-search-box col">						
+                            <img class="logo-icon me-3" style="height: 25px;" src="/static/brasao.ico" alt="logo">
+                            <span class="logo-text text-uppercase">Prefeitura Municipal de Nova Friburgo</span>
+                        </div><!--//app-search-box-->
+                    </div><!--//row-->
+                </div><!--//app-header-content-->
+            </div><!--//container-fluid-->
+        </div><!--//app-header-inner-->
+    </header><!--//app-header-->
+    
+    <div class="app-wrapper">	    
+        <div class="w-100 app-content pt-3 p-md-3 p-lg-4">
+            <div class="container-xl">
+                <div class="position-relative mb-3">
+                    <div class="row g-3 justify-content-between">
+                        <div class="col-auto">
+                            <h1 class="app-page-title mb-0">FormFácil</h1>
+                        </div>
+                    </div>
+                </div>
+			    
+                <div class="app-card app-card-notification shadow-sm mb-4">
+                    <div class="app-card-header px-4 py-3">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-12 col-lg-auto text-center text-lg-start">						        
+                                <img style="width: 48px;" src="/static/brasao.ico" alt="">
+                            </div><!--//col-->
+                            <div class="col-12 col-lg-auto text-center text-lg-start">
+                                <h4 class="notification-title mb-1">Cadastro de Solicitação de E-mail Institucional</h4>
+                                <ul class="notification-meta list-inline mb-0">
+                                    <li class="list-inline-item">Subsecretaria de Tecnologia da Informação</li>
+                                </ul>
+                            </div><!--//col-->
+                        </div><!--//row-->
+                    </div><!--//app-card-header-->
+                    <div class="app-card-body p-4">
+                        <div class="notification-content">
+                            Prezados, solicitamos o preenchimento do formulário abaixo para levantamento dos servidores que necessitarão de e-mail institucional. As informações serão utilizadas para a criação e organização das contas de e-mail oficiais da prefeitura. Importante: Evite abreviações no nome. O e-mail sugerido poderá ser ajustado conforme disponibilidade e padronização. Esse formulário deverá ser preenchido para cada servidor que precisará de e-mail institucional. Agradecemos pela colaboração!
+                        </div>
+                    </div><!--//app-card-body-->				    
+                </div><!--//app-card-->
+				
+                <div class="app-card app-card-notification shadow-sm mb-4">				    
+                    <div class="app-card-body p-4">
+                        <div class="notification-content">
+                            <form method="POST" class="settings-form" enctype="multipart/form-data">
+                                <input type="hidden" name="csrfmiddlewaretoken" value="au2PtG44JIf43kFuhqg2UO9JmNg4YYiUEAJwnBuscTZGBEYY7Ed8SdhdWC09asJu">
+                                
+                                <div class="form-group">
+                                    <label for="id_nome">Nome completo:</label>
+                                    <input type="text" name="nome" class="form-control" maxlength="150" required id="id_nome">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="id_matricula">Matrícula:</label>
+                                    <input type="text" name="matricula" class="form-control" maxlength="10" required id="id_matricula">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="id_cpf">CPF:</label>
+                                    <input type="text" name="cpf" class="form-control" onkeydown="mascara(this, icpf)" maxlength="14" required id="id_cpf">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_telefone">Telefone:</label>
+                                    <input type="text" name="telefone" class="form-control" onkeydown="mascara(this, itel)" maxlength="15" required id="id_cpf">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_secretaria">Secretaria:</label>
+                                    <input type="text" name="secretaria" class="form-control" maxlength="250" required id="id_secretaria">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="d-flex flex-column" for="id_email_institucional">
+                                        E-mail institucional                                        
+                                    </label>
+									<p>Sugestão do formato:
+                                        <br> 
+                                        nomedosetor@novafriburgo.rj.gov.br <span style="font-weight: bold;">(uso coletivo) </span>
+                                        <br>
+                                        nome.sobrenome@novafriburgo.rj.gov.br <span style="font-weight: bold;">(Para o servidor que realmente utilize e-mail para comunicação externa/interna)</span>
+                                    </p>
+                                    <input type="email" name="email_institucional" class="form-control" maxlength="254" required id="id_email_institucional">
+                                </div>
+                                
+                                <button type="submit" class="btn app-btn-primary">Enviar</button>
+                            </form>
+                        </div>
+                    </div><!--//app-card-body-->
+                </div><!--//app-card-->																																			
+            </div><!--//container-fluid-->
+        </div><!--//app-content-->
+	    
+        <footer class="app-footer">
+            <div class="container text-center py-3">
+                <small class="copyright">© Subsecretaria de Tecnologia da Informação e Comunicação - 2024</small>
+            </div>
+        </footer><!--//app-footer-->
+    </div><!--//app-wrapper-->    					
+
+    <!-- Javascript -->          
+    <script src="/static/plugins/popper.min.js"></script>
+    <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>  
+    
+    <style>
+        .app-wrapper {
+            margin-left: 0px !important;
+        }
+        .app-header-inner {
+            margin-left: 0px !important;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-size: 13pt;
+        }
+        input, textarea {
+            margin-bottom: 1rem;
+        }
+        textarea {
+            height: 200px;
+        }
+        textarea.form-control {
+            min-height: 100px !important;
+        }
+        .app-header {
+            height: auto;
+        }
+        .errorlist {
+            padding: 0px;
+        }
+        .errorlist li {
+            list-style: none;
+            color: red;
+            font-size: 10pt;
+        }
+    </style>
+    
+    <script>
+        function icpf(v) {
+            v = v.replace(/\D/g, "");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            return v;
+        }
+        function itel(v){
+            v=v.replace(/\D/g,"")                 //Remove tudo o que nao e digito
+            v=v.replace(/^(\d\d)(\d)/g,"($1) $2") //Coloca parenteses em volta dos dois primeiros digitos
+            console.log(v.length)
+            if (v.length<14){
+                v=v.replace(/(\d{4})(\d)/,"$1-$2")    //Coloca hifen entre o quarto e o quinto digitos
+            }else{
+                v=v.replace(/(\d{4,5})(\d)/,"$1-$2")    //Coloca hifen entre o quarto e o quinto digitos
+            }
+                           
+            return v
+        }
+            
+        function mascara(o, f) {
+            v_obj = o;
+            v_fun = f;
+            setTimeout("execmascara()", 1);
+        }
+        function execmascara() {
+            v_obj.value = v_fun(v_obj.value);
+        }
+    </script>
+</body>
+</html>
+

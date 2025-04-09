@@ -27,7 +27,7 @@ def cadastro_solicitacao_email_institucional(request):
         'mensagem': 'Prezados, solicitamos o preenchimento do formulário abaixo para levantamento dos servidores que necessitarão de e-mail institucional. As informações serão utilizadas para a criação e organização das contas de e-mail oficiais da prefeitura. Importante: Evite abreviações no nome. O e-mail sugerido poderá ser ajustado conforme disponibilidade e padronização. Esse formulário deverá ser preenchido para cada servidor que precisará de e-mail institucional. Agradecemos pela colaboração!'
         
     }
-    return render(request, 'formfacil/formfacil_form.html', context)
+    return render(request, 'formfacil/form_email_institucional.html', context)
 
 @login_required
 def visualizar_cadastros_solicitacao_email_institucional(request):

@@ -184,11 +184,12 @@ class AvaliacaoSistemaELForm(forms.ModelForm):
 class SolicitacaoEmailInstitucionalForm(forms.ModelForm):
     class Meta:
         model = SolicitacaoEmailInstitucional
-        fields = ['nome', 'matricula', 'cpf', 'secretaria', 'email_institucional']
+        fields = ['nome', 'matricula', 'cpf', 'telefone', 'secretaria', 'email_institucional']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control'}),            
             'matricula': forms.TextInput(attrs={'class': 'form-control'}),
             'cpf': forms.TextInput(attrs={'class': 'form-control', 'onkeydown': 'mascara(this, icpf)'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control', 'onkeydown': 'mascara(this, itel)'}),
             'secretaria': forms.TextInput(attrs={'class': 'form-control'}),                       
             'email_institucional': forms.EmailInput(attrs={'class': 'form-control'}),            
         }
