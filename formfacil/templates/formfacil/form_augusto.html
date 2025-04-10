@@ -1,326 +1,146 @@
 <!DOCTYPE html>
-<html lang="pt">
-
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário SEHARF</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: #333;
-        }
-
-        .container {
-            background: #fff;
-            color: #333;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            max-width: 700px;
-            width: 100%;
-        }
-
-        .logo {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .logo img {
-            max-width: 150px;
-        }
-
-        h2 {
-            color: #0056b3;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        h3 {
-            color: #fff;
-            margin-bottom: 20px;
-            text-align: center;
-            padding: 10px;
-            border-radius: 0px;
-            background-color: #3f3e3e;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-top: 15px;
-            color: #495057;
-        }
-
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            margin-top: 5px;
-            border: 1px solid #ced4da;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #495057;
-            background-color: #f8f9fa;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: #0056b3;
-            outline: none;
-            box-shadow: 0 0 8px rgba(0, 86, 179, 0.5);
-        }
-
-        button {
-            margin-top: 20px;
-            padding: 12px 20px;
-            background: #0056b3;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-
-        button:hover {
-            background: #003d80;
-            transform: scale(1.05);
-        }
-
-        .familia-membro {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            background-color: #e9ecef;
-        }
-
-        .familia-membro label {
-            color: #0056b3;
-        }
-
-        .conditional {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-
-            button {
-                width: 100%;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Termômetro de Satisfação com Tendência</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      height: 300px;
+      margin: auto;
+    }
+    .gradient-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: linear-gradient(to right,
+        #e74c3c 0%,
+        #e67e22 20%,
+        #f1c40f 40%,
+        #2ecc71 70%,
+        #27ae60 100%);
+      transform: translateY(-50%);
+    }
+    .point {
+      position: absolute;
+      top: 50%;
+      font-size: 24px;
+      transform: translate(-50%, -150%);
+      transition: all 0.3s ease;
+    }
+    .label {
+      position: absolute;
+      top: calc(50% + 30px);
+      font-size: 14px;
+      transform: translateX(-50%);
+      color: #333;
+    }
+    .trend-point {
+      position: absolute;
+      font-size: 24px;
+      transform: translate(-50%, -250%);
+      border: 2px solid black;
+      border-radius: 50%;
+      padding: 2px;
+      background: white;
+      z-index: 10;
+    }
+    .inverted-line {
+      position: absolute;
+      top: 25%;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: #ccc;
+      border-radius: 4px;
+    }
+  </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="logo">
-            <img src="https://intranet.novafriburgo.rj.gov.br/static/images/logo.png" alt="Logo Prefeitura">
-        </div>
-        <h2>Formulário SEHARF</h2>
-        <form id="seharfForm">
-            <h3>Dados Pessoais</h3>
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" required>
 
-            <label for="rua">Rua:</label>
-            <input type="text" id="rua" name="rua" required>
+  <h2>Termômetro de Satisfação com Tendência</h2>
+  <div class="chart-container" id="chart">
+    <div class="gradient-line"></div>
+    <div class="inverted-line"></div>
+  </div>
 
-            <label for="numero">Número:</label>
-            <input type="text" id="numero" name="numero" required>
+  <script>
+    const data = {
+      a: 4,
+      c: 3,
+      d: 15,
+      e: 35
+    };
 
-            <label for="bairro">Bairro:</label>
-            <input type="text" id="bairro" name="bairro" required>
+    const satisfactionMap = [
+      { max: 5, emoji: '😞', color: '#e74c3c' },
+      { max: 10, emoji: '😕', color: '#e67e22' },
+      { max: 20, emoji: '🙂', color: '#f1c40f' },
+      { max: 30, emoji: '😊', color: '#2ecc71' },
+      { max: Infinity, emoji: '😁', color: '#27ae60' },
+    ];
 
-            <label for="distrito">Distrito:</label>
-            <input type="text" id="distrito" name="distrito" required>
+    const container = document.getElementById('chart');
+    const keys = Object.keys(data);
+    const values = Object.values(data);
+    const totalWeight = values.reduce((a, b) => a + b, 0);
 
-            <label for="cep">CEP:</label>
-            <input type="text" id="cep" name="cep" required>
+    const pointSpacing = 120;
+    const offsetLeft = (container.offsetWidth - ((keys.length - 1) * pointSpacing)) / 2;
 
-            <label for="telefone">Telefone:</label>
-            <input type="text" id="telefone" name="telefone" required>
+    // Posição de cada ponto
+    const positions = keys.map((_, i) => offsetLeft + i * pointSpacing);
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email">
+    // Criar os pontos com base na satisfação
+    keys.forEach((key, index) => {
+      const value = data[key];
+      const x = positions[index];
 
-            <h3>Dados da Família</h3>
-            <div id="familia-container">
-                <div class="familia-membro">
-                    <label>Nome:</label>
-                    <input type="text" name="familia_nome[]">
-                    <label>Idade:</label>
-                    <input type="number" name="familia_idade[]">
-                    <label>Escolaridade:</label>
-                    <input type="text" name="familia_escolaridade[]">
-                    <label>Ocupação:</label>
-                    <input type="text" name="familia_ocupacao[]">
-                    <label>Rendimento:</label>
-                    <input type="number" name="familia_rendimento[]">
-                </div>
-            </div>
-            <button type="button" onclick="adicionarMembro()">Adicionar membro</button>
+      const satisfaction = satisfactionMap.find(s => value <= s.max);
 
-            <label>Algum portador de deficiência?</label>
-            <input type="radio" name="deficiencia" value="sim" onclick="toggleSection('deficiencia-section', true)"> Sim
-            <input type="radio" name="deficiencia" value="nao" onclick="toggleSection('deficiencia-section', false)"> Não
-            <div id="deficiencia-section" class="conditional">
-                <label>Quantos?</label>
-                <input type="number" name="quantos_deficientes">
-                <label>Tipos:</label>
-                <input type="checkbox" name="deficiencia_tipo" value="cadeirante"> Cadeirante
-                <input type="checkbox" name="deficiencia_tipo" value="visual"> Visual
-                <input type="checkbox" name="deficiencia_tipo" value="outro"> Outro
-            </div>
+      const point = document.createElement('div');
+      point.className = 'point';
+      point.style.left = `${x}px`;
+      point.style.color = satisfaction.color;
+      point.innerText = satisfaction.emoji;
+      container.appendChild(point);
 
-            <h3>Condições da Moradia</h3>
-            <label>Moradia própria?</label>
-            <input type="radio" name="moradia_propria" value="sim" onclick="toggleSection('propria-section', true)"> Sim
-            <input type="radio" name="moradia_propria" value="nao" onclick="toggleSection('propria-section', false)"> Não
-            <div id="propria-section" class="conditional">
-                <label>Tem título de propriedade?</label>
-                <input type="checkbox" name="titulo_propriedade" value="sim"> Sim
-                <input type="checkbox" name="titulo_propriedade" value="nao"> Não
+      const label = document.createElement('div');
+      label.className = 'label';
+      label.style.left = `${x}px`;
+      label.innerText = `${key.toUpperCase()} (${value})`;
+      container.appendChild(label);
+    });
 
-                <label>Possui escritura?</label>
-                <input type="checkbox" name="possui_escritura" value="sim"> Sim
-                <input type="checkbox" name="possui_escritura" value="nao"> Não
-            </div>
+    // Calcular centro de massa (ponto de equilíbrio)
+    const centerOfMassIndex = values
+      .map((val, i) => i * val) 
+      .reduce((a, b) => a + b, 0) / totalWeight;
 
-            <label>Possui outros imóveis?</label>
-            <input type="radio" name="outros_imoveis" value="sim" onclick="toggleSection('outros-imoveis-section', true)"> Sim
-            <input type="radio" name="outros_imoveis" value="nao" onclick="toggleSection('outros-imoveis-section', false)"> Não
-            <div id="outros-imoveis-section" class="conditional">
-                <label>Quantos?</label>
-                <input type="number" name="quantos_outros_imoveis">
-            </div>
+    const balanceX = offsetLeft + centerOfMassIndex * pointSpacing;
 
-            <label>Alugada?</label>
-            <input type="radio" name="alugada" value="sim" onclick="toggleSection('alugada-section', true)"> Sim
-            <input type="radio" name="alugada" value="nao" onclick="toggleSection('alugada-section', false)"> Não
-            <div id="alugada-section" class="conditional">
-                <label>Possui terreno para construção?</label>
-                <input type="checkbox" name="terreno_construcao_alugada" value="sim"> Sim
-                <input type="checkbox" name="terreno_construcao_alugada" value="nao"> Não
-            </div>
+    // Determinar a cor e emoji do ponto de equilíbrio
+    const balanceValue = values.reduce((a, b) => a + b, 0) / values.length;
+    const balanceSatisfaction = satisfactionMap.find(s => balanceValue <= s.max);
 
-            <label>Cedida?</label>
-            <input type="radio" name="cedida" value="sim" onclick="toggleSection('cedida-section', true)"> Sim
-            <input type="radio" name="cedida" value="nao" onclick="toggleSection('cedida-section', false)"> Não
-            <div id="cedida-section" class="conditional">
-                <label>Possui terreno para construção?</label>
-                <input type="checkbox" name="terreno_construcao_cedida" value="sim"> Sim
-                <input type="checkbox" name="terreno_construcao_cedida" value="nao"> Não
-            </div>
+    const trendPoint = document.createElement('div');
+    trendPoint.className = 'trend-point';
+    trendPoint.style.left = `${balanceX}px`;
+    trendPoint.style.color = balanceSatisfaction.color;
+    trendPoint.innerText = balanceSatisfaction.emoji;
+    container.appendChild(trendPoint);
+  </script>
 
-            <label>Sua moradia é compartilhada com outra família?</label>
-            <input type="checkbox" name="moradia_compartilhada" value="sim"> Sim
-
-            <label>Qual o estado de conservação?</label>
-            <select name="estado_conservacao">
-                <option value="boa">Boa</option>
-                <option value="regular">Regular</option>
-                <option value="precária">Precária</option>
-            </select>
-
-            <label>Tipo de construção:</label>
-            <input type="checkbox" name="tipo_construcao" value="tijolo"> Tijolo
-            <input type="checkbox" name="tipo_construcao" value="madeira"> Madeira
-            <input type="checkbox" name="tipo_construcao" value="resto_madeira"> Resto de madeira
-            <input type="checkbox" name="tipo_construcao" value="outro"> Outro
-            <input type="checkbox" name="tipo_construcao" value="acabamento_externo"> Possui acabamento externo
-
-            <label>Número de quartos:</label>
-            <input type="number" name="num_quartos">
-
-            <label>Número de banheiros:</label>
-            <input type="number" name="num_banheiros">
-
-            <label>Segurança:</label>
-            <input type="checkbox" name="seguranca" value="risco_alagamento"> Risco de alagamento
-            <input type="checkbox" name="seguranca" value="risco_deslizamento"> Risco de deslizamento
-            <input type="checkbox" name="seguranca" value="telhado_seguro"> Telhado seguro
-
-            <label>Qual o tempo de deslocamento de sua casa ao local de trabalho/estudo?</label>
-            <select name="tempo_deslocamento">
-                <option value="ate_30_min">Até 30 min</option>
-                <option value="30_a_60_min">30 a 60 min</option>
-                <option value="1_a_2_horas">1 a 2 horas</option>
-                <option value="mais_de_2_horas">Mais de 2h</option>
-            </select>
-
-            <h3>Infraestrutura do Bairro</h3>
-            <label>Pavimentação:</label>
-            <select name="pavimentacao">
-                <option value="bom">Bom</option>
-                <option value="regular">Regular</option>
-                <option value="ruim">Ruim</option>
-                <option value="inexistente">Inexistente</option>
-            </select>
-
-            <label>Gosta de morar em seu bairro?</label>
-            <input type="radio" name="gosta_bairro" value="sim" onclick="toggleSection('onde-morar-section', false)"> Sim
-            <input type="radio" name="gosta_bairro" value="nao" onclick="toggleSection('onde-morar-section', true)"> Não
-            <div id="onde-morar-section" class="conditional">
-                <label>Onde gostaria de morar?</label>
-                <textarea name="onde_gostaria_morar"></textarea>
-            </div>
-
-            <label>O que seu bairro tem de melhor?</label>
-            <textarea name="melhor_bairro"></textarea>
-
-            <label>Qual o seu sonho?</label>
-            <textarea name="sonho"></textarea>
-
-            <button type="submit">Enviar</button>
-        </form>
-    </div>
-    <script>
-        function adicionarMembro() {
-            const container = document.getElementById('familia-container');
-            const novoMembro = document.createElement('div');
-            novoMembro.classList.add('familia-membro');
-            novoMembro.innerHTML = `
-                <label>Nome:</label>
-                <input type="text" name="familia_nome[]">
-                <label>Idade:</label>
-                <input type="number" name="familia_idade[]">
-                <label>Escolaridade:</label>
-                <input type="text" name="familia_escolaridade[]">
-                <label>Ocupação:</label>
-                <input type="text" name="familia_ocupacao[]">
-                <label>Rendimento:</label>
-                <input type="number" name="familia_rendimento[]">
-            `;
-            container.appendChild(novoMembro);
-        }
-
-        function toggleSection(sectionId, show) {
-            const section = document.getElementById(sectionId);
-            section.style.display = show ? 'block' : 'none';
-        }
-
-        document.getElementById('seharfForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            alert('Formulário enviado com sucesso!');
-        });
-    </script>
 </body>
-
 </html>

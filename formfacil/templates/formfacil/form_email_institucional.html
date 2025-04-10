@@ -66,7 +66,10 @@
                     </div><!--//app-card-header-->
                     <div class="app-card-body p-4">
                         <div class="notification-content">
-                            Prezados, solicitamos o preenchimento do formulário abaixo para levantamento dos servidores que necessitarão de e-mail institucional. As informações serão utilizadas para a criação e organização das contas de e-mail oficiais da prefeitura. Importante: Evite abreviações no nome. O e-mail sugerido poderá ser ajustado conforme disponibilidade e padronização. Esse formulário deverá ser preenchido para cada servidor que precisará de e-mail institucional. Agradecemos pela colaboração!
+                            Prezados, solicitamos o preenchimento do formulário abaixo para levantamento dos servidores que necessitarão de e-mail institucional. 
+                            As informações serão utilizadas para a criação e organização das contas de e-mail oficiais da prefeitura. 
+                            Importante: Evite abreviações no nome. <strong>O e-mail sugerido poderá ser ajustado conforme disponibilidade e padronização. </strong>
+                            Esse formulário deverá ser preenchido para cada servidor que precisará de e-mail institucional. Agradecemos pela colaboração!
                         </div>
                     </div><!--//app-card-body-->				    
                 </div><!--//app-card-->
@@ -75,7 +78,7 @@
                     <div class="app-card-body p-4">
                         <div class="notification-content">
                             <form method="POST" class="settings-form" enctype="multipart/form-data">
-                                <input type="hidden" name="csrfmiddlewaretoken" value="au2PtG44JIf43kFuhqg2UO9JmNg4YYiUEAJwnBuscTZGBEYY7Ed8SdhdWC09asJu">
+                                {% csrf_token %}
                                 
                                 <div class="form-group">
                                     <label for="id_nome">Nome completo:</label>
