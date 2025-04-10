@@ -33,6 +33,7 @@
                         </a>
                     </td>
                 </tr>
+                {% if not request.user.id == 5 %}
                 <tr>
                     <td>Cadastro de Almoxarifado</td>
                     <td>Rômulo Rodrigues</td>
@@ -59,6 +60,7 @@
                         </a>
                     </td>
                 </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>

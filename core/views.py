@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.contrib.auth.decorators import login_required
 from chamados.models import Chamado, TipoChamado, chamadoSatisfacao
@@ -6,6 +6,13 @@ from datetime import datetime, timedelta
 from instituicoes.models import Servidor
 from noticias.models import Carrousell, Noticias
 from notificacoes.models import Notificacao
+
+@login_required
+def admin(request):
+    print(request.user.id)
+    if request.user.is_superuser and request.user.id == 5:
+        return render(request, '403.html', status=403)
+    return redirect('/dj-admin/')
 
 @xframe_options_exempt
 @login_required
