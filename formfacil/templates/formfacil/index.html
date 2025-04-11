@@ -33,7 +33,7 @@
                         </a>
                     </td>
                 </tr>
-                
+                {% if not request.user.id == 5 %}
                 <tr>
                     <td>Cadastro de Almoxarifado</td>
                     <td>Rômulo Rodrigues</td>
@@ -47,7 +47,7 @@
                         </a>
                     </td>
                 </tr>
-                {% if not request.user.id == 5 %}
+                {% endif %}
                 <tr>
                     <td>Solicitação de E-mail Institucional</td>
                     <td>Rômulo Rodrigues</td>
@@ -60,8 +60,7 @@
                             <i class="fa fa-eye"></i> Visualizar
                         </a>
                     </td>
-                </tr>
-                {% endif %}
+                </tr>                
             </tbody>
         </table>
     </div>
