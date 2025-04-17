@@ -145,10 +145,12 @@ def exportar_excel(request):
 
 from django.http import JsonResponse
 
-@staff_member_required
+# @staff_member_required
+@login_required
 def api_detalhes_registro(request, matricula):
-    responsavel = Responsavel.objects.filter(user=request.user)
-    if not responsavel.exists():
+    # responsavel = Responsavel.objects.filter(user=request.user)
+    if not Responsavel.is_responsavel(request.user):
+        print('Acesso negado.')
         return render(request, "erro.html", {"mensagem": "Acesso negado."})
     
     agora = datetime.now()
