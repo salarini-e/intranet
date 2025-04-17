@@ -147,7 +147,8 @@ from django.http import JsonResponse
 
 @staff_member_required
 def api_detalhes_registro(request, matricula):
-    if not Responsavel.is_responsavel(request.user):
+    responsavel = Responsavel.objects.filter(user=request.user)
+    if not responsavel.exists():
         return render(request, "erro.html", {"mensagem": "Acesso negado."})
     
     agora = datetime.now()

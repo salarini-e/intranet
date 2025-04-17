@@ -33,7 +33,7 @@ def processar_csv():
                 matriculas_nao_encontradas.append(f';{matricula};{nome};{secretaria};{cpf}')    
                 
             except Meta_Servidores.DoesNotExist:
-                # Caso a matrícula não seja encontrada, adiciona à lista de não encontradas                
+                # Caso a matrícula não seja encontrada, adiciona à lista de não encontradas 
                 matriculas_nao_encontradas.append(f';{matricula};{nome};{secretaria};{cpf}')
         
         # Escrever as matrículas não encontradas no arquivo de log
