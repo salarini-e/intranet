@@ -244,25 +244,26 @@ def busca_servidor(matricula):
         driver.quit()
 def api_get_servidor(request):
     dict_mapeamento = {
-    'SEC MUNIC FINANCAS,PLANEJAMENTO,DESENV ECON GESTAO': 'Secretaria Municipal de Finanças, Planejamento, Desenvolvimento Econômico e Gestão',
-    'CONTROLADORIA GERAL': 'Controladoria Geral',
+    'SECRETARIA DE FAZENDA': 'SECRETARIA DE FAZENDA',
+    'CONTROLADORIA GERAL DO MUNICIPIO': 'Controladoria-Geral do Município',
     'PROCURADORIA GERAL': 'Procuradoria Geral do Município',
     'SECRETARIA MUNICIPAL DA CASA CIVIL - EGCP': 'Secretaria Municipal da Casa Civil',
-    'SECRETARIA MUN DE AGRICULTURA E DES RURAL': 'Secretaria Municipal de Agricultura e Desenvolvimento Rural',
-    'SEC MUN DE ASSIST SOCIAL DIREITOS HUMANOS TRABALHO': 'Secretaria Municipal de Assistência Social, Direitos Humanos, Trabalho e Políticas Públicas para a Juventude',
-    'SEC MUN CIENCIA,TEC,INOV E ENSINO PROF. E SUPERIOR': 'Secretaria Municipal de Ciência, Tecnologia, Inovação e Educação Profissionalizante e Superior',
-    'SECRETARIA MUN DE CULTURA': 'Secretaria Municipal de Cultura',
-    'SECRETARIA MUNICIPAL DE DEFESA CIVIL': 'Secretaria Municipal de Defesa Civil',
-    'SECRETARIA MUNICIPAL DE EDUCACAO': 'Secretaria Municipal de Educação',
-    'SEC MUN DE ESPORTES E LAZER': 'Secretaria Municipal de Esportes e Lazer',
-    'SECRETARIA MUNICIPAL DE GOVERNO': 'Secretaria de Governo',
+    'SECRETARIA DE AGRICULTURA E DESENVOLVIMENTO RURAL': 'Secretaria Municipal de Agricultura e Desenvolvimento Rural',
+    'SECRETARIA DE DESENVOLVIMENTO SOCIAL E DIREITOS HUMANOS': 'Secretaria Municipal de Assistência Social, Direitos Humanos, Trabalho e Políticas Públicas para a Juventude',
+    'SECRETARIA DE CIENCIA, TECNOLOGIA, INOVACAO E DESENVOLVIMENTO ECONOMICO': 'Secretaria Municipal de Ciência, Tecnologia, Inovação e Educação Profissionalizante e Superior',
+    'SECRETARIA DE CULTURA': 'Secretaria Municipal de Cultura',
+    'SECRETARIA DE PROTECAO E DEFESA CIVIL': 'Secretaria Municipal de Proteção e Defesa Civil',
+    'SECRETARIA DE EDUCACAO': 'Secretaria Municipal de Educação',
+    'SECRETARIA DE ESPORTE E LAZER': 'Secretaria Municipal de Esportes e Lazer',
+    'SECRETARIA DE GOVERNO': 'Secretaria de Governo',
     'SECRETARIA MUNICIPAL DE INFRAESTRUTURA E LOGISTICA': 'Secretaria Municipal de Infraestrutura e Logística',
-    'SEC MUN DE MEIO AMBIENTE E DESENV URBANO SUSTENTAV': 'Secretaria Municipal de Meio Ambiente e Desenvolvimento Urbano Sustentável',
-    'SECRETARIA MUNICIPAL DE OBRAS': 'Secretaria Municipal de Obras',
-    'SEC MUN DE ORDEM E MOBILIDADE URBANA': 'Secretaria Municipal de Ordem e Mobilidade Urbana',
+    'SECRETARIA DO AMBIENTE E DESENVOLVIMENTO URBANO SUSTENTAVEL': 'Secretaria do Ambiente e Desenvolvimento Urbano Sustentável',
+    'SECRETARIA DE INFRAESTRUTURA E OBRAS': 'Secretaria Municipal de Infraestrutura e Obras',
+    'SECRETARIA DE SEGURANCA E ORDEM PUBLICA': 'Secretaria Municipal de Ordem e Mobilidade Urbana',
+    'SECRETARIA DE MOBILIDADE E URBANISMO': 'SECRETARIA DE MOBILIDADE E URBANISMO',
     'SECRETARIA MUNICIPAL DE SAUDE': 'Secretaria Municipal de Saúde',
-    'SECRETARIA MUN DE SERVICOS PUBLICOS': 'Secretaria Municipal de Serviços Públicos',
-    'SECRETARIA MUN DE TURISMO E MARKETING DA CIDADE': 'Secretaria Municipal de Turismo e Marketing da Cidade',
+    'SECRETARIA DE SERVICOS E EQUIPAMENTOS PUBLICOS': 'Secretaria Municipal de Serviços e Equipamentos Públicos ',
+    'SECRETARIA DE TURISMO': 'Secretaria Municipal de Turismo e Marketing da Cidade',
     'SUBPREFEITURA DE CAMPO DO COELHO': 'Subprefeitura de Campo do Coelho',
     'SUBPREFEITURA DE CONSELHEIRO PAULINO': 'Subprefeitura de Conselheiro Paulino',
     'SUBPREFEITURA DE LUMIAR E SAO PEDRO DA SERRA': 'Subprefeitura de Lumiar e São Pedro da Serra',
@@ -275,6 +276,13 @@ def api_get_servidor(request):
     'SECRETARIA DE GABINETE':'SECRETARIA DE GABINETE DO PREFEITO',
     'SECRETARIA DA MULHER': 'SECRETARIA DA MULHER',
     'SECRETARIA DE HABITACAO E REGULARIZACAO FUNDIARIA': 'SECRETARIA DE HABITAÇÃO E REGULARIZAÇÃO FUNDIÁRIA',
+    'SECRETARIA EXECUTIVA DE DESENVOLVIMENTO REGIONAL': 'SECRETARIA EXECUTIVA DE DESENVOLVIMENTO REGIONAL',    
+    'SECRETARIA DE GESTÃO E RESCURSOS HUMANOS': 'SECRETARIA DE GESTÃO E RESCURSOS HUMANOS',
+    'SECRETARIA DE BEM ESTAR E PROTEÇAO ANIMAL':'SECRETARIA DE BEM-ESTAR E PROTEÇÃO ANIMAL',
+    'SECRETARIA DE LICITACOES E PLANEJAMENTO': 'Secretaria de Licitações e Planejamento',
+
+
+
 }
     matricula = request.GET.get('matricula', None)
     
