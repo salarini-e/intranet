@@ -164,7 +164,8 @@ document.getElementById('confirmBackupButton').addEventListener('click', functio
 
     
     alert('Após concluído o backup ele irá constar no log.');
-    window.location.reload(); // Recarrega a página para atualizar os logs
+    // Redireciona para a URL de backup
+    window.location.href = "{% url 'backup_maneger:novo_backup' %}";
 });
 </script>
 {% endblock %}
