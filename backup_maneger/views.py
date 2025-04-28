@@ -1,11 +1,15 @@
 import os
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+import subprocess
+
+# dir_backups = '/home/eduardo/Documentos/Backups_db'
+dir_backups = '/home/sistemas/db_backup'
+log_file_path = f'{dir_backups}/backup_log.txt'
 
 # Create your views here.
 def index(request):
-    dir_backups = '/home/eduardo/Documentos/Backups_db'
-    log_file_path = '/home/eduardo/Documentos/Backups_db/backup_log.txt'
+ 
     list_folders = []
     logs = []
 
@@ -47,7 +51,7 @@ def index(request):
     return render(request, 'backup_maneger/index.html', context)
 
 def list_db_files(request, subdir):
-    dir_backups = '/home/eduardo/Documentos/Backups_db'
+        
     list_files = []
     path = os.path.join(dir_backups, subdir)
     
@@ -64,7 +68,7 @@ def list_db_files(request, subdir):
     return render(request, 'backup_maneger/list_db_files.html', context)
     
 def download_file(request, subdir, file_name):
-    dir_backups = '/home/eduardo/Documentos/Backups_db'
+    
     file_path = os.path.join(dir_backups, subdir, file_name)
     
     if os.path.exists(file_path):
@@ -74,7 +78,19 @@ def download_file(request, subdir, file_name):
             return response
     
     return HttpResponse("File not found.")
-    
+
 def novo_backup(request):
-    message = ""
+    # Caminho absoluto para o script
+    projeto_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    caminho_script = os.path.join(projeto_root, 'mk_backup.sh')
+
+    # Disparar o script sem esperar resposta
+    subprocess.Popen(
+        f'nohup bash {caminho_script} &',
+        shell=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+
+
     return redirect('backup_maneger:index')
