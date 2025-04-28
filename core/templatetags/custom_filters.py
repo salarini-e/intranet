@@ -6,6 +6,7 @@ from instituicoes.models import Servidor
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.timesince import timesince
+import os
 
 register = template.Library()
 
@@ -171,3 +172,58 @@ def chamado_satisfacao_display(user):
                 <i class="fa-solid fa-tools"></i> {chamado.profissional_designado}
         </p>'''
     return False
+
+
+@register.filter
+def get_file_size(file_name, subdir):
+    dir_backups = '/home/eduardo/Documentos/Backups_db'
+    path = os.path.join(dir_backups, subdir, file_name)
+
+    try:
+        size = os.path.getsize(path)
+        for unit in ['B', 'KB', 'MB', 'GB']:
+            if size < 1024:
+                return f"{size:.2f} {unit}"
+            size /= 1024
+        return f"{size:.2f} TB"
+    except:
+        return "Tamanho desconhecido"   
+    
+@register.filter
+def date_format(value, time_value=None):
+    """
+    Formata a data (e opcionalmente a hora) para 'dd/mm/yyyy - hh:mm:ss'
+    """
+    try:
+        date_parts = value.split('-')
+        if len(date_parts) != 3:
+            return value
+        
+        date_formatted = f"{date_parts[2]}/{date_parts[1]}/{date_parts[0]}"
+        
+        if time_value:
+            time_parts = time_value.split('-')
+            if len(time_parts) == 3:
+                hour, minute, second = time_parts
+                time_formatted = f"{hour}:{minute}:{second}"
+                return f"{date_formatted} <br> {time_formatted}"
+        
+        return date_formatted
+    except Exception:
+        return value
+
+
+@register.filter
+def split(value, key):
+    """Divide uma string usando o delimitador informado"""
+    return value.split(key)
+
+@register.filter
+def replace(value, args):
+    """
+    Recebe uma string e troca substrings.
+    Exemplo: {{ value|replace:"-:." }} troca '-' por ':'
+    """
+    old, new = args.split(':')
+    return value.replace(old, new)
+

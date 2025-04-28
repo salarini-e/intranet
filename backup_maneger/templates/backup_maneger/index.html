@@ -1,0 +1,170 @@
+{% extends 'template.html' %}
+{% load static %}
+{% block chamados %}active{% endblock %}
+{% block title %}Tickets Chamados{% endblock %}
+{% block css %}
+<style>
+    .log-container {
+        margin-bottom: 15px;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .log-success {
+        background-color: #e9f7ef;
+        color: #155724;
+        border-left: 6px solid #28a745;
+    }
+    .log-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-left: 6px solid #dc3545;
+    }
+    .log-header {
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+    .log-details {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    .log-details p {
+        margin: 5px 0;
+    }
+    .log-divider {
+        margin: 10px 0;
+        border-top: 1px solid #ddd;
+    }
+</style>
+{% endblock %}
+{% block main %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col d-flex align-items-center">
+            <h1 class="me-4">Gerenciador de Backups</h1>
+
+            <!-- Campo de pesquisa -->
+            <input type="text" id="searchInput" class="form-control w-25 me-auto" placeholder="Pesquisar banco...">
+
+            <!-- Botão de novo backup -->
+            <div class="text-center">
+                <button id="newBackupButton" class="btn btn-success btn-lg text-white" data-bs-toggle="modal" data-bs-target="#backupModal">
+                    <i class="fa-solid fa-floppy-disk me-2"></i> Novo Backup
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="backupMessage" class="alert alert-info mt-3 d-none" role="alert">
+        A tarefa de backup foi iniciada. Verifique os logs para acompanhar o progresso.
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-9">
+            <div class="row row-cols-1 row-cols-md-4 g-4" id="foldersList">
+                {% for folder in list_folders %}
+                <div class="col folder-card">
+                    <div class="card h-100">
+                        <a href="{% url 'backup_maneger:list_db_files' folder %}" class="text-decoration-none text-dark">
+                            <img src="{% static 'images/sql-database.png' %}" class="card-img-top p-3" alt="Banco de Dados">
+                            <div class="card-body">
+                                <h5 class="card-title text-center" style="color: black;">{{ folder }}</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <p>Não há backups disponíveis.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Coluna dos logs -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header text-white" style="background-color: rgb(37, 37, 37);">
+                    Logs de Backup
+                </div>
+                <div class="card-body" style="height: 70vh; overflow-y: auto;">
+                    {% if logs %}
+                        {% for log in logs %}
+                            <div class="log-container log-{{ log.status|lower }}">
+                                <div class="log-header">
+                                    <span>{{ log.date }}</span> - <span>{{ log.status }}</span>
+                                </div>
+                                <div class="log-details">
+                                    <p><strong>Início:</strong> {{ log.start_time }}</p>
+                                    <p><strong>Fim:</strong> {{ log.end_time }}</p>
+                                    {% if log.failures %}
+                                        <div class="log-divider"></div>
+                                        <p><strong>Falhas:</strong></p>
+                                        <ul>
+                                            {% for failure in log.failures %}
+                                                <li>{{ failure }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>Nenhum log disponível.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação -->
+    <div class="modal fade" id="backupModal" tabindex="-1" aria-labelledby="backupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="backupModalLabel">Confirmar Backup</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Tem certeza de que deseja iniciar um novo backup?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="confirmBackupButton" class="btn btn-success">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Placeholder para mensagem de backup iniciado -->
+    
+</div>
+
+<!-- Script para filtrar -->
+<script>
+document.getElementById('searchInput').addEventListener('input', function() {
+    var search = this.value.toLowerCase();
+    var cards = document.querySelectorAll('.folder-card');
+
+    cards.forEach(function(card) {
+        var title = card.querySelector('.card-title').innerText.toLowerCase();
+        if (title.includes(search)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
+
+document.getElementById('confirmBackupButton').addEventListener('click', function() {
+    // Exibe a mensagem de backup iniciado
+    var backupMessage = document.getElementById('backupMessage');
+    backupMessage.classList.remove('d-none');
+
+    // Fecha o modal
+    var backupModal = new bootstrap.Modal(document.getElementById('backupModal'));
+    backupModal.hide();
+
+    
+    alert('Após concluído o backup ele irá constar no log.');
+    window.location.reload(); // Recarrega a página para atualizar os logs
+});
+</script>
+{% endblock %}

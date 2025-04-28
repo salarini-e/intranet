@@ -1,0 +1,62 @@
+{% extends 'template.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block chamados %}active{% endblock %}
+{% block title %}Arquivos de Backup{% endblock %}
+{% block css %}
+{% endblock %}
+{% block main %}
+<div class="container mt-4">
+    <div class="row mb-4 align-items-center">
+        <div class="col">
+            <h2>Backups de <span class="text-primary">{{ subdir }}</span></h2>
+        </div>
+        <div class="col text-end">
+            <a href="{% url 'backup_maneger:index' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-6 g-4">
+        {% for file in list_files %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <!-- Data e hora extraída -->
+                        {% with file_name=file|cut:'.sql' %}
+                        {% with file_parts=file_name|split:'_' %}
+                            {% with time_part=file_parts|last %}
+                                {% with date_part=file_parts|slice:"-2:-1"|first %}
+                                    <li class=" list-group-item text-center">
+                                        <span>{{ date_part|date_format:time_part|safe }}</span>        
+                                    </li>
+                                {% endwith %}
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+                                                            
+                        <!-- Nome real do arquivo opcional: {{ file }} -->
+                    </div>
+                    <img src="{% static 'images/sql-file.png' %}" class="card-img mt-4" alt="">
+                    <div class="mt-4 text-center">
+                        <!-- Link para download futuramente se quiser -->
+                        <a href="{% url 'backup_maneger:download_file' subdir file %}" class="btn btn-outline-primary w-100">
+                            <i class="fa-solid fa-download me-2"></i> Baixar
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Footer com tamanho -->
+                <div class="card-footer text-center small">
+                    {{ file|get_file_size:subdir }}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>Não há arquivos de backup disponíveis.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
