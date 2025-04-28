@@ -44,7 +44,8 @@
                         <label for="file" class="form-label">grdData:</label>
                         <input type="file" name="file" id="file" class="form-control">
                     </div>
-                    <button type="submit" class="btn btn-primary w-100" style="color: white;">Enviar</button>
+                    <button type="submit" class="btn btn-primary w-100" style="color: white;"><i class="fa-solid fa-cloud-arrow-up me-2"></i>Enviar arquivo</button>
+                    <a href="{% url 'autenticacao:atualizar-meta-servidores2' %}" class="btn btn-secondary mt-2 w-100" style="color: white; background-color: rgb(70, 70, 240);"><i class="fa-solid fa-arrow-rotate-left me-2"></i>Reprocessar arquivo</a>
                 </form>
                 {% endif %}
             </div>
