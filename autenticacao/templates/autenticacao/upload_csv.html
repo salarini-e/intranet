@@ -14,8 +14,8 @@
                 <h5 class="card-title text-success">Arquivo enviado com sucesso!</h5>
                 <p class="card-text">Gostaria de atualizar o banco de dados?</p>
                 <div class="d-flex gap-3">
-                    <a href="{% url 'atualizar-meta-servidores1' %}" class="ms-auto btn btn-primary">Sim</a>
-                    <a href="#" class="me-auto btn btn-secondary">Não</a>
+                    <a href="{% url 'autenticacao:atualizar-meta-servidores1' %}" class="ms-auto btn btn-primary">Sim</a>
+                    <a href="/envio-meta-servidores/" class="me-auto btn btn-secondary">Não</a>
                 </div>
                 {% else %}
                 <h5 class="card-title">Envie o arquivo CSV</h5>
