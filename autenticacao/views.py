@@ -475,7 +475,10 @@ def atualizar_meta_servidores_1(request):
         processar_csv()
         msg = 'Processamento finalizado. Verifique o arquivo de log: matriculas_nao_encontradas.csv'
     except Exception as e:
-        msg = f'Erro ao processar o arquivo: {str(e)}'
+        if  str(e)== 'Matricula':
+            msg = 'Altere o cabeçaho do arquivo CSV conforme as instruções ao lado.'
+        else:
+            msg = f'Erro ao processar o arquivo: {str(e)}'
         print(msg)
         return render(request, 'autenticacao/upload_csv.html', {'status': False, 'msg': msg})
     
