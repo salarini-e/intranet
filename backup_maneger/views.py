@@ -85,12 +85,16 @@ def novo_backup(request):
     caminho_script = '/home/sistemas/intranet/site/intranet/mk_backup.sh'
 
     # Disparar o script sem esperar resposta
-    subprocess.Popen(
-        f'nohup bash {caminho_script} &',
-        shell=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
-    )
+    try:
+        subprocess.Popen(
+            f'nohup bash {caminho_script} &',
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+    except Exception as e:
+        return HttpResponse(f"Erro ao tentar disparar backup: {e}")
+
 
 
     return redirect('backup_maneger:index')
