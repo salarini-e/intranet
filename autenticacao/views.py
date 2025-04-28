@@ -474,21 +474,23 @@ def atualizar_meta_servidores_1(request):
     try:
         processar_csv()
         msg = 'Processamento finalizado. Verifique o arquivo de log: matriculas_nao_encontradas.csv'
-    except Exception as e:
-        print(e)
-        if  str(e)== 'Matricula':
-            msg = 'Altere o cabeçaho do arquivo CSV conforme as instruções ao lado.'
+        print('opa')
+    except Exception as e:        
+        print('Erro ao processar o arquivo:', str(e))
+        if  str(e)== "'Matricula'":
+            msg = {'status': 400, 'msg': 'Altere o cabeçaho do arquivo CSV<br>conforme as instruções ao lado.'}
         else:
-            msg = f'Erro ao processar o arquivo: {str(e)}'
-        print(msg)
+            msg = {'status': 400, 'msg': f'Erro ao processar o arquivo: {str(e)}'}
         return render(request, 'autenticacao/upload_csv.html', {'status': False, 'msg': msg})
+    return redirect('autenticacao:atualizar-meta-servidores2')
+        
     
-    return render(request, 'autenticacao/upload_csv.html', {'status': True, 'msg': msg})
+    return render(request, 'autenticacao/upload_csv.html', {'status': False, 'msg': msg})
 
 def atualizar_meta_servidores_2(request):    
     try:
         cadastrar_nao_encontrados()
-        msg = 'Processamento finalizado. Verifique o arquivo de log: matriculas_nao_encontradas.csv'
+        msg = {'status': 200, 'msg': 'Processamento finalizado. Banco atualizado!'}
     except Exception as e:
-        msg = f'Erro ao processar o arquivo: {str(e)}'
+        msg = {'status': 400, 'msg': f'Erro ao processar o arquivo: {str(e)}'}
     return render(request, 'autenticacao/upload_csv.html', {'status': False, 'msg': msg})

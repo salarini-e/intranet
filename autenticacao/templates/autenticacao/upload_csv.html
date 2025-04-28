@@ -6,17 +6,33 @@
         <div class="card shadow-sm m-auto my-5" style="max-width: 600px;">
             <div class="card-body">
                 {% if msg %}
-                <div class="alert alert-danger" role="alert">
-                    {{ msg }}
+                <div class="text-center alert {% if msg.status == 200 %}alert-info{% else %} alert-danger{% endif %}" role="alert">
+                    {{ msg.msg|safe }}
                 </div>
                 {% endif %}
                 {% if status %}
                 <h5 class="card-title text-success">Arquivo enviado com sucesso!</h5>
                 <p class="card-text">Gostaria de atualizar o banco de dados?</p>
-                <div class="d-flex gap-3">
-                    <a href="{% url 'autenticacao:atualizar-meta-servidores1' %}" class="ms-auto btn btn-primary">Sim</a>
+                <div class="gap-3" id="botoes">
+                    <a href="{% url 'autenticacao:atualizar-meta-servidores1' %}" 
+                       class="ms-auto btn btn-primary" 
+                       onclick="showSpinner(event)">Sim</a>
                     <a href="/envio-meta-servidores/" class="me-auto btn btn-secondary">Não</a>
                 </div>
+                <div id="spinner" class="text-center mt-3 pt-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Processando...</span>
+                    </div>
+                    <p>Processando...</p>
+                </div>
+                <script>
+                    function showSpinner(event) {
+                        event.preventDefault();
+                        document.getElementById('botoes').style.display = 'none';
+                        document.getElementById('spinner').style.display = 'block';
+                        window.location.href = event.target.href;
+                    }
+                </script>
                 {% else %}
                 <h5 class="card-title">Envie o arquivo CSV</h5>
                 <a href="https://novafriburgo-rj.portaltp.com.br/consultas/pessoal/servidores.aspx">
@@ -43,5 +59,9 @@
         </div>
     </div>
 </div>
-
+<style>
+    #botoes {
+        display: flex;        
+    }
+</style>
 {% endblock %}
