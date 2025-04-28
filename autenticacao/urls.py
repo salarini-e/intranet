@@ -22,7 +22,7 @@ urlpatterns = [
     path('new-login/', views.new_login, name='new_login'),
 
     path('envio-meta-servidores/', views.upload_csv_view, name='envio-meta-servidores'),
-
-
+    path('atualizar-meta-servidores/1/', views.atualizar_meta_servidores_1, name='atualizar-meta-servidores1'),
+    path('atualizar-meta-servidores/2/', views.atualizar_meta_servidores_2, name='atualizar-meta-servidores2'),
     
 ]

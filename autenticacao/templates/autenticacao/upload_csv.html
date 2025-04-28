@@ -5,11 +5,16 @@
     <div class="container d-flex">
         <div class="card shadow-sm m-auto my-5" style="max-width: 600px;">
             <div class="card-body">
+                {% if msg %}
+                <div class="alert alert-info" role="alert">
+                    {{ msg }}
+                </div>
+                {% endif %}
                 {% if status %}
                 <h5 class="card-title text-success">Arquivo enviado com sucesso!</h5>
                 <p class="card-text">Gostaria de atualizar o banco de dados?</p>
                 <div class="d-flex gap-3">
-                    <a href="#" class="ms-auto btn btn-primary">Sim</a>
+                    <a href="{% url 'atualizar-meta-servidores1' %}" class="ms-auto btn btn-primary">Sim</a>
                     <a href="#" class="me-auto btn btn-secondary">Não</a>
                 </div>
                 {% else %}

@@ -465,3 +465,26 @@ def upload_csv_view(request):
             return HttpResponse("Por favor, envie um arquivo CSV.", content_type="text/html")
 
     return render(request, 'autenticacao/upload_csv.html')
+
+from .management.commands.verificar_metaservidores import processar_csv
+from .management.commands.cadastrar_nao_encontrados import cadastrar_nao_encontrados
+
+
+def atualizar_meta_servidores_1(request):
+    try:
+        processar_csv()
+        msg = 'Processamento finalizado. Verifique o arquivo de log: matriculas_nao_encontradas.csv'
+    except Exception as e:
+        msg = f'Erro ao processar o arquivo: {str(e)}'
+        print(msg)
+        return render(request, 'autenticacao/upload_csv.html', {'status': False, 'msg': msg})
+    
+    return render(request, 'autenticacao/upload_csv.html', {'status': True, 'msg': msg})
+
+def atualizar_meta_servidores_2(request):    
+    try:
+        cadastrar_nao_encontrados()
+        msg = 'Processamento finalizado. Verifique o arquivo de log: matriculas_nao_encontradas.csv'
+    except Exception as e:
+        msg = f'Erro ao processar o arquivo: {str(e)}'
+    return render(request, 'autenticacao/upload_csv.html', {'status': False, 'msg': msg})
