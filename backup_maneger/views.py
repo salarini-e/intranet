@@ -4,8 +4,8 @@ from django.http import HttpResponse
 import subprocess
 from django.contrib.auth.decorators import login_required
 
-dir_backups = '/home/eduardo/Documentos/Backups_db'
-# dir_backups = '/home/sistemas/db_backup'
+# dir_backups = '/home/eduardo/Documentos/Backups_db'
+dir_backups = '/home/sistemas/db_backup'
 log_file_path = f'{dir_backups}/backup_log.txt'
 
 # Create your views here.
