@@ -1,63 +1,87 @@
 {% extends 'template.html' %}
+{% block configuracoes %}active{% endblock %}
 {% block main %}  
 
 <div class="app-content pt-3 p-md-3 p-lg-4">
-    <div class="container d-flex">
-        <div class="card shadow-sm m-auto my-5" style="max-width: 600px;">
-            <div class="card-body">
-                {% if msg %}
-                <div class="text-center alert {% if msg.status == 200 %}alert-info{% else %} alert-danger{% endif %}" role="alert">
-                    {{ msg.msg|safe }}
-                </div>
-                {% endif %}
-                {% if status %}
-                <h5 class="card-title text-success">Arquivo enviado com sucesso!</h5>
-                <p class="card-text">Gostaria de atualizar o banco de dados?</p>
-                <div class="gap-3" id="botoes">
-                    <a href="{% url 'autenticacao:atualizar-meta-servidores1' %}" 
-                       class="ms-auto btn btn-primary" 
-                       onclick="showSpinner(event)">Sim</a>
-                    <a href="/envio-meta-servidores/" class="me-auto btn btn-secondary">Não</a>
-                </div>
-                <div id="spinner" class="text-center mt-3 pt-4" style="display: none;">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Processando...</span>
-                    </div>
-                    <p>Processando...</p>
-                </div>
-                <script>
-                    function showSpinner(event) {
-                        event.preventDefault();
-                        document.getElementById('botoes').style.display = 'none';
-                        document.getElementById('spinner').style.display = 'block';
-                        window.location.href = event.target.href;
-                    }
-                </script>
-                {% else %}
-                <h5 class="card-title">Envie o arquivo CSV</h5>
-                <a href="https://novafriburgo-rj.portaltp.com.br/consultas/pessoal/servidores.aspx">
-                    <small><i class="fa-solid fa-download me-2"></i>Portal da Transparência </small>
-                </a>
-                <form method="post" enctype="multipart/form-data" class="mt-4">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="file" class="form-label">grdData:</label>
-                        <input type="file" name="file" id="file" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100" style="color: white;"><i class="fa-solid fa-cloud-arrow-up me-2"></i>Enviar arquivo</button>
-                    <a href="{% url 'autenticacao:atualizar-meta-servidores2' %}" class="btn btn-secondary mt-2 w-100" style="color: white; background-color: rgb(70, 70, 240);"><i class="fa-solid fa-arrow-rotate-left me-2"></i>Reprocessar arquivo</a>
-                </form>
-                {% endif %}
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col">
+                <h2>Dados do Portal da Transparência</h2>
             </div>
         </div>
-        <div class="card shadow-sm m-auto my-5 col-lg ms-2 col-sm-12">
-            <div class="card-body">
-                <h5 class="card-title">Instruções</h5>
-                <p>Você deve mudar a primeira linha do arquivo de</p>
-                <code style="color: red;">Detalhes;Matr�cula;Nome;Lota��o;CPF;V�nculo;Cargo;Admiss�o;Demiss�o;Ano;M�s;Situa��o Funcional</code>
-                <p>para</p>
-                <code style="color: green;">Detalhes;Matricula;Nome;Lotacao;CPF;Vinculo;Cargo;Admissao;Demissao;Ano;Mes;Situacao Funcional</code>
+        <div class="row">
+            <div class="col d-flex">
+                <div class="card shadow-sm m-auto mb-5" style="max-width: 600px;">
+                    <div class="card-body">
+                        {% if msg %}
+                        <div class="text-center alert {% if msg.status == 200 %}alert-info{% else %} alert-danger{% endif %}" role="alert">
+                            {{ msg.msg|safe }}
+                        </div>
+                        {% endif %}
+                        {% if status %}
+                        <h5 class="card-title text-success">Arquivo enviado com sucesso!</h5>
+                        <p class="card-text">Gostaria de atualizar o banco de dados?</p>
+                        <div class="gap-3" id="botoes">
+                            <a href="{% url 'autenticacao:atualizar-meta-servidores1' %}" 
+                               class="ms-auto btn btn-primary" 
+                               onclick="showSpinner(event)">Sim</a>
+                            <a href="/envio-meta-servidores/" class="me-auto btn btn-secondary">Não</a>
+                        </div>
+                        <div id="spinner" class="text-center mt-3 pt-4" style="display: none;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Processando...</span>
+                            </div>
+                            <p>Processando...</p>
+                        </div>
+                        <script>
+                            function showSpinner(event) {
+                                event.preventDefault();
+                                document.getElementById('botoes').style.display = 'none';
+                                document.getElementById('spinner').style.display = 'block';
+                                window.location.href = event.target.href;
+                            }
+                        </script>
+                        {% else %}
+                        <h5 class="card-title">Envie o arquivo CSV</h5>
+                        <a href="https://novafriburgo-rj.portaltp.com.br/consultas/pessoal/servidores.aspx">
+                            <small><i class="fa-solid fa-download me-2"></i>Portal da Transparência </small>
+                        </a>
+                        <form method="post" enctype="multipart/form-data" class="mt-4">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="file" class="form-label">grdData:</label>
+                                <input type="file" name="file" id="file" class="form-control">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100" style="color: white;"><i class="fa-solid fa-cloud-arrow-up me-2"></i>Enviar arquivo</button>
+                            <a href="{% url 'autenticacao:atualizar-meta-servidores2' %}" class="btn btn-secondary mt-2 w-100" style="color: white; background-color: rgb(70, 70, 240);"><i class="fa-solid fa-arrow-rotate-left me-2"></i>Reprocessar arquivo</a>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card shadow-sm mx-auto mb-5 col-lg ms-2 col-sm-12">
+                    <div class="card-body">
+                        <h5 class="card-title">Instruções</h5>
+                        <p>Você deve mudar a primeira linha do arquivo de</p>
+                        <code style="color: red;">Detalhes;Matr�cula;Nome;Lota��o;CPF;V�nculo;Cargo;Admiss�o;Demiss�o;Ano;M�s;Situa��o Funcional</code>
+                        <p>para</p>
+                        <code style="color: green;">Detalhes;Matricula;Nome;Lotacao;CPF;Vinculo;Cargo;Admissao;Demissao;Ano;Mes;Situacao Funcional</code>
+                </div>
+            </div>
         </div>
+        <div class="row mb-3">
+            <div class="col">
+                <h2>Monitor de Backups</h2>
+            </div>
+        </div>
+        <div class="card shadow-sm mx-auto mb-5 col-lg ms-2 col-sm-12">
+            <div class="card-body">
+                <p>Faça o download ou restaure backups existentes.</p>
+                <a href="{% url 'backup_maneger:index' %}" class="btn btn-primary w-100" style="color: white;">
+                    <i class="fa-solid fa-database me-2"></i>Acessar Central de Backups
+                </a>
+            </div>
+        </div>
+
     </div>
 </div>
 <style>

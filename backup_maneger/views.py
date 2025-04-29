@@ -2,14 +2,17 @@ import os
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import subprocess
-
+from django.contrib.auth.decorators import login_required
 # dir_backups = '/home/eduardo/Documentos/Backups_db'
 dir_backups = '/home/sistemas/db_backup'
 log_file_path = f'{dir_backups}/backup_log.txt'
 
 # Create your views here.
+@login_required
 def index(request):
- 
+    if not request.user.is_superuser:
+        return HttpResponse("Apenas administradores podem acessar os backups.")
+    
     list_folders = []
     logs = []
 
@@ -28,7 +31,7 @@ def index(request):
                 line = line.strip()
                 if line.startswith('[') and ']' in line:
                     if current_log:
-                        logs.append(current_log)
+                        logs.append(current_log)    
                         current_log = {}
                     current_log['date'], current_log['status'] = line[1:].split('] ')
                 elif line.startswith('Iniciado em:'):
@@ -50,8 +53,10 @@ def index(request):
     }
     return render(request, 'backup_maneger/index.html', context)
 
+@login_required
 def list_db_files(request, subdir):
-        
+    if not request.user.is_superuser:
+        return HttpResponse("Apenas administradores podem acessar os backups.")
     list_files = []
     path = os.path.join(dir_backups, subdir)
     
@@ -67,8 +72,10 @@ def list_db_files(request, subdir):
     }
     return render(request, 'backup_maneger/list_db_files.html', context)
     
+@login_required    
 def download_file(request, subdir, file_name):
-    
+    if not request.user.is_superuser:
+        return HttpResponse("Apenas administradores podem baixar os backups.")
     file_path = os.path.join(dir_backups, subdir, file_name)
     
     if os.path.exists(file_path):
@@ -79,7 +86,10 @@ def download_file(request, subdir, file_name):
     
     return HttpResponse("File not found.")
 
+@login_required    
 def novo_backup(request):
+    if not request.user.is_superuser:
+        return HttpResponse("Apenas administradores podem disparar o backup.")
     # Caminho absoluto para o script
     # projeto_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     caminho_script = '/home/sistemas/intranet/site/intranet/mk_backup.sh'
