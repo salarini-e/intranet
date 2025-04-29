@@ -195,7 +195,5 @@ class SolicitacaoEmailInstitucionalForm(forms.ModelForm):
         }
     def clean_cpf(self):
         cpf = self.cleaned_data["cpf"].replace('.', '').replace('-', '').strip()
-        cpf = validate_cpf(cpf)
-        if SolicitacaoEmailInstitucional.objects.filter(cpf=cpf).exists():
-            raise forms.ValidationError("Este CPF já está cadastrado no sistema. Por favor, verifique.")
+        cpf = validate_cpf(cpf)        
         return cpf
