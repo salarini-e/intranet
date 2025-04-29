@@ -23,7 +23,7 @@ urlpatterns = [
     path('planejamento-de-acoes/', include('planejamento_de_acoes.urls')),
     path('gestao-acao/', include('gestao_acao.urls')),
     path('ma/', include('ma_interno.urls')),
-    path('backup-maneger/', include('backup_maneger.urls')),
+    path('backup-manager/', include('backup_maneger.urls')),
     # path('logwatcher/', include('django_logwatcher.urls')),
 ]   
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -83,7 +83,6 @@ def novo_backup(request):
     # Caminho absoluto para o script
     # projeto_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     caminho_script = '/home/sistemas/intranet/site/intranet/mk_backup.sh'
-
     # Disparar o script sem esperar resposta
     try:
         subprocess.Popen(
