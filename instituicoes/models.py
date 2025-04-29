@@ -77,10 +77,8 @@ class Servidor(models.Model):
         super().save(*args, **kwargs)
     
     def get_avatar(self):
-        if self.avatar:
-            return self.avatar.url
-        else:
-            return '/static/images/user.png'
+         return self.avatar.url if self.avatar else '/static/images/user.png'
+            
         
 class Meta_Servidores(models.Model):
     def __str__(self):

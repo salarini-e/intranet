@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Registro, Responsavel
+from .models import Registro, Responsavel, Acesso
 from django_select2.forms import ModelSelect2Widget
 
 @admin.register(Registro)
@@ -57,3 +57,7 @@ class ResponsavelAdmin(admin.ModelAdmin):
 
     # Torna o campo `user` uma barra de pesquisa
     autocomplete_fields = ('user', 'secretaria', 'setor')
+
+@admin.register(Acesso)
+class AcessoAdmin(admin.ModelAdmin):
+    list_display = ( 'tipo', 'secretaria', 'setor', 'servidor')

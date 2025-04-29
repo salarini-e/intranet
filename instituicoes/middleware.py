@@ -1,4 +1,4 @@
-from instituicoes.models import Servidor
+from .models import Servidor
 
 class ServidorMiddleware:
     def __init__(self, get_response):
@@ -7,9 +7,12 @@ class ServidorMiddleware:
     def __call__(self, request):
         # Adicionar o atributo `servidor` ao objeto `request`
         if request.user.is_authenticated:
-            request.servidor = Servidor.objects.filter(user=request.user).first()
+            request.servidor = Servidor.objects.filter(user=request.user).first()                        
         else:
             request.servidor = None
 
         response = self.get_response(request)
         return response
+    
+
+    

@@ -87,3 +87,17 @@ class Log_Alteracao(models.Model):
     saida2_old = models.TimeField(null=True, blank=True, verbose_name="Saída 2 antiga")
     saida2 = models.TimeField(null=True, blank=True, verbose_name="Saída 2 nova")
     dt_inclusao = models.DateTimeField(auto_now_add=True, verbose_name="Data da alteração")
+
+class Acesso(models.Model):
+    ESCOLHAS = (
+        ('1', 'Secretaria'),
+        ('2', 'Setor'),
+        ('3', 'Servidor'),        
+    )
+
+    tipo = models.CharField(max_length=1, choices=ESCOLHAS, default='1')
+    secretaria = models.ForeignKey(Secretaria, on_delete=models.CASCADE, null=True, blank=True)
+    setor = models.ForeignKey(Setor, on_delete=models.CASCADE, null=True, blank=True)
+    servidor = models.ForeignKey(Servidor, on_delete=models.CASCADE, null=True, blank=True)
+
+    
