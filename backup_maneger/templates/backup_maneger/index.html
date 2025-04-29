@@ -1,7 +1,7 @@
 {% extends 'template.html' %}
 {% load static %}
-{% block chamados %}active{% endblock %}
-{% block title %}Tickets Chamados{% endblock %}
+{% block configuracoes %}active{% endblock %}
+{% block title %}Monitor de Backups{% endblock %}
 {% block css %}
 <style>
     .log-container {
@@ -42,7 +42,7 @@
 <div class="container-fluid mt-4">
     <div class="row">
         <div class="col d-flex align-items-center">
-            <h1 class="me-4">Gerenciador de Backups</h1>
+            <h1 class="me-4">Monitor de Backups</h1>
 
             <!-- Campo de pesquisa -->
             <input type="text" id="searchInput" class="form-control w-25 me-auto" placeholder="Pesquisar banco...">
@@ -68,6 +68,10 @@
                             <img src="{% static 'images/sql-database.png' %}" class="card-img-top p-3" alt="Banco de Dados">
                             <div class="card-body">
                                 <h5 class="card-title text-center" style="color: black;">{{ folder }}</h5>
+                                <!-- Icone de não sincronizado -->
+                                <div class="text-center mt-2">
+                                    <i class="fa-solid fa-cloud-slash text-danger" title="Não sincronizado com a nuvem"></i>
+                                </div>
                             </div>
                         </a>
                     </div>
