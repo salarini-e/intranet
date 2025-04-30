@@ -162,8 +162,9 @@ def date_chamados_por_mes():
     # print(data)
     return data
 
-def data_generic(titulo, periodo='dia'):    
+from django.utils import timezone
 
+def data_generic(titulo, periodo='dia'):    
     """
     Gera dados de evolução de chamados agrupados por dia, semana ou mês.
 
@@ -180,7 +181,6 @@ def data_generic(titulo, periodo='dia'):
             'backgroundColor': DEFAULT_COLORS[titulo],
             'borderColor': DEFAULT_COLORS[titulo],
             'borderWidth': 2,
-
         }]
     }
 
@@ -194,20 +194,23 @@ def data_generic(titulo, periodo='dia'):
     else:
         raise ValueError("Período inválido. Use 'dia', 'semana' ou 'mes'.")
 
+    # Filtro de data para os últimos 30 dias
+    data_inicio = timezone.now() - timedelta(days=30)
+
     query = f"""
         SELECT {agrupamento} AS periodo, COUNT(id) AS total
         FROM chamados_chamado
         WHERE tipo_id = (
             SELECT id FROM chamados_tipochamado WHERE nome = %s
         )
+        AND dt_inclusao >= %s
         GROUP BY periodo
         ORDER BY periodo;
     """
 
     with connection.cursor() as cursor:
-        cursor.execute(query, [titulo])
+        cursor.execute(query, [titulo, data_inicio])
         resultados = cursor.fetchall()
-
 
     for periodo_, total in resultados:
         if periodo == 'mes':
@@ -215,12 +218,11 @@ def data_generic(titulo, periodo='dia'):
             nome_mes = calendar.month_name[int(mes)] 
             data["labels"].append(f"{nome_mes}")  
         elif periodo == 'dia':
-            # Formatando a data no formato "dd/mm/yyyy"
             ano, mes, dia = periodo_.split("-")
             data_formatada = f"{int(dia):02d}/{int(mes):02d}"
             data["labels"].append(data_formatada)
         else:
-            data["labels"].append(periodo_)  # `periodo` já está em formato de string
+            data["labels"].append(periodo_)
         data['datasets'][0]["data"].append(total)
 
     return data
