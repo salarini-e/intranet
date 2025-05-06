@@ -347,11 +347,13 @@ def menu_acertar_ponto(request):
     }
     if request.method == "POST":
         
-        responsavel_geral = responsavel.geral
-        responsavel_secretaria = responsavel.secretaria == Servidor.objects.filter(matricula = request.POST.get("matricula")).first().setor.secretaria
-        responsavel_do_setor = not responsavel.setor == Servidor.objects.filter(matricula = request.POST.get("matricula")).first().setor
+        not_responsavel_geral = not responsavel.geral
+        not_responsavel_secretaria = not responsavel.secretaria == Servidor.objects.filter(matricula = request.POST.get("matricula")).first().setor.secretaria
+        not_responsavel_do_setor = not responsavel.setor == Servidor.objects.filter(matricula = request.POST.get("matricula")).first().setor
         
-        if  (responsavel_geral and responsavel_secretaria) or responsavel_do_setor:
+        if not_responsavel_geral and not_responsavel_secretaria:
+                return render(request, "erro.html", {"mensagem": "Acesso negado.", "submensagem": "Você não tem autorização para alterar os registros desse servidor."})
+        elif not_responsavel_do_setor:
             return render(request, "erro.html", {"mensagem": "Acesso negado.", "submensagem": "Você não tem autorização para alterar os registros desse servidor."})
         matricula = request.POST.get("matricula")
         data = request.POST.get("data")            
