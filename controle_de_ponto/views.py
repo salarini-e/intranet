@@ -363,7 +363,8 @@ def menu_acertar_ponto(request):
             if not mesma_secretaria:
                 return render(request, "erro.html", {
                     "mensagem": "Acesso negado.",
-                    "submensagem": "Você só pode alterar registros de servidores da sua secretaria."
+                    "submensagem": f'{responsavel.secretaria} != {servidor.setor.secretaria} {mesma_secretaria}',
+                    # "submensagem": "Você só pode alterar registros de servidores da sua secretaria."
                 })
         elif not mesmo_setor:
             return render(request, "erro.html", {
