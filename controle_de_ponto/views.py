@@ -339,31 +339,46 @@ def alocar_servidor(request):
 
 from core.templatetags.custom_filters import acessoPonto
 def menu_acertar_ponto(request):
+    
     if not Responsavel.is_responsavel(request.user):
         return render(request, "erro.html", {"mensagem": "Acesso negado."})
+    
     responsavel = Responsavel.objects.get(user=request.user)
     context = {
         'responsavel': responsavel,
     }
     if request.method == "POST":
         
-        not_responsavel_geral = not responsavel.geral
-        not_responsavel_secretaria = not responsavel.secretaria == Servidor.objects.filter(matricula = request.POST.get("matricula")).first().setor.secretaria
-        not_responsavel_do_setor = not responsavel.setor == Servidor.objects.filter(matricula = request.POST.get("matricula")).first().setor
-        
-        if not_responsavel_geral and not_responsavel_secretaria:
-                return render(request, "erro.html", {"mensagem": "Acesso negado.", "submensagem": "Você não tem autorização para alterar os registros desse servidor."})
-        elif not_responsavel_do_setor:
-            return render(request, "erro.html", {"mensagem": "Acesso negado.", "submensagem": "Você não tem autorização para alterar os registros desse servidor."})
         matricula = request.POST.get("matricula")
-        data = request.POST.get("data")            
+        data = request.POST.get("data")
+        servidor = Servidor.objects.filter(matricula=matricula).select_related("setor__secretaria").first()
+
+        if not servidor:
+            return render(request, "erro.html", {"mensagem": "Servidor não encontrado."})
+
+        mesma_secretaria = responsavel.secretaria == servidor.setor.secretaria
+        mesmo_setor = responsavel.setor == servidor.setor
+        
+        if responsavel.geral:
+            if not mesma_secretaria:
+                return render(request, "erro.html", {
+                    "mensagem": "Acesso negado.",
+                    "submensagem": "Você só pode alterar registros de servidores da sua secretaria."
+                })
+        elif not mesmo_setor:
+            return render(request, "erro.html", {
+                "mensagem": "Acesso negado.",
+                "submensagem": "Você não tem autorização para alterar os registros desse servidor."
+            })
+        
         registros = Registro.objects.filter(matricula=matricula, data_registro=data)
+
         if not registros.exists():
             messages.error(request, 'Nenhum registro encontrado.')
             return redirect('controle_de_ponto:menu_acertar_ponto')
 
         registro = registros.first()
-        print(registro)
+        
         context = {
             'data': datetime.strptime(data, '%Y-%m-%d').date(),
             'matricula': registro.matricula,
