@@ -337,6 +337,7 @@ def alocar_servidor(request):
 #         registro.save()
 #     return render(request, "erro.html", {"mensagem": "Feito.", "submensagem": "Gambiarra aplicada."})
 
+from core.templatetags.custom_filters import acessoPonto
 def menu_acertar_ponto(request):
     if not Responsavel.is_responsavel(request.user):
         return render(request, "erro.html", {"mensagem": "Acesso negado."})
@@ -345,7 +346,12 @@ def menu_acertar_ponto(request):
         'responsavel': responsavel,
     }
     if request.method == "POST":
-        if not responsavel.setor == Servidor.objects.filter(matricula = request.POST.get("matricula")).first().setor:
+        
+        responsavel_geral = responsavel.geral
+        responsavel_secretaria = responsavel.secretaria == Servidor.objects.filter(matricula = request.POST.get("matricula")).first().setor.secretaria
+        responsavel_do_setor = not responsavel.setor == Servidor.objects.filter(matricula = request.POST.get("matricula")).first().setor
+        
+        if  (responsavel_geral and responsavel_secretaria) or responsavel_do_setor:
             return render(request, "erro.html", {"mensagem": "Acesso negado.", "submensagem": "Você não tem autorização para alterar os registros desse servidor."})
         matricula = request.POST.get("matricula")
         data = request.POST.get("data")            
