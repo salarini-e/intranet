@@ -12,4 +12,6 @@ urlpatterns = [
     path('aloca_item/<int:item_id>/', views.aloca_item, name='aloca_item'),
     path('retira_item/<int:item_id>/', views.retira_item, name='retira_item'),
     path('historico/', views.historico_view, name='historico'),
+    path('gerar_relatorio/', views.relatorio_xml, name='gerar_relatorio'),
+
 ]

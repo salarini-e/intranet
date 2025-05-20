@@ -4,6 +4,11 @@ from .forms import ItemForm, EditItemForm, AlocaItemForm, RetiraItemForm
 from .models import Item, HistoricoItem
 from django.db.models import Q
 from .decorators import required_almoxarifado
+from django.http import HttpResponse
+import xml.etree.ElementTree as ET
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
+from datetime import datetime
 
 @login_required
 @required_almoxarifado
@@ -144,3 +149,71 @@ def retira_item(request, item_id):
 def historico_view(request):
     historicos = HistoricoItem.objects.all().order_by('-data')
     return render(request, 'historico.html', {'historicos': historicos})
+
+@login_required
+@required_almoxarifado
+def relatorio_xml(request):
+    # Cria uma planilha
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Histórico de Itens"
+
+    # Estilos
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill("solid", fgColor="4F81BD")  # azul
+    center_alignment = Alignment(horizontal="center", vertical="center")
+    border = Border(
+        left=Side(style="thin"),
+        right=Side(style="thin"),
+        top=Side(style="thin"),
+        bottom=Side(style="thin"),
+    )
+
+    # Cabeçalhos
+    colunas = [
+        "ID", "Item", "Usuário", "Data", "Tipo", "Descrição",
+        "Qtd. Inicial", "Qtd. Movimentada", "Qtd. Final"
+    ]
+    ws.append(colunas)
+
+    # Formatar cabeçalho
+    for col_num, column_title in enumerate(colunas, 1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = center_alignment
+        cell.border = border
+
+    # Dados
+    historicos = HistoricoItem.objects.all().order_by('-data')
+
+    for row_num, h in enumerate(historicos, start=2):
+        valores = [
+            h.id,
+            h.item.nome,
+            h.usuario.username if hasattr(h.usuario, 'username') else h.usuario,
+            h.data.strftime('%d/%m/%Y %H:%M'),
+            h.get_tipo_display(),
+            h.descricao,
+            h.quantidade_inicial,
+            h.quantidade,
+            h.quantidade_final,
+        ]
+        for col_num, value in enumerate(valores, 1):
+            cell = ws.cell(row=row_num, column=col_num, value=value)
+            cell.alignment = center_alignment
+            cell.border = border
+
+    # Ajustar larguras de coluna
+    col_widths = [6, 25, 20, 20, 12, 40, 15, 18, 15]
+    for i, width in enumerate(col_widths, 1):
+        ws.column_dimensions[chr(64 + i)].width = width
+
+    # Retorna como arquivo
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    data_str = datetime.now().strftime('%d-%m-%Y')
+    response['Content-Disposition'] = f'attachment; filename=relatorio_almoxarifado_{data_str}.xlsx'
+    wb.save(response)
+    return response
