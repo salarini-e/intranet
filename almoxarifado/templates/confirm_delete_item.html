@@ -1,0 +1,33 @@
+{% extends "template.html" %}
+
+{% load static %}
+
+{% block main %}
+
+<div class="w-100">
+
+    <div class="d-flex p-2 m-4 rounded-3 justify-content-between align-items-center text-white" style="background-color: #00528A;">
+        <h4 class="d-flex align-items-center text-white justify-content-center flex-row p-0 m-2">Confirmação de Remoção de Item</h4>
+    </div>
+
+    <div class="d-flex bg-white p-2 m-4 rounded-3 justify-content-between align-items-center" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);">
+        <div class="d-flex flex-column w-100">
+            <form method="post" class="d-flex flex-column p-4 rounded-3">
+                {% csrf_token %}
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">Tem certeza que deseja remover o item <strong>"{{ item.nome }}"</strong>?</h4>
+                    <p>Essa ação é <strong>irreversível</strong> e resultará na <strong>exclusão completa do histórico</strong> associado a este item.</p>
+                </div>
+                    <p class="mb-4">
+                    <strong>Dica:</strong> Se seu objetivo é apenas registrar a saída do item, considere utilizar a opção <strong>Retirada</strong>, a qual é representada por um botão vermelho com sinal de menos, em vez da remoção.
+                    </p>
+
+            <div class="col d-flex justify-content-start gap-2 mt-2">
+                <button type="submit" class="btn btn-danger text-white">Remover</button>
+                <a href="{% url 'almoxarifado:almoxarifado' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

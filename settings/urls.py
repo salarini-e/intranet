@@ -22,6 +22,7 @@ urlpatterns = [
     path('projetos/', include('projetos.urls')),
     path('planejamento-de-acoes/', include('planejamento_de_acoes.urls')),
     path('gestao-acao/', include('gestao_acao.urls')),
+    path('almoxarifado/', include('almoxarifado.urls')),
     path('ma/', include('ma_interno.urls')),
     path('backup-manager/', include('backup_maneger.urls')),
     # path('logwatcher/', include('django_logwatcher.urls')),

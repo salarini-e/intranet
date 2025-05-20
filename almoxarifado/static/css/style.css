@@ -1,0 +1,76 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+:root{
+    --cor-primaria: #ffffff;
+    --cor-secundaria: #00528A;
+}
+
+.nav-item a {
+    color: var(--cor-primaria);
+    text-decoration: none;
+}
+
+.nav-item a:hover {
+    color: var(--cor-secundaria) !important;
+    transition: 0.3s ease-in-out ;
+}
+
+main {
+    background-color: var(--cor-primaria);
+}
+
+th{
+    white-space: nowrap;
+}
+
+.login{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 30%;
+    background-color: var(--cor-primaria);
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.login input{
+    margin: 0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+.login label{
+    margin: 0;
+    padding: 0;
+}
+
+.login button{
+    margin: 0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+.formulario{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    color: #ffffff;
+    gap: 20px;
+}
+
+.text-sucess{
+    color: green;
+}
