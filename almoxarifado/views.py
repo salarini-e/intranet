@@ -5,10 +5,10 @@ from .models import Item, HistoricoItem
 from django.db.models import Q
 from .decorators import required_almoxarifado
 from django.http import HttpResponse
-import xml.etree.ElementTree as ET
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
-from datetime import datetime
+from django.utils import timezone
+from instituicoes.models import Servidor
 
 @login_required
 @required_almoxarifado
@@ -27,11 +27,12 @@ def almoxarifado(request):
 def item_create(request):
     if request.method == 'POST':
         form = ItemForm(request.POST)
+        usuario_ativo = get_object_or_404(Servidor, matricula=request.user.username)
         if form.is_valid():
             form.save()
             HistoricoItem.objects.create(
                 item=form.instance,
-                usuario=request.user.username,
+                usuario=usuario_ativo.nome,
                 tipo='ADICAO',
                 descricao="Adição de item",
                 quantidade_inicial=0,
@@ -75,10 +76,11 @@ def aloca_item(request, item_id):
     item = get_object_or_404(Item, id=item_id)
     if request.method == 'POST':
         form = AlocaItemForm(request.POST)
+        usuario_ativo = get_object_or_404(Servidor, matricula=request.user.username)
         if form.is_valid():
             alocacao = form.save(commit=False)
             alocacao.item = item
-            alocacao.user = request.user.username
+            alocacao.user = usuario_ativo.nome
             item = item
             quantidade_inicial = item.quantidade_total
             item.quantidade_total += alocacao.quantidade
@@ -106,12 +108,15 @@ def aloca_item(request, item_id):
 @required_almoxarifado
 def retira_item(request, item_id):
     item = get_object_or_404(Item, id=item_id)
+    
     if request.method == 'POST':
         form = RetiraItemForm(request.POST)
+        usuario_ativo = get_object_or_404(Servidor, matricula=request.user.username)
+
         if form.is_valid():
             retirada = form.save(commit=False)
             retirada.item = item
-            retirada.user = request.user.username
+            retirada.user = usuario_ativo.nome
             item = item
             if item.quantidade_total < retirada.quantidade:
                 form.add_error('quantidade', 'Quantidade insuficiente em estoque.')
@@ -191,7 +196,7 @@ def relatorio_xml(request):
         valores = [
             h.id,
             h.item.nome,
-            h.usuario.username if hasattr(h.usuario, 'username') else h.usuario,
+            h.usuario,
             h.data.strftime('%d/%m/%Y %H:%M'),
             h.get_tipo_display(),
             h.descricao,
@@ -205,7 +210,7 @@ def relatorio_xml(request):
             cell.border = border
 
     # Ajustar larguras de coluna
-    col_widths = [6, 25, 20, 20, 12, 40, 15, 18, 15]
+    col_widths = [6, 25, 30, 20, 12, 40, 15, 18, 15]
     for i, width in enumerate(col_widths, 1):
         ws.column_dimensions[chr(64 + i)].width = width
 
@@ -213,7 +218,7 @@ def relatorio_xml(request):
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    data_str = datetime.now().strftime('%d-%m-%Y')
+    data_str = timezone.now().strftime('%d-%m-%Y')
     response['Content-Disposition'] = f'attachment; filename=relatorio_almoxarifado_{data_str}.xlsx'
     wb.save(response)
     return response
