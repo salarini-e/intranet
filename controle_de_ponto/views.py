@@ -56,10 +56,24 @@ def exportar_excel(request):
         if not mes:
             return render(request, "erro.html", {'mensagem': 'DATA INVÁLIDA',"submensagem": "Por favor, selecione um mês."})
         elif arquivo == 'PDF':
-            registros = Registro.objects.filter(
-                data_registro__month=mes, data_registro__year=ano, 
-                setor=responsavel.setor
-            ).order_by('nome', 'data_registro')  # Ordenar por nome e data
+
+            ################## FILTRO ESPECIFICO PARA SECRETARIA MEIO AMBIENTE ####################
+            # Foi solicitado esse caso especifico Dia 22/05/2025
+            # Caso queira que a pessoa do Meio Ambiente no Relatorio PDF veja somente a do seu setor, basta remover esse if e retirar e manter o codigo dentro do else
+            if responsavel.secretaria.nome == "Secretaria do Ambiente e Desenvolvimento Urbano Sustentável":
+                registros = Registro.objects.filter(
+                    secretaria=responsavel.secretaria,
+                    data_registro__month=mes,
+                    data_registro__year=ano
+                ).order_by('nome', 'data_registro')
+            #########################################################################################
+            
+            else:
+                registros = Registro.objects.filter(
+                    data_registro__month=mes, data_registro__year=ano, 
+                    setor=responsavel.setor
+                ).order_by('nome', 'data_registro')
+
             funcionarios = {}
             for registro in registros:
                 if registro.nome not in funcionarios:
@@ -80,13 +94,13 @@ def exportar_excel(request):
                     secretaria=responsavel.secretaria,            
                     data_registro__month=mes,
                     data_registro__year=ano
-                )
+                ).order_by('nome', 'data_registro') 
             else:
                 registros = Registro.objects.filter(
                     setor=responsavel.setor,            
                     data_registro__month=mes,
                     data_registro__year=ano
-                )
+                ).order_by('nome', 'data_registro') 
 
             # Cria um workbook e uma worksheet
             wb = openpyxl.Workbook()
@@ -245,7 +259,7 @@ def api_registrar_ponto(request):
                     setor = request.servidor.setor,
                     data_registro=data_registro,
                     entrada1=horario_registro,
-                    ip_inclusao=ip_cliente
+                    ip_inclusao=ip_cliente,
                 )
                 estado = 'entrada1'
 
