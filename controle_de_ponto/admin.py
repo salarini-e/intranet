@@ -1,6 +1,5 @@
 from django.contrib import admin
 from .models import Registro, Responsavel, Acesso
-from django_select2.forms import ModelSelect2Widget
 
 @admin.register(Registro)
 class RegistroAdmin(admin.ModelAdmin):
@@ -9,7 +8,7 @@ class RegistroAdmin(admin.ModelAdmin):
     list_filter = ('data_registro', 'secretaria', 'setor')  # Filtros laterais para pesquisa
     search_fields = ('nome', 'matricula')  # Campos pesquisáveis
     ordering = ('-data_registro', 'nome')  # Ordenação padrão
-    readonly_fields = ('matricula', 'nome', 'ip_inclusao')  # Campos somente leitura no formulário
+    # readonly_fields = ('matricula', 'nome', 'ip_inclusao')  # Campos somente leitura no formulário
 
     # Campos exibidos no formulário de detalhes de um registro
     fieldsets = (
@@ -21,14 +20,8 @@ class RegistroAdmin(admin.ModelAdmin):
         }),
     )
 
-    # Personalize os formulários para incluir o widget pesquisável
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "user":
-            kwargs["widget"] = ModelSelect2Widget(
-                model=db_field.related_model,
-                search_fields=["username__icontains", "email__icontains", "first_name__icontains", "last_name__icontains"],
-            )
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+    autocomplete_fields = ('user',)
+
 
 @admin.register(Responsavel)
 class ResponsavelAdmin(admin.ModelAdmin):
