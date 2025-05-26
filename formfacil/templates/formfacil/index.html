@@ -61,6 +61,32 @@
                         </a>
                     </td>
                 </tr>                
+                <tr>
+                    <td>Processo Digital (03/06/2025)</td>
+                    <td>Rômulo Rodrigues</td>
+                    <td>
+                        <span class="badge bg-success fs-6">Ativo</span>
+                    </td>
+                    <td>{{ registros.processo_digital_total }}</td>
+                    <td class="text-center d-none d-md-table-cell">
+                        <a href="{% url 'formfacil:visualizar_processo_digital' %}" class="btn btn-sm btn-primary text-white" data-bs-toggle="tooltip" title="Visualizar">
+                            <i class="fa fa-eye"></i> Visualizar
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Padronização do Processo de Pagamento (04/06/2025)</td>
+                    <td>Rômulo Rodrigues</td>
+                    <td>
+                        <span class="badge bg-success fs-6">Ativo</span>
+                    </td>
+                    <td>{{ registros.padronizacao_pagamento_total }}</td>
+                    <td class="text-center d-none d-md-table-cell">
+                        <a href="{% url 'formfacil:visualizar_padronizacao_pagamento' %}" class="btn btn-sm btn-primary text-white" data-bs-toggle="tooltip" title="Visualizar">
+                            <i class="fa fa-eye"></i> Visualizar
+                        </a>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -84,6 +110,30 @@
                     </td>                                    
                     <td class="text-end">
                         <a class="btn btn-primary text-white" href="{% url 'formfacil:inscricao-ato-prefeito' %}" data-bs-toggle="tooltip" title="Acessar">
+                            <i class="bi bi-box-arrow-in-right"></i> Acessar
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="{% url 'formfacil:cadastro_processo_digital' %}" class="text-decoration-none">
+                            Processo Digital (03/06/2025)
+                        </a>
+                    </td>
+                    <td class="text-end">
+                        <a class="btn btn-primary text-white" href="{% url 'formfacil:cadastro_processo_digital' %}" data-bs-toggle="tooltip" title="Acessar">
+                            <i class="bi bi-box-arrow-in-right"></i> Acessar
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="{% url 'formfacil:cadastro_padronizacao_pagamento' %}" class="text-decoration-none">
+                            Orientações sobre a padronização do processo de pagamento (04/06/2025)
+                        </a>
+                    </td>
+                    <td class="text-end">
+                        <a class="btn btn-primary text-white" href="{% url 'formfacil:cadastro_padronizacao_pagamento' %}" data-bs-toggle="tooltip" title="Acessar">
                             <i class="bi bi-box-arrow-in-right"></i> Acessar
                         </a>
                     </td>

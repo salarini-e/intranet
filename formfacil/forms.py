@@ -197,3 +197,29 @@ class SolicitacaoEmailInstitucionalForm(forms.ModelForm):
         cpf = self.cleaned_data["cpf"].replace('.', '').replace('-', '').strip()
         cpf = validate_cpf(cpf)        
         return cpf
+
+class ProcessoDigitalInscricaoForm(forms.ModelForm):
+    class Meta:
+        model = ProcessoDigitalInscricao
+        fields = ['nome', 'matricula', 'secretaria', 'setor', 'celular', 'turma']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'matricula': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'secretaria': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'setor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'celular': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'turma': forms.Select(attrs={'class': 'form-select mb-3'})
+        }
+
+class PadronizacaoPagamentoInscricaoForm(forms.ModelForm):
+    class Meta:
+        model = PadronizacaoPagamentoInscricao
+        fields = ['nome', 'matricula', 'secretaria', 'setor', 'celular', 'turma']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'matricula': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'secretaria': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'setor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'celular': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'turma': forms.Select(attrs={'class': 'form-select mb-3'})
+        }

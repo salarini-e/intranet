@@ -1,0 +1,76 @@
+{% extends 'template.html' %}
+{% load utils %}
+{% block formfacil %}active{% endblock %}
+{% block main %}
+<div class="row">
+    <div class="col d-flex">
+        <h1 class="app-page-title">Form Fácil - Padronização do Processo de Pagamento</h1>
+    </div>
+</div>
+<h3 class="mb-4 mt-3">Inscrições por Turma</h3>
+{% for turma, nome_turma in turmas.items %}
+<div class="row container mx-auto g-4 mb-4 px-3">
+    <div class="col app-card app-card-stats-table h-100 shadow-sm p-4">
+        <div class="w-100 d-flex flex-wrap">
+            <h5>{{ nome_turma }} <span class="text-secondary">- Total ({{ registros|get_item:nome_turma|length }})</span></h5>
+            <button class="ms-auto my-auto btn app-btn-secondary" onclick="toogleTable(this, 'table-{{ forloop.counter }}')" style="border:none; ">
+                <i class="fa-regular fa-eye me-2"></i>
+                Visualizar registros
+            </button>
+        </div>
+        <table id="table-{{ forloop.counter }}" class="table table-borderless mb-0" style="display:none;">
+            <thead>
+                <th>Nome</th>
+                <th>Matrícula</th>
+                <th>Secretaria</th>
+                <th>Setor</th>
+                <th>Celular</th>
+                <th>Dt. Inscrição</th>
+            </thead>
+            <tbody>
+                {% for cadastro in registros|get_item:nome_turma %}
+                <tr>
+                    <td>{{ cadastro.nome }}</td>
+                    <td>{{ cadastro.matricula }}</td>
+                    <td>{{ cadastro.secretaria }}</td>
+                    <td>{{ cadastro.setor }}</td>
+                    <td>{{ cadastro.celular }}</td>
+                    <td>{{ cadastro.dt_inscricao }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center p-5">Nenhum registro efetuado até o momento.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+function hiddeTables() {
+    const tables = document.getElementsByClassName('table');
+    for (let i = 0; i < tables.length; i++) {
+        tables[i].classList.remove('show');
+        tables[i].style.display = 'none'; // Esconde completamente
+    }
+}
+
+function toogleTable(e, id) {
+    const table = document.getElementById(id);
+
+    if (table.classList.contains('show')) {
+        hiddeTables();
+        e.innerHTML = '<i class="fa-regular fa-eye me-2"></i> Visualizar registros';
+    } else {
+        hiddeTables();
+        table.style.display = 'table'; // Mostra a tabela
+        setTimeout(() => table.classList.add('show'), 100); // Garante a transição suave
+        e.innerHTML = '<i class="fa-regular fa-eye-slash me-2"></i> Ocultar registros';
+    }
+}
+
+
+</script>
+{% endblock %}

@@ -42,4 +42,8 @@ urlpatterns = [
     path('cadastro-solicitacao-email-institucional/', cadastro_solicitacao_email_institucional, name='cadastro_solicitacao_email_institucional'),
     path('visualizar/solicitacao-email-institucional/', visualizar_cadastros_solicitacao_email_institucional, name='visualizar_solicitacao_email_institucional'),
     path('exportar/solicitacao-email-institucional/', exportar_cadastros_solicitacao_email_institucional, name='exportar_solicitacao_email_institucional'),
+    path('cadastro-processo-digital-2025/', views.cadastro_processo_digital, name='cadastro_processo_digital'),
+    path('visualizar/processo-digital-2025/', views.visualizar_processo_digital, name='visualizar_processo_digital'),
+    path('cadastro-padronizacao-pagamento-2025/', views.cadastro_padronizacao_pagamento, name='cadastro_padronizacao_pagamento'),
+    path('visualizar/padronizacao-pagamento-2025/', views.visualizar_padronizacao_pagamento, name='visualizar_padronizacao_pagamento'),
 ]

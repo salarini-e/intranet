@@ -203,4 +203,35 @@ class SolicitacaoEmailInstitucional(models.Model):
     email_institucional = models.EmailField(verbose_name='E-mail institucional sugerido. Sugestão no formato: nome.sobrenome@prefeituradenovafriburgo.rj.gov.br')
     dt_registro = models.DateTimeField(auto_now_add=True)
 
-    
+class ProcessoDigitalInscricao(models.Model):
+    TURMAS = (
+        ("turma1", "Turma 1 (10h às 12h)"),
+        ("turma2", "Turma 2 (14h às 16h)")
+    )
+    nome = models.CharField(max_length=150, verbose_name='Nome Completo')
+    matricula = models.CharField(max_length=10, verbose_name='Matrícula')
+    secretaria = models.CharField(max_length=250)
+    setor = models.CharField(max_length=250)
+    celular = models.CharField(max_length=15, verbose_name='Celular')
+    turma = models.CharField(max_length=10, choices=TURMAS)
+    dt_inscricao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.nome} - {self.turma}'
+
+class PadronizacaoPagamentoInscricao(models.Model):
+    TURMAS = (
+        ("turma1", "Turma 1 (10h às 12h)"),
+        ("turma2", "Turma 2 (14h às 16h)")
+    )
+    nome = models.CharField(max_length=150, verbose_name='Nome Completo')
+    matricula = models.CharField(max_length=10, verbose_name='Matrícula')
+    secretaria = models.CharField(max_length=250)
+    setor = models.CharField(max_length=250)
+    celular = models.CharField(max_length=15, verbose_name='Celular')
+    turma = models.CharField(max_length=10, choices=TURMAS)
+    dt_inscricao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.nome} - {self.turma}'
+

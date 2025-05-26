@@ -64,3 +64,18 @@ class SolicitacaoEmailInstitucionalAdmin(admin.ModelAdmin):
     ordering = ('-dt_registro', 'nome')
 
 admin.site.register(SolicitacaoEmailInstitucional, SolicitacaoEmailInstitucionalAdmin)
+
+class ProcessoDigitalInscricaoAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'matricula', 'secretaria', 'setor', 'celular', 'turma', 'dt_inscricao')
+    search_fields = ('nome', 'matricula', 'secretaria', 'setor', 'celular')
+    list_filter = ('turma', 'secretaria', 'setor')
+    ordering = ('-dt_inscricao', 'nome')
+
+class PadronizacaoPagamentoInscricaoAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'matricula', 'secretaria', 'setor', 'celular', 'turma', 'dt_inscricao')
+    search_fields = ('nome', 'matricula', 'secretaria', 'setor', 'celular')
+    list_filter = ('turma', 'secretaria', 'setor')
+    ordering = ('-dt_inscricao', 'nome')
+
+admin.site.register(ProcessoDigitalInscricao, ProcessoDigitalInscricaoAdmin)
+admin.site.register(PadronizacaoPagamentoInscricao, PadronizacaoPagamentoInscricaoAdmin)
