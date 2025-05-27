@@ -231,9 +231,9 @@ def api_registrar_ponto(request):
             horario_registro = datetime.strptime(dados.get('registro'), '%H:%M:%S').time()
             data_registro = datetime.strptime(dados.get('data_registro'), '%d/%m/%Y').date()
 
-            ip_cliente = obter_ip_cliente(request)
-            if ip_cliente != '192.168.6.1':
-                return JsonResponse({'success': False, 'message': 'Ponto somente dentro da rede da prefeitura.'}, status=403)
+            # ip_cliente = obter_ip_cliente(request)
+            # if ip_cliente != '192.168.6.1':
+            #     return JsonResponse({'success': False, 'message': 'Ponto somente dentro da rede da prefeitura.'}, status=403)
 
             registro = Registro.objects.filter(user=request.user, data_registro=data_registro)
             if registro.exists():
@@ -259,7 +259,8 @@ def api_registrar_ponto(request):
                     setor = request.servidor.setor,
                     data_registro=data_registro,
                     entrada1=horario_registro,
-                    ip_inclusao=ip_cliente,
+                    ip_inclusao="teste",
+                    # ip_inclusao=ip_cliente,
                 )
                 estado = 'entrada1'
 
@@ -451,3 +452,65 @@ def menu_acertar_ponto_update(request):
             messages.error(request, f'Erro ao atualizar o registro: {e}')
             return redirect('controle_de_ponto:menu_acertar_ponto')
     return render(request, "erro.html", {"mensagem": "Método inválido."})
+from django.contrib import messages
+from datetime import date
+
+def registrar_ponto_anterior(request, matricula):
+    if not Responsavel.is_responsavel(request.user):
+        return render(request, "erro.html", {"mensagem": "Acesso negado."})
+    servidor = Servidor.objects.filter(matricula=matricula).first()
+    if not servidor:
+        messages.error(request, 'Servidor não encontrado.')
+        return redirect('controle_de_ponto:alocar_servidor')
+    data_inicial = ''
+    if request.method == "POST":
+        data = request.POST.get("data")
+        entrada1 = request.POST.get("entrada1")
+        saida1 = request.POST.get("saida1")
+        entrada2 = request.POST.get("entrada2")
+        saida2 = request.POST.get("saida2")
+        data_inicial = data
+        # Não permite datas futuras
+        if data > date.today().isoformat():
+            erro_validacao = 'Não é permitido registrar ponto para datas futuras.'
+            context = {
+                'matricula': matricula,
+                'today': date.today().isoformat(),
+                'data_inicial': data_inicial,
+                'erro_validacao': erro_validacao,
+            }
+            return render(request, 'controle_de_ponto/registrar_ponto_anterior.html', context)
+        # Não permite duplicidade
+        if Registro.objects.filter(matricula=matricula, data_registro=data).exists():
+            erro_validacao = 'Já existe um registro para essa matrícula e data.'
+            context = {
+                'matricula': matricula,
+                'today': date.today().isoformat(),
+                'data_inicial': data_inicial,
+                'erro_validacao': erro_validacao,
+            }
+            return render(request, 'controle_de_ponto/registrar_ponto_anterior.html', context)
+        registro = Registro(
+            user=servidor.user,
+            matricula=matricula,
+            nome=servidor.nome,
+            secretaria=servidor.setor.secretaria,
+            setor=servidor.setor,
+            data_registro=data,
+            entrada1=entrada1 if entrada1 else None,
+            saida1=saida1 if saida1 else None,
+            entrada2=entrada2 if entrada2 else None,
+            saida2=saida2 if saida2 else None,
+        )
+        registro.save()
+        messages.success(request, 'Registro de ponto salvo com sucesso!')
+        return redirect('controle_de_ponto:alocar_servidor')
+    else:
+        # Se não for POST, tenta pegar a data da query string
+        data_inicial = request.GET.get("data", "")
+    context = {
+        'matricula': matricula,
+        'today': date.today().isoformat(),
+        'data_inicial': data_inicial,
+    }
+    return render(request, 'controle_de_ponto/registrar_ponto_anterior.html', context)

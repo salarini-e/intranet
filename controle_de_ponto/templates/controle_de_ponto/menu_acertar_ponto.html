@@ -100,6 +100,16 @@
         const tipoBtn = document.getElementById('tipoBtn');
         tipoBtn.innerText = select.value; 
     }
+
+    function adicionarRegistroAnterior() {
+        const matricula = document.getElementById('matricula').value;
+        const data = document.getElementById('data').value;
+        if (!matricula || !data) {
+            alert('Preencha a matrícula e a data antes de adicionar o registro!');
+            return;
+        }
+        window.location.href = `/ponto/registrar/${matricula}/?data=${data}`;
+    }
 </script>
 <div class="container">        
     <div class="row">
@@ -121,7 +131,7 @@
         </div>
     {% endfor %}
     {% endif %}
-    <form method="post" class="p-4 rounded mt-4" style="background-color: white;">
+    <form method="post" class="p-4 rounded mt-4 shadow" style="background-color: white;">
         <div class="w-100 d-flex flex-column">
             <h4 class="my-auto"><i class="fa-solid fa-clock-rotate-left me-4"></i>Acertar horário</h4>  
             <div class="row">
@@ -135,7 +145,12 @@
                         <label for="data" class="form-label">Data</label>
                         <input type="date" class="form-control" id="data" name="data" required>
                     </div> 
-                    <button type="submit" class="btn me-auto btn-primary mt-3" style="color: white;">Buscar registro</button> 
+                    <div class="mt-2">
+                        <button type="submit" class="btn me-auto btn-info mt-3" style="color: white;">Buscar registro</button> 
+                        <button type="button" class="btn me-auto btn-primary text-white mt-3" onclick="adicionarRegistroAnterior()">
+                            <i class="fa-solid fa-plus me-2 text-white"></i>Adicionar Registro de Ponto para Dias Anteriores
+                        </button>
+                    </div>
                 </div>
             </div>          
         </div>        
@@ -149,7 +164,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <form action="./update/" method="post">
+                <form action="./update/" method="post ">
                     {% csrf_token %}
                     <input type="hidden" name="matricula" value="{{ matricula }}">
                     <input type="hidden" name="data" value="{{ data|date:'Y-m-d' }}">

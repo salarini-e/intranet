@@ -124,7 +124,7 @@
                 {% csrf_token %}
                 <div class="mb-3">
                     {{ form.servidor.label_tag }}
-                    {{ form.servidor }}
+                    {% comment %} {{ form.servidor }} {% endcomment %}
                     {% for error in form.servidor.errors %}
                         <div class="text-danger">{{ error }}</div>
                     {% endfor %}
@@ -274,6 +274,7 @@
                 .then(data => {
                     if (data.length > 0) {
                         detailsCell.innerHTML = `
+                            
                             <table class="table-custom w-100 table-horas">      
                                 <thead>
                                     <tr>

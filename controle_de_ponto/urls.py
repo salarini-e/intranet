@@ -12,4 +12,5 @@ urlpatterns = [
     # path('gambiarra', views.gambiarra, name='gambiarra'),
     path('api/enviar-registro/', views.api_registrar_ponto, name='api_registrar_ponto'),
     path('api/detalhes-registro/<matricula>/', views.api_detalhes_registro, name='api_detalhes_registro'),
+    path('registrar/<str:matricula>/', views.registrar_ponto_anterior, name='registrar_ponto_anterior'),
 ]
