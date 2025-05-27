@@ -124,7 +124,7 @@
                 {% csrf_token %}
                 <div class="mb-3">
                     {{ form.servidor.label_tag }}
-                    {% comment %} {{ form.servidor }} {% endcomment %}
+                    {{ form.servidor }}
                     {% for error in form.servidor.errors %}
                         <div class="text-danger">{{ error }}</div>
                     {% endfor %}
