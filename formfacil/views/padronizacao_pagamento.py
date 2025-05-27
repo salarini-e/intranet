@@ -11,6 +11,15 @@ def cadastro_padronizacao_pagamento(request):
     if request.method == 'POST':
         form = PadronizacaoPagamentoInscricaoForm(request.POST)
         if form.is_valid():
+            # Verifica se já existe inscrição para a mesma matrícula em qualquer turma
+            if PadronizacaoPagamentoInscricao.objects.filter(matricula=form.cleaned_data['matricula']).exists():
+                context = {
+                    'form': form,
+                    'titulo': 'Padronização do Processo de Pagamento',
+                    'subtitulo': 'Inscrição',
+                    'mensagem': '<span class="text-danger">Esta matrícula já está inscrita em uma das turmas.</span>'
+                }
+                return render(request, 'formfacil/formfacil_form.html', context)
             if PadronizacaoPagamentoInscricao.objects.filter(turma=form.cleaned_data['turma']).count() >= 28:
                 context = {
                     'form': form,
