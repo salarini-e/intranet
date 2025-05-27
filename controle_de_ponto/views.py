@@ -460,8 +460,8 @@ def registrar_ponto_anterior(request, matricula):
         return render(request, "erro.html", {"mensagem": "Acesso negado."})
     servidor = Servidor.objects.filter(matricula=matricula).first()
     if not servidor:
-        messages.error(request, 'Servidor não encontrado.')
-        return redirect('controle_de_ponto:alocar_servidor')
+        messages.error(request, 'Matricula não encontrada.')
+        return redirect('controle_de_ponto:menu_acertar_ponto')
     data_inicial = ''
     if request.method == "POST":
         data = request.POST.get("data")
@@ -470,6 +470,16 @@ def registrar_ponto_anterior(request, matricula):
         entrada2 = request.POST.get("entrada2")
         saida2 = request.POST.get("saida2")
         data_inicial = data
+        # Entrada 1 obrigatória
+        if not entrada1:
+            erro_validacao = 'O campo Entrada 1 é obrigatório.'
+            context = {
+                'matricula': matricula,
+                'today': date.today().isoformat(),
+                'data_inicial': data_inicial,
+                'erro_validacao': erro_validacao,
+            }
+            return render(request, 'controle_de_ponto/registrar_ponto_anterior.html', context)
         # Não permite datas futuras
         if data > date.today().isoformat():
             erro_validacao = 'Não é permitido registrar ponto para datas futuras.'
@@ -497,14 +507,14 @@ def registrar_ponto_anterior(request, matricula):
             secretaria=servidor.setor.secretaria,
             setor=servidor.setor,
             data_registro=data,
-            entrada1=entrada1 if entrada1 else None,
+            entrada1=entrada1,
             saida1=saida1 if saida1 else None,
             entrada2=entrada2 if entrada2 else None,
             saida2=saida2 if saida2 else None,
         )
         registro.save()
         messages.success(request, 'Registro de ponto salvo com sucesso!')
-        return redirect('controle_de_ponto:alocar_servidor')
+        return redirect('controle_de_ponto:menu_acertar_ponto')
     else:
         # Se não for POST, tenta pegar a data da query string
         data_inicial = request.GET.get("data", "")
