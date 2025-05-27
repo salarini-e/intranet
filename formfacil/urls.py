@@ -7,6 +7,11 @@ from .views.solicitacao_email_institucional import (
     visualizar_cadastros_solicitacao_email_institucional,
     exportar_cadastros_solicitacao_email_institucional
 )
+from .views.treinamento_tributario import exportar_decretos_portaria_atos_to_excel
+
+from .views.padronizacao_pagamento import exportar_padronizacao_pagamento_to_excel, cadastro_padronizacao_pagamento, visualizar_padronizacao_pagamento
+
+from .views.processo_digital import exportar_processo_digital_to_excel, cadastro_processo_digital, visualizar_processo_digital
 
 app_name = 'formfacil'
 urlpatterns = [
@@ -29,7 +34,7 @@ urlpatterns = [
     path('visualizar/cadastros-treinamento-tributario-emissores/', views.visualizarDados_TT_Emissores, name='cadastros-treinamento-tributario-emissores'),
     path('visualizar/cadastros-treinamento-tributario-contadores/', views.visualizarDados_TT_Contadores, name='cadastros-treinamento-tributario-contadores'),
     path('visualizar/cadastros-decretos-portaria-atos-prefeito/', views.visualizarDados_Decreto_Portaria_Atos_Prefeito, name='cadastros-decretos-portaria-atos-prefeito'),
-
+    path('exportar/decretos-portaria/', exportar_decretos_portaria_atos_to_excel, name='exportar_decretos_portaria'),
     path('exportar/cadastro-processo-digital/', views.exportar_aulas_processo_digital_to_excel, name='exportar_aulas_processo_digital'),
     path('exportar/treinamento-tributario-emissores-taxas/', views.exportar_aulas_tributario_emissores_to_excel, name='exportar_treinamento_tributario_emissores_taxas'),
     path('exportar/treinamento-tributario-contadores/', views.exportar_aulas_tributario_contadores_to_excel, name='exportar_treinamento_tributario_contadores'),
@@ -46,4 +51,11 @@ urlpatterns = [
     path('visualizar/processo-digital-2025/', views.visualizar_processo_digital, name='visualizar_processo_digital'),
     path('cadastro-padronizacao-pagamento-2025/', views.cadastro_padronizacao_pagamento, name='cadastro_padronizacao_pagamento'),
     path('visualizar/padronizacao-pagamento-2025/', views.visualizar_padronizacao_pagamento, name='visualizar_padronizacao_pagamento'),
+
+    path('exportar/padronizacao-pagamento/', exportar_padronizacao_pagamento_to_excel, name='exportar_padronizacao_pagamento'),
+
+    path('exportar/processo-digital/', exportar_processo_digital_to_excel, name='exportar_processo_digital'),
+
+
+
 ]

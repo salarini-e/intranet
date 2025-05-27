@@ -294,3 +294,47 @@ def cadastroDecretos2024(request):
             )
         }
     return render(request, 'formfacil/formfacil_form.html', context)
+
+def exportar_decretos_portaria_atos_to_excel(request):
+    wb = Workbook()
+    ws = wb.active
+    ws.title = 'Decretos e Portaria Atos do Prefeito'
+    cadastros = Inscricao_Decretos_Portaria_E_Atos_Do_Prefeito.objects.all().order_by('horarios', 'nome')
+    ws.append(['Nome', 'Matrícula', 'Secretaria', 'Setor', 'Telefone', 'Turma', 'Dt. Registro'])
+    for item in cadastros:
+        ws.append([
+            item.nome,
+            item.matricula,
+            item.secretaria,
+            item.setor,
+            item.telefone,
+            item.horarios,
+            item.dt_registro.astimezone().strftime('%d/%m/%Y %H:%M:%S')
+        ])
+    # Ajusta a largura das colunas
+    from openpyxl.utils import get_column_letter
+    import time
+    col_widths = [25, 15, 20, 20, 15, 15, 20]
+    for i, width in enumerate(col_widths, 1):
+        ws.column_dimensions[get_column_letter(i)].width = width
+    # Corrige o intervalo da tabela
+    total_rows = ws.max_row
+    total_cols = ws.max_column
+    first_col = get_column_letter(1)
+    last_col = get_column_letter(total_cols)
+    table_ref = f"{first_col}1:{last_col}{total_rows}"
+    # Gera um nome único para a tabela
+    timestamp = int(time.time())
+    table_name = f"DecretosAtos_{timestamp}"
+    table = Table(displayName=table_name, ref=table_ref)
+    style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False, showRowStripes=True, showColumnStripes=True)
+    table.tableStyleInfo = style
+    ws.add_table(table)
+    from io import BytesIO
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=DecretosPortariaAtos.xlsx'
+    response.write(output.getvalue())
+    return response

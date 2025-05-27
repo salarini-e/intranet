@@ -8,6 +8,15 @@
     </div>
 </div>
 <h3 class="mb-4 mt-3">Inscrições por Turma</h3>
+<div class="row container mx-auto g-4 mb-4 px-3">
+	<div class="d-flex align-items-center justify-content-between app-card app-card-stats-table h-100 shadow-sm p-4">  
+		<h5 class="p-0 m-0">Registros efetuados</h5>
+		<a href="{% url 'formfacil:exportar_processo_digital' %}" class="btn btn-success" style="color: white;">
+			<i class="fa-solid fa-file-excel me-2"></i>
+			Exportar para Excel
+		</a>
+	</div>
+</div>
 {% for turma, nome_turma in turmas.items %}
 <div class="row container mx-auto g-4 mb-4 px-3">
     <div class="col app-card app-card-stats-table h-100 shadow-sm p-4">
