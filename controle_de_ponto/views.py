@@ -37,7 +37,6 @@ def index(request):
     }
     return render(request, 'controle_de_ponto/index.html', context)
 
-
 def exportar_excel(request):
     if not Responsavel.is_responsavel(request.user):
         return render(request, "erro.html", {"mensagem": "Acesso negado."})
@@ -156,7 +155,6 @@ def exportar_excel(request):
             return response
 
     return render(request, "erro.html", {"mensagem": "Método inválido."})
-
 from django.http import JsonResponse
 
 # @staff_member_required
@@ -369,7 +367,14 @@ def menu_acertar_ponto(request):
         servidor = Servidor.objects.filter(matricula=matricula).select_related("setor__secretaria").first()
 
         if not servidor:
-            return render(request, "erro.html", {"mensagem": "Servidor não encontrado."})
+            erro_matricula = 'Servidor não encontrado.'
+            context = {
+                'responsavel': responsavel,
+                'erro_matricula': erro_matricula,
+                'matricula': matricula,
+                'data': data,
+            }
+            return render(request, 'controle_de_ponto/menu_acertar_ponto.html', context)
 
         mesma_secretaria = responsavel.secretaria == servidor.setor.secretaria
         mesmo_setor = responsavel.setor == servidor.setor
@@ -452,6 +457,8 @@ def menu_acertar_ponto_update(request):
             messages.error(request, f'Erro ao atualizar o registro: {e}')
             return redirect('controle_de_ponto:menu_acertar_ponto')
     return render(request, "erro.html", {"mensagem": "Método inválido."})
+
+
 from django.contrib import messages
 from datetime import date
 
