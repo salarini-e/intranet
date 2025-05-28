@@ -302,11 +302,12 @@ class PasswordResetCompleteView(PasswordContextMixin, TemplateView):
 from instituicoes.forms import ServidorForm2
 from .functions import enviar_email_apos_cadastrar
 def cadastro_user(request):
-    
     if request.user.is_authenticated:
         return redirect('/')
 
-       
+    context = {
+        'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,
+    }
 
     if request.method == "POST":
 
@@ -324,10 +325,7 @@ def cadastro_user(request):
         
         if not result['success']:
             messages.error(request, 'Por favor, confirme que você não é um robô.')
-            context = {
-                'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,
-            }
-            return render(request, 'adm/cadastro.html', context)
+            return render(request, 'adm/new_cadastro.html', context)
         
         """
         'csrfmiddlewaretoken': ['MD2KkFbCaaV1X8jUHnC4xOmKjuSuQqpJDR2y4u6v6Ig2dKWeBLL3lh4yE2auEm3O'], 
@@ -343,64 +341,36 @@ def cadastro_user(request):
         'consentimento': ['on']}>
 
         """        
-        cpf_oculto = request.POST.get('cpf_oculto')
-        cpf_oculto = cpf_oculto.replace('*', '')
-        cpf = request.POST.get('cpf')
+        cpf_oculto = request.POST.get('cpf_oculto', '').replace('*', '')
+        cpf = request.POST.get('cpf', '')
+        form = ServidorForm2(request.POST)
         if cpf_oculto in cpf:
-            form = ServidorForm2(request.POST)        
             if form.is_valid():
-                servidor = form.save(commit=False)
-                servidor.setor = form.get_setor(request)
-                servidor.user = form.create_user()
-                servidor.user_inclusao = None
-                servidor.save()
-                messages.success(request, f'Servidor cadastrado(a) com sucesso! Foi enviado um email com as informações do seu login.')
-                enviar_email_apos_cadastrar(servidor.user)
-                return redirect('/')            
+                try:
+                    servidor = form.save(commit=False)
+                    servidor.setor = form.get_setor(request)
+                    servidor.user = form.create_user()
+                    servidor.user_inclusao = None
+                    servidor.save()
+                    messages.success(request, f'Servidor cadastrado(a) com sucesso! Foi enviado um email com as informações do seu login.')
+                    enviar_email_apos_cadastrar(servidor.user)
+                    return redirect('/')
+                except Exception as e:
+                    messages.error(request, f'Erro ao cadastrar servidor: {str(e)}')
+                    context['form'] = form
+                    context['form_errors'] = form.errors
+                    return render(request, 'adm/new_cadastro.html', context)
             else:
-                print(form.errors)
-                messages.error(request, 'Erro ao cadastrar servidor.')
+                context['form'] = form
+                context['form_errors'] = form.errors
+                messages.error(request, 'Erro ao cadastrar servidor. Verifique os campos destacados.')
+                return render(request, 'adm/new_cadastro.html', context)
         else:
             messages.error(request, 'CPF incorreto!')
-            
-        
-        if False:
+            context['form'] = form
+            return render(request, 'adm/new_cadastro.html', context)
 
-        
-            user = User.objects.create_user(
-                username=request.POST['email'], email=request.POST['email'], password=request.POST['password'])
-            user.first_name = request.POST['nome']
-            user.save()
-
-            # servidor = form_pessoa.save(commit=False)
-            # servidor.user = user
-
-            #             pessoa.save()
-            #             messages.success(request, 'Usuário cadastrado com sucesso!')
-            #             user = authenticate(request, username=request.POST['email'], password=request.POST['password'])
-            #             if user is not None:
-            #                     login(request, user)
-            #                     if pessoa.possui_cnpj:
-            #                         return redirect('empreendedor:cadastrar_empresa')
-            #                     try:
-            #                         return redirect(request.GET['next'])
-            #                     except:
-            #                         return redirect('/')
-            #             else:
-            #                     context = {
-            #                         'error': True,
-            #                     }
-            #         except Exception as e:
-            #             messages.error(
-            #                 request, 'Email de usuário já cadastrado')
-                        
-            #     messages.error(
-            #         request, 'A senha deve possuir pelo menos 8 caracteres')
-            # else:                
-            #     messages.error(request, 'As senhas digitadas não se coincidem')
-    context = {
-        'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,
-    }    
+    context['form'] = ServidorForm2()
     return render(request, 'adm/new_cadastro.html', context)
 
 
