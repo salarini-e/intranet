@@ -205,9 +205,11 @@ class SolicitacaoEmailInstitucional(models.Model):
 
 class ProcessoDigitalInscricao(models.Model):
     TURMAS = (
-        ("turma1", "Turma 1 (10h às 12h)"),
-        ("turma2", "Turma 2 (14h às 16h)")
+        ("turma1", "Turma 1 (10h às 12h | 03/06/2025)"),
+        ("turma2", "Turma 2 (14h às 16h | 03/06/2025)"),
+        ("turma3", "Turma 3 (10h às 12h | 05/06/2025)")
     )
+    
     nome = models.CharField(max_length=150, verbose_name='Nome Completo')
     matricula = models.CharField(max_length=10, verbose_name='Matrícula')
     secretaria = models.CharField(max_length=250)

@@ -42,9 +42,9 @@ def cadastro_processo_digital(request):
         'titulo': 'Processo Digital',
         'subtitulo': 'Inscrição',
         'mensagem': (
-            'Data: 03/06/2025<br>'
-            'Turma 1: 10h às 12h<br>'
-            'Turma 2: 14h às 16h<br>'
+            'Turma 1: 10h às 12h | 03/06/2025<br>'
+            'Turma 2: 14h às 16h | 03/06/2025<br>'
+            'Turma 3: 10h às 12h | 05/06/2025<br>'
             'Local: Sala de treinamento da secretaria de ciência e tecnologia, inovação e desenvolvimento econômico - Av. Alberto Braune, 223 - 2º andar.'
         )
     }
