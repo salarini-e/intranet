@@ -42,9 +42,8 @@ def cadastro_padronizacao_pagamento(request):
         'titulo': 'Padronização do Processo de Pagamento',
         'subtitulo': 'Inscrição',
         'mensagem': (
-            'Data: 04/06/2025<br>'
-            'Turma 1: 10h às 12h<br>'
-            'Turma 2: 14h às 16h<br>'
+            'Turma 1: 10h às 12h | 04/06/2025<br>'
+            'Turma 2: 14h às 16h | 04/06/2025<br>'
             'Local: Sala de treinamento da secretaria de ciência e tecnologia, inovação e desenvolvimento econômico - Av. Alberto Braune, 223 - 2º andar.'
         )
     }
