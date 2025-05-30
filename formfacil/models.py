@@ -48,27 +48,6 @@ class Sistemas_EL(models.Model):
     def __str__(self):
         return self.nome
     
-class CadastroEL(models.Model):
-    
-    cpf = models.CharField(max_length=14, verbose_name='CPF')
-    nome = models.CharField(max_length=150, verbose_name='Nome completo')
-    matricula = models.CharField(max_length=10, verbose_name='Matrícula')
-    telefone = models.CharField(max_length=15, verbose_name='Telefone', default='', null=True)
-    email = models.EmailField(verbose_name='Email', default='', null=True)
-    pdf_memorando = models.FileField(upload_to='uploads/', verbose_name='PDF do memorando')
-    sistemas = models.ManyToManyField(Sistemas_EL, verbose_name='Quais sistemas você precisa de acesso?')
-    observacao = models.TextField('Deseja fazer alguma observação?', blank=True)
-    dt_inclusao = models.DateTimeField(auto_now_add=True)
-
-    def send_email(self):
-        Email(self).cadastro_el('Novo cadastro efetuado no FormFácil - Cadastro EL', 'analise.ti.pmnf@gmail.com')
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        try:
-            self.send_email()
-        except Exception as e:
-            print(e)
 
 # #############################################################################
 class Opcao_Turmas(models.Model):

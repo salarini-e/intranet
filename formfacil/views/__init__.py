@@ -95,29 +95,6 @@ def snct2024_export(request):
 
     return response
 
-def cadastro_el_view(request):
-    if request.method == 'POST':
-        form = CadastroELForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            context = {
-                'titulo': 'Formulário para Cadastro da EL',    
-                'subtitulo': 'Subsecretaria de TI',
-                'mensagem': "<span class='text-success'><i class='fa-solid fa-circle-check me-2'></i>Formulário enviado com sucesso!</span>"
-            }
-            return render(request, 'formfacil/formfacil_success.html', context)
-    else:
-        form = CadastroELForm()
-        
-    context = {
-            'form': form,
-            'titulo': 'Formulário para Cadastro da EL',    
-                'subtitulo': 'Subsecretaria de TI',
-                'mensagem': "Preencha corretamente os campos abaixo para efetuar o cadastro nos sistemas da EL."
-        }
-    return render(request, 'formfacil/formfacil_form.html', context)
-
-
 from .aulas_processo_digital import *
 from .treinamento_tributario import * 
 from .processo_digital import cadastro_processo_digital, visualizar_processo_digital

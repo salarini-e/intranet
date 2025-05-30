@@ -21,18 +21,6 @@ class Email:
     def criar_notificacao(self, subject):
         pass
 
-    def cadastro_el(self, subject, email_to):
-        email_template = self.create_email(email_to, 'email/cadastro_el.txt')   
-        email_to = email_to
-        
-        self.criar_notificacao(subject)
-
-        msg = {
-            'subject': subject,
-            'email_template': email_template,
-            'email_to': email_to
-        }
-        return self.enviar(msg)
 
     def enviar(self, msg):
         try:

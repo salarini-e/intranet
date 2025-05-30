@@ -4,8 +4,6 @@ from .models import *
 admin.site.register(FormIndicacaoComitePSP)
 admin.site.register(CadastroWebex)
 admin.site.register(FormSugestaoSemanaNacionalCET2024)
-admin.site.register(Sistemas_EL)
-admin.site.register(CadastroEL)
 admin.site.register(Opcao_Turmas)
 
 class CadastroAulasProcessoDigitalAdmin(admin.ModelAdmin):
@@ -48,14 +46,6 @@ class CadastroAlmoxarifadoAdmin(admin.ModelAdmin):
     ordering = ('-dt_registro', 'nome_requisitante')
 
 admin.site.register(Cadastro_de_Almoxarifado, CadastroAlmoxarifadoAdmin)
-
-class AvaliacaoSistemaELAdmin(admin.ModelAdmin):
-    list_display = ('sistema', 'usuario_nome', 'usuario_matricula', 'satisfacao', 'houve_lentidao', 'sugestao', 'data_avaliacao', 'usuario_inclusao')
-    search_fields = ('sistema', 'usuario_nome', 'usuario_matricula', 'sugestao')
-    list_filter = ('sistema', 'satisfacao', 'houve_lentidao', 'data_avaliacao')
-    ordering = ('-data_avaliacao', 'sistema')
-
-admin.site.register(AvaliacaoSistemaEL, AvaliacaoSistemaELAdmin)
 
 class SolicitacaoEmailInstitucionalAdmin(admin.ModelAdmin):
     list_display = ('nome', 'matricula', 'cpf', 'secretaria', 'email_institucional', 'dt_registro')
