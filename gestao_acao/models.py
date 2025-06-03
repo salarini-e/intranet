@@ -25,3 +25,8 @@ class PlanejamentoAcao(models.Model):
     def __str__(self):
         return f'{self.data} {self.descricao} {self.local} {self.horario} {self.responsavel} {self.status}'
     
+    # def save(self, *args, **kwargs):
+    #     if not self.user_inclusao:
+    #         from django.contrib.auth.models import User
+    #         self.user_inclusao = User.objects.first()
+    #     super().save(*args, **kwargs)

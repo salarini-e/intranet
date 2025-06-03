@@ -20,6 +20,13 @@ class Demandas(models.Model):
         (3, 'Urgente'),        
 
     }
+    STATUS_CHOICES = {
+        ('p', 'Em aberto'),
+        ('e', 'Em andamento'),
+        ('c', 'Concluído'),
+        ('x', 'Cancelado'),
+    }
+    
     nome = models.CharField(max_length=255)
     descricao = models.TextField(verbose_name='Descrição')
     prioridade = models.IntegerField(choices=PRIORIDADE_CHOICES, default=0)
@@ -41,6 +48,8 @@ class Demandas(models.Model):
     id_referencia = models.IntegerField(null=True, blank=True)
     user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Usuário de inclusão')
 
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='p', verbose_name='Status da demanda')
+    
     def __str__(self):
         return self.nome
     
@@ -54,7 +63,7 @@ class Demandas(models.Model):
             self.atribuicao = Servidor.objects.get(user=self.user_inclusao)
         if self.concluido:
             self.dt_concluido = self.dt_att
-        # self.conclui()
+            self.conclui()
         super(Demandas, self).save(*args, **kwargs)
 
     def conclui(self):
@@ -67,7 +76,7 @@ class Demandas(models.Model):
                 atividade = Atividades.objects.get(id=self.id_referencia)
                 atividade.concluido = True
                 atividade.save()
-            elif self.referencia == 'p':
+            elif self.referencia == 'p':                
                 acao = PlanejamentoAcao.objects.get(id=self.id_referencia)
                 acao.status = 'c'
                 acao.save()
@@ -275,7 +284,7 @@ class Tarefas(models.Model):
                 old_instance.anexo.delete(save=False)
             if old_instance.atribuicao != self.atribuicao and self.atribuicao:
                 if self.exist_demanda():
-                    self.att_demanda()
+                    self.att_demanda()                    
                 else:
                     self.cria_demanda()
         if self.concluido and self.exist_demanda():
@@ -306,18 +315,19 @@ class Tarefas(models.Model):
             return False
     
     def att_demanda(self):
-        try:
-            demanda = Demandas.objects.get(id_referencia=self.id, referencia='t')
-            demanda.nome = self.nome
-            demanda.descricao = self.descricao
-            demanda.data_inicio = self.data_inicio
-            demanda.data_fim = self.data_fim
-            demanda.atribuicao = self.atribuicao
-            demanda.concluido = self.concluido
-            demanda.save()
-        except Demandas.DoesNotExist:            
-            demanda = None
-        return demanda
+        return ''
+        # try:        
+        #     demanda = Demandas.objects.get(id_referencia=self.id, referencia='t')
+        #     demanda.nome = self.nome
+        #     demanda.descricao = self.descricao
+        #     demanda.data_inicio = self.data_inicio
+        #     demanda.data_fim = self.data_fim
+        #     demanda.atribuicao = self.atribuicao
+        #     demanda.concluido = self.concluido
+        #     demanda.save()
+        # except Demandas.DoesNotExist:            
+        #     demanda = None
+        # return demanda
     
     
 class Atividades(models.Model):
