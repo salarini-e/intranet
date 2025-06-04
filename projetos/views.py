@@ -9,15 +9,36 @@ from django.http import JsonResponse, HttpResponse
 from instituicoes.models import Servidor
 import json
 
-def gambiarra(request):
-    demandas = Demandas.objects.all()
-    for demanda in demandas:
-        if demanda.concluido:
-            demanda.status = 'c'
-        else:
-            demanda.status = 'p'
-        demanda.save()
-    return HttpResponse('Gambiarra executada com sucesso')
+def demandas_gerar_relatorio(request):
+    # Recebe datas via GET
+    data_inicio = request.GET.get('data_inicio')
+    data_fim = request.GET.get('data_fim')
+    demandas = []
+
+    if data_inicio and data_fim and request.user.is_authenticated:
+        try:
+            data_inicio_dt = datetime.datetime.strptime(data_inicio, "%Y-%m-%d").date()
+            data_fim_dt = datetime.datetime.strptime(data_fim, "%Y-%m-%d").date()
+            demandas = Demandas.objects.filter(
+                atribuicao__user=request.user,
+                data_prevista_execucao__gte=data_inicio_dt,
+                data_prevista_execucao__lte=data_fim_dt
+            ).order_by('data_prevista_execucao', 'ordem_dia', 'nome')
+        except Exception as e:
+            demandas = []
+    else:
+        # Se não há datas, só renderiza o formulário
+        return render(request, 'tarefas/gerar_relatorio.html')
+
+    context = {
+        'demandas': demandas,
+        'data_inicio': data_inicio_dt.strftime('%d/%m/%Y') if data_inicio else '',
+        'data_fim': data_fim_dt.strftime('%d/%m/%Y') if data_fim else '',        
+        'now': datetime.datetime.now().strftime('%d/%m/%Y %H:%M'),
+        'servidor': Servidor.objects.filter(user=request.user).first(),
+    }
+    return render(request, 'tarefas/relatorio.html', context)
+
 
 @login_required
 def index(request):

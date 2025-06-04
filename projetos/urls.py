@@ -5,6 +5,7 @@ app_name = 'projetos'
 urlpatterns = [
     path('', views.index, name='index'),
     path('tarefas/', views.tarefas, name='tarefas'),
+    path('tarefas/gerar-relatorio/', views.demandas_gerar_relatorio, name='gerar_relatorio'),
     path('tarefas/definir-data/', views.definir_data_demandas_nao_agendadas, name='definir_data_demandas_nao_agendadas'),
     path('tarefas/atrasados/', views.atrasados, name='atrasados'),
     path('tarefas/em-breve/', views.em_breve, name='em_breve'),

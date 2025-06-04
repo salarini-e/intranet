@@ -10,7 +10,7 @@
    <div class="d-flex align-items-center ">
         <!-- <h1 class="mb-0 mt-0">Planejamento de ações</h1> -->
          <h1 class="mb-4 text-start">Minhas tarefas</h1>
-        <a href="{% url 'projetos:gerar_relatorio' %}" class="btn ms-auto btn-float-acao" data-bs-target="#addTaskModal">
+        <a class="btn ms-auto btn-float-acao" data-bs-target="#addTaskModal">
             <i class="fa-regular fa-flag me-2"></i> Gerar relatório
         </a>
         {% if request.user.is_superuser %}

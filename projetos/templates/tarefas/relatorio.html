@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Demandas</title>
+    <meta name="viewport">
+    <style>
+        body {
+            background: #fff;
+            color: #222;
+            font-family: "Times New Roman", Times, serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            display: flex;
+        }
+        .a4-sheet {
+            margin: 0 auto;
+            min-height: 297mm;
+            background: #fff;
+            box-shadow: 0 0 0.5cm rgba(0,0,0,0.05);
+            padding: 0 20mm 20mm 20mm;
+            box-sizing: border-box;
+            position: relative;
+            width: 210mm;
+        }
+        .header-prefeitura {
+            display: flex;
+            align-items: flex-start;
+            border-bottom: 2px solid #003366;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            width: calc(100% + 40mm);
+            margin-left: -20mm;
+            margin-right: -20mm;
+            background: #fff;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .header-prefeitura img {
+            height: 70px;
+            margin-right: 20px;
+            margin-top: 0;
+        }
+        .header-prefeitura .info {
+            flex: 1;
+            margin-top: 0;
+        }
+        .header-prefeitura .info h2 {
+            margin: 0;
+            color: #003366;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+        .header-prefeitura .info p {
+            margin: 0;
+            font-size: 1rem;
+            color: #333;
+        }
+        .header-periodo {
+            text-align: right;
+            font-size: 1.05rem;
+            color: #003366;
+            font-weight: bold;
+            min-width: 220px;
+            margin-left: auto;
+            margin-top: 2px;
+        }
+        .relatorio-contexto {
+            /* text-align: start; */
+            margin: 30px 0 30px 0;
+            font-size: 1.1rem;
+            margin-left: 0;
+        }
+        table {
+            width: 100vw;
+            max-width: none;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.98rem;
+            margin-bottom: 30px;
+            margin-left: -20mm;
+            margin-right: -20mm;
+        }
+        th, td {
+            border: none;
+            padding: 6px 8px;
+            text-align: left;
+        }
+        th {
+            background: #e6f0fa;
+            color: #003366;
+            font-weight: bold;
+        }
+        .row-bg-1 {
+            background: #f7fafd;
+        }
+        .row-bg-2 {
+            background: #eaf3fa;
+        }
+        .descricao-row td {
+            font-style: italic;
+            color: #444;
+            font-size: 0.97em;
+            padding-top: 0;
+            padding-bottom: 10px;
+        }
+        .assinatura {
+            margin-top: 60px;
+            text-align: left;
+        }
+        .assinatura .linha {
+            border-bottom: 1px solid #333;
+            width: 250px;
+            margin-bottom: 4px;
+        }
+        .assinatura .nome {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .assinatura .cargo {
+            font-size: 0.95rem;
+            color: #555;
+        }
+        .emitido-em {
+            margin-top: 30px;
+            text-align: left;
+            font-size: 0.95rem;
+            color: #888;
+        }
+        @media print {
+            html, body {
+                width: 210mm;
+                height: 297mm;
+                background: #fff !important;
+            }
+            .a4-sheet {
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 0 20mm 20mm 20mm !important;
+                width: 210mm !important;
+            }
+            .header-prefeitura {
+                margin-top: 0 !important;
+                margin-left: -20mm !important;
+                margin-right: -20mm !important;
+                width: 210mm !important;
+            }
+            table {
+                margin-left: -20mm !important;
+                margin-right: -20mm !important;
+                width: 210mm !important;
+                max-width: 210mm !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="a4-sheet">
+        <div class="header-prefeitura">
+            <img src="https://intranet.novafriburgo.rj.gov.br/static/brasao.ico" alt="Prefeitura" onerror="this.style.display='none'">
+            <div class="info">
+                <h2>Prefeitura Municipal de Nova Friburgo</h2>
+                <p>Subsecretaria de Tecnologia da Informação</p>
+                <p><strong>Relatório de Tarefas - {{servidor.nome}}</strong></p>
+            </div>
+            <div class="header-periodo">
+                Período:
+                <span class="me-2">
+                    De {{ data_inicio}} a {{ data_fim }}
+                </span>
+            </div>
+        </div>         
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 110px;">Data</th>
+                    <th>Nome</th>
+                    <th style="width: 120px;">Prioridade</th>
+                    <th style="width: 120px;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for demanda in demandas %}
+                {% cycle 'row-bg-1' 'row-bg-2' as rowcolor silent %}
+                <tr class="{{ rowcolor }}">
+                    <td>{{ demanda.data_prevista_execucao|date:"d/m/Y" }}</td>
+                    <td>{{ demanda.nome }}</td>
+                    <td>
+                        {% if demanda.prioridade == 0 %}Regular
+                        {% elif demanda.prioridade == 1 %}Média
+                        {% elif demanda.prioridade == 2 %}Importante
+                        {% elif demanda.prioridade == 3 %}Urgente
+                        {% else %}-
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if demanda.status == 'p' %}Em aberto
+                        {% elif demanda.status == 'e' %}Em andamento
+                        {% elif demanda.status == 'c' %}Concluído
+                        {% elif demanda.status == 'x' %}Cancelado
+                        {% else %}-
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr class="descricao-row {{ rowcolor }}">
+                    <td></td>
+                    <td colspan="3">{{ demanda.descricao }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted">Nenhuma demanda encontrada para o período selecionado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="emitido-em">
+            Emitido em: <strong>{{ now }}</strong>
+        </div>
+        <!-- <div class="assinatura">
+            <div class="linha"></div>
+            <div class="nome">{{ request.user.servidor.nome|default:request.user.get_full_name }}</div>
+            <div class="cargo">Responsável pelo relatório</div>
+        </div> -->
+    </div>
+</body>
+</html>
