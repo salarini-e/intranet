@@ -3,12 +3,237 @@ import datetime
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from .models import Projetos, Fases, Tarefas, Atividades, Prioridade, Grupo, Comentarios, Demandas
+from .models import Projetos, Fases, Tarefas, Atividades, Prioridade, Grupo, Comentarios, Demandas, Painel_Acompanhamento_Demandas
 from .forms import ProjetosForm
 from django.http import JsonResponse, HttpResponse
 from instituicoes.models import Servidor
 import json
 
+@login_required
+def menu_acompanhar_demandas(request):
+    if not request.user.is_superuser:
+        return HttpResponse('Acesso negado')
+    
+    paineis = Painel_Acompanhamento_Demandas.objects.all().order_by('titulo')
+
+    context = {
+        'paineis': paineis,        
+    }
+    return render(request, 'tarefas/acompanhar_menu.html', context  )
+
+@login_required
+def api_ver_demandas_por_painel_em_andamento(request):
+    """
+    Retorna demandas em andamento (status='e') dos últimos 31 dias para todos os servidores de um painel.
+    """
+    painel_hash = request.GET.get('painel_hash')
+    if not painel_hash:
+        return JsonResponse({'status': 400, 'error': 'Parâmetro painel_hash obrigatório'})
+    try:
+        painel = Painel_Acompanhamento_Demandas.objects.get(hash=painel_hash)
+    except Painel_Acompanhamento_Demandas.DoesNotExist:
+        return JsonResponse({'status': 404, 'error': 'Painel não encontrado'})
+    from datetime import date, timedelta
+    hoje = date.today()
+    limite = hoje - timedelta(days=31)
+    servidores = painel.servidores.all()
+    resultado = []
+    for servidor in servidores:
+        demandas = Demandas.objects.filter(
+            atribuicao=servidor,
+            status='e',
+            data_prevista_execucao__gte=limite,
+            data_prevista_execucao__lte=hoje
+        ).order_by('-data_prevista_execucao')[:50]
+        resultado.append({
+            'servidor': {'id': servidor.id, 'nome': servidor.nome},
+            'demandas': [
+                {
+                    'id': d.id,
+                    'nome': d.nome,
+                    'descricao': d.descricao,
+                    'prioridade': d.prioridade,
+                    'data_prevista_execucao': d.data_prevista_execucao.strftime('%Y-%m-%d') if d.data_prevista_execucao else '',
+                    'status': d.status,
+                }
+                for d in demandas
+            ]
+        })
+    return JsonResponse({'status': 200, 'painel': painel.titulo, 'dados': resultado})
+
+@login_required
+def api_ver_demandas_por_painel_em_aberto(request):
+    """
+    Retorna demandas em aberto (status='p') dos últimos 31 dias para todos os servidores de um painel.
+    """
+    painel_hash = request.GET.get('painel_hash')
+    if not painel_hash:
+        return JsonResponse({'status': 400, 'error': 'Parâmetro painel_hash obrigatório'})
+    try:
+        painel = Painel_Acompanhamento_Demandas.objects.get(hash=painel_hash)
+    except Painel_Acompanhamento_Demandas.DoesNotExist:
+        return JsonResponse({'status': 404, 'error': 'Painel não encontrado'})
+    from datetime import date, timedelta
+    hoje = date.today()
+    limite = hoje - timedelta(days=31)
+    servidores = painel.servidores.all()
+    resultado = []
+    for servidor in servidores:
+        demandas = Demandas.objects.filter(
+            atribuicao=servidor,
+            status='p',
+            data_prevista_execucao__gte=limite,
+            data_prevista_execucao__lte=hoje
+        ).order_by('-data_prevista_execucao')[:50]
+        resultado.append({
+            'servidor': {'id': servidor.id, 'nome': servidor.nome},
+            'demandas': [
+                {
+                    'id': d.id,
+                    'nome': d.nome,
+                    'descricao': d.descricao,
+                    'prioridade': d.prioridade,
+                    'data_prevista_execucao': d.data_prevista_execucao.strftime('%Y-%m-%d') if d.data_prevista_execucao else '',
+                    'status': d.status,
+                }
+                for d in demandas
+            ]
+        })
+    return JsonResponse({'status': 200, 'painel': painel.titulo, 'dados': resultado})
+
+@login_required
+def api_ver_demandas_por_painel_concluidas(request):
+    """
+    Retorna demandas concluídas (status='c') dos últimos 31 dias para todos os servidores de um painel.
+    """
+    painel_hash = request.GET.get('painel_hash')
+    if not painel_hash:
+        return JsonResponse({'status': 400, 'error': 'Parâmetro painel_hash obrigatório'})
+    try:
+        painel = Painel_Acompanhamento_Demandas.objects.get(hash=painel_hash)
+    except Painel_Acompanhamento_Demandas.DoesNotExist:
+        return JsonResponse({'status': 404, 'error': 'Painel não encontrado'})
+    from datetime import date, timedelta
+    hoje = date.today()
+    limite = hoje - timedelta(days=31)
+    servidores = painel.servidores.all()
+    resultado = []
+    for servidor in servidores:
+        demandas = Demandas.objects.filter(
+            atribuicao=servidor,
+            status='c',
+            dt_concluido__gte=limite,
+            dt_concluido__lte=hoje
+        ).order_by('-dt_concluido')[:50]
+        resultado.append({
+            'servidor': {'id': servidor.id, 'nome': servidor.nome},
+            'demandas': [
+                {
+                    'id': d.id,
+                    'nome': d.nome,
+                    'descricao': d.descricao,
+                    'prioridade': d.prioridade,
+                    'data_prevista_execucao': d.data_prevista_execucao.strftime('%Y-%m-%d') if d.data_prevista_execucao else '',
+                    'dt_concluido': d.dt_concluido.strftime('%Y-%m-%d') if d.dt_concluido else '',
+                    'status': d.status,
+                }
+                for d in demandas
+            ]
+        })
+    return JsonResponse({'status': 200, 'painel': painel.titulo, 'dados': resultado})
+
+@login_required
+def api_ver_demandas_em_andamento(request):
+    """
+    Retorna demandas em andamento (status='e') dos últimos 31 dias para um usuário (servidor_id).
+    """
+    servidor_id = request.GET.get('servidor_id')
+    if not servidor_id:
+        return JsonResponse({'status': 400, 'error': 'Parâmetro servidor_id obrigatório'})
+    from datetime import date, timedelta
+    hoje = date.today()
+    limite = hoje - timedelta(days=31)
+    demandas = Demandas.objects.filter(
+        atribuicao_id=servidor_id,
+        status='e',
+        data_prevista_execucao__gte=limite,
+        data_prevista_execucao__lte=hoje
+    ).order_by('-data_prevista_execucao')[:50]
+    data = [
+        {
+            'id': d.id,
+            'nome': d.nome,
+            'descricao': d.descricao,
+            'prioridade': d.prioridade,
+            'data_prevista_execucao': d.data_prevista_execucao.strftime('%Y-%m-%d') if d.data_prevista_execucao else '',
+            'status': d.status,
+        }
+        for d in demandas
+    ]
+    return JsonResponse({'status': 200, 'demandas': data})
+
+@login_required
+def api_ver_demandas_em_aberto(request):
+    """
+    Retorna demandas em aberto (status='p') dos últimos 31 dias para um usuário (servidor_id).
+    """
+    servidor_id = request.GET.get('servidor_id')
+    if not servidor_id:
+        return JsonResponse({'status': 400, 'error': 'Parâmetro servidor_id obrigatório'})
+    from datetime import date, timedelta
+    hoje = date.today()
+    limite = hoje - timedelta(days=31)
+    demandas = Demandas.objects.filter(
+        atribuicao_id=servidor_id,
+        status='p',
+        data_prevista_execucao__gte=limite,
+        data_prevista_execucao__lte=hoje
+    ).order_by('-data_prevista_execucao')[:50]
+    data = [
+        {
+            'id': d.id,
+            'nome': d.nome,
+            'descricao': d.descricao,
+            'prioridade': d.prioridade,
+            'data_prevista_execucao': d.data_prevista_execucao.strftime('%Y-%m-%d') if d.data_prevista_execucao else '',
+            'status': d.status,
+        }
+        for d in demandas
+    ]
+    return JsonResponse({'status': 200, 'demandas': data})
+
+@login_required
+def api_ver_demandas_concluidas(request):
+    """
+    Retorna demandas concluídas (status='c') dos últimos 31 dias para um usuário (servidor_id).
+    """
+    servidor_id = request.GET.get('servidor_id')
+    if not servidor_id:
+        return JsonResponse({'status': 400, 'error': 'Parâmetro servidor_id obrigatório'})
+    from datetime import date, timedelta
+    hoje = date.today()
+    limite = hoje - timedelta(days=31)
+    demandas = Demandas.objects.filter(
+        atribuicao_id=servidor_id,
+        status='c',
+        dt_concluido__gte=limite,
+        dt_concluido__lte=hoje
+    ).order_by('-dt_concluido')[:50]
+    data = [
+        {
+            'id': d.id,
+            'nome': d.nome,
+            'descricao': d.descricao,
+            'prioridade': d.prioridade,
+            'data_prevista_execucao': d.data_prevista_execucao.strftime('%Y-%m-%d') if d.data_prevista_execucao else '',
+            'dt_concluido': d.dt_concluido.strftime('%Y-%m-%d') if d.dt_concluido else '',
+            'status': d.status,
+        }
+        for d in demandas
+    ]
+    return JsonResponse({'status': 200, 'demandas': data})
+
+@login_required
 def demandas_gerar_relatorio(request):
     # Recebe datas via GET
     data_inicio = request.GET.get('data_inicio')
@@ -616,3 +841,90 @@ def save_task_order(request):
         except Exception as e:
             return JsonResponse({'status': 500, 'error': str(e)})
     return JsonResponse({'status': 400, 'error': 'Método inválido'})
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .forms import PainelAcompanhamentoDemandasForm
+
+@login_required
+def cadastrar_painel_acompanhamento(request):
+    if request.method == 'POST':
+        print(request.POST)
+        # Cria o form sem o campo 'servidores' para evitar erro de validação
+        post_data = request.POST.copy()
+        if 'servidores' in post_data:
+            servidores_ids = request.POST.get('servidores', '')
+            ids = [int(s) for s in servidores_ids.split(',') if s.strip().isdigit()]
+            post_data.setlist('servidores', ids)            
+        form = PainelAcompanhamentoDemandasForm(post_data)
+        if form.is_valid():
+            painel = form.save(commit=False)
+            painel.user_inclusao = request.user
+            painel.save()
+            # Atualiza os servidores selecionados via campo hidden            
+            
+            if ids:
+                painel.servidores.set(Servidor.objects.filter(id__in=ids))
+            else:
+                painel.servidores.clear()
+            form.save_m2m()
+            return redirect('projetos:acompanhar')
+        else:
+            print(form.errors)
+    else:
+        form = PainelAcompanhamentoDemandasForm()
+    return render(request, 'tarefas/cadastrar_painel_acompanhamento.html', {'form': form})
+
+@login_required
+def editar_painel_acompanhamento(request, painel_hash):
+    painel = get_object_or_404(Painel_Acompanhamento_Demandas, hash=painel_hash)
+    if request.method == 'POST':
+        print(request.POST)
+        post_data = request.POST.copy()
+        if 'servidores' in post_data:
+            servidores_ids = request.POST.get('servidores', '')
+            ids = [int(s) for s in servidores_ids.split(',') if s.strip().isdigit()]
+            post_data.setlist('servidores', ids)
+        form = PainelAcompanhamentoDemandasForm(post_data, instance=painel)
+        if form.is_valid():
+            painel = form.save(commit=False)
+            painel.user_inclusao = request.user
+            painel.save()
+            
+            
+            if ids:
+                print(ids)
+                painel.servidores.set(Servidor.objects.filter(id__in=ids))
+            else:
+                painel.servidores.clear()
+            form.save_m2m()
+            return redirect('projetos:acompanhar')
+        else:
+            print(form.errors)
+    else:
+        form = PainelAcompanhamentoDemandasForm(instance=painel)
+    return render(request, 'tarefas/cadastrar_painel_acompanhamento.html', {'form': form, 'painel': painel})
+
+from instituicoes.models import Servidor
+
+@login_required
+def api_servidores(request):
+    q = request.GET.get('q', '').strip()
+    servidores = Servidor.objects.all()
+    if q:
+        servidores = servidores.filter(nome__icontains=q)
+    data = {
+        "results": [
+            {"id": s.id, "nome": s.nome}
+            for s in servidores.order_by('nome')[:20]
+        ]
+    }
+    return JsonResponse(data)
+
+@login_required
+def excluir_painel_acompanhamento(request, painel_hash):
+    painel = get_object_or_404(Painel_Acompanhamento_Demandas, hash=painel_hash)
+    if request.method == 'POST':
+        painel.delete()
+        return redirect('projetos:acompanhar')
+    return render(request, 'tarefas/excluir_painel_acompanhamento.html', {'painel': painel})

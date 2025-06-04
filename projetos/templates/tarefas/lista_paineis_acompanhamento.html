@@ -1,0 +1,27 @@
+{% extends 'template.html' %}
+{% block main %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="fa-solid fa-table-columns me-2"></i>Painéis de Acompanhamento</h2>
+        <a href="{% url 'projetos:cadastrar_painel_acompanhamento' %}" class="btn btn-primary">
+            <i class="fa fa-plus me-1"></i>Novo Painel
+        </a>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            {% if paineis %}
+                <ul class="list-group">
+                    {% for painel in paineis %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ painel.titulo }}
+                            <span class="badge bg-secondary">{{ painel.servidores.count }} servidores</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">Nenhum painel cadastrado.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,5 +1,6 @@
 from django import forms
-from .models import Projetos, Demandas
+from .models import Projetos, Demandas, Painel_Acompanhamento_Demandas
+from chamados.forms import RequisitanteWidget
 
 class ProjetosForm(forms.ModelForm):
     class Meta:
@@ -28,5 +29,14 @@ class DemandasForm(forms.ModelForm):
             'data_prevista_execucao': forms.DateInput(attrs={'type': 'date', 'class': 'form-control mb-3'}),
             'rotina': forms.CheckboxInput(attrs={'class': 'form-check-input mb-3'}),
             'ordem_dia': forms.NumberInput(attrs={'class': 'form-control mb-3'}),
+        }
+
+class PainelAcompanhamentoDemandasForm(forms.ModelForm):
+    class Meta:
+        model = Painel_Acompanhamento_Demandas
+        fields = ['titulo', 'servidores']
+        widgets = {
+            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
+            'servidores': forms.SelectMultiple(attrs={'class': 'form-select'}),
         }
 

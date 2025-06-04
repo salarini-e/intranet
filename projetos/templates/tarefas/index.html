@@ -14,7 +14,7 @@
             <i class="fa-regular fa-flag me-2"></i> Gerar relatório
         </a>
         {% if request.user.is_superuser %}
-        <a class="btn btn-float-acao ms-1" onclick="alert('Em desenvolvimento!')">
+        <a class="btn btn-float-acao ms-1" href="{% url 'projetos:acompanhar' %}">
             <i class="fa-regular fa-eye me-2"></i> Acompanhar
         </a>
         {% endif %}

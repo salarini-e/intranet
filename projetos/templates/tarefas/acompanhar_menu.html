@@ -1,0 +1,487 @@
+{% extends 'template.html' %}
+{% block gestao %}active{% endblock %}
+{% block showgestao %}show{% endblock %}
+{% block tarefas %}active{% endblock %}
+{% block main %}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex align-items-center mb-3">
+        <h1 class="mb-0 text-start">
+            Acompanhar Atividades
+        </h1>
+        <a href="{% url 'projetos:tarefas' %}" class="btn ms-auto btn-float-acao">
+            <i class="fa-solid fa-arrow-left me-2"></i> Voltar para Minhas Tarefas
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Painel de monitoramento (dados) -->
+        <div class="col-12 col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <h5 class="card-title mb-0" id="monitoramentoTitulo">
+                            <i class="fa-solid fa-desktop me-2"></i>Visão Geral
+                        </h5>
+                        <button 
+                            class="btn btn-outline-secondary ms-auto p-0 my-auto"
+                            title="Abrir monitoramento em nova janela"                            
+                            type="button"
+                        >
+                            <i class="fa-solid fa-up-right-from-square"></i>
+                        </button>
+                    </div>
+                    <div id="monitoramentoConteudo" class="py-3">
+                        <div id="monitoramentoPlaceholder" class="text-center text-muted py-5" style="display:;">
+                            <i class="fa-solid fa-eye fa-2x mb-3"></i>
+                            <p>
+                                Selecione um usuário ou um painel para visualizar as tarefas.<br>
+                                <!-- <span class="small">(Em breve: gráficos, listas e indicadores em tempo real)</span> -->
+                            </p>
+                        </div>
+                        <div id="monitoramentoAtividades" style="display:none;">
+                            <div class="d-flex justify-content-between align-items-center mb-2" id="monitoramentoHeader" style="display:none;">
+                                <h6 class="mb-0" id="monitoramentoSubtitulo">
+                                    <i class="fa-solid fa-list-check me-2"></i>
+                                    Atividades em andamento
+                                </h6>
+                                <div>
+                                    <a href="#" id="verEmAndamento" class="btn btn-link btn-sm fw-bold text-primary" style="display:none;">Ver em andamento</a>
+                                    <a href="#" id="verAbertas" class="btn btn-link btn-sm" style="display:none;">Ver em aberto</a>
+                                    <a href="#" id="verConcluidas" class="btn btn-link btn-sm" style="display:none;">Ver concluídas</a>
+                                </div>
+                            </div>
+                            <ul class="list-group" id="listaAtividadesEmAndamento">
+                                <!-- Itens dinâmicos -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Painel de seleção -->
+        <div class="col-12 col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center mb-3">
+                        <h5 class="card-title mb-3 flex-grow-1">
+                            <i class="fa-solid fa-sliders me-2"></i> Configurações
+                        </h5>
+                        <button 
+                            class="btn btn-outline-secondary ms-auto p-0 mb-auto"
+                            title="Abrir monitoramento em nova janela"                            
+                            type="button"
+                            id="btnLimparSelecao"
+                        >
+                            Limpar seleção
+                        </button>
+                    </div>
+                    <div class="mb-3 position-relative">
+                        <label for="buscaUsuario" class="form-label">Usuário para monitorar</label>
+                        <input type="text" id="buscaUsuario" class="form-control" placeholder="Digite para buscar usuário...">
+                        <div id="autocompleteUsuarios" class="list-group mt-1" style="position: absolute; z-index: 10; width: 100%;"></div>
+                        <div id="usuarioSelecionado" class="mt-2"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="selectPainel" class="form-label">Painel</label>
+                        <div class="input-group">
+                            <select id="selectPainel" class="form-select">
+                                <option selected disabled>Escolha um painel</option>
+                                {% for painel in paineis %}
+                                <option value="{{painel.hash}}">{{painel}}</option>
+                                {% endfor %}                            
+                            </select>
+                            <button id="btnEditarPainel" class="btn btn-outline-secondary" type="button" style="display:none;">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <a href="{% url 'projetos:cadastrar_painel_acompanhamento' %}" class="btn btn-outline-primary w-100 mt-auto">
+                        <i class="fa fa-plus me-2"></i>Criar novo painel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function pad(n) {
+    return n < 10 ? '0' + n : n;
+}
+function setPeriodo(periodo) {
+    const hoje = new Date();
+    let inicio, fim;
+    if (periodo === 'hoje') {
+        inicio = new Date(hoje);
+        fim = new Date(hoje);
+    } else if (periodo === 'semana') {
+        const diaSemana = hoje.getDay();
+        inicio = new Date(hoje);
+        inicio.setDate(hoje.getDate() - diaSemana);
+        fim = new Date(inicio);
+        fim.setDate(inicio.getDate() + 6);
+    } else if (periodo === 'mes') {
+        inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+        fim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+    }
+    document.getElementById('data_inicio').value = `${inicio.getFullYear()}-${pad(inicio.getMonth() + 1)}-${pad(inicio.getDate())}`;
+    document.getElementById('data_fim').value = `${fim.getFullYear()}-${pad(fim.getMonth() + 1)}-${pad(fim.getDate())}`;
+}
+
+// Usuário autocomplete
+const buscaUsuario = document.getElementById('buscaUsuario');
+const autocompleteUsuarios = document.getElementById('autocompleteUsuarios');
+const usuarioSelecionado = document.getElementById('usuarioSelecionado');
+const selectPainel = document.getElementById('selectPainel');
+const btnLimparSelecao = document.getElementById('btnLimparSelecao');
+const monitoramentoTitulo = document.getElementById('monitoramentoTitulo');
+const monitoramentoSubtitulo = document.getElementById('monitoramentoSubtitulo');
+const btnVerEmAndamento = document.getElementById('verEmAndamento');
+const btnVerAbertas = document.getElementById('verAbertas');
+const btnVerConcluidas = document.getElementById('verConcluidas');
+const btnEditarPainel = document.getElementById('btnEditarPainel');
+let usuarioEscolhido = null;
+let painelEscolhido = null;
+let modoAtual = 'em_andamento';
+
+function renderAtividades(atividades, container) {
+    container.innerHTML = '';
+    if (!atividades.length) {
+        container.innerHTML = '<li class="list-group-item text-muted">Nenhuma atividade encontrada.</li>';
+        return;
+    }
+    atividades.forEach(atividade => {
+        let prioridadeBadge = '';
+        if (atividade.prioridade == 0) prioridadeBadge = '<span class="badge bg-secondary ms-2">Regular</span>';
+        if (atividade.prioridade == 1) prioridadeBadge = '<span class="badge bg-warning text-dark ms-2">Média</span>';
+        if (atividade.prioridade == 2) prioridadeBadge = '<span class="badge bg-danger ms-2">Importante</span>';
+        if (atividade.prioridade == 3) prioridadeBadge = '<span class="badge bg-purple text-white ms-2" style="background:#6f42c1;">Urgente</span>';
+        container.innerHTML += `
+            <li class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                <div>
+                    <strong>${atividade.nome}</strong>
+                    <div class="small text-muted">${atividade.descricao}</div>
+                </div>
+                <div class="d-flex align-items-center mt-2 mt-md-0">
+                    ${prioridadeBadge}
+                    <span class="badge bg-light text-dark ms-2"><i class="fa-solid fa-calendar-day me-1"></i> ${atividade.data_prevista_execucao || atividade.dt_concluido || ''}</span>
+                </div>
+            </li>
+        `;
+    });
+}
+
+function atualizarTitulos(modo) {
+    // Atualiza títulos e mostra/esconde botões conforme o modo
+    const header = document.getElementById('monitoramentoHeader');
+    if (modo === 'em_andamento') {
+        monitoramentoTitulo.innerHTML = '<i class="fa-solid fa-desktop me-2"></i>Visão Geral';
+        monitoramentoSubtitulo.innerHTML = '<i class="fa-solid fa-list-check me-2"></i>Atividades em andamento';
+        header.style.display = '';
+        btnVerEmAndamento.style.display = 'none';
+        btnVerAbertas.style.display = '';
+        btnVerConcluidas.style.display = '';
+        btnVerAbertas.classList.remove('fw-bold', 'text-primary');
+        btnVerConcluidas.classList.remove('fw-bold', 'text-primary');
+    } else if (modo === 'abertas') {
+        monitoramentoTitulo.innerHTML = '<i class="fa-solid fa-folder-open me-2"></i>Demandas em aberto';
+        monitoramentoSubtitulo.innerHTML = '<i class="fa-solid fa-list me-2"></i>Atividades em aberto';
+        header.style.display = '';
+        btnVerEmAndamento.style.display = '';
+        btnVerAbertas.style.display = 'none';
+        btnVerConcluidas.style.display = '';
+        btnVerEmAndamento.classList.remove('fw-bold', 'text-primary');
+        btnVerConcluidas.classList.remove('fw-bold', 'text-primary');
+    } else if (modo === 'concluidas') {
+        monitoramentoTitulo.innerHTML = '<i class="fa-solid fa-circle-check me-2"></i>Demandas concluídas';
+        monitoramentoSubtitulo.innerHTML = '<i class="fa-solid fa-check-double me-2"></i>Atividades concluídas';
+        header.style.display = '';
+        btnVerEmAndamento.style.display = '';
+        btnVerAbertas.style.display = '';
+        btnVerConcluidas.style.display = 'none';
+        btnVerEmAndamento.classList.remove('fw-bold', 'text-primary');
+        btnVerAbertas.classList.remove('fw-bold', 'text-primary');
+    }
+    // Destaca o botão ativo
+    if (modo === 'em_andamento') {
+        btnVerEmAndamento.classList.add('fw-bold', 'text-primary');
+    } else if (modo === 'abertas') {
+        btnVerAbertas.classList.add('fw-bold', 'text-primary');
+    } else if (modo === 'concluidas') {
+        btnVerConcluidas.classList.add('fw-bold', 'text-primary');
+    }
+    // Sempre mostra os botões relevantes quando há atividades
+    if (document.getElementById('monitoramentoAtividades').style.display !== 'none') {
+        header.style.display = '';
+        if (modo !== 'em_andamento') btnVerEmAndamento.style.display = '';
+        if (modo !== 'abertas') btnVerAbertas.style.display = '';
+        if (modo !== 'concluidas') btnVerConcluidas.style.display = '';
+    }
+}
+
+function mostrarAtividades(tipo, servidor_id) {
+    const lista = document.getElementById('listaAtividadesEmAndamento');
+    let url = '';
+    if (tipo === 'em_andamento') {
+        url = `/projetos/api/ver-demandas-em-andamento/?servidor_id=${servidor_id}`;
+    } else if (tipo === 'abertas') {
+        url = `/projetos/api/ver-demandas-em-aberto/?servidor_id=${servidor_id}`;
+    } else if (tipo === 'concluidas') {
+        url = `/projetos/api/ver-demandas-concluidas/?servidor_id=${servidor_id}`;
+    }
+    atualizarTitulos(tipo);
+    modoAtual = tipo;
+    fetch(url)
+        .then(resp => resp.json())
+        .then(data => {
+            if (data.status === 200) {
+                renderAtividades(data.demandas, lista);
+            } else {
+                lista.innerHTML = `<li class="list-group-item text-danger">${data.error || 'Erro ao buscar atividades.'}</li>`;
+            }
+        })
+        .catch(() => {
+            lista.innerHTML = `<li class="list-group-item text-danger">Erro ao buscar atividades.</li>`;
+        });
+}
+
+buscaUsuario.addEventListener('input', function() {
+    const query = this.value.trim();
+    autocompleteUsuarios.innerHTML = '';
+    usuarioEscolhido = null;
+    usuarioSelecionado.innerHTML = '';
+    if (selectPainel.value && selectPainel.value !== "Escolha um painel") {
+        selectPainel.selectedIndex = 0;
+        painelEscolhido = null;
+    }
+    if (query.length < 2) return;
+    fetch(`/projetos/api/servidores/?q=${encodeURIComponent(query)}`)
+        .then(resp => resp.json())
+        .then(data => {
+            autocompleteUsuarios.innerHTML = '';
+            data.results.forEach(usuario => {
+                const item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'list-group-item list-group-item-action';
+                item.textContent = usuario.nome;
+                item.onclick = () => {
+                    usuarioEscolhido = usuario;
+                    buscaUsuario.value = usuario.nome;
+                    autocompleteUsuarios.innerHTML = '';
+                    usuarioSelecionado.innerHTML = `
+                        <span class="badge bg-primary">${usuario.nome}</span>
+                    `;
+                    if (selectPainel.value && selectPainel.value !== "Escolha um painel") {
+                        selectPainel.selectedIndex = 0;
+                        painelEscolhido = null;
+                    }
+                    document.getElementById('monitoramentoPlaceholder').style.display = 'none';
+                    document.getElementById('monitoramentoAtividades').style.display = '';
+                    mostrarAtividades(modoAtual, usuario.id);
+                };
+                autocompleteUsuarios.appendChild(item);
+            });
+        });
+});
+
+window.removerUsuarioSelecionado = function() {
+    usuarioEscolhido = null;
+    buscaUsuario.value = '';
+    usuarioSelecionado.innerHTML = '';
+    document.getElementById('monitoramentoPlaceholder').style.display = '';
+    document.getElementById('monitoramentoAtividades').style.display = 'none';
+    atualizarTitulos('em_andamento');
+    modoAtual = 'em_andamento';
+};
+
+selectPainel.addEventListener('change', function() {
+    painelEscolhido = this.value;
+    usuarioEscolhido = null;
+    buscaUsuario.value = '';
+    usuarioSelecionado.innerHTML = '';
+    autocompleteUsuarios.innerHTML = '';
+    document.getElementById('monitoramentoPlaceholder').style.display = 'none';
+    document.getElementById('monitoramentoAtividades').style.display = '';
+    atualizarTitulos('em_andamento');
+    modoAtual = 'em_andamento';
+    buscarPainelDemandas('em_andamento', painelEscolhido); // agora sempre busca dados reais
+    // Exibe botão editar painel
+    btnEditarPainel.style.display = '';
+});
+
+// Botão limpar seleção
+btnLimparSelecao.addEventListener('click', function() {
+    usuarioEscolhido = null;
+    painelEscolhido = null;
+    buscaUsuario.value = '';
+    usuarioSelecionado.innerHTML = '';
+    autocompleteUsuarios.innerHTML = '';
+    selectPainel.selectedIndex = 0;
+    document.getElementById('monitoramentoPlaceholder').style.display = '';
+    document.getElementById('monitoramentoAtividades').style.display = 'none';
+    atualizarTitulos('em_andamento');
+    modoAtual = 'em_andamento';
+    btnEditarPainel.style.display = 'none';
+});
+
+// Botão editar painel
+btnEditarPainel.addEventListener('click', function() {
+    if (painelEscolhido) {
+        window.location.href = `/projetos/painel/editar/${painelEscolhido}/`;
+    }
+});
+
+// Links para ver em andamento, abertas, concluídas
+btnVerEmAndamento.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (usuarioEscolhido) {
+        mostrarAtividades('em_andamento', usuarioEscolhido.id);
+    } else if (painelEscolhido) {
+        buscarPainelDemandas('em_andamento', painelEscolhido);
+    }
+});
+btnVerAbertas.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (usuarioEscolhido) {
+        mostrarAtividades('abertas', usuarioEscolhido.id);
+    } else if (painelEscolhido) {
+        buscarPainelDemandas('abertas', painelEscolhido);
+    }
+});
+btnVerConcluidas.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (usuarioEscolhido) {
+        mostrarAtividades('concluidas', usuarioEscolhido.id);
+    } else if (painelEscolhido) {
+        buscarPainelDemandas('concluidas', painelEscolhido);
+    }
+});
+
+function renderPainelUsuariosAPI(dados) {
+    const container = document.getElementById('listaAtividadesEmAndamento');
+    container.innerHTML = '';
+    if (!dados.length) {
+        document.getElementById('monitoramentoHeader').hidden = true;
+        container.innerHTML = '<li class="list-group-item text-muted">Nenhuma atividade encontrada neste painel.</li>';
+        return;
+    }
+    document.getElementById('monitoramentoHeader').hidden = false;
+    dados.forEach(entry => {
+        let card = document.createElement('div');
+        card.className = 'card mb-3 shadow-sm';
+        card.innerHTML = `
+            <div class="card-header bg-light fw-bold">
+                <i class="fa-solid fa-user me-2"></i>${entry.servidor.nome}
+            </div>
+            <ul class="list-group list-group-flush" id="painel-atividades-${entry.servidor.id}">
+            </ul>
+        `;
+        container.appendChild(card);
+        const ul = card.querySelector(`#painel-atividades-${entry.servidor.id}`);
+        if (!entry.demandas || entry.demandas.length === 0) {
+            ul.innerHTML = '<li class="list-group-item text-muted">Nenhuma atividade em andamento.</li>';
+        } else {
+            entry.demandas.forEach(atividade => {
+                let prioridadeBadge = '';
+                if (atividade.prioridade == 0) prioridadeBadge = '<span class="badge bg-secondary ms-2">Regular</span>';
+                if (atividade.prioridade == 1) prioridadeBadge = '<span class="badge bg-warning text-dark ms-2">Média</span>';
+                if (atividade.prioridade == 2) prioridadeBadge = '<span class="badge bg-danger ms-2">Importante</span>';
+                if (atividade.prioridade == 3) prioridadeBadge = '<span class="badge bg-purple text-white ms-2" style="background:#6f42c1;">Urgente</span>';
+                ul.innerHTML += `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <input type="checkbox" class="form-check-input me-2" disabled>
+                            <strong>${atividade.nome}</strong>
+                            <div class="small text-muted">${atividade.descricao}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            ${prioridadeBadge}
+                            <span class="badge bg-light text-dark ms-2">
+                                <i class="fa-solid fa-calendar-day me-1"></i>
+                                ${atividade.data_prevista_execucao || atividade.dt_concluido || ''}
+                            </span>
+                        </div>
+                    </li>
+                `;
+            });
+        }
+    });
+}
+
+function buscarPainelDemandas(tipo, painelHash) {
+    let url = '';
+    if (tipo === 'em_andamento') {
+        url = `/projetos/api/ver-demandas-por-painel-em-andamento/?painel_hash=${painelHash}`;
+    } else if (tipo === 'abertas') {
+        url = `/projetos/api/ver-demandas-por-painel-em-aberto/?painel_hash=${painelHash}`;
+    } else if (tipo === 'concluidas') {
+        url = `/projetos/api/ver-demandas-por-painel-concluidas/?painel_hash=${painelHash}`;
+    }
+    atualizarTitulos(tipo);
+    modoAtual = tipo;
+    fetch(url)
+        .then(resp => resp.json())
+        .then(data => {
+            if (data.status === 200) {
+                renderPainelUsuariosAPI(data.dados);
+            } else {
+                document.getElementById('listaAtividadesEmAndamento').innerHTML = `<li class="list-group-item text-danger">${data.error || 'Erro ao buscar atividades.'}</li>`;
+            }
+        })
+        .catch(() => {
+            document.getElementById('listaAtividadesEmAndamento').innerHTML = `<li class="list-group-item text-danger">Erro ao buscar atividades.</li>`;
+        });
+}
+</script>
+
+<style>
+.btn-float-acao {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0px 2px 10px rgba(0,0,0,0.08);
+    color: #0d6efd;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    display: flex;
+    align-items: center;
+    transition: box-shadow 0.2s, background 0.2s;
+    z-index: 2;
+}
+.btn-float-acao:hover, .btn-float-acao:focus {
+    background: #f8f9fa;
+    color: #0a58ca;
+    box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
+    text-decoration: none;
+}
+.btn-float-acao i {
+    font-size: 1.1rem;
+}
+.card-title i {
+    color: #0d6efd;
+}
+#autocompleteUsuarios {
+    max-height: 200px;
+    overflow-y: auto;
+}
+.btn-outline-secondary{
+    color: #0d6efd;
+}
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+}
+.bg-purple {
+    background: #6f42c1 !important;
+    color: #fff !important;
+}
+.card-header {
+    font-size: 1rem;
+    background: #f8f9fa;
+}
+.card.shadow-sm.h-100 {
+    min-height: 420px;
+}
+</style>
+{% endblock %}

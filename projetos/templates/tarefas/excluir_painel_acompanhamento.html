@@ -1,0 +1,22 @@
+{% extends 'template.html' %}
+{% block main %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h2 class="mb-4 text-danger">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>Excluir Painel
+                    </h2>
+                    <p>Tem certeza que deseja excluir o painel <strong>{{ painel.titulo }}</strong>?</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Sim, excluir</button>
+                        <a href="{% url 'projetos:editar_painel_acompanhamento' painel.hash %}" class="btn btn-secondary ms-2">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

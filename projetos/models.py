@@ -95,6 +95,21 @@ class Demandas(models.Model):
                     print(f"Ação com ID {self.id_referencia} não encontrada.")
         
 
+class Painel_Acompanhamento_Demandas(models.Model):
+    titulo = models.CharField(max_length=255, verbose_name='Título do painel')
+    servidores = models.ManyToManyField(Servidor, related_name='painel_acompanhamento', blank=True)
+    hash = models.CharField(max_length=255, unique=True, verbose_name='Hash do painel', null=True, blank=True)    
+    user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Usuário de inclusão')
+
+    def save(self, *args, **kwargs):
+        if not self.hash:
+            import uuid
+            self.hash = str(uuid.uuid4())
+        super(Painel_Acompanhamento_Demandas, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.titulo
+
 class Grupo(models.Model):
     responsavel = models.ForeignKey(Servidor, on_delete=models.SET_NULL, null=True, blank=True)
     nome = models.CharField(max_length=255)

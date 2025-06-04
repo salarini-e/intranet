@@ -1,0 +1,131 @@
+{% extends 'template.html' %}
+{% block main %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="mb-4 text-center">
+                        <i class="fa-solid fa-plus me-2"></i>Cadastrar Painel de Acompanhamento
+                    </h2>
+                    <form method="post" id="painelForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ form.titulo.label_tag }}
+                            {{ form.titulo }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="busca-servidor" class="form-label">Adicionar servidores</label>
+                            <input type="text" id="busca-servidor" class="form-control" placeholder="Digite para buscar servidores...">
+                            <div id="autocomplete-servidores" class="list-group mt-1" style="position: absolute; z-index: 10;"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Servidores selecionados</label>
+                            <ul id="servidores-selecionados" class="list-group mb-2">
+                                <!-- Lista dinâmica -->
+                            </ul>
+                        </div>
+                        <input type="hidden" name="servidores" id="servidores-ids">
+                        <button type="submit" class="btn btn-primary w-100">Salvar Painel</button>
+                        <a href="{% url 'projetos:acompanhar' %}" class="btn btn-link w-100 mt-2">Voltar</a>
+                        {% if painel %}
+                        <a href="{% url 'projetos:excluir_painel_acompanhamento' painel.hash %}" class="btn btn-danger w-100 mt-2">
+                            Excluir painel
+                        </a>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% comment %}
+Passa os servidores já selecionados para o JS se estiver editando
+{% endcomment %}
+{% if painel %}
+<script>
+window.servidoresSelecionados = [
+    {% for servidor in painel.servidores.all %}
+        {"id": {{ servidor.id }}, "nome": "{{ servidor.nome|escapejs }}"}{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
+</script>
+{% else %}
+<script>
+window.servidoresSelecionados = [];
+</script>
+{% endif %}
+<script>
+const buscaInput = document.getElementById('busca-servidor');
+const autocompleteBox = document.getElementById('autocomplete-servidores');
+const selecionadosUl = document.getElementById('servidores-selecionados');
+const servidoresIdsInput = document.getElementById('servidores-ids');
+// Use a variável global definida acima
+let servidoresSelecionados = window.servidoresSelecionados || [];
+
+buscaInput.addEventListener('input', function() {
+    const query = this.value.trim();
+    autocompleteBox.innerHTML = '';
+    if (query.length < 2) return;
+    fetch(`/projetos/api/servidores/?q=${encodeURIComponent(query)}`)
+        .then(resp => resp.json())
+        .then(data => {
+            autocompleteBox.innerHTML = '';
+            data.results.forEach(servidor => {
+                if (!servidoresSelecionados.some(s => s.id === servidor.id)) {
+                    const item = document.createElement('button');
+                    item.type = 'button';
+                    item.className = 'list-group-item list-group-item-action';
+                    item.textContent = servidor.nome;
+                    item.onclick = () => {
+                        servidoresSelecionados.push({id: servidor.id, nome: servidor.nome});
+                        renderSelecionados();
+                        buscaInput.value = '';
+                        autocompleteBox.innerHTML = '';
+                    };
+                    autocompleteBox.appendChild(item);
+                }
+            });
+        });
+});
+
+function renderSelecionados() {
+    selecionadosUl.innerHTML = '';
+    servidoresSelecionados.forEach((servidor, idx) => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        li.textContent = servidor.nome;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-sm btn-danger ms-2';
+        btn.innerHTML = '<i class="fa fa-times"></i>';
+        btn.onclick = () => {
+            servidoresSelecionados.splice(idx, 1);
+            renderSelecionados();
+        };
+        li.appendChild(btn);
+        selecionadosUl.appendChild(li);
+    });
+    servidoresIdsInput.value = servidoresSelecionados.map(s => s.id).join(',');
+}
+
+document.getElementById('painelForm').addEventListener('submit', function(e) {
+    if (servidoresSelecionados.length === 0) {
+        e.preventDefault();
+        alert('Selecione pelo menos um servidor para o painel.');
+        return false;
+    }
+    servidoresIdsInput.value = servidoresSelecionados.map(s => s.id).join(',');
+});
+
+// Renderiza os servidores já selecionados ao carregar a página
+renderSelecionados();
+</script>
+<style>
+#autocomplete-servidores {
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+}
+</style>
+{% endblock %}

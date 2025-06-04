@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Projetos, Fases, Categorias, Prioridade, Tarefas, Atividades, Comentarios, Grupo, Anexo, Demandas
+from .models import Projetos, Fases, Categorias, Prioridade, Tarefas, Atividades, Comentarios, Grupo, Anexo, Demandas, Painel_Acompanhamento_Demandas
 
 @admin.register(Grupo)
 class GrupoAdmin(admin.ModelAdmin):
@@ -74,3 +74,9 @@ class DemandasAdmin(admin.ModelAdmin):
     list_filter = ('prioridade', 'concluido', 'dt_inclusao', 'dt_att')
     search_fields = ('nome', 'descricao', 'atribuicao__nome')
     readonly_fields = ('dt_inclusao', 'dt_att')
+
+@admin.register(Painel_Acompanhamento_Demandas)
+class PainelAcompanhamentoDemandasAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'hash', 'user_inclusao')
+    search_fields = ('titulo', 'hash')
+    filter_horizontal = ('servidores',)
