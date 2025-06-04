@@ -3,38 +3,64 @@
 {% block showgestao %}show{% endblock %}
 {% block acoes %}active{% endblock %}
 {% block main %}
-    <h1 class="mt-4 mb-4">Planejamento de ações</h1>
-    <div class="container-acao">
-        <div class="row">
-            <div class="col d-flex">
-                <h2 class="my-auto">Minhas ações</h2>
-                <a class="my-auto ms-auto text-primary" href="{% url 'gestao_acao:adicionar_acao' %}">
-                    <i class="fa-solid fa-plus me-2"></i> Adicionar Tarefa
-                </a>
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h1 class="mb-0 mt-0">Planejamento de ações</h1>
+        <a class="btn btn-float-acao" href="{% url 'gestao_acao:adicionar_acao' %}">
+            <i class="fa-solid fa-plus me-2"></i> Adicionar Tarefa
+        </a>
+    </div>
+    <div class="container-acao position-relative">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs mb-3" id="acaoTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="minhas-acoes-tab" data-bs-toggle="tab" data-bs-target="#minhas-acoes" type="button" role="tab" aria-controls="minhas-acoes" aria-selected="true">
+                    Minhas ações
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="concluidas-tab" data-bs-toggle="tab" data-bs-target="#concluidas" type="button" role="tab" aria-controls="concluidas" aria-selected="false">
+                    Concluídas
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="acaoTabsContent">
+            <div class="tab-pane fade show active" id="minhas-acoes" role="tabpanel" aria-labelledby="minhas-acoes-tab">
+                <table class="table table-borderless mt-4 table-style">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Horário</th>
+                            <th>Local</th>
+                            <th>Responsável</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="task-list">
+                        <!-- Renderizado via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="concluidas" role="tabpanel" aria-labelledby="concluidas-tab">
+                <table class="table table-borderless mt-4 table-style">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Horário</th>
+                            <th>Local</th>
+                            <th>Responsável</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="concluidas-list">
+                        <!-- Renderizado via JS -->
+                    </tbody>
+                </table>
             </div>
         </div>
-        <table class="table table-borderless mt-4 table-style">
-            <thead class="table-light">
-                <tr>
-                    <th>Data</th>
-                    <th>Descrição</th>
-                    <th>Horário</th>
-                    <th>Local</th>
-                    <th>Responsável</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="task-list">
-                {% for planejamento_acao in planejamento_acoes %}
-               
-                {% empty %}
-                <tr class="align-middle">
-                    <td colspan="8" class="text-center">Nenhum planejamento encontrado!</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -84,7 +110,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.min.js" integrity="sha384-Re460s1NeyAhufAM5JwfIGWosokaQ7CH15ti6W5Y4wC/m4eJ5opJ2ivohxVM05Wd" crossorigin="anonymous"></script>
-     <script>
+    <script>
         class Acao {
             constructor(id, data, descricao, horario, local, responsavel, status) {
                 this.id = id;
@@ -95,8 +121,8 @@
                 this.responsavel = responsavel;
                 this.status = status;
                 this.csrfToken = '{{ csrf_token }}'
-                this.render(); 
-                this.elemento = document.getElementById(`task-${this.id}`); // Adicionando o ID da tarefa ao elemento
+                // Não renderiza automaticamente
+                this.elemento = null;
             }
 
             get_status() {
@@ -152,7 +178,7 @@
                 return `${year}-${month}-${day}`; // Return in YYYY-MM-DD format
 
             }
-            render() {
+            render(targetId) {
                 // Create table row
                 const tr = document.createElement('tr');
                 tr.className = 'align-middle';
@@ -202,16 +228,22 @@
                 // Create actions cell
                 const actionsTd = document.createElement('td');
                 actionsTd.className = 'acao_style text-center';
+
+                // Agrupar botões em um container flex
+                const actionGroup = document.createElement('div');
+                actionGroup.className = 'd-inline-flex gap-1';
+
                 const calendarButton = document.createElement('button');
-                calendarButton.className = 'btn btn-light ms-auto me-2';
+                calendarButton.className = 'btn btn-light p-1';
                 calendarButton.onclick = () => modalCalendario(this.id);
                 const calendarIcon = document.createElement('i');
                 calendarIcon.className = 'fas fa-calendar-alt icon';
-                
                 calendarIcon.setAttribute('data-bs-toggle', 'modal');
                 calendarIcon.setAttribute('data-bs-target', '#exampleModal');
+                calendarButton.appendChild(calendarIcon);
+
                 const trashButton = document.createElement('button');
-                trashButton.className = 'btn btn-light me-auto';
+                trashButton.className = 'btn btn-light p-1';
                 trashButton.onclick = () => modalExcluir(this.id);
                 const trashIcon = document.createElement('i');
                 trashIcon.className = 'fas fa-trash icon';
@@ -219,9 +251,9 @@
                 trashIcon.setAttribute('data-bs-target', '#deleteModal');
                 trashButton.appendChild(trashIcon);
 
-                calendarButton.appendChild(calendarIcon);
-                actionsTd.appendChild(calendarButton);
-                actionsTd.appendChild(trashButton);
+                actionGroup.appendChild(calendarButton);
+                actionGroup.appendChild(trashButton);
+                actionsTd.appendChild(actionGroup);
 
                 // Append all cells to the row
                 tr.appendChild(dataTd);
@@ -233,9 +265,7 @@
                 tr.appendChild(actionsTd);
 
                 // Append the row to the table body
-                document.getElementById('task-list').appendChild(tr);
-
-                // Save the row element for later updates
+                document.getElementById(targetId).appendChild(tr);
                 this.elemento = tr;
             }
 
@@ -335,10 +365,39 @@
             .catch(error => console.error('Erro:', error));
         }
 
-        const  lista_de_acoes = []; 
+        // Função utilitária para comparar datas no formato DD/MM/YYYY
+        function isToday(dateStr) {
+            const [day, month, year] = dateStr.split('/');
+            const today = new Date();
+            return (
+                parseInt(day) === today.getDate() &&
+                parseInt(month) === (today.getMonth() + 1) &&
+                parseInt(year) === today.getFullYear()
+            );
+        }
 
+        // Função para renderizar as ações nas abas corretas
+        function renderAcoes() {
+            document.getElementById('task-list').innerHTML = '';
+            document.getElementById('concluidas-list').innerHTML = '';
+            lista_de_acoes.forEach(acao => {
+                if (acao.status === 'c') {
+                    // Se for concluída e a data for hoje, aparece nas duas abas
+                    if (isToday(acao.data)) {
+                        acao.render('task-list');
+                        acao.render('concluidas-list');
+                    } else {
+                        acao.render('concluidas-list');
+                    }
+                } else {
+                    acao.render('task-list');
+                }
+            });
+        }
+
+        // Inicialização das ações
+        const lista_de_acoes = [];
         {% for planejamento_acao in planejamento_acoes %}
-        
         lista_de_acoes.push(new Acao(
             {{ planejamento_acao.id }},
             "{{ planejamento_acao.data|date:'d/m/Y' }}",
@@ -349,6 +408,18 @@
             "{{ planejamento_acao.status }}"
         ));
         {% endfor %}
+
+        // Renderizar ao carregar
+        renderAcoes();
+
+        // Atualizar renderização ao mudar status
+        lista_de_acoes.forEach(acao => {
+            const originalUpdateStatus = acao.updateStatus.bind(acao);
+            acao.updateStatus = function(newStatus) {
+                originalUpdateStatus(newStatus);
+                setTimeout(renderAcoes, 100); // Pequeno delay para garantir atualização
+            }
+        });
     </script>
     <style>
         .container-acao {
@@ -422,6 +493,53 @@
             border: 1px solid #ddd;
         }
 
+        .nav-tabs .nav-link.active {
+            font-weight: bold;
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #0d6efd;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            color: #0d6efd;
+        }
+        .nav-tabs .nav-link:hover {
+            color: #0a58ca;
+        }
 
+        .acao_style .btn {
+            margin: 0;
+            padding: 0.25rem 0.5rem;
+            vertical-align: middle;
+        }
+        .acao_style .icon {
+            font-size: 1.1rem;
+            vertical-align: middle;
+        }
+        .acao_style .d-inline-flex {
+            gap: 0.25rem;
+        }
+
+        .btn-float-acao {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0,0,0,0.08);
+            color: #0d6efd;
+            font-weight: 500;
+            padding: 0.5rem 1.25rem;
+            display: flex;
+            align-items: center;
+            transition: box-shadow 0.2s, background 0.2s;
+            z-index: 2;
+        }
+        .btn-float-acao:hover, .btn-float-acao:focus {
+            background: #f8f9fa;
+            color: #0a58ca;
+            box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
+            text-decoration: none;
+        }
+        .btn-float-acao i {
+            font-size: 1.1rem;
+        }
     </style>
 {% endblock %}
