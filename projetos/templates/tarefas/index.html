@@ -65,6 +65,13 @@
                                     {% endif %}
                                     {% if demanda.concluido %}
                                         <span class="me-1 badge bg-primary text-white mt-2 concluido-badge">Concluído</span>
+                                        {% else %}
+                                    
+                                    <select class="badge priority-select status me-1 mt-2" data-id="{{ demanda.id }}" onchange="toggleStatus({{ demanda.id }}, this.value)">
+                                        <option value="p" {% if demanda.status == 'p' %}selected{% endif %} style="background-color: #f5b133; color: white;">Em Aberto</option>
+                                        <option value="e" {% if demanda.status == 'e' %}selected{% endif %} style="background-color: #fa3636; color: white;">Em Andamento</option>
+                                        
+                                    </select>                                        
                                     {% endif %}
                                     <select class="badge priority-select mt-2" data-id="{{ demanda.id }}">
                                         <option value="0" {% if demanda.prioridade == 0 %}selected{% endif %} style="background-color: #6c757d; color: white;">Regular</option>
@@ -482,6 +489,39 @@
         .catch(error => console.error('Erro:', error));
     }
 
+     function toggleStatus(taskId, status) {
+        openLoading(taskId);
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+        fetch("{% url 'projetos:toggle_demanda_status' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ tarefa_id: taskId, status: status }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                closeLoading(taskId);                
+                if (status) {
+                    // addBadge(taskId);
+                    console.log('Status atualizado com sucesso!');
+                    console.log(status);
+                    // showFireworks() 
+                } else {
+                    // removeBadge(taskId);
+                    console.log('Status removido com sucesso!');
+                    console.log(status);
+                }
+            } else {
+                alert('Erro ao atualizar tarefa: ' + data.error);
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
     function addBadge(taskId) {
         const taskElement = document.querySelector(`#demanda-${taskId}`);
         const badgesContainer = taskElement.closest('.thediv').querySelector('.statusbadges');
@@ -490,6 +530,12 @@
             badge.className = 'me-1 badge bg-primary text-white mt-2 concluido-badge';
             badge.textContent = 'Concluído';
             badgesContainer.prepend(badge);
+
+            // Remove o select de status da tarefa concluída
+            const statusSelect = badgesContainer.querySelector(`.status[data-id="${taskId}"]`);
+            if (statusSelect) {
+                statusSelect.style.display = 'none'; // Esconde o select de status
+            }
         }
     }
 
@@ -499,8 +545,14 @@
         const badge = badgesContainer.querySelector('.concluido-badge');
         if (badge) {
             badge.remove();
+            const statusSelect = badgesContainer.querySelector(`.status[data-id="${taskId}"]`);
+            if (statusSelect) {
+                statusSelect.style.display = 'block'; // Esconde o select de status
+                
+            }
         }
     }
+    
 
     function updateTaskDate(taskId, newDate) {
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;

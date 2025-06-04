@@ -49,7 +49,7 @@ class Demandas(models.Model):
     user_inclusao = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Usuário de inclusão')
 
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='p', verbose_name='Status da demanda')
-    
+
     def __str__(self):
         return self.nome
     
@@ -62,24 +62,37 @@ class Demandas(models.Model):
         if not self.atribuicao:
             self.atribuicao = Servidor.objects.get(user=self.user_inclusao)
         if self.concluido:
+            self.status = 'c'
             self.dt_concluido = self.dt_att
             self.conclui()
+        if not self.concluido and self.status == 'c':
+            self.status = 'p'            
         super(Demandas, self).save(*args, **kwargs)
 
     def conclui(self):
         if self.referencia:
             if self.referencia == 't':
-                tarefa = Tarefas.objects.get(id=self.id_referencia)
-                tarefa.concluido = True
-                tarefa.save()
+                try:
+                    tarefa = Tarefas.objects.get(id=self.id_referencia)
+                    tarefa.concluido = True
+                    tarefa.save()
+                except Tarefas.DoesNotExist:
+                    print(f"Tarefa com ID {self.id_referencia} não encontrada.")
+
             elif self.referencia == 'a':
-                atividade = Atividades.objects.get(id=self.id_referencia)
-                atividade.concluido = True
-                atividade.save()
+                try:
+                    atividade = Atividades.objects.get(id=self.id_referencia)
+                    atividade.concluido = True
+                    atividade.save()
+                except Atividades.DoesNotExist:
+                    print(f"Atividade com ID {self.id_referencia} não encontrada.")
             elif self.referencia == 'p':                
-                acao = PlanejamentoAcao.objects.get(id=self.id_referencia)
-                acao.status = 'c'
-                acao.save()
+                try:
+                    acao = PlanejamentoAcao.objects.get(id=self.id_referencia)
+                    acao.status = 'c'
+                    acao.save()
+                except PlanejamentoAcao.DoesNotExist:
+                    print(f"Ação com ID {self.id_referencia} não encontrada.")
         
 
 class Grupo(models.Model):

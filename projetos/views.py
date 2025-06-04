@@ -9,6 +9,16 @@ from django.http import JsonResponse, HttpResponse
 from instituicoes.models import Servidor
 import json
 
+def gambiarra(request):
+    demandas = Demandas.objects.all()
+    for demanda in demandas:
+        if demanda.concluido:
+            demanda.status = 'c'
+        else:
+            demanda.status = 'p'
+        demanda.save()
+    return HttpResponse('Gambiarra executada com sucesso')
+
 @login_required
 def index(request):
     projetos_grupo_membro = Projetos.objects.filter(grupos__membros__user=request.user).exclude(status="A")
@@ -503,6 +513,29 @@ def toggle_demanda_completion(request):
         demanda.save()
         return JsonResponse({'status': 200, 'message': 'Tarefa atualizada com sucesso'})
     return JsonResponse({'status': 400, 'error': 'Método inválido'})
+
+@login_required
+def toggle_demanda_status(request):
+    if request.method == 'POST':
+        # print('opa')
+        data_json = request.body.decode('utf-8')
+        data = json.loads(data_json)
+        # print(data)        
+        demanda_id = data.get('tarefa_id')
+        # print(demanda_id)
+        demandas = Demandas.objects.filter(atribuicao__user=request.user, id=demanda_id)
+        # for dem in Demandas.objects.all():
+            # print(dem.id)
+            # print(int(dem.id) == int(demanda_id))
+        if not demandas.exists():
+            return JsonResponse({'status': 404, 'error': 'Demanda não encontrada'})
+        demanda = demandas.first()
+        # print(demanda)
+        demanda.status = data.get('status')
+        demanda.save()
+        return JsonResponse({'status': 200, 'message': 'Tarefa atualizada com sucesso'})
+    return JsonResponse({'status': 400, 'error': 'Método inválido'})
+
 
 @login_required
 @csrf_exempt
