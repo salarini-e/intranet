@@ -93,3 +93,27 @@ class Meta_Servidores(models.Model):
     secretaria = models.CharField(max_length=164, verbose_name='Secretaria')    
     cpf=models.CharField(max_length=14, verbose_name='Parte do CPF')    
     dt_inclusao=models.DateField(auto_now_add=True, verbose_name='Data de inclusão')
+
+class Dict_Mapeamento_Secretarias(models.Model):
+    def __str__(self):
+        return f'{self.nome_portal} - {self.nome_intranet}'
+    
+    class Meta:
+        verbose_name = 'Dicionário de secretarias Portal x Intranet'
+        verbose_name_plural = 'Dicionário de secretarias Portal x Intranet'
+
+    nome_portal = models.CharField(max_length=164, verbose_name='Nome')
+    nome_intranet = models.CharField(max_length=164, verbose_name='Nome Intranet')
+    secretaria = models.ForeignKey(Secretaria, on_delete=models.CASCADE, verbose_name='Secretaria', null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.secretaria:
+            secretaria = Secretaria.objects.filter(nome=self.nome_portal)
+            if secretaria.exists():
+                self.secretaria = secretaria.first()
+        else:            
+            raise ValueError("O nome da secretaria não corresponde com as cadastradas na Intranet.")
+
+        super().save(*args, **kwargs)
+    
+   
