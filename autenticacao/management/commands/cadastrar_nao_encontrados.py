@@ -7,8 +7,7 @@ from django.core.management.base import BaseCommand
 
 def cadastrar_nao_encontrados():
     # Caminho completo do arquivo CSV
-    csv_path = os.path.join(settings.BASE_DIR, 'matriculas_nao_encontradas.csv')
-    
+    csv_path = os.path.join(settings.BASE_DIR, 'matriculas_nao_encontradas.csv')    
     # Definindo o caminho para o arquivo de log
     log_path = os.path.join(settings.BASE_DIR, 'error_cadastrar_nao_encontradas.log')
     
