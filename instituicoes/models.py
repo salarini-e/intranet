@@ -96,24 +96,25 @@ class Meta_Servidores(models.Model):
 
 class Dict_Mapeamento_Secretarias(models.Model):
     def __str__(self):
-        return f'{self.nome_portal} - {self.nome_intranet}'
+        return f'{self.nome_portal}'
     
     class Meta:
         verbose_name = 'Dicionário de secretarias Portal x Intranet'
         verbose_name_plural = 'Dicionário de secretarias Portal x Intranet'
 
-    nome_portal = models.CharField(max_length=164, verbose_name='Nome')
-    nome_intranet = models.CharField(max_length=164, verbose_name='Nome Intranet')
+    nome_portal = models.CharField(max_length=164, verbose_name='Nome')    
     secretaria = models.ForeignKey(Secretaria, on_delete=models.CASCADE, verbose_name='Secretaria', null=True, blank=True)
 
-    def save(self, *args, **kwargs):
-        if not self.secretaria:
-            secretaria = Secretaria.objects.filter(nome=self.nome_portal)
-            if secretaria.exists():
-                self.secretaria = secretaria.first()
-        else:            
-            raise ValueError("O nome da secretaria não corresponde com as cadastradas na Intranet.")
-
-        super().save(*args, **kwargs)
+class Log_Nao_Encontrados(models.Model):
+    def __str__(self):
+        return f'{self.matricula} - {self.nome}'
     
-   
+    class Meta:
+        verbose_name = 'Log de Matrículas Não Encontradas'
+        verbose_name_plural = 'Logs de Matrículas Não Encontradas'
+    
+    matricula = models.CharField(max_length=14, verbose_name='Matrícula', unique=True)
+    nome = models.CharField(max_length=164, verbose_name='Nome')
+    secretaria = models.CharField(max_length=164, verbose_name='Secretaria')    
+    erro = models.TextField(verbose_name='Erro')
+    dt_inclusao = models.DateTimeField(auto_now_add=True, verbose_name='Data de inclusão')

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Secretaria, Setor, Servidor, Meta_Servidores
+from .models import Secretaria, Setor, Servidor, Meta_Servidores, Dict_Mapeamento_Secretarias, Log_Nao_Encontrados
 
 @admin.register(Secretaria)
 class SecretariaAdmin(admin.ModelAdmin):
@@ -26,3 +26,13 @@ class MetaServidoresAdmin(admin.ModelAdmin):
     list_display = ('nome', 'matricula', 'secretaria', 'cpf', 'dt_inclusao')
     search_fields = ['nome', 'matricula', 'secretaria', 'cpf']
     readonly_fields = ('dt_inclusao',)
+
+@admin.register(Dict_Mapeamento_Secretarias)
+class DictMapeamentoSecretariasAdmin(admin.ModelAdmin):
+    list_display = ('nome_portal', 'secretaria')
+    search_fields = ('nome_portal', 'secretaria')
+    autocomplete_fields = ('secretaria',)
+
+@admin.register(Log_Nao_Encontrados)
+class LogNaoEncontradosAdmin(admin.ModelAdmin):
+    list_display = ('matricula', 'nome', 'secretaria')

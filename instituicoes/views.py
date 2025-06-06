@@ -243,48 +243,45 @@ def busca_servidor(matricula):
         # Quit the driver
         driver.quit()
 def api_get_servidor(request):
-    dict_mapeamento = {
-    'SECRETARIA DE FAZENDA': 'SECRETARIA DE FAZENDA',
-    'CONTROLADORIA GERAL DO MUNICIPIO': 'Controladoria-Geral do Município',
-    'PROCURADORIA GERAL': 'Procuradoria Geral do Município',
-    'SECRETARIA MUNICIPAL DA CASA CIVIL - EGCP': 'Secretaria Municipal da Casa Civil',
-    'SECRETARIA DE AGRICULTURA E DESENVOLVIMENTO RURAL': 'Secretaria Municipal de Agricultura e Desenvolvimento Rural',
-    'SECRETARIA DE DESENVOLVIMENTO SOCIAL E DIREITOS HUMANOS': 'Secretaria Municipal de Assistência Social, Direitos Humanos, Trabalho e Políticas Públicas para a Juventude',
-    'SECRETARIA DE CIENCIA, TECNOLOGIA, INOVACAO E DESENVOLVIMENTO ECONOMICO': 'Secretaria Municipal de Ciência, Tecnologia, Inovação e Educação Profissionalizante e Superior',
-    'SECRETARIA DE CULTURA': 'Secretaria Municipal de Cultura',
-    'SECRETARIA DE PROTECAO E DEFESA CIVIL': 'Secretaria Municipal de Proteção e Defesa Civil',
-    'SECRETARIA DE EDUCACAO': 'Secretaria Municipal de Educação',
-    'SECRETARIA DE ESPORTE E LAZER': 'Secretaria Municipal de Esportes e Lazer',
-    'SECRETARIA DE GOVERNO': 'Secretaria de Governo',
-    'SECRETARIA MUNICIPAL DE INFRAESTRUTURA E LOGISTICA': 'Secretaria Municipal de Infraestrutura e Logística',
-    'SECRETARIA DO AMBIENTE E DESENVOLVIMENTO URBANO SUSTENTAVEL': 'Secretaria do Ambiente e Desenvolvimento Urbano Sustentável',
-    'SECRETARIA DE INFRAESTRUTURA E OBRAS': 'Secretaria Municipal de Infraestrutura e Obras',
-    'SECRETARIA DE SEGURANCA E ORDEM PUBLICA': 'Secretaria Municipal de Ordem e Mobilidade Urbana',
-    'SECRETARIA DE MOBILIDADE E URBANISMO': 'SECRETARIA DE MOBILIDADE E URBANISMO',
-    'SECRETARIA MUNICIPAL DE SAUDE': 'Secretaria Municipal de Saúde',
-    'SECRETARIA DE SERVICOS E EQUIPAMENTOS PUBLICOS': 'Secretaria Municipal de Serviços e Equipamentos Públicos ',
-    'SECRETARIA DE TURISMO': 'Secretaria Municipal de Turismo e Marketing da Cidade',
-    'SUBPREFEITURA DE CAMPO DO COELHO': 'Subprefeitura de Campo do Coelho',
-    'SUBPREFEITURA DE CONSELHEIRO PAULINO': 'Subprefeitura de Conselheiro Paulino',
-    'SUBPREFEITURA DE LUMIAR E SAO PEDRO DA SERRA': 'Subprefeitura de Lumiar e São Pedro da Serra',
-    'SUBPREFEITURA DE OLARIA E CONEGO': 'Subprefeitura de Olaria e Cônego',
-    'FUNDACAO D. JOAO VI DE NOVA FRIBURGO': 'Fundação Dom João VI de Nova Friburgo',
-    'SECRETARIA MUNICIPAL DE POLITICAS SOBRE DROGAS': 'Secretaria Municipal de Políticas Sobre Drogas',
-    'CRAS': 'CRAS',
-    'CREAS': 'CREAS',
-    'QUADRO SUPLEMENTAR-LEI COMPLEM.30/2007': 'QUADRO SUPLEMENTAR-LEI COMPLEM.30/2007',
-    'SECRETARIA DE GABINETE':'SECRETARIA DE GABINETE DO PREFEITO',
-    'SECRETARIA DA MULHER': 'SECRETARIA DA MULHER',
-    'SECRETARIA DE HABITACAO E REGULARIZACAO FUNDIARIA': 'SECRETARIA DE HABITAÇÃO E REGULARIZAÇÃO FUNDIÁRIA',
-    'SECRETARIA EXECUTIVA DE DESENVOLVIMENTO REGIONAL': 'SECRETARIA EXECUTIVA DE DESENVOLVIMENTO REGIONAL',    
-    'SECRETARIA DE GESTÃO E RESCURSOS HUMANOS': 'SECRETARIA DE GESTÃO E RESCURSOS HUMANOS',
-    'SECRETARIA DE BEM ESTAR E PROTECAO ANIMAL':'SECRETARIA DE BEM-ESTAR E PROTEÇÃO ANIMAL',
-    'SECRETARIA DE LICITACOES E PLANEJAMENTO': 'Secretaria de Licitações e Planejamento',
-    'SECRETARIA DE GESTAO E RECURSOS HUMANOS': 'SECRETARIA DE GESTAO E RECURSOS HUMANOS'
-
-
-
-}
+#     dict_mapeamento = {
+#     'SECRETARIA DE FAZENDA': 'SECRETARIA DE FAZENDA',
+#     'CONTROLADORIA GERAL DO MUNICIPIO': 'Controladoria-Geral do Município',
+#     'PROCURADORIA GERAL': 'Procuradoria Geral do Município',
+#     'SECRETARIA MUNICIPAL DA CASA CIVIL - EGCP': 'Secretaria Municipal da Casa Civil',
+#     'SECRETARIA DE AGRICULTURA E DESENVOLVIMENTO RURAL': 'Secretaria Municipal de Agricultura e Desenvolvimento Rural',
+#     'SECRETARIA DE DESENVOLVIMENTO SOCIAL E DIREITOS HUMANOS': 'Secretaria Municipal de Assistência Social, Direitos Humanos, Trabalho e Políticas Públicas para a Juventude',
+#     'SECRETARIA DE CIENCIA, TECNOLOGIA, INOVACAO E DESENVOLVIMENTO ECONOMICO': 'Secretaria Municipal de Ciência, Tecnologia, Inovação e Educação Profissionalizante e Superior',
+#     'SECRETARIA DE CULTURA': 'Secretaria Municipal de Cultura',
+#     'SECRETARIA DE PROTECAO E DEFESA CIVIL': 'Secretaria Municipal de Proteção e Defesa Civil',
+#     'SECRETARIA DE EDUCACAO': 'Secretaria Municipal de Educação',
+#     'SECRETARIA DE ESPORTE E LAZER': 'Secretaria Municipal de Esportes e Lazer',
+#     'SECRETARIA DE GOVERNO': 'Secretaria de Governo',
+#     'SECRETARIA MUNICIPAL DE INFRAESTRUTURA E LOGISTICA': 'Secretaria Municipal de Infraestrutura e Logística',
+#     'SECRETARIA DO AMBIENTE E DESENVOLVIMENTO URBANO SUSTENTAVEL': 'Secretaria do Ambiente e Desenvolvimento Urbano Sustentável',
+#     'SECRETARIA DE INFRAESTRUTURA E OBRAS': 'Secretaria Municipal de Infraestrutura e Obras',
+#     'SECRETARIA DE SEGURANCA E ORDEM PUBLICA': 'Secretaria Municipal de Ordem e Mobilidade Urbana',
+#     'SECRETARIA DE MOBILIDADE E URBANISMO': 'SECRETARIA DE MOBILIDADE E URBANISMO',
+#     'SECRETARIA MUNICIPAL DE SAUDE': 'Secretaria Municipal de Saúde',
+#     'SECRETARIA DE SERVICOS E EQUIPAMENTOS PUBLICOS': 'Secretaria Municipal de Serviços e Equipamentos Públicos ',
+#     'SECRETARIA DE TURISMO': 'Secretaria Municipal de Turismo e Marketing da Cidade',
+#     'SUBPREFEITURA DE CAMPO DO COELHO': 'Subprefeitura de Campo do Coelho',
+#     'SUBPREFEITURA DE CONSELHEIRO PAULINO': 'Subprefeitura de Conselheiro Paulino',
+#     'SUBPREFEITURA DE LUMIAR E SAO PEDRO DA SERRA': 'Subprefeitura de Lumiar e São Pedro da Serra',
+#     'SUBPREFEITURA DE OLARIA E CONEGO': 'Subprefeitura de Olaria e Cônego',
+#     'FUNDACAO D. JOAO VI DE NOVA FRIBURGO': 'Fundação Dom João VI de Nova Friburgo',
+#     'SECRETARIA MUNICIPAL DE POLITICAS SOBRE DROGAS': 'Secretaria Municipal de Políticas Sobre Drogas',
+#     'CRAS': 'CRAS',
+#     'CREAS': 'CREAS',
+#     'QUADRO SUPLEMENTAR-LEI COMPLEM.30/2007': 'QUADRO SUPLEMENTAR-LEI COMPLEM.30/2007',
+#     'SECRETARIA DE GABINETE':'SECRETARIA DE GABINETE DO PREFEITO',
+#     'SECRETARIA DA MULHER': 'SECRETARIA DA MULHER',
+#     'SECRETARIA DE HABITACAO E REGULARIZACAO FUNDIARIA': 'SECRETARIA DE HABITAÇÃO E REGULARIZAÇÃO FUNDIÁRIA',
+#     'SECRETARIA EXECUTIVA DE DESENVOLVIMENTO REGIONAL': 'SECRETARIA EXECUTIVA DE DESENVOLVIMENTO REGIONAL',    
+#     'SECRETARIA DE GESTÃO E RESCURSOS HUMANOS': 'SECRETARIA DE GESTÃO E RESCURSOS HUMANOS',
+#     'SECRETARIA DE BEM ESTAR E PROTECAO ANIMAL':'SECRETARIA DE BEM-ESTAR E PROTEÇÃO ANIMAL',
+#     'SECRETARIA DE LICITACOES E PLANEJAMENTO': 'Secretaria de Licitações e Planejamento',
+#     'SECRETARIA DE GESTAO E RECURSOS HUMANOS': 'SECRETARIA DE GESTAO E RECURSOS HUMANOS'
+# }
     matricula = request.GET.get('matricula', None)
     
     # Remove leading zeros from matricula if present
@@ -298,25 +295,30 @@ def api_get_servidor(request):
             meta_servidor = busca_servidor(matricula)
         try:
             servidor = meta_servidor
-            print(servidor.secretaria)
-            print(dict_mapeamento[servidor.secretaria])
-            try:
-                secretaria = Secretaria.objects.get(nome=dict_mapeamento[servidor.secretaria])
+            # print(servidor.secretaria)
+            # print(dict_mapeamento[servidor.secretaria])
+            try:                
+                secretaria = Dict_Mapeamento_Secretarias.objects.get(nome_portal=servidor.secretaria).secretaria
             except Exception as E:
                 print('erro ao pegar secretaria', E)
                 try:
-                    secretaria = Secretaria.objects.create(nome=dict_mapeamento[servidor.secretaria], apelido='n/h', sigla='n/d',
-                                                            user_inclusao=User.objects.get(username='sistema'),)
-                    setor = Setor.objects.create(nome='Não definido', 
-                                                apelido='n/d', 
-                                                sigla='n/d',    
-                                                cep='n/d', 
-                                                bairro='n/d', 
-                                                endereco='n/d', 
-                                                secretaria=secretaria, 
-                                                user_inclusao=User.objects.get(username='sistema'))
+                    Log_Nao_Encontrados.objects.create(matricula=servidor.matricula, nome=servidor.nome, secretaria=servidor.secretaria)            
                 except Exception as E:
-                    print('Erro a criar secretaria', E)
+                    print('Erro ao criar log de não encontrados', E)
+                
+                # try:
+                #     secretaria = Secretaria.objects.create(nome=dict_mapeamento[servidor.secretaria], apelido='n/h', sigla='n/d',
+                #                                             user_inclusao=User.objects.get(username='sistema'),)
+                #     setor = Setor.objects.create(nome='Não definido', 
+                #                                 apelido='n/d', 
+                #                                 sigla='n/d',    
+                #                                 cep='n/d', 
+                #                                 bairro='n/d', 
+                #                                 endereco='n/d', 
+                #                                 secretaria=secretaria, 
+                #                                 user_inclusao=User.objects.get(username='sistema'))
+                # except Exception as E:
+                # print('Erro a criar secretaria', E)
             try:
                 setores = Setor.objects.filter(secretaria=secretaria)
                 print(secretaria)
