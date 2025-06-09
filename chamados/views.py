@@ -995,11 +995,11 @@ def painel_controle(request):
         # Avança para o próximo mês
         esse_ano_atendimentos = proximo_mes
     
+    semanas_ano, dados_abertos_um_ano, dados_fechados_um_ano = dados_graficos(chamados, um_ano, data_atual,'Um-ano' )
+    meses_esse_ano, dados_abertos_esse_ano, dados_fechados_esse_ano = dados_graficos(chamados,esse_ano, data_atual, "Este-ano" )
     semanas_mes, dados_abertos_um_mes,dados_fechados_um_mes = dados_graficos(chamados, um_mes_atras, data_atual, "Um-mes")
     uma_semana, dados_abertos_uma_semana, dados_fechados_uma_semana = dados_graficos(chamados, uma_semana_atras, data_atual, "Uma-semana")
     hoje, dados_abertos_hoje, dados_fechados_hoje = dados_graficos(chamados,datetime.now().replace(hour=0, minute=0, second=0, microsecond=0), datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999), 'Hoje')
-    meses_ano, dados_abertos_um_ano, dados_fechados_um_ano = dados_graficos(chamados, um_ano, data_atual,'Um-ano' )
-    meses_esse_ano, dados_abertos_esse_ano, dados_fechados_esse_ano = dados_graficos(chamados,esse_ano, data_atual, "Este-ano" )
     
     tipos = TipoChamado.objects.all()
 
@@ -1062,6 +1062,11 @@ def painel_controle(request):
         chamado.dias_em_aberto = dias_em_aberto
         chamados_criticos.append(chamado)
 
+    # Dividir chamados críticos em páginas de 9
+    chamados_criticos_paginas = [
+        chamados_criticos[i:i+9] for i in range(0, len(chamados_criticos), 9)
+    ]
+
     context= {
         'dados_mes_tipo': dados_mes_tipo,
         'dados_uma_semana_atras_tipo': dados_uma_semana_atras_tipo,
@@ -1108,8 +1113,9 @@ def painel_controle(request):
         'labels_atendimentos_realizados': labels_atendimentos_realizados,
         'dados_abertos_atendimentos_realizados': dados_abertos_atendimentos_realizados,
         'chamados_criticos': chamados_criticos,
+        'chamados_criticos_paginas': chamados_criticos_paginas,
     }
-    return render(request, 'chamados/painel_controle.html', context)
+    return render(request, 'chamados/new_dashboard.html', context)
 
 @login_required
 def ver_detalhes_tickets_nao_resolvidos(request):
@@ -1354,6 +1360,11 @@ def new_dashboard(request):
         chamado.dias_em_aberto = dias_em_aberto
         chamados_criticos.append(chamado)
 
+    # Dividir chamados críticos em páginas de 9
+    chamados_criticos_paginas = [
+        chamados_criticos[i:i+9] for i in range(0, len(chamados_criticos), 9)
+    ]
+
     context= {
         'graficos': graficos,
         'totais': {
@@ -1366,8 +1377,40 @@ def new_dashboard(request):
         'media_diaria': round(Chamado.objects.filter(~Q(status__in=['6']), dt_inclusao__gte=timezone.now() - timedelta(days=30)).count() / 30, 1),
         # 'noticias': noticias
         'chamados_criticos': chamados_criticos,
+        'chamados_criticos_paginas': chamados_criticos_paginas,
     }
     return render(request, 'chamados/new_dashboard.html', context)
+
+
+@login_required
+def new_dashboard_2(request):
+    from .models import Chamado
+    from datetime import timedelta
+    from django.utils import timezone
+
+    # Chamados abertos há mais de 7 dias, ordenados por prioridade (alta primeiro), depois por tempo em aberto
+    chamados_criticos_qs = Chamado.objects.filter(
+        status='0',
+        dt_inclusao__lte=timezone.now() - timedelta(days=7)
+    ).order_by('-prioridade', 'dt_inclusao')
+
+    chamados_criticos = []
+    for chamado in chamados_criticos_qs:
+        dias_em_aberto = (timezone.now().date() - chamado.dt_inclusao.date()).days
+        chamado.dias_em_aberto = dias_em_aberto
+        chamados_criticos.append(chamado)
+
+    # Dividir chamados críticos em páginas de 9
+    chamados_criticos_paginas = [
+        chamados_criticos[i:i+9] for i in range(0, len(chamados_criticos), 9)
+    ]
+
+    context = {
+        'chamados_criticos': chamados_criticos,
+        'chamados_criticos_paginas': chamados_criticos_paginas,
+    }
+    return render(request, 'chamados/new_dashboard_2.html', context)
+
 
 import requests
 def get_news():
@@ -1670,7 +1713,7 @@ def feedback_in_excel(request):
         sheet_feedbacks.cell(row=row_num, column=9).value = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(feedback.tempo_espera, "N/A")
         sheet_feedbacks.cell(row=row_num, column=10).value = feedback.comentario
         sheet_feedbacks.cell(row=row_num, column=11).value = feedback.dt_inclusao.strftime('%d/%m/%Y %H:%M:%S')
-    
+
     for row_num, feed in enumerate(feed_pendente, 2):
         #n_protocolo, requisitante, profissional_designado, tipo, dt_inclusao, dt_execucao, dt_fechamento
         aba_pendentes.cell(row=row_num, column=1).value = feed.n_protocolo

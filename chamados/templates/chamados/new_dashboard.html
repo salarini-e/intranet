@@ -71,6 +71,7 @@
             border-radius: 16px;
             border: none !important;
             transition: box-shadow 0.2s;
+            font-size: 0.5vw;
             /* min-height: 220px; */
         }
         .critical-card:hover {
@@ -228,58 +229,6 @@
             
         </div>       
     </div>
-    <div id="display-5" class="container-fluid m-auto">
-        <h3 class="text-white text-center">
-            Chamados mais antigos em aberto<br>
-            <span class="badge bg-danger ms-2 mt-3" style="font-size:1rem;">
-                Total: {{ chamados_criticos|length }}
-            </span>
-        </h3>
-        <!-- Painel em Grade com Cartões -->
-        <div id="critical-cards-panel" class="row g-3 justify-content-center px-5 text-white rounded-4 shadow" style="max-height: 70vh; overflow-y: auto; padding-top: 1.5rem; padding-bottom: 1.5rem;">
-            {% for chamado in chamados_criticos %}
-            <div class="col-12 col-sm-6 col-md-4">
-                <div class="card critical-card h-100 shadow border-0 bg-black text-white">
-                    <div class="card-body d-flex flex-column">
-                        <div class="d-flex align-items-center mb-2 justify-content-between">
-                            <span class="fw-bold">
-                                Chamado {{ chamado.n_protocolo }}
-                            </span>
-                            <span class="text-white-50 small">
-                                ABERTO NO DIA {{ chamado.dt_inclusao|date:"d/m/Y" }}
-                            </span>
-                        </div>
-                        <div class="mb-1"><strong>Solicitante:</strong> {{ chamado.requisitante.nome }}</div>
-                        <div class="mb-1"><strong>Secretaria:</strong> {{ chamado.secretaria.nome }}</div>
-                        <div class="mb-1"><strong>Responsável:</strong> {{ chamado.profissional_designado.nome_servidor|default:"N/H" }}</div>
-                        <div class="d-flex justify-content-between align-items-center mt-auto">
-                            <span>
-                                <strong>Prioridade:</strong>
-                                <span class="badge 
-                                    {% if chamado.prioridade == '2' %}bg-danger
-                                    {% elif chamado.prioridade == '1' %}bg-warning text-dark
-                                    {% elif chamado.prioridade == '0' %}bg-info text-dark
-                                    {% else %}bg-secondary
-                                    {% endif %}">
-                                    {{ chamado.get_prioridade_display }}
-                                </span>
-                            </span>
-                            <span class="text-danger fw-bold">
-                                <i class="fa-solid fa-clock fa-spin me-1"></i>
-                                {{ chamado.dias_em_aberto }} dias em aberto
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="col-12">
-                <div class="alert alert-success text-center">Nenhum chamado antigo em aberto!</div>
-            </div>
-            {% endfor %}
-        </div>
-        <!-- Fim do painel em grade -->
-    </div>
      <!-- <div id="display-6" class="container-fluid m-auto">
         <h3 class="text-white text-center">
             MONINOTORAMENTO DE SERVIÇOS
@@ -295,6 +244,178 @@
                 <div class="card text-white shadow mb-3" style="background-color: transparent;">
                     <div class="card-body px-2 py-3">
                         <div class="row g-3">
+                            <div class="col-12 col-md-3">
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Site Oficial</strong><br>
+                                                    <small class="text-white-50">Online há 99.8% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Protocolo Digital</strong><br>
+                                                    <small class="text-white-50">Online há 99.5% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Portal RH</strong><br>
+                                                    <small class="text-white-50">Online há 99.9% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Portal Transparência</strong><br>
+                                                    <small class="text-white-50">Online há 99.7% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Portal Educação</strong><br>
+                                                    <small class="text-white-50">Online há 99.6% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-danger me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor Backup</strong><br>
+                                                    <small class="text-white-50">Offline - 80.0% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #dc3545; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Site Oficial</strong><br>
+                                                    <small class="text-white-50">Online há 99.8% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Protocolo Digital</strong><br>
+                                                    <small class="text-white-50">Online há 99.5% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Portal RH</strong><br>
+                                                    <small class="text-white-50">Online há 99.9% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Portal Transparência</strong><br>
+                                                    <small class="text-white-50">Online há 99.7% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Portal Educação</strong><br>
+                                                    <small class="text-white-50">Online há 99.6% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-danger me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor Backup</strong><br>
+                                                    <small class="text-white-50">Offline - 80.0% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #dc3545; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-12 col-md-3">
                                 <div class="card border-0 bg-black text-white mb-2">
                                     <div class="card-body d-flex flex-column">
@@ -717,16 +838,22 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let display_atual = 1;
-        let display_max = 5;
+        let display_max = 4; // Agora só existem 4 displays
+
         function next_display() {
             for (let i = 1; i <= display_max; i++) {
-                $('#display-' + i).fadeOut(); // Esconde com fade
+                $('#display-' + i).fadeOut();
             }
             display_atual = display_atual === display_max ? 1 : display_atual + 1;
             setTimeout(function() {
-                $('#display-' + display_atual).fadeIn(); // Exibe com fade
+                $('#display-' + display_atual).fadeIn();
+                // Se terminou o ciclo, redireciona para o new_dashboard_2
+                if (display_atual === display_max) {
+                    setTimeout(function() {
+                        window.location.href = "{% url 'chamados:new_dashboard_2' %}";
+                    }, 10000); // 10 segundos após o último display
+                }
             }, 800);
-            // $('#display-' + display_atual).fadeIn(); // Exibe com fade
         }
 
         // Função para mostrar a página anterior com efeito fade
