@@ -5,6 +5,7 @@ from instituicoes.models import Meta_Servidores
 
 from django.core.management.base import BaseCommand
 
+# processa arquivo do portal de transparência e gera novo arquivo
 def processar_csv():
     # Caminho completo do arquivo CSV
     csv_path = os.path.join(settings.MEDIA_ROOT, 'grdData.csv')
@@ -29,8 +30,8 @@ def processar_csv():
             try:
                 # Verificar se a matrícula já existe no banco de dados
                 servidor = Meta_Servidores.objects.get(matricula=matricula)
-                servidor.delete()
-                matriculas_nao_encontradas.append(f';{matricula};{nome};{secretaria};{cpf}')    
+                # servidor.delete()
+                # matriculas_nao_encontradas.append(f';{matricula};{nome};{secretaria};{cpf}')    
                 
             except Meta_Servidores.DoesNotExist:
                 # Caso a matrícula não seja encontrada, adiciona à lista de não encontradas 

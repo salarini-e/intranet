@@ -5,6 +5,8 @@ from instituicoes.models import Meta_Servidores
 
 from django.core.management.base import BaseCommand
 
+
+# cadastra de acordo com o arquivo gerado
 def cadastrar_nao_encontrados():
     # Caminho completo do arquivo CSV
     csv_path = os.path.join(settings.BASE_DIR, 'matriculas_nao_encontradas.csv')    
