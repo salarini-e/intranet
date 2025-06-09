@@ -30,9 +30,9 @@ class MetaServidoresAdmin(admin.ModelAdmin):
 @admin.register(Dict_Mapeamento_Secretarias)
 class DictMapeamentoSecretariasAdmin(admin.ModelAdmin):
     list_display = ('nome_portal', 'secretaria')
-    search_fields = ('nome_portal', 'secretaria')
+    search_fields = ('nome_portal', 'secretaria__nome')
     autocomplete_fields = ('secretaria',)
 
 @admin.register(Log_Nao_Encontrados)
-class LogNaoEncontradosAdmin(admin.ModelAdmin):
+class LogNaoEncontradosAdmin(admin.ModelAdmin): 
     list_display = ('matricula', 'nome', 'secretaria')

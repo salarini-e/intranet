@@ -927,4 +927,4 @@ def excluir_painel_acompanhamento(request, painel_hash):
     if request.method == 'POST':
         painel.delete()
         return redirect('projetos:acompanhar')
-    return render(request, 'tarefas/excluir_painel_acompanhamento.html', {'painel': painel})
+    return render(request, 'tarefas/excluir_painel_acompanhamento.html', {'painel': painel})    

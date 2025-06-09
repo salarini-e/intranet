@@ -1050,7 +1050,19 @@ def painel_controle(request):
             'dados_fechados': dados_fechados_um_ano
         }
 
-    context = {      
+    # Chamados abertos há mais de 7 dias, ordenados por prioridade (alta primeiro), depois por tempo em aberto
+    chamados_criticos_qs = Chamado.objects.filter(
+        status='0',
+        dt_inclusao__lte=timezone.now() - timedelta(days=7)
+    ).order_by('-prioridade', 'dt_inclusao')
+
+    chamados_criticos = []
+    for chamado in chamados_criticos_qs:
+        dias_em_aberto = (timezone.now().date() - chamado.dt_inclusao.date()).days
+        chamado.dias_em_aberto = dias_em_aberto
+        chamados_criticos.append(chamado)
+
+    context= {
         'dados_mes_tipo': dados_mes_tipo,
         'dados_uma_semana_atras_tipo': dados_uma_semana_atras_tipo,
         'dados_hoje_tipo': dados_hoje_tipo,
@@ -1094,7 +1106,8 @@ def painel_controle(request):
         'chamados_abertos_por_secretaria': chamados_abertos_por_secretaria,
         'total_chamados_abertos':total_chamados_abertos,
         'labels_atendimentos_realizados': labels_atendimentos_realizados,
-        'dados_abertos_atendimentos_realizados': dados_abertos_atendimentos_realizados
+        'dados_abertos_atendimentos_realizados': dados_abertos_atendimentos_realizados,
+        'chamados_criticos': chamados_criticos,
     }
     return render(request, 'chamados/painel_controle.html', context)
 
@@ -1329,6 +1342,18 @@ def new_dashboard(request):
     #     print(f"Erro ao buscar notícias: {e}")
     #     noticias = []
 
+    # Chamados abertos há mais de 7 dias, ordenados por prioridade (alta primeiro), depois por tempo em aberto
+    chamados_criticos_qs = Chamado.objects.filter(
+        status='0',
+        dt_inclusao__lte=timezone.now() - timedelta(days=7)
+    ).order_by('-prioridade', 'dt_inclusao')
+
+    chamados_criticos = []
+    for chamado in chamados_criticos_qs:
+        dias_em_aberto = (timezone.now().date() - chamado.dt_inclusao.date()).days
+        chamado.dias_em_aberto = dias_em_aberto
+        chamados_criticos.append(chamado)
+
     context= {
         'graficos': graficos,
         'totais': {
@@ -1340,6 +1365,7 @@ def new_dashboard(request):
         'taxa_eficiencia': round(Chamado.objects.filter(status='4', dt_inclusao__gte=timezone.now() - timedelta(days=30)).count() / Chamado.objects.filter(~Q(status__in=['5', '6']), dt_inclusao__gte=timezone.now() - timedelta(days=30)).count() * 100, 1) if Chamado.objects.filter(~Q(status__in=['5', '6']), dt_inclusao__gte=timezone.now() - timedelta(days=30)).count() > 0 else 0,
         'media_diaria': round(Chamado.objects.filter(~Q(status__in=['6']), dt_inclusao__gte=timezone.now() - timedelta(days=30)).count() / 30, 1),
         # 'noticias': noticias
+        'chamados_criticos': chamados_criticos,
     }
     return render(request, 'chamados/new_dashboard.html', context)
 
@@ -1376,7 +1402,7 @@ def ajustar_tom(cor_hex, fator):
 
 def painel_satisfacao(request):
     feedbacks = chamadoSatisfacao.objects.filter(chamado__pesquisa_satisfacao=True).order_by('-id')
-
+    
     totais = {
         'geral': sum(int(feed.avaliacao) for feed in feedbacks),
         'cordialidade': sum(int(feed.cordialidade) for feed in feedbacks),

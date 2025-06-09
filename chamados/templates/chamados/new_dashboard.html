@@ -59,8 +59,42 @@
             padding: 40px;
             border-radius: 15px;
         }
-        #display-2, #display-3, #display-4, #display-5 {
+        #display-2, #display-3, #display-4, #display-5, #display-6 {
             display: none;
+        }
+        #critical-cards-panel {
+            margin-top: 1.5rem;
+        }
+        .critical-card {
+            background: #111 !important;
+            color: #fff !important;
+            border-radius: 16px;
+            border: none !important;
+            transition: box-shadow 0.2s;
+            /* min-height: 220px; */
+        }
+        .critical-card:hover {
+            box-shadow: 0 0 0 4px #ffb30033;
+        }
+        .critical-icon i {
+            color: #dc3545;
+            font-size: 1.5rem;
+            animation: pulse 1.2s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1);}
+            100% { transform: scale(1.18);}
+        }
+        /* 3 por fileira, máximo 3 fileiras */
+        #critical-cards-panel .col-md-4 {
+            flex: 0 0 33.333333%;
+            max-width: 33.333333%;
+        }
+        @media (max-width: 991px) {
+            #critical-cards-panel .col-md-4 { flex: 0 0 50%; max-width: 50%; }
+        }
+        @media (max-width: 767px) {
+            #critical-cards-panel .col-md-4 { flex: 0 0 100%; max-width: 100%; }
         }
     </style>
 </head>
@@ -194,6 +228,431 @@
             
         </div>       
     </div>
+    <div id="display-5" class="container-fluid m-auto">
+        <h3 class="text-white text-center">
+            Chamados mais antigos em aberto<br>
+            <span class="badge bg-danger ms-2 mt-3" style="font-size:1rem;">
+                Total: {{ chamados_criticos|length }}
+            </span>
+        </h3>
+        <!-- Painel em Grade com Cartões -->
+        <div id="critical-cards-panel" class="row g-3 justify-content-center px-5 text-white rounded-4 shadow" style="max-height: 70vh; overflow-y: auto; padding-top: 1.5rem; padding-bottom: 1.5rem;">
+            {% for chamado in chamados_criticos %}
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="card critical-card h-100 shadow border-0 bg-black text-white">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex align-items-center mb-2 justify-content-between">
+                            <span class="fw-bold">
+                                Chamado {{ chamado.n_protocolo }}
+                            </span>
+                            <span class="text-white-50 small">
+                                ABERTO NO DIA {{ chamado.dt_inclusao|date:"d/m/Y" }}
+                            </span>
+                        </div>
+                        <div class="mb-1"><strong>Solicitante:</strong> {{ chamado.requisitante.nome }}</div>
+                        <div class="mb-1"><strong>Secretaria:</strong> {{ chamado.secretaria.nome }}</div>
+                        <div class="mb-1"><strong>Responsável:</strong> {{ chamado.profissional_designado.nome_servidor|default:"N/H" }}</div>
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <span>
+                                <strong>Prioridade:</strong>
+                                <span class="badge 
+                                    {% if chamado.prioridade == '2' %}bg-danger
+                                    {% elif chamado.prioridade == '1' %}bg-warning text-dark
+                                    {% elif chamado.prioridade == '0' %}bg-info text-dark
+                                    {% else %}bg-secondary
+                                    {% endif %}">
+                                    {{ chamado.get_prioridade_display }}
+                                </span>
+                            </span>
+                            <span class="text-danger fw-bold">
+                                <i class="fa-solid fa-clock fa-spin me-1"></i>
+                                {{ chamado.dias_em_aberto }} dias em aberto
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-success text-center">Nenhum chamado antigo em aberto!</div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Fim do painel em grade -->
+    </div>
+     <div id="display-6" class="container-fluid m-auto">
+        <h3 class="text-white text-center">
+            MONINOTORAMENTO DE SERVIÇOS
+        </h3>
+        <div class="row px-4 my-4 justify-content-center">
+            <div class="col-12 col-lg-8">
+                <!-- Alerta de matrícula não encontrada -->
+                {% if logs_nao_encontrados %}
+                    <div class="alert alert-danger text-center mb-4" role="alert" style="font-size: 1.1rem;">
+                        <i class="fa fa-exclamation-triangle me-2"></i>
+                        Matrícula não encontrada ao tentar se cadastrar na Intranet!
+                    </div>
+                {% endif %}
+                <!-- Painel de monitoramento estilo UptimeRobot -->
+                <div class="card text-white shadow mb-3" style="background-color: transparent;">
+                    <div class="card-body px-2 py-3">
+                        <div class="row g-3">
+                            <!-- 4 colunas de serviços -->
+                            <div class="col-12 col-md-3">
+                                <!-- ...coluna 2 (6 serviços)... -->
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Site Oficial</strong><br>
+                                                    <small class="text-white-50">Online há 99.8% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Protocolo Digital</strong><br>
+                                                    <small class="text-white-50">Online há 99.5% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Portal RH</strong><br>
+                                                    <small class="text-white-50">Online há 99.9% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Portal Transparência</strong><br>
+                                                    <small class="text-white-50">Online há 99.7% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Portal Educação</strong><br>
+                                                    <small class="text-white-50">Online há 99.6% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-danger me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor Backup</strong><br>
+                                                    <small class="text-white-50">Offline - 80.0% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #dc3545; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <!-- ...coluna 2 (6 serviços)... -->
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Site Oficial</strong><br>
+                                                    <small class="text-white-50">Online há 99.8% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Protocolo Digital</strong><br>
+                                                    <small class="text-white-50">Online há 99.5% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Portal RH</strong><br>
+                                                    <small class="text-white-50">Online há 99.9% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Portal Transparência</strong><br>
+                                                    <small class="text-white-50">Online há 99.7% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Portal Educação</strong><br>
+                                                    <small class="text-white-50">Online há 99.6% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-danger me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor Backup</strong><br>
+                                                    <small class="text-white-50">Offline - 80.0% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #dc3545; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <!-- ...coluna 3 (6 serviços)... -->
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor Arquivos</strong><br>
+                                                    <small class="text-white-50">Online há 99.9% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor Web</strong><br>
+                                                    <small class="text-white-50">Online há 99.8% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor DNS</strong><br>
+                                                    <small class="text-white-50">Online há 99.9% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-warning text-dark me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor Proxy</strong><br>
+                                                    <small class="text-white-50">Intermitente - 95.0% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #dc3545; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor DHCP</strong><br>
+                                                    <small class="text-white-50">Online há 99.7% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor FTP</strong><br>
+                                                    <small class="text-white-50">Online há 99.9% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <!-- ...coluna 4 (6 serviços fictícios)... -->
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor Backup 2</strong><br>
+                                                    <small class="text-white-50">Online há 99.8% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-warning text-dark me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor Proxy 2</strong><br>
+                                                    <small class="text-white-50">Intermitente - 96.2% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #dc3545; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-danger me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor FTP 2</strong><br>
+                                                    <small class="text-white-50">Offline - 70.0% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #dc3545; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor Web 2</strong><br>
+                                                    <small class="text-white-50">Online há 99.9% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor DNS 2</strong><br>
+                                                    <small class="text-white-50">Online há 99.8% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-0 bg-black text-white mb-2">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;">&nbsp;</span>
+                                                <div>
+                                                    <strong>Servidor DHCP 2</strong><br>
+                                                    <small class="text-white-50">Online há 99.7% (30d)</small>
+                                                </div>
+                                            </div>
+                                            <span style="color: #28a745; font-weight: bold; font-size: 1.2rem;">||||</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- ...fim das colunas... -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- <div id="display-5" class="container-fluid m-auto">
         <h3 class="text-white text-center">Notícias</h3>
         <div class="row px-4 my-4">
@@ -266,7 +725,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let display_atual = 1;
-        let display_max = 4;
+        let display_max = 6;
         function next_display() {
             for (let i = 1; i <= display_max; i++) {
                 $('#display-' + i).fadeOut(); // Esconde com fade
@@ -348,6 +807,15 @@
             location.reload();
         }, 120000); 
     
+    </script>
+    <script>
+        // Ativa tooltips do Bootstrap 5
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        });
     </script>
 </body>
 </html>
