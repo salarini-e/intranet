@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Base HTML template with Bootstrap">
+    <title>Dashboard Chamados</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        html,body {
+            height: 100%;
+            overflow-y: hidden  ;
+        }
+        html{
+            background-image: url('/static/images/banner-pmnf.jpeg');
+            background-size: cover;
+            background-position: center;
+        }
+        body{
+            background-color: rgba(0, 0, 0, 0.692);
+        }
+        footer, #fake-footer {
+            font-size: 9pt;
+            line-height: auto;
+            position: fixed;
+            bottom: 0;
+            padding-top: 4px;
+            height: 30px;
+            width: 100%;
+        }
+        nav{
+            height: 40px;
+        }
+        nav .navbar-brand{
+            font-size: 10pt;
+        }
+        nav #logo {
+            height: 30px;
+            margin-right: 8px;
+        }
+        .col-graf {
+            min-height: 34vh;
+            max-height: 80vh;
+        }
+        canvas {
+            height: 100% !important;
+            width: 100% !important;
+            background-color: #000000e0;
+            padding: 40px;
+            border-radius: 15px;
+        }
+        #alertas, h5{
+            font-size: 1vw;
+        }
+        #alertas p{
+            font-size: 0.7vw;
+        }
+        #critical-cards-panel {
+            margin-top: 1.5rem;
+        }
+        .critical-card {
+            background: #111 !important;
+            color: #fff !important;
+            border-radius: 16px;
+            border: none !important;
+            transition: box-shadow 0.2s;
+            font-size: 0.5vw;
+        }
+        .critical-card:hover {
+            box-shadow: 0 0 0 4px #ffb30033;
+        }
+        .critical-icon i {
+            color: #dc3545;
+            font-size: 1.5rem;
+            animation: pulse 1.2s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1);}
+            100% { transform: scale(1.18);}
+        }
+        /* 3 por fileira, máximo 3 fileiras */
+        #critical-cards-panel .col-md-4 {
+            flex: 0 0 33.333333%;
+            max-width: 33.333333%;
+        }
+        @media (max-width: 991px) {
+            #critical-cards-panel .col-md-4 { flex: 0 0 50%; max-width: 50%; }
+        }
+        @media (max-width: 767px) {
+            #critical-cards-panel .col-md-4 { flex: 0 0 100%; max-width: 100%; }
+        }
+        .ind p{
+            color: aliceblue;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.5rem;
+        }
+        .ind p span{
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .ind2 p{         
+            font-size: 0.5rem;
+        }
+        .ind2 p span{
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .col-graf{
+            max-height: 252px !important;
+        }
+        .news-card {
+            background: rgba(255, 255, 255, 0.8);
+            color: black;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            padding: 15px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        .news-card a {
+            color: #007bff;
+        }
+        .quote-card {
+            background: linear-gradient(135deg, #f8fafc 60%, #e3e9f2 100%);
+            border-radius: 18px;
+            transition: box-shadow 0.2s, transform 0.2s;
+            width: auto;
+        }
+        .quote-card:hover {
+            box-shadow: 0 8px 32px 0 rgba(60,60,120,0.18), 0 1.5px 5px 0 rgba(0,0,0,0.10);
+            transform: translateY(-4px) scale(1.03);
+        }
+        .quote-text {
+            margin-bottom: 0;
+        }
+        .quote-author {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            white-space: normal;
+        }
+        @media (max-width: 600px) {
+            .quote-card { max-width: 100% !important; }
+            .quote-text, .quote-author { text-align: center !important; }
+        }
+        @media (max-width: 991px) {
+            #quote-widget .col-md-4 { flex: 0 0 100%; max-width: 100%; margin-bottom: 1.5em; }
+        }
+    </style>
+</head>
+<body class="d-flex flex-column">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="/static/brasao.ico" alt="" id="logo">
+                Prefeitura Municipal de Nova Friburgo
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content: Apenas display-5 -->
+    <div id="display-5" class="container-fluid m-auto">
+        <!-- <div class="row mx-auto" style="max-width: 96%;">
+            <div class="col px-5">
+                <h3 class="text-white text-center">
+                Avisos e alertas
+                </h3>                
+            </span>
+            </div>
+        </div> -->
+        <div class="row pt-3 justify-content-center px-5 mt-3 mx-auto" id="alertas" style="max-width: 96%;">
+            {% for log in logs %}
+            <div class="col-md-12 mx-5">
+                <div class="news-card border border-danger text-center">
+                    <!-- <h5 class="mb-2 text-danger">Erro ao cadastrar matrícula</h5> -->
+                    <p class="mb-1"><i class="fa-solid fa-triangle-exclamation me-2 text-danger"></i>O servidor {{log.nome}} não conseguiu se cadastrar com a matrícula <strong>{{log.matricula}}</strong>, da <strong style="color: #333333;">{{log.secretaria}}</strong>, na <strong>INTRANET</strong>.</p>                    
+                </div>
+            </div>            
+            {% empty %}
+            <div class="col-md-12 mx-5">
+                <!-- Frase de pensador - Design aprimorado, centralizado -->
+                <section id="quote-widget" class="d-flex justify-content-center align-items-center" style="min-height: 120px;">
+                    <div class="container py-4 px-3" style="max-width: 600px;">
+                        <div class="card shadow quote-card border-0" style="max-width: 540px; margin: 0 auto;">
+                            <div class="card-body d-flex flex-column align-items-center p-4">
+                                <div class="quote-text text-center w-100" id="quote-0" style="font-size:1.15em; color:#222; font-family:'Georgia',serif; font-style:italic; word-break:break-word;">
+                                    <span class="text-muted">Carregando...</span>
+                                </div>
+                                <div class="quote-author text-end w-100 mt-3" id="author-0" style="font-size:1em; color:#555;"></div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <small class="text-secondary" style="font-size:0.95em;">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                Inspiração para seu dia!
+                            </small>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Remover outros displays e seções comentadas -->
+
+    <!-- Footer -->
+    <div id="fake-footer" class="bg-dark text-light" style="opacity: 0;">
+        <div class="container text-center">
+            <p>&copy; 2025 Subsecretaria de Tecnologia da Informação e Comunicação. Todos os direitos reservados.</p>
+        </div>
+    </div>
+    <footer class="bg-dark text-light">
+        <div class="container text-center">
+            <p>&copy; 2025 Subsecretaria de Tecnologia da Informação e Comunicação. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Ativa tooltips do Bootstrap 5
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        });
+
+        // Redireciona para a próxima dashboard após 10 segundos
+        // setTimeout(function() {
+        //     window.location.href = "/chamados/new_dashboard/";
+        // }, 10000);
+
+        // Frase de pensador (1 frase, traduzida, design aprimorado)
+        document.addEventListener('DOMContentLoaded', function () {
+            // Defina para true para usar apenas fallbackQuotes, false para tentar API + fallback
+            const useOnlyFallbackQuotes = true;
+
+            // Lista de frases fallback (array de objetos {quote, author}), sem frases do Elon Musk
+            const fallbackQuotes = [
+                { quote: "A inovação distingue um líder de um seguidor.", author: "Steve Jobs" },
+                { quote: "Não se gerencia o que não se mede.", author: "Peter Drucker" },
+                { quote: "O software está comendo o mundo.", author: "Marc Andreessen" },
+                { quote: "A melhor maneira de prever o futuro é inventá-lo.", author: "Alan Kay" },
+                { quote: "Simplicidade é a sofisticação máxima.", author: "Leonardo da Vinci" },
+                { quote: "Se você não pode falhar, não pode inovar.", author: "Reid Hoffman" },
+                { quote: "Grandes equipes constroem grandes produtos.", author: "Ben Horowitz" },
+                { quote: "Trate seus programadores como poetas.", author: "Robert C. Martin" },
+                { quote: "Não existe um botão mágico. Existe um time forte.", author: "Sheryl Sandberg" },
+                { quote: "Oportunidade está onde as soluções ainda não foram construídas.", author: "Satya Nadella" },
+                { quote: "O design não é apenas o que parece. É como funciona.", author: "Steve Jobs" },
+                { quote: "Agilidade é sobre entregar valor contínuo.", author: "Jeff Sutherland" },
+                { quote: "A tecnologia sozinha não basta.", author: "Steve Jobs" },
+                { quote: "A persistência é o caminho do êxito.", author: "Charles Chaplin" },
+                { quote: "O talento vence jogos, mas o trabalho em equipe vence campeonatos.", author: "Michael Jordan" },
+                { quote: "Grandes programadores são artistas.", author: "Bill Gates" },
+                { quote: "A criatividade é inteligência se divertindo.", author: "Albert Einstein" },
+                { quote: "Se você quer ir rápido, vá sozinho. Se quer ir longe, vá em equipe.", author: "Provérbio africano" },
+                { quote: "Não é sobre ideias. É sobre fazer acontecer.", author: "Scott Belsky" },
+                { quote: "A excelência não é um ato, é um hábito.", author: "Aristóteles" },
+                { quote: "Transparência gera confiança. Confiança gera velocidade.", author: "Stephen Covey" },
+                { quote: "Código limpo é como poesia: direto, belo e com propósito.", author: "Robert C. Martin" },
+                { quote: "Liderar é servir, não controlar.", author: "Simon Sinek" },
+                { quote: "Não construa produtos. Resolva problemas.", author: "Paul Graham" },
+                { quote: "Iterar é melhor que adivinhar.", author: "Eric Ries" },
+                { quote: "Trabalhar duro no que ama é paixão.", author: "Simon Sinek" },
+                { quote: "Empresas bem-sucedidas constroem pontes, não muros.", author: "Satya Nadella" },
+                { quote: "Problemas são convites à criatividade.", author: "Dan Pink" },
+                { quote: "Todo sistema tende à complexidade. Cabe a nós lutar pela simplicidade.", author: "Martin Fowler" },
+                { quote: "Quando todos pensam igual, ninguém está pensando.", author: "Benjamin Franklin" },
+                { quote: "Qualidade é fazer certo quando ninguém está olhando.", author: "Henry Ford" },
+                { quote: "Seu código é sua reputação.", author: "Linus Torvalds" },
+                { quote: "Não tenha medo de reescrever.", author: "Kent Beck" },
+                { quote: "Transformações digitais começam com pessoas.", author: "Brian Solis" },
+                { quote: "Tecnologia deve ampliar o humano, não substituí-lo.", author: "Ginni Rometty" },
+                { quote: "O cliente pode não ter sempre razão, mas deve sempre ser ouvido.", author: "Jeff Bezos" },
+                { quote: "Faça menos, mas melhor.", author: "Greg McKeown" },
+                { quote: "A disciplina é a ponte entre metas e realizações.", author: "Jim Rohn" },
+                { quote: "Toda equipe precisa de tempo para pensar, não só executar.", author: "Basecamp Team" },
+                { quote: "Velocidade é útil apenas se você estiver na direção certa.", author: "Joel Barker" },
+                { quote: "Erre rápido. Aprenda mais rápido.", author: "Eric Schmidt" },
+                { quote: "Boas perguntas importam mais que boas respostas.", author: "Peter Block" },
+                { quote: "Não existe código perfeito, apenas menos problemático.", author: "Linus Torvalds" },
+                { quote: "Na dúvida, teste.", author: "Kent Beck" },
+                { quote: "A liderança técnica é humildade, não ego.", author: "John Allspaw" },
+                { quote: "As melhores ideias surgem em times diversos.", author: "Reshma Saujani" },
+                { quote: "Tecnologia é ferramenta. A transformação é cultural.", author: "Gene Kim" },
+                { quote: "Foco não é dizer sim, é saber dizer não.", author: "Steve Jobs" },
+                { quote: "A mente que se abre a uma nova ideia jamais volta ao seu tamanho original.", author: "Albert Einstein" },
+                { quote: "Você não escala código. Você escala pessoas.", author: "Camille Fournier" },
+                { quote: "Automatize o entediante. Valorize o criativo.", author: "Casey Neistat" },
+                { quote: "Empatia é o motor da inovação.", author: "Satya Nadella" },
+                { quote: "A confiança é o maior acelerador de uma equipe.", author: "Patrick Lencioni" },
+                { quote: "Menos é mais. Sempre.", author: "Dieter Rams" },
+                { quote: "O desafio não é adotar tecnologia. É mudar comportamentos.", author: "Clay Shirky" },
+                { quote: "Cresça, aprenda, contribua. Essa é a missão.", author: "Naval Ravikant" },
+                { quote: "Seu sistema é tão bom quanto sua documentação.", author: "Joel Spolsky" },
+                { quote: "Desafios são convites à excelência.", author: "Anônimo" },
+                { quote: "Um bug é uma oportunidade de aprendizado disfarçada.", author: "Slogan ágil" },
+                { quote: "Códigos mudam. Pessoas ficam.", author: "ThoughtWorks" },
+                { quote: "Tecnologia sem propósito é ruído.", author: "Joi Ito" },
+                { quote: "Desenvolvimento é arte e engenharia misturados.", author: "Bill Gates" },
+                { quote: "Na dúvida, compartilhe conhecimento.", author: "Slogan de cultura dev" },
+                { quote: "Times fortes constroem sistemas fortes.", author: "Kent Beck" },
+                { quote: "Devagar se vai longe — se estiver testando bem.", author: "Anônimo" },
+                { quote: "Uma boa reunião economiza mil commits mal pensados.", author: "Anônimo" },
+                { quote: "Motivação vem de propósito, não de pressão.", author: "Daniel Pink" },
+                { quote: "A melhor arquitetura nasce de boas restrições.", author: "Martin Fowler" },
+                { quote: "Você não é pago para programar. É pago para resolver.", author: "Eduardo Salarini 😎" },
+                { quote: "Desenvolver é resolver problemas, não escrever linhas.", author: "Eduardo Salarini" },
+                { quote: "Aprenda algo novo toda semana.", author: "Scott Hanselman" },
+                { quote: "Boas ferramentas não salvam um mau processo.", author: "Jez Humble" },
+                { quote: "Tudo que é medido melhora.", author: "Tom DeMarco" },
+                { quote: "A evolução de um sistema reflete a organização que o criou.", author: "Lei de Conway" },
+                { quote: "Resiliência é um dos maiores ativos de um time.", author: "Brené Brown" },
+                { quote: "Menos ego. Mais entrega.", author: "Cultura Dev" },
+                { quote: "Tecnologia deve servir à sociedade, não ao contrário.", author: "Parafraseando G. D. Kranz" },
+                { quote: "A inteligência coletiva é mais poderosa que o talento individual.", author: "Pierre Lévy" },
+                { quote: "Código bom é aquele que outra pessoa entende.", author: "Sábio dev" }
+            ];
+
+            function showFallbackQuote() {
+                const idx = Math.floor(Math.random() * fallbackQuotes.length);
+                const q = fallbackQuotes[idx];
+                document.getElementById('quote-0').innerHTML = `"${q.quote}"`;
+                document.getElementById('author-0').innerHTML = q.author ? `— ${q.author}` : '';
+                const spinner = document.getElementById('quote-spinner');
+                if (spinner) spinner.style.display = 'none';
+            }
+
+            // Mostra spinner enquanto carrega
+            document.getElementById('quote-0').innerHTML = `
+                <div id="quote-spinner" class="d-flex justify-content-center align-items-center" style="height: 48px;">
+                    <div class="spinner-border text-dark" role="status" style="width: 2.5rem; height: 2.5rem;">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+            `;
+
+            if (useOnlyFallbackQuotes) {
+                showFallbackQuote();
+                return;
+            }
+            fetch('https://api.api-ninjas.com/v1/quotes', {
+                headers: { 'X-Api-Key': 'E4fyy2juAtaSuIwVTe5IQw==ancRz8joKo6bF5wa' }
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('API error');
+                    return response.json();
+                })
+                .then(data => {
+                    if (Array.isArray(data) && data.length > 0 && data[0].quote) {
+                        const quote = data[0].quote;
+                        const author = data[0].author;
+                        fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=pt&dt=t&q=' + encodeURIComponent(quote))
+                            .then(resp => resp.json())
+                            .then(translatedArr => {
+                                const translated = translatedArr[0][0][0];
+                                document.getElementById('quote-0').innerHTML = `"${translated}"`;
+                                document.getElementById('author-0').innerHTML = author ? `— ${author}` : '';
+                                const spinner = document.getElementById('quote-spinner');
+                                if (spinner) spinner.style.display = 'none';
+                            })
+                            .catch(showFallbackQuote);
+                    } else {
+                        showFallbackQuote();
+                    }
+                })
+                .catch(showFallbackQuote);
+        });
+    </script>
+</body>
+</html>

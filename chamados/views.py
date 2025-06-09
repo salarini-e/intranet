@@ -31,7 +31,7 @@ from .graficos import (date_chamados_por_secretaria, options_chamados_por_secret
                        data_generic, options_generic, date_chamados_por_atendente, 
                        options_chamados_por_atendente, date_chamados_por_mes, options_chamados_por_mes,)
 
-
+from instituicoes.models import Log_Nao_Encontrados
 
 # Define a localidade para português (Brasil)
 locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
@@ -1411,7 +1411,13 @@ def new_dashboard_2(request):
     }
     return render(request, 'chamados/new_dashboard_2.html', context)
 
+def new_dashboard_3(request):
+    logs = Log_Nao_Encontrados.objects.all().order_by('-id')
+    context = {
+        'logs': logs,
+    }
 
+    return render(request, 'chamados/new_dashboard_3.html', context)
 import requests
 def get_news():
     API_KEY = 'a562b55b3c794fff85f3492b3a72fa15'

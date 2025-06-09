@@ -72,7 +72,7 @@
             border-radius: 16px;
             border: none !important;
             transition: box-shadow 0.2s;
-            font-size: 0.5vw;
+            font-size: 0.7vw;
         }
         .critical-card:hover {
             box-shadow: 0 0 0 4px #ffb30033;
@@ -152,15 +152,7 @@
                 Total: {{ chamados_criticos|length }}
             </span>
             </div>
-        </div>
-        <div class="row pt-3 justify-content-center px-5 mt-3 mx-auto" id="alertas" style="max-width: 96%;">
-            <div class="col-md-12 mx-5">
-                <div class="news-card border border-danger text-center">
-                    <h5 class="mb-2 text-danger"><i class="fa-solid fa-triangle-exclamation me-2"></i>Erro ao cadastrar matrícula</h5>
-                    <p class="mb-1">Não foi possível cadastrar a matrícula <strong>06358</strong> da <br><strong>Secretaria de Ciência e Tecnologia</strong>.</p>                    
-                </div>
-            </div>            
-        </div>
+        </div>        
         <!-- Painel em Grade com Cartões -->
         <div id="critical-cards-panel" class="row g-3 justify-content-center px-5 text-white rounded-4 shadow" style="max-height: 70vh; overflow-y: auto; padding-bottom: 1.5rem;">
             <div class="col">

@@ -48,6 +48,7 @@ urlpatterns = [
     path('download/relatorio/', views.download_relatorio, name='download_relatorio'),
     path('new_dashboard/', views.new_dashboard, name='new_dashboard'),
     path('new_dashboard_2/', views.new_dashboard_2, name='new_dashboard_2'),
+    path('new_dashboard_3/', views.new_dashboard_3, name='new_dashboard_3'),
     path('dashboard/satisfacao/', views.painel_satisfacao, name='satisfacao'),
     path('pesquisar-feedback/', views.pesquisar_feedback, name='pesquisar_feedback'),
     path('pesquisar-feedback/download-excel/', views.feedback_in_excel, name='download_excel_feedback'),
