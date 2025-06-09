@@ -1382,7 +1382,7 @@ def new_dashboard(request):
     return render(request, 'chamados/new_dashboard.html', context)
 
 
-@login_required
+
 def new_dashboard_2(request):
     from .models import Chamado
     from datetime import timedelta
