@@ -1812,3 +1812,49 @@ def editar_detalhes_chamado(request, hash):
                 'chamado': instance
               }
     return render(request, 'chamados/editar_detalhes_chamado.html', context)
+
+from .debug_commands import (
+    debug_tutorial,
+    debug_query_command,
+    debug_show_from_command,
+    debug_count_chamados_command,
+    debug_tipos_command,
+    debug_tables_command
+)
+
+def debug(request):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden('Você não tem autorização para acessar esta página!')
+
+    debug_output = ""
+    if request.method == 'POST':
+        comando = request.POST.get('debug_input', '').strip()
+        debug_type = request.POST.get('debug_type', 'cmd').lower()
+
+        if debug_type == 'query':
+            debug_output = debug_query_command(comando)
+        elif debug_type == 'cmd':
+            cmd = comando.strip()
+            cmd_lower = cmd.lower()
+            if cmd_lower.startswith('show from '):
+                debug_output = debug_show_from_command(cmd)
+            elif cmd_lower in ('count chamados', 'chamados'):
+                debug_output = debug_count_chamados_command(cmd)
+            elif cmd_lower == 'tipos':
+                debug_output = debug_tipos_command(cmd)
+            elif cmd_lower in ('tables', 'tabelas'):
+                debug_output = debug_tables_command(cmd)
+            else:
+                debug_output = debug_tutorial(f"<div style='color:#b00;'>Comando não reconhecido.</div>")
+        elif debug_type == 'help' or comando == '':
+            debug_output = debug_tutorial()
+        else:
+            debug_output = debug_tutorial(f"<div style='color:#b00;'>Comando não reconhecido.</div>")
+
+    else:
+        debug_output = debug_tutorial()
+
+    context = {
+        'debug_output': debug_output,
+    }
+    return render(request, 'chamados/debug.html', context)

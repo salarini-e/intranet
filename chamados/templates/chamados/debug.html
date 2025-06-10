@@ -1,0 +1,201 @@
+{% extends 'template_chamados.html' %}
+
+{% block chamados %}active{% endblock %}
+{% block main %}
+<style>
+/* Minimalist radio for cmd/query */
+.debug-radio-group {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 1rem;
+    align-items: center;
+}
+.debug-radio {
+    display: none;
+}
+.debug-radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1.08em;
+    border-radius: 12px;
+    padding: 3px 14px 3px 10px;
+    transition: color 0.18s, background 0.18s;
+    border: none;
+    background: none;
+    color: #888;
+    user-select: none;
+}
+.debug-radio:checked + .debug-radio-label {
+    background: none;
+    color: #222;
+    font-weight: bold;
+    border-bottom: 2px solid #007AFF;
+    box-shadow: none;
+    
+}
+.debug-radio-label.cmd {
+    color: #007AFF;
+}
+.debug-radio-label.query {
+    color: #34C759;
+    
+}
+/* Minimalist textarea */
+#debugInput {
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    resize: vertical;
+    font-family: monospace;
+    font-size: 1.1em;
+    color: #222;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    padding-left: 70px;
+}
+#debugInput:focus {
+    background: none !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+#cmdLabel{
+    font-size: 1.08em;
+    letter-spacing: 1px;
+    font-weight: bold;
+    position: absolute;
+    left: 10px;
+    /* top: 8px; */
+    pointer-events: none;
+    opacity: 0.85;
+}
+#queryLabel {
+    font-size: 1.08em;
+    letter-spacing: 1px;
+    font-weight: bold;
+    position: absolute;
+    left: 10px;
+    top: 0px;
+    pointer-events: none;
+    opacity: 0.85;
+}
+#cmdLabel {
+    color: #007AFF;
+}
+#queryLabel {
+    color: #34C759;
+}
+</style>
+<div class="container mt-4">
+    <h2>Debug Interface</h2>
+    <form method="post" id="debugForm" autocomplete="off">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Tipo de comando</label>
+            <div>
+                <input type="radio" id="debugTypeCmd" name="debug_type" value="cmd" checked>
+                <label for="debugTypeCmd" style="margin-right:18px;">cmd</label>
+                <input type="radio" id="debugTypeQuery" name="debug_type" value="query">
+                <label for="debugTypeQuery">query</label>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="debugInput" class="form-label">Debug Input</label>
+            <div style="position:relative;">
+                <textarea id="debugInput" name="debug_input" rows="1"
+                    placeholder="Ex: SELECT * FROM chamados_chamado LIMIT 5 ou show from Educação"></textarea>
+                <span id="cmdLabel">cmd:</span>
+                <span id="queryLabel" style="display:none;">query:</span>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Run Debug</button>
+    </form>
+    {% if debug_output %}
+    <div class="mt-4">
+        <h5>Debug Output:</h5>
+        <div>{{ debug_output|safe }}</div>
+    </div>
+    {% endif %}
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const debugTypeCmd = document.getElementById('debugTypeCmd');
+    const debugTypeQuery = document.getElementById('debugTypeQuery');
+    const debugInput = document.getElementById('debugInput');
+    const debugForm = document.getElementById('debugForm');
+    const cmdLabel = document.getElementById('cmdLabel');
+    const queryLabel = document.getElementById('queryLabel');
+
+    // Focus textarea on load
+    debugInput.focus();
+
+    // Make textarea 100% width (already in CSS, but ensure on resize)
+    function setTextareaFullWidth() {
+        debugInput.style.width = "100%";
+        debugInput.style.minWidth = "100%";
+        debugInput.style.maxWidth = "100%";
+    }
+    setTextareaFullWidth();
+    window.addEventListener('resize', setTextareaFullWidth);
+
+    // Update label and placeholder
+    function updateLabel() {
+        if (debugTypeCmd.checked) {
+            cmdLabel.style.display = '';
+            queryLabel.style.display = 'none';
+            debugInput.placeholder = "Ex: show from Educação";
+        } else {
+            cmdLabel.style.display = 'none';
+            queryLabel.style.display = '';
+            debugInput.placeholder = "Ex: SELECT * FROM chamados_chamado LIMIT 5";
+        }
+    }
+    debugTypeCmd.addEventListener('change', updateLabel);
+    debugTypeQuery.addEventListener('change', updateLabel);
+    updateLabel();
+
+    // Focus textarea on any keypress on the page
+    document.addEventListener('keydown', function(e) {
+        // If focus is not in textarea or a form element, focus textarea
+        const tag = document.activeElement.tagName.toLowerCase();
+        if (tag !== 'textarea' && tag !== 'input' && tag !== 'select' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            debugInput.focus();
+        }
+        // Submit on Enter if not Shift+Enter
+        if (document.activeElement === debugInput && e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            debugForm.requestSubmit();
+        }
+    });
+
+    // Sintaxe highlight para SQL keywords no modo query
+    function sqlHighlight(text) {
+        const keywords = ['select', 'from', 'where', 'limit', 'order by', 'group by', 'having', 'as', 'and', 'or', 'not', 'in', 'on', 'join', 'left', 'right', 'inner', 'outer', 'union', 'distinct', 'count', 'sum', 'avg', 'min', 'max'];
+        let result = text;
+        keywords.forEach(function(word) {
+            result = result.replace(new RegExp('\\b' + word + '\\b', 'gi'), function(match) {
+                return match.toUpperCase();
+            });
+        });
+        return result;
+    }
+
+    debugInput.addEventListener('input', function(e) {
+        if (debugTypeQuery.checked) {
+            const start = debugInput.selectionStart;
+            const end = debugInput.selectionEnd;
+            const before = debugInput.value;
+            const after = sqlHighlight(before);
+            if (before !== after) {
+                debugInput.value = after;
+                debugInput.setSelectionRange(start, end);
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

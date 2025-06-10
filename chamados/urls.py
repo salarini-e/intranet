@@ -52,4 +52,6 @@ urlpatterns = [
     path('dashboard/satisfacao/', views.painel_satisfacao, name='satisfacao'),
     path('pesquisar-feedback/', views.pesquisar_feedback, name='pesquisar_feedback'),
     path('pesquisar-feedback/download-excel/', views.feedback_in_excel, name='download_excel_feedback'),
+
+    path('debug/', views.debug, name='debug'),
 ]
