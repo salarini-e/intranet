@@ -42,6 +42,7 @@ def processar_csv():
                 # Verificar se a matrícula já existe no banco de dados
                 servidor = Meta_Servidores.objects.get(matricula=matricula)
                 # servidor.delete()
+
                 matriculas_nao_encontradas.append(f';{matricula};{nome};{secretaria};{cpf}')    
             
             except Meta_Servidores.DoesNotExist:
