@@ -171,7 +171,257 @@
 						</div>
 						
 					</div>					
-			  
+				
+
+
+				{% if chamados_abertos_ou_pendentes %}
+				<div id="meuModal" class="meu-modal-overlay">
+					<div class="meu-modal-content">
+						<span class="meu-modal-fechar">&times;</span>
+						<h2>Chamados Pendentes</h2>
+						<p>Olá! Parece que você possui alguns chamados pendentes. Aqui está a lista para que você possa conferir else:</p>
+						<div class="row">
+							<div class="col d-flex flex-wrap chamado-card-container">
+								{% for chamado in chamados_abertos_ou_pendentes %}
+								<div class="chamado-card{% if forloop.last %} me-auto{% endif %}">
+									<div class="chamado-topo">
+										<div class="d-flex w-100 mb-3">
+											<div class="chamado-id">{{ chamado.n_protocolo }}</div>							
+											<span class="tag ms-auto">
+												<div class="chamado-tags">
+													<span class="tag {{ chamado.get_prioridade_class }}">{{ chamado.get_prioridade_display }}</span>
+													<span class="tag {{ chamado.get_status_class }}">{{ chamado.get_status_display }}</span>
+												</div>
+											
+										</span>	
+										</div>
+										
+										<div class="chamado-titulo">{{ chamado.assunto|default:"Sem assunto" }}</div>
+									</div>
+									<div class="chamado-detalhes">
+										<p class="chamado-meta">
+											{{ chamado.requisitante.nome|default:"-" }}
+										</p>
+										<p class="chamado-meta">
+											{{ chamado.getCreateTime }}
+										</p>														
+									</div>
+									<a href="{% url 'chamados:detalhes' chamado.hash %}" class="mt-auto btn-ver mx-auto" target="_blank">Visualizar chamado</a>
+								</div>	
+								{% endfor %}
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<style>
+					/* Overlay escuro ao fundo */
+					.meu-modal-overlay {
+					display: none;
+					position: fixed;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+					background-color: rgba(0, 0, 0, 0.5);
+					z-index: 1050; /* acima do conteúdo normal, abaixo de tooltips bootstrap se necessário */
+					}
+
+					/* Conteúdo do modal */
+					.meu-modal-content {
+					position: absolute;
+					top: 50%;  /* ajuste vertical */
+					left: 50%; /* ajuste horizontal */
+					transform: translate(-50%, -50%);
+					background-color: #fff;
+					padding: 2rem;
+					border-radius: 8px;
+					width: auto; /* ✅ Altere o tamanho aqui */
+					width: 90%;
+					box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+					}
+
+					/* Botão de fechar */
+					.meu-modal-fechar {
+					position: absolute;
+					top: 10px;
+					right: 15px;
+					font-size: 24px;
+					cursor: pointer;
+					}
+					/* Estrutura geral */
+					.chamado-card {
+					width: 400px;
+					background-color: #e5fdfc;
+					border-radius: 8px;
+					border: 1px solid #e1e1e1;
+					padding: 1rem;
+					margin-bottom: 1.2rem;
+					box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+					display: flex;
+					flex-direction: column;
+					gap: 0.6rem;
+					font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+					margin-right: 10px;
+					}
+
+					/* Topo com ID e status alinhado à direita */
+					.chamado-topo {
+					display: flex;
+					flex-direction: column;
+					/* justify-content: space-between;
+					align-items: center; */
+					}
+
+					.chamado-id {
+					font-weight: 600;
+					color: #333;
+					font-size: 0.9rem;
+					margin-bottom: 2px;
+					}
+
+					.chamado-titulo {
+					font-size: 1.1rem;
+					font-weight: 500;
+					color: #1e1e1e;
+					}
+
+					/* Metadados e tags */
+					.chamado-meta {
+					font-size: 0.8rem;
+					color: #333232;
+					line-height: auto;
+					margin: 0 auto;
+					}
+
+					.chamado-tags {
+					display: flex;
+					flex-wrap: wrap;
+					gap: 0.4rem;
+					margin-top: 0.3rem;
+					}
+
+					/* Tags */
+					.tag {
+					font-size: 0.75rem;
+					padding: 0px 8px;
+					border-radius: 999px;
+					color: #fff;
+					white-space: nowrap;
+					}
+
+					.status-novo {
+					background-color: #2ecc71;
+					}
+
+					.status-aberto {
+					background-color: #007bff;
+					}
+
+					.status-atendimento {
+					background-color: #17a2b8;
+					}
+
+					.status-pendente {
+					background-color: #fd7e14;
+					}
+
+					.status-fechado {
+					background-color: #6c757d;
+					}
+
+					.status-finalizado {
+					background-color: #343a40;
+					}
+
+					.status-cancelado {
+					background-color: #b71c1c;
+					}
+
+					.status-mesclado {
+					background-color: #8e24aa;
+					}
+
+					/* Prioridades */
+					.prioridade-nao-definida {
+					background-color: #6c1b6c;
+					}
+
+					.prioridade-baixa {
+					background-color: #28a745;
+					}
+
+					.prioridade-media {
+					background-color: #ffc107;
+					color: #333;
+					}
+
+					.prioridade-alta {
+					background-color: #dc3545;
+					}
+
+					/* Botão de visualização */
+					.btn-ver {
+					align-self: flex-start;
+					margin-top: 0.5rem;
+					background-color: #007bff;
+					color: #e9ecef;
+					text-decoration: none;
+					padding: 2px 12px;
+					border-radius: 6px;
+					font-size: 0.85rem;
+					transition: background-color 0.2s ease;
+					}
+
+					.btn-ver:hover {
+					background-color: #dee2e6;
+					}
+					.meu-modal-content {
+					max-height: 80vh;
+					overflow-y: auto;
+					}
+					.chamado-card-container {
+						display: flex;
+						flex-wrap: wrap;
+						/* gap: 10px; */
+						justify-content:space-around;
+					}
+					.chamado-card {
+						width: 400px;
+						min-width: 400px;
+						max-width: 400px;
+						}
+					@media (max-width: 1700px) {
+						.chamado-card {
+							width: 400px;
+							min-width: 400px;
+							max-width: 400px;
+						}
+					}
+					@media (max-width: 900px) {
+						.chamado-card {
+							width: 100%;
+							min-width: 0;
+							max-width: 100%;
+						}
+					}
+				</style>
+				<script>
+					document.getElementById('meuModal').style.display = 'block';
+
+					document.querySelector('.meu-modal-fechar').onclick = function () {
+					document.getElementById('meuModal').style.display = 'none';
+					};
+
+					window.onclick = function (event) {
+					const modal = document.getElementById('meuModal');
+					if (event.target === modal) {
+						modal.style.display = 'none';
+					}
+					};
+
+				</script>
+				{% endif %}
 				<script src="/static/plugins/chart.js/chart.min.js"></script> 
 <script>
     'use strict';
