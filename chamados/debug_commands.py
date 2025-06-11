@@ -21,7 +21,7 @@ def debug_tutorial(extra_msg=""):
     return f"{extra_msg}<pre style='background:#f5f5f5;padding:8px;border-radius:4px;'>{tutorial}</pre>"
 
 def debug_query_command(comando):
-    sql = comando[6:].strip()
+    sql = comando.strip()
     query_out = f"<div style='background:#f5f5f5;padding:8px;border-radius:4px;margin-bottom:8px;'><b>Query enviada:</b><br><code style='font-size:1.1em'>{sql}</code></div>"
     if not sql.lower().startswith('select'):
         return f"{query_out}<div style='color:#b00;'>Apenas comandos SELECT são permitidos por segurança.</div>"
