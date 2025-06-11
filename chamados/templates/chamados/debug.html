@@ -91,7 +91,14 @@
 }
 </style>
 <div class="container mt-4">
-    <h2>Debug Interface</h2>
+    <div class="row">
+        <div class="col d-flex">
+            <h2>Debug Interface</h2>
+            <a href="{% url 'chamados:tickets' %}" class="my-auto btn app-btn-secondary ms-auto" data-bs-toggle="tooltip" data-bs-title="Voltar">
+                Voltar
+            </a>            
+        </div>
+    </div>
     <form method="post" id="debugForm" autocomplete="off">
         {% csrf_token %}
         <div class="mb-3">

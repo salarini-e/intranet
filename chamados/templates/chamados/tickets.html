@@ -31,7 +31,11 @@
             <a href="{% url 'chamados:new_dashboard' %}" target="_blank" class="my-auto btn app-btn-secondary" data-bs-toggle="tooltip" data-bs-title="Dashboard">
                 <i class="fa-solid fa-chart-line"></i>
             </a>
-            
+            {% if request.user.is_superuser %}
+            <a href="{% url 'chamados:debug' %}" class="my-auto btn app-btn-secondary" data-bs-toggle="tooltip" data-bs-title="Debug interface">
+                <i class="fa-solid fa-bug-slash"></i>
+            </a>
+            {% endif %}
             {% endif %}
             {% endif %}
             <a href="{% url 'chamados:tickets' %}" class="my-auto btn app-btn-secondary" data-bs-toggle="tooltip" data-bs-title="Atualizar página">
