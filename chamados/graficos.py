@@ -230,7 +230,7 @@ def data_generic(titulo, periodo='dia'):
 def data_generic_bar_semanal(titulo):
     """
     Gera dados para gráfico de barras agrupados por semana (segunda a domingo),
-    considerando as últimas 18 semanas (incluindo a atual).
+    considerando as últimas 10 semanas (incluindo a atual).
     """
     from django.utils import timezone
     import calendar
@@ -251,11 +251,11 @@ def data_generic_bar_semanal(titulo):
     weekday = hoje.weekday()  # 0 = segunda-feira
     segunda_atual = hoje - timedelta(days=weekday)
 
-    # Calcular a data da segunda-feira de 17 semanas atrás (total 18 semanas)
-    segunda_inicio = segunda_atual - timedelta(weeks=17)
+    # Calcular a data da segunda-feira de 11 semanas atrás (total 10 semanas)
+    segunda_inicio = segunda_atual - timedelta(weeks=11)
 
     # Gerar lista de segundas-feiras (início de cada semana)
-    semanas = [segunda_inicio + timedelta(weeks=i) for i in range(18)]
+    semanas = [segunda_inicio + timedelta(weeks=i) for i in range(10)]
 
     # Buscar os dados do banco agrupando por semana (segunda-feira)
     agrupamento = "DATE_FORMAT(DATE_SUB(dt_inclusao, INTERVAL(WEEKDAY(dt_inclusao)) DAY), '%%Y-%%m-%%d')"
