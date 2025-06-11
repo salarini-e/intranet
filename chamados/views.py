@@ -1327,16 +1327,20 @@ def api_get_data_servidor(request):
 from dashboards.graficos import dados_chamados_por_secretaria
 
 def new_dashboard(request):
-    
-    
+    from .graficos import (
+        date_chamados_por_secretaria, options_chamados_por_secretaria,
+        data_generic_bar_semanal, options_generic, date_chamados_por_atendente,
+        options_chamados_por_atendente, date_chamados_por_mes, options_chamados_por_mes,
+    )
+
     graficos = [        
         {'id': 'chartA1', 'tipo': 'bar', 'dados': date_chamados_por_secretaria(), 'opcoes': options_chamados_por_secretaria(), 'scales': {}, 'plugins': '[ChartDataLabels]'},
-        {'id': 'chartC1', 'tipo': 'line', 'dados': data_generic('impressora'), 'opcoes': options_generic('impressora'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
-        {'id': 'chartC2', 'tipo': 'line', 'dados': data_generic('internet'), 'opcoes': options_generic('internet'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
-        {'id': 'chartC3', 'tipo': 'line', 'dados': data_generic('sistemas - E&L'), 'opcoes': options_generic('sistemas - E&L'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
-        {'id': 'chartD1', 'tipo': 'line', 'dados': data_generic('computador'), 'opcoes': options_generic('computador'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
-        {'id': 'chartD2', 'tipo': 'line', 'dados': data_generic('telefonia'), 'opcoes': options_generic('telefonia'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
-
+        # Alterado para barra semanal
+        {'id': 'chartC1', 'tipo': 'bar', 'dados': data_generic_bar_semanal('impressora'), 'opcoes': options_generic('impressora'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartC2', 'tipo': 'bar', 'dados': data_generic_bar_semanal('internet'), 'opcoes': options_generic('internet'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartC3', 'tipo': 'bar', 'dados': data_generic_bar_semanal('sistemas - E&L'), 'opcoes': options_generic('sistemas - E&L'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartD1', 'tipo': 'bar', 'dados': data_generic_bar_semanal('computador'), 'opcoes': options_generic('computador'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
+        {'id': 'chartD2', 'tipo': 'bar', 'dados': data_generic_bar_semanal('telefonia'), 'opcoes': options_generic('telefonia'), 'scales': {}, 'plugins': '[ChartDataLabels]'},
         {'id': 'chartA2', 'tipo': 'bar', 'dados': date_chamados_por_atendente(), 'opcoes': options_chamados_por_atendente(), 'scales': {}, 'plugins': '[ChartDataLabels]'},
         {'id': 'chartA3', 'tipo': 'bar', 'dados': date_chamados_por_mes(), 'opcoes': options_chamados_por_mes(), 'scales': {}, 'plugins': '[ChartDataLabels]'},
         # {'id': 'chartD3', 'tipo': 'line', 'dados': date_generic(), 'opcoes': options_generic('a'), 'scales': {}, 'plugins': '[ChartDataLabels]'},

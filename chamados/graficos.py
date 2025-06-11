@@ -227,6 +227,66 @@ def data_generic(titulo, periodo='dia'):
 
     return data
 
+def data_generic_bar_semanal(titulo):
+    """
+    Gera dados para gráfico de barras agrupados por semana (segunda a domingo),
+    considerando as últimas 18 semanas (incluindo a atual).
+    """
+    from django.utils import timezone
+    import calendar
+
+    data = {
+        "labels": [],
+        "datasets": [{
+            'label': 'Total de chamados',
+            'data': [],
+            'backgroundColor': DEFAULT_COLORS[titulo],
+            'borderColor': DEFAULT_COLORS[titulo],
+            'borderWidth': 2,
+        }]
+    }
+
+    # Calcular a data da segunda-feira da semana atual
+    hoje = timezone.now().date()
+    weekday = hoje.weekday()  # 0 = segunda-feira
+    segunda_atual = hoje - timedelta(days=weekday)
+
+    # Calcular a data da segunda-feira de 17 semanas atrás (total 18 semanas)
+    segunda_inicio = segunda_atual - timedelta(weeks=17)
+
+    # Gerar lista de segundas-feiras (início de cada semana)
+    semanas = [segunda_inicio + timedelta(weeks=i) for i in range(18)]
+
+    # Buscar os dados do banco agrupando por semana (segunda-feira)
+    agrupamento = "DATE_FORMAT(DATE_SUB(dt_inclusao, INTERVAL(WEEKDAY(dt_inclusao)) DAY), '%%Y-%%m-%%d')"
+    data_inicio = segunda_inicio
+
+    query = f"""
+        SELECT {agrupamento} AS semana_inicio, COUNT(id) AS total
+        FROM chamados_chamado
+        WHERE tipo_id = (
+            SELECT id FROM chamados_tipochamado WHERE nome = %s
+        )
+        AND dt_inclusao >= %s
+        GROUP BY semana_inicio
+        ORDER BY semana_inicio;
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, [titulo, data_inicio])
+        resultados = cursor.fetchall()
+        # Corrige: converte a chave para str, não para int
+        resultados_dict = {str(row[0]): row[1] for row in resultados}
+
+    # Montar os labels e os dados, garantindo 0 para semanas sem chamados
+    for segunda in semanas:
+        label = segunda.strftime("%d/%m/%Y")
+        chave = segunda.strftime("%Y-%m-%d")
+        data["labels"].append(label)
+        data['datasets'][0]["data"].append(resultados_dict.get(chave, 0))
+
+    return data
+
 def options_chamados_por_secretaria():
     return '''{
                 responsive: true,
