@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
 {% load bootstrap5 %}
-
 <html lang="pt-br">
     <head>
         <link rel="icon" type="image/x-icon" href="https://senhas.novafriburgo.rj.gov.br/static/favicon.ico">
@@ -94,25 +93,19 @@
                     <label for="matricula" class="form-label">Sua matrícula</label>
                     <div class="d-flex">
                         <input type="text" class="form-control" id="matricula" name="matricula" maxlength="6" required>
-                        
-                        
-                        <button id="validar" type="button" class="btn btn-success m-0" style="width: auto !important; background-color: rgb(57, 163, 57); border-color: rgb(57, 163, 57);">
-
-                        <script type="module">
-                            import { validarMatricula } from '{% static 'js/valida_matricula.js' %}';   
-
-                            document.getElementById('validar').addEventListener('click', async () => {
-                                const matricula = document.getElementById('matricula').value;
-                                await validarMatricula(matricula);
-                            });
-
-                        </script>
-
-                        {% comment %} <button id="validar" type="button" class="btn btn-success m-0" style="width: auto !important; background-color: rgb(57, 163, 57); border-color: rgb(57, 163, 57);" onclick="callMetaServidor()"> {% endcomment %}
+                        <button id="validar" type="button" class="btn btn-success m-0" style="width: auto !important; background-color: rgb(57, 163, 57); border-color: rgb(57, 163, 57);" onclick="callMetaServidor()">
                             <span class='btn_text' id='btn_text'>Validar</span>
                             <img id='loading_validar' src="{% static 'images/loading.png'%}" class='btn_loading_image'/>
                         </button>
+
+
+                        {% comment %} <button id="validar" type="button" class="btn btn-success m-0" style="width: auto !important; background-color: rgb(57, 163, 57); border-color: rgb(57, 163, 57);" onclick="callMetaServidor()">
+                            <span class='btn_text' id='btn_text'>Validar</span>
+                            <img id='loading_validar' src="{% static 'images/loading.png'%}" class='btn_loading_image'/>
+                        </button> {% endcomment %}
                     </div>
+                    
+                    
                     <div class="row">
                         <small id="error" class="text-danger">
                         
@@ -216,413 +209,413 @@
         </style>
         <script src="/static/js/request.js"></script>
                         
-        <script>		            
-            var podeCadastrar= false;
-            var buttonCadastrar = document.getElementById('cadastrar');
-            var buttonValidar = document.getElementById('validar');
-            buttonCadastrar.addEventListener('mouseenter', function(e) {                        
-                buttonValidar.classList.add('shake');
-                if (!podeCadastrar) {
-                    buttonCadastrar.classList.add('disabled');
-                }
-            });
-            buttonCadastrar.addEventListener('click', function(e) {
-                if (!podeCadastrar) {
-                    e.preventDefault();                                
-                }else{                            
-                    form.submit();
-                }
-                
-            });
-            buttonCadastrar.addEventListener('animationend', function() {
-                buttonValidar.classList.remove('shake');
-            });
-            function errorCPF(response){
-                response = JSON.parse(response);                        
-                var cpfSmall = document.getElementById('errorCPF');
-                cpfSmall.innerText = response.msg;
-            }
-            function checkInputLength(inputId) {
-                var input = document.getElementById(inputId);
-                if(input.value.length === 14) {
-                    console.log(input.value.length)
-                    getRequest("{% url 'ins:testar_cpf' %}" + "?cpf=" + input.value, errorCPF);
-                } else {
-                    console.log(input.value.length)
-                }
-            }
-
+                        <script>		                        
+                            var podeCadastrar= false;
+                            var buttonCadastrar = document.getElementById('cadastrar');
+                            var buttonValidar = document.getElementById('validar');
+                            buttonCadastrar.addEventListener('mouseenter', function(e) {                        
+                                buttonValidar.classList.add('shake');
+                                if (!podeCadastrar) {
+                                    buttonCadastrar.classList.add('disabled');
+                                }
+                            });
+                            buttonCadastrar.addEventListener('click', function(e) {
+                                if (!podeCadastrar) {
+                                    e.preventDefault();                                
+                                }else{                            
+                                    form.submit();
+                                }
+                                
+                            });
+                            buttonCadastrar.addEventListener('animationend', function() {
+                                buttonValidar.classList.remove('shake');
+                            });
+                            function errorCPF(response){
+                                response = JSON.parse(response);                        
+                                var cpfSmall = document.getElementById('errorCPF');
+                                cpfSmall.innerText = response.msg;
+                            }
+                            function checkInputLength(inputId) {
+                                var input = document.getElementById(inputId);
+                                if(input.value.length === 14) {
+                                    console.log(input.value.length)
+                                    getRequest("{% url 'ins:testar_cpf' %}" + "?cpf=" + input.value, errorCPF);
+                                } else {
+                                    console.log(input.value.length)
+                                }
+                            }
         
-            
-            function montarSelect(response){    
-                var form = document.getElementById('novos-inputs');
-                form.innerHTML = '';
-                console.log(response)
-                if (response == 404){                            
-                    document.getElementById('error').innerHTML = 'Servidor não encontrado';
-                    btnValidar = document.getElementById('validar');  
-                    btnValidar.classList.remove('btn-secondary');
-                    btnValidar.classList.add('btn-success')
-                    btnValidar.classList.remove('btnValidar');
-                }
-                else if(response == 500){
-                    document.getElementById('error').innerText = 'Servidor não encontrado';
-                    btnValidar = document.getElementById('validar');  
-                    btnValidar.classList.remove('btn-secondary');
-                    btnValidar.classList.add('btn-success')
-                    btnValidar.classList.remove('btnValidar');
-                }
-                else{
-                    document.getElementById('error').innerHTML = '';
-                    // Create input for name
-                    var nameInput = document.createElement("input");
-                    nameInput.type = "text";
-                    nameInput.className = "form-control bg-readonly mb-3";
-                    nameInput.id = "nome";
-                    nameInput.name = "nome";
-                    nameInput.required = true;
-                    nameInput.readOnly = true; 
-                    var nameLabel = document.createElement("label");
-                    nameLabel.for = "nome";
-                    nameLabel.className = "form-label";
-                    nameLabel.innerHTML = "Nome";
-
-                    // Create input for CPF Oculto
-                    var cpfOcultoInput = document.createElement("input");
-                    cpfOcultoInput.type = "text";
-                    cpfOcultoInput.className = "form-control bg-readonly mb-3";
-                    cpfOcultoInput.id = "cpf_oculto";
-                    cpfOcultoInput.name = "cpf_oculto";
-                    cpfOcultoInput.required = true;
-                    cpfOcultoInput.readOnly = true; // Make the input read-only
-                    var cpfOcultoLabel = document.createElement("label");
-                    cpfOcultoLabel.for = "cpf";
-                    cpfOcultoLabel.className = "form-label";
-                    cpfOcultoLabel.innerHTML = "CPF";
+                       
+                            
+                            function montarSelect(response){    
+                                var form = document.getElementById('novos-inputs');
+                                form.innerHTML = '';
+                                console.log(response)
+                                if (response == 404){                            
+                                    document.getElementById('error').innerHTML = 'Servidor não encontrado';
+                                    btnValidar = document.getElementById('validar');  
+                                    btnValidar.classList.remove('btn-secondary');
+                                    btnValidar.classList.add('btn-success')
+                                    btnValidar.classList.remove('btnValidar');
+                                }
+                                else if(response == 500){
+                                    document.getElementById('error').innerText = 'Servidor não encontrado';
+                                    btnValidar = document.getElementById('validar');  
+                                    btnValidar.classList.remove('btn-secondary');
+                                    btnValidar.classList.add('btn-success')
+                                    btnValidar.classList.remove('btnValidar');
+                                }
+                                else{
+                                    document.getElementById('error').innerHTML = '';
+                                    // Create input for name
+                                    var nameInput = document.createElement("input");
+                                    nameInput.type = "text";
+                                    nameInput.className = "form-control bg-readonly mb-3";
+                                    nameInput.id = "nome";
+                                    nameInput.name = "nome";
+                                    nameInput.required = true;
+                                    nameInput.readOnly = true; 
+                                    var nameLabel = document.createElement("label");
+                                    nameLabel.for = "nome";
+                                    nameLabel.className = "form-label";
+                                    nameLabel.innerHTML = "Nome";
+        
+                                    // Create input for CPF Oculto
+                                    var cpfOcultoInput = document.createElement("input");
+                                    cpfOcultoInput.type = "text";
+                                    cpfOcultoInput.className = "form-control bg-readonly mb-3";
+                                    cpfOcultoInput.id = "cpf_oculto";
+                                    cpfOcultoInput.name = "cpf_oculto";
+                                    cpfOcultoInput.required = true;
+                                    cpfOcultoInput.readOnly = true; // Make the input read-only
+                                    var cpfOcultoLabel = document.createElement("label");
+                                    cpfOcultoLabel.for = "cpf";
+                                    cpfOcultoLabel.className = "form-label";
+                                    cpfOcultoLabel.innerHTML = "CPF";
+                                    
+                                    
+                                    
+                                    // Create input for CPF
+                                    var cpfInput = document.createElement("input");
+                                    cpfInput.type = "text";
+                                    cpfInput.className = "form-control";
+                                    cpfInput.id = "cpf";
+                                    cpfInput.name = "cpf";
+                                    cpfInput.required = true;
+                                    
+                                    
+                                    var cpfLabel = document.createElement("label");
+                                    cpfLabel.for = "cpf";
+                                    cpfLabel.className = "form-label";
+                                    cpfLabel.innerHTML = "Confirme seu CPF";
+                                    
+                                    var divErrorCpf = document.createElement("div");
+                                    divErrorCpf.className = "row mt-1";
+                                    var cpfSmall = document.createElement("small");
+                                    cpfSmall.id = "errorCPF";
+                                    cpfSmall.className = "text-danger";
+                                    
+                                    // Create select for Secretaria
+                                    var secretariaSelect = document.createElement("select");
+                                    secretariaSelect.className = "form-control bg-readonly";
+                                    secretariaSelect.id = "secretaria";
+                                    secretariaSelect.required = true;
+                                    secretariaSelect.readOnly = true; 
+                                    secretariaSelect.name = "secretaria"
+                                    var secretariaLabel = document.createElement("label");
+                                    secretariaLabel.for = "secretaria";
+                                    secretariaLabel.className = "form-label mt-3";
+                                    secretariaLabel.innerHTML = "Secretaria";
+        
+                                    // Create options for select
+                                    var option1 = document.createElement("option");                           
+                                    secretariaSelect.add(option1);
+                                    secretariaSelect.tabIndex = "-1";
+                                    secretariaSelect.setAttribute("aria-disabled", "true");
+        
+        
+        
+                                    // Append to form                            
+                                    form.appendChild(nameLabel);
+                                    form.appendChild(nameInput);
+                                    form.appendChild(cpfOcultoLabel);
+                                    form.appendChild(cpfOcultoInput);
+                                    form.appendChild(cpfLabel);
+                                    form.appendChild(cpfInput);
+                                    form.appendChild(divErrorCpf)
+                                    divErrorCpf.appendChild(cpfSmall);
+                                    form.appendChild(secretariaLabel);
+                                    form.appendChild(secretariaSelect);
+                                    
+                                    response = JSON.parse(response);
+                                    option1.value = response.secretaria.id;
+                                    option1.text = response.secretaria.nome;                       
+                                    nameInput.value = response.nome;
+                                    cpfOcultoInput.value = response.cpf;
+                                   
+                                    // Create select for Setor
+                                    var setorSelect = document.createElement("select");
+                                    setorSelect.className = "form-select";
+                                    setorSelect.id = "setor";
+                                    setorSelect.required = true;
+                                    setorSelect.readOnly = true; 
+                                    setorSelect.name = "setor"
+                                    var setorLabel = document.createElement("label");
+                                    setorLabel.for = "setor";
+                                    setorLabel.className = "form-label mt-3";
+                                    setorLabel.innerHTML = "Selecione seu setor";
+        
+                                    // Assuming response.setores is the setores data
+                                    for (var i = 0; i < response.setores.length; i++) {
+                                        var optionSetor = document.createElement("option");
+                                        optionSetor.value = response.setores[i].id;
+                                        optionSetor.text = response.setores[i].nome;
+                                        setorSelect.add(optionSetor);
+                                    }
+                                    
+                                    var optionSetor = document.createElement("option");
+                                    optionSetor.value = 0;
+                                    optionSetor.text = 'Outro';                            
+                                    setorSelect.add(optionSetor);                            
+                                    
+        
+                                    setorSelect.tabIndex = "-1";
+                                    setorSelect.setAttribute("aria-disabled", "true");
+                                    
+                                    //PARA APARECER O SELECT DO SETOR B
+                                    // Append to form                            
+                                    // form.appendChild(setorLabel);
+                                    // form.appendChild(setorSelect);
+        
+                                    // Create hidden input for other setor
+                                    var otherSetorInput = document.createElement("input");
+                                    otherSetorInput.className = "form-control mt-2";
+                                    otherSetorInput.placeholder = "Digite o nome do setor";
+                                    if (response.setores.length == 0) {
+                                        otherSetorInput.style.display = "block";
+                                        otherSetorInput.required = true;
+                                    }else{
+                                        otherSetorInput.style.display = "none";    
+                                    }
+                                    
+                                    otherSetorInput.id = "outro";
+                                    otherSetorInput.name = "outro";
+                                    otherSetorInput.required = false;
+        
+                                    // Append to form
+                                    form.appendChild(otherSetorInput);
+                                    
+                                    // Create input for Email
+                                    var emailInput = document.createElement("input");
+                                    emailInput.type = "email";
+                                    emailInput.className = "form-control mb-3";                            
+                                    emailInput.id = "email";
+                                    emailInput.name = "email";
+                                    emailInput.required = true;
+                                    // Create label for Email
+                                    var emailLabel = document.createElement("label");
+                                    emailLabel.for = "email";
+                                    emailLabel.className = "form-label mt-3";
+                                    emailLabel.innerHTML = "Digite seu email";
+        
+                                    // Append to form
+                                    form.appendChild(emailLabel);
+                                    form.appendChild(emailInput);
+        
+                                    // Create input for Telefone
+                                    var telefoneInput = document.createElement("input");
+                                    telefoneInput.type = "tel";
+                                    telefoneInput.className = "form-control mb-3";                        
+                                    telefoneInput.id = "telefone";
+                                    telefoneInput.name = "telefone";
+                                    telefoneInput.required = true;
+                                    // Create label for Telefone
+                                    var telefoneLabel = document.createElement("label");
+                                    telefoneLabel.for = "telefone";
+                                    telefoneLabel.className = "form-label";
+                                    telefoneLabel.innerHTML = "Digite seu telefone";
+                                    // Append to form
+                                    form.appendChild(telefoneLabel);
+                                    form.appendChild(telefoneInput);
+                                    
+                                    // Create input for Data de Nascimento
+                                    var dtNascimentoInput = document.createElement("input");
+                                    dtNascimentoInput.type = "date";
+                                    dtNascimentoInput.className = "form-control mb-3";                        
+                                    dtNascimentoInput.id = "dt_nascimento";
+                                    dtNascimentoInput.name = "dt_nascimento";
+                                    dtNascimentoInput.required = true;
+                                    // Create label for Data de Nascimento
+                                    var dtNascimentoLabel = document.createElement("label");
+                                    dtNascimentoLabel.for = "dt_nascimento";
+                                    dtNascimentoLabel.className = "form-label";
+                                    dtNascimentoLabel.innerHTML = "Digite sua data de nascimento";
+                                    // Append to form
+                                    form.appendChild(dtNascimentoLabel);
+                                    form.appendChild(dtNascimentoInput);
+                                    
+        
+                                    setorSelect.addEventListener('change', function() {                                
+                                        if (this.value == '0') {
+                                            otherSetorInput.style.display = "block";
+                                            otherSetorInput.required = true;
+                                        } else {
+                                            otherSetorInput.style.display = "none";
+                                            otherSetorInput.value = '';
+                                            otherSetorInput.required = false;
+                                        }
+                                    });
+        
+                                    cpfInput.addEventListener('keyup', function (e) {                                
+                                        mascara(cpfInput, icpf);
+                                        checkInputLength(cpfInput.id);
+                                        
+                                    });
+                                    telefoneInput.addEventListener('keyup', function (e) {
+                                        mascara(telefoneInput, itel);								
+                                    });
+                                }
+                                textValidar = document.getElementById('btn_text');  
+                                imageValidar = document.getElementById('loading_validar');  
+                                textValidar.classList.remove('text_loading');
+                                imageValidar.classList.remove('loading_image');
+                                
+                            }
+                            function callMetaServidor(){
+                                document.getElementById('error').innerHTML = '';
+                                podeCadastrar = true;
+                                if (buttonCadastrar.classList.contains('disabled')) {
+                                    buttonCadastrar.classList.remove('disabled');
+                                }
+                                // document.getElementById('response-message').display = 'none';
+                                var matricula = document.getElementById('matricula').value; 
+                                var url = "{% url 'ins:getServidor' %}" + "?matricula=" + matricula; 
+                                
+                                if(matricula== "000000"){
+                                    document.getElementById('error').innerText = 'Preencha a matrícula';
+                                }
+                                else{
+                                    getRequest(url, montarSelect);       
+                                    btnValidar = document.getElementById('validar');  
+                                    imageValidar = document.getElementById('loading_validar');   
+                                    textValidar = document.getElementById('btn_text');      
+                                    btnValidar.classList.remove('btn-success');
+                                    btnValidar.classList.add('btn-secondary');
+                                    btnValidar.classList.add('btnValidar');
+                                    textValidar.classList.add('text_loading');
+                                imageValidar.classList.add('loading_image');
+                                    document.getElementById('cadastrar').disabled = false;
+                                    alert('Aguarde enquanto sua matrícula é validada!')
+                                }
+                            }
                     
+                            
+        
+                            
+                            function itel(v) {
+                                v = v.replace(/\D/g, ""); // Remove tudo o que não é dígito
+        
+                                // Coloca parênteses em volta dos dois primeiros dígitos (DDD)
+                                v = v.replace(/^(\d{2})(\d)/g, "($1) $2"); 
+                                
+                                if (v.length === 14) { // Formato DDD + 9 dígitos (celular)
+                                    v = v.replace(/(\d{5})(\d)/, "$1-$2"); // Coloca hífen entre o 5º e 6º dígitos
+                                    
+                                } else { // Formato DDD + 8 dígitos (fixo)
+                                    v = v.replace(/(\d{4})(\d)/, "$1-$2"); // Coloca hífen entre o 4º e 5º dígitos
+                                } 
+                                
+                                return v;
+                            }
+                            function icpf(v){
+                                v=v.replace(/\D/g,"")                    //Remove tudo o que nao e digito
+                                v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+                                v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
+                                                                        //de novo (para o segundo bloco de numeros)
+                                v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hifen entre o terceiro e o quarto digitos
+                                return v
+                            }
+                            function mascara(o,f){
+                                        v_obj=o
+                                        v_fun=f
+                                        setTimeout("execmascara()",1)
+                                    }
+                                
+                            function execmascara(){
+                                        v_obj.value=v_fun(v_obj.value)
+                                    }
+        
+                            
+                            document.getElementById('matricula').addEventListener('input', function (e) {
+                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                            });
+        
+                            document.querySelector('form').addEventListener('keydown', function(e) {
+                                if (e.keyCode == 13) {
+                                    e.preventDefault();
+                                    return false;
+                                }
+                            });
+                            //iniciar o input com 000000 e alterar de acordo com o que o usuario digita ou apaga
+                            document.addEventListener("DOMContentLoaded", function() {
+                                const matriculaInput = document.getElementById("matricula");
+                                // Inicia o campo com 000000
+                                matriculaInput.value = "000000";
+                                matriculaInput.addEventListener("keydown", function(e) {
+                                    //Caso tenha 6 digitos já, não permite que mais dígitos sejam adicionados
+                                    if (matriculaInput.value.replace(/^0+/, '').length >= 6 && /^\d$/.test(e.key)) {
+                                        e.preventDefault();
+                                        return;
+                                    }
                     
-                    
-                    // Create input for CPF
-                    var cpfInput = document.createElement("input");
-                    cpfInput.type = "text";
-                    cpfInput.className = "form-control";
-                    cpfInput.id = "cpf";
-                    cpfInput.name = "cpf";
-                    cpfInput.required = true;
-                    
-                    
-                    var cpfLabel = document.createElement("label");
-                    cpfLabel.for = "cpf";
-                    cpfLabel.className = "form-label";
-                    cpfLabel.innerHTML = "Confirme seu CPF";
-                    
-                    var divErrorCpf = document.createElement("div");
-                    divErrorCpf.className = "row mt-1";
-                    var cpfSmall = document.createElement("small");
-                    cpfSmall.id = "errorCPF";
-                    cpfSmall.className = "text-danger";
-                    
-                    // Create select for Secretaria
-                    var secretariaSelect = document.createElement("select");
-                    secretariaSelect.className = "form-control bg-readonly";
-                    secretariaSelect.id = "secretaria";
-                    secretariaSelect.required = true;
-                    secretariaSelect.readOnly = true; 
-                    secretariaSelect.name = "secretaria"
-                    var secretariaLabel = document.createElement("label");
-                    secretariaLabel.for = "secretaria";
-                    secretariaLabel.className = "form-label mt-3";
-                    secretariaLabel.innerHTML = "Secretaria";
-
-                    // Create options for select
-                    var option1 = document.createElement("option");                           
-                    secretariaSelect.add(option1);
-                    secretariaSelect.tabIndex = "-1";
-                    secretariaSelect.setAttribute("aria-disabled", "true");
-
-
-
-                    // Append to form                            
-                    form.appendChild(nameLabel);
-                    form.appendChild(nameInput);
-                    form.appendChild(cpfOcultoLabel);
-                    form.appendChild(cpfOcultoInput);
-                    form.appendChild(cpfLabel);
-                    form.appendChild(cpfInput);
-                    form.appendChild(divErrorCpf)
-                    divErrorCpf.appendChild(cpfSmall);
-                    form.appendChild(secretariaLabel);
-                    form.appendChild(secretariaSelect);
-                    
-                    response = JSON.parse(response);
-                    option1.value = response.secretaria.id;
-                    option1.text = response.secretaria.nome;                       
-                    nameInput.value = response.nome;
-                    cpfOcultoInput.value = response.cpf;
-                    
-                    // Create select for Setor
-                    var setorSelect = document.createElement("select");
-                    setorSelect.className = "form-select";
-                    setorSelect.id = "setor";
-                    setorSelect.required = true;
-                    setorSelect.readOnly = true; 
-                    setorSelect.name = "setor"
-                    var setorLabel = document.createElement("label");
-                    setorLabel.for = "setor";
-                    setorLabel.className = "form-label mt-3";
-                    setorLabel.innerHTML = "Selecione seu setor";
-
-                    // Assuming response.setores is the setores data
-                    for (var i = 0; i < response.setores.length; i++) {
-                        var optionSetor = document.createElement("option");
-                        optionSetor.value = response.setores[i].id;
-                        optionSetor.text = response.setores[i].nome;
-                        setorSelect.add(optionSetor);
-                    }
-                    
-                    var optionSetor = document.createElement("option");
-                    optionSetor.value = 0;
-                    optionSetor.text = 'Outro';                            
-                    setorSelect.add(optionSetor);                            
-                    
-
-                    setorSelect.tabIndex = "-1";
-                    setorSelect.setAttribute("aria-disabled", "true");
-                    
-                    //PARA APARECER O SELECT DO SETOR B
-                    // Append to form                            
-                    // form.appendChild(setorLabel);
-                    // form.appendChild(setorSelect);
-
-                    // Create hidden input for other setor
-                    var otherSetorInput = document.createElement("input");
-                    otherSetorInput.className = "form-control mt-2";
-                    otherSetorInput.placeholder = "Digite o nome do setor";
-                    if (response.setores.length == 0) {
-                        otherSetorInput.style.display = "block";
-                        otherSetorInput.required = true;
-                    }else{
-                        otherSetorInput.style.display = "none";    
-                    }
-                    
-                    otherSetorInput.id = "outro";
-                    otherSetorInput.name = "outro";
-                    otherSetorInput.required = false;
-
-                    // Append to form
-                    form.appendChild(otherSetorInput);
-                    
-                    // Create input for Email
-                    var emailInput = document.createElement("input");
-                    emailInput.type = "email";
-                    emailInput.className = "form-control mb-3";                            
-                    emailInput.id = "email";
-                    emailInput.name = "email";
-                    emailInput.required = true;
-                    // Create label for Email
-                    var emailLabel = document.createElement("label");
-                    emailLabel.for = "email";
-                    emailLabel.className = "form-label mt-3";
-                    emailLabel.innerHTML = "Digite seu email";
-
-                    // Append to form
-                    form.appendChild(emailLabel);
-                    form.appendChild(emailInput);
-
-                    // Create input for Telefone
-                    var telefoneInput = document.createElement("input");
-                    telefoneInput.type = "tel";
-                    telefoneInput.className = "form-control mb-3";                        
-                    telefoneInput.id = "telefone";
-                    telefoneInput.name = "telefone";
-                    telefoneInput.required = true;
-                    // Create label for Telefone
-                    var telefoneLabel = document.createElement("label");
-                    telefoneLabel.for = "telefone";
-                    telefoneLabel.className = "form-label";
-                    telefoneLabel.innerHTML = "Digite seu telefone";
-                    // Append to form
-                    form.appendChild(telefoneLabel);
-                    form.appendChild(telefoneInput);
-                    
-                    // Create input for Data de Nascimento
-                    var dtNascimentoInput = document.createElement("input");
-                    dtNascimentoInput.type = "date";
-                    dtNascimentoInput.className = "form-control mb-3";                        
-                    dtNascimentoInput.id = "dt_nascimento";
-                    dtNascimentoInput.name = "dt_nascimento";
-                    dtNascimentoInput.required = true;
-                    // Create label for Data de Nascimento
-                    var dtNascimentoLabel = document.createElement("label");
-                    dtNascimentoLabel.for = "dt_nascimento";
-                    dtNascimentoLabel.className = "form-label";
-                    dtNascimentoLabel.innerHTML = "Digite sua data de nascimento";
-                    // Append to form
-                    form.appendChild(dtNascimentoLabel);
-                    form.appendChild(dtNascimentoInput);
-                    
-
-                    setorSelect.addEventListener('change', function() {                                
-                        if (this.value == '0') {
-                            otherSetorInput.style.display = "block";
-                            otherSetorInput.required = true;
-                        } else {
-                            otherSetorInput.style.display = "none";
-                            otherSetorInput.value = '';
-                            otherSetorInput.required = false;
-                        }
-                    });
-
-                    cpfInput.addEventListener('keyup', function (e) {                                
-                        mascara(cpfInput, icpf);
-                        checkInputLength(cpfInput.id);
-                        
-                    });
-                    telefoneInput.addEventListener('keyup', function (e) {
-                        mascara(telefoneInput, itel);								
-                    });
-                }
-                textValidar = document.getElementById('btn_text');  
-                imageValidar = document.getElementById('loading_validar');  
-                textValidar.classList.remove('text_loading');
-                imageValidar.classList.remove('loading_image');
-                
-            }
-            function callMetaServidor(){
-                document.getElementById('error').innerHTML = '';
-                podeCadastrar = true;
-                if (buttonCadastrar.classList.contains('disabled')) {
-                    buttonCadastrar.classList.remove('disabled');
-                }
-                // document.getElementById('response-message').display = 'none';
-                var matricula = document.getElementById('matricula').value; 
-                var url = "{% url 'ins:getServidor' %}" + "?matricula=" + matricula; 
-                
-                if(matricula== "000000"){
-                    document.getElementById('error').innerText = 'Preencha a matrícula';
-                }
-                else{
-                    getRequest(url, montarSelect);       
-                    btnValidar = document.getElementById('validar');  
-                    imageValidar = document.getElementById('loading_validar');   
-                    textValidar = document.getElementById('btn_text');      
-                    btnValidar.classList.remove('btn-success');
-                    btnValidar.classList.add('btn-secondary');
-                    btnValidar.classList.add('btnValidar');
-                    textValidar.classList.add('text_loading');
-                imageValidar.classList.add('loading_image');
-                    document.getElementById('cadastrar').disabled = false;
-                    alert('Aguarde enquanto sua matrícula é validada!')
-                }
-            }
-    
-            
-
-            
-            function itel(v) {
-                v = v.replace(/\D/g, ""); // Remove tudo o que não é dígito
-
-                // Coloca parênteses em volta dos dois primeiros dígitos (DDD)
-                v = v.replace(/^(\d{2})(\d)/g, "($1) $2"); 
-                
-                if (v.length === 14) { // Formato DDD + 9 dígitos (celular)
-                    v = v.replace(/(\d{5})(\d)/, "$1-$2"); // Coloca hífen entre o 5º e 6º dígitos
-                    
-                } else { // Formato DDD + 8 dígitos (fixo)
-                    v = v.replace(/(\d{4})(\d)/, "$1-$2"); // Coloca hífen entre o 4º e 5º dígitos
-                } 
-                
-                return v;
-            }
-            function icpf(v){
-                v=v.replace(/\D/g,"")                    //Remove tudo o que nao e digito
-                v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
-                v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto digitos
-                                                        //de novo (para o segundo bloco de numeros)
-                v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hifen entre o terceiro e o quarto digitos
-                return v
-            }
-            function mascara(o,f){
-                        v_obj=o
-                        v_fun=f
-                        setTimeout("execmascara()",1)
-                    }
-                
-            function execmascara(){
-                        v_obj.value=v_fun(v_obj.value)
-                    }
-
-            
-            document.getElementById('matricula').addEventListener('input', function (e) {
-                e.target.value = e.target.value.replace(/[^0-9]/g, '');
-            });
-
-            document.querySelector('form').addEventListener('keydown', function(e) {
-                if (e.keyCode == 13) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-            //iniciar o input com 000000 e alterar de acordo com o que o usuario digita ou apaga
-            document.addEventListener("DOMContentLoaded", function() {
-                const matriculaInput = document.getElementById("matricula");
-                // Inicia o campo com 000000
-                matriculaInput.value = "000000";
-                matriculaInput.addEventListener("keydown", function(e) {
-                    //Caso tenha 6 digitos já, não permite que mais dígitos sejam adicionados
-                    if (matriculaInput.value.replace(/^0+/, '').length >= 6 && /^\d$/.test(e.key)) {
-                        e.preventDefault();
-                        return;
-                    }
-    
-                    // Se a tecla pressionada for um número (0-9)
-                    if (/^\d$/.test(e.key)) {
-                        e.preventDefault();
-                        let value = e.key;
-                        // Remove o zero inicial a cada tecla numérica
-                        let currentValue = matriculaInput.value.replace(/^0+/, '');
-                        // Concatena o valor digitado ao final da matricula
-                        currentValue += value;
-                        // Garante que o valor tenha no máximo 6 dígitos
-                        if (currentValue.length > 6) {
-                            currentValue = currentValue.slice(-6);
-                        }
-                        // Preenche com zeros à esquerda para garantir 6 dígitos
-                        matriculaInput.value = currentValue.padStart(6, '0');
-                    }
-                    
-                    // Controle de Backspace e Delete
-                    if ((e.key === "Backspace" || e.key === "Delete")) {
-                        e.preventDefault();
-                        // Remove o último dígito da direita
-                        let currentValue = matriculaInput.value.slice(0, -1);
-                        // Preenche com zeros à esquerda até ter 6 dígitos
-                        matriculaInput.value = currentValue.padStart(6, '0');
-                    }
-                });
-            });
-        </script>
-        <style>
-            .bg-readonly{
-                background-color: #b5cfec !important;
-                pointer-events: none;
-                touch-action: none;
-            }
-            .shake{
-                animation: shake 0.5s ease-in-out;
-            }
-
-            @keyframes shake {
-                0% { transform: translateX(0); }
-                20% { transform: translateX(-10px); }
-                40% { transform: translateX(10px); }
-                60% { transform: translateX(-10px); }
-                80% { transform: translateX(10px); }
-                100% { transform: translateX(0); }
-            }
-            #cadastrar:disabled {                        
-                cursor: not-allowed;
-            }
-        </style>
+                                    // Se a tecla pressionada for um número (0-9)
+                                    if (/^\d$/.test(e.key)) {
+                                        e.preventDefault();
+                                        let value = e.key;
+                                        // Remove o zero inicial a cada tecla numérica
+                                        let currentValue = matriculaInput.value.replace(/^0+/, '');
+                                        // Concatena o valor digitado ao final da matricula
+                                        currentValue += value;
+                                        // Garante que o valor tenha no máximo 6 dígitos
+                                        if (currentValue.length > 6) {
+                                            currentValue = currentValue.slice(-6);
+                                        }
+                                        // Preenche com zeros à esquerda para garantir 6 dígitos
+                                        matriculaInput.value = currentValue.padStart(6, '0');
+                                    }
+                                    
+                                    // Controle de Backspace e Delete
+                                    if ((e.key === "Backspace" || e.key === "Delete")) {
+                                        e.preventDefault();
+                                        // Remove o último dígito da direita
+                                        let currentValue = matriculaInput.value.slice(0, -1);
+                                        // Preenche com zeros à esquerda até ter 6 dígitos
+                                        matriculaInput.value = currentValue.padStart(6, '0');
+                                    }
+                                });
+                            });
+                        </script>
+                        <style>
+                            .bg-readonly{
+                                background-color: #b5cfec !important;
+                                pointer-events: none;
+                                touch-action: none;
+                            }
+                            .shake{
+                                animation: shake 0.5s ease-in-out;
+                            }
+        
+                            @keyframes shake {
+                                0% { transform: translateX(0); }
+                                20% { transform: translateX(-10px); }
+                                40% { transform: translateX(10px); }
+                                60% { transform: translateX(-10px); }
+                                80% { transform: translateX(10px); }
+                                100% { transform: translateX(0); }
+                            }
+                            #cadastrar:disabled {                        
+                                cursor: not-allowed;
+                            }
+                        </style>
     </body>
 </html>
