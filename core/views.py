@@ -134,3 +134,32 @@ def swot(request):
     if request.user.is_superuser:
         return render(request, 'swot.html')
     return render(request, '403.html', status=403)
+
+import requests
+from django.http import JsonResponse
+import xml.etree.ElementTree as ET
+import json
+
+def api_prefeitura_nf(request, ano, mes):
+    url = f"https://novafriburgo-rj.portaltp.com.br/api/transparencia.asmx/json_servidores?ano={ano}&mes={mes}"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+
+        # Parse do XML
+        root = ET.fromstring(response.content)
+
+        # O conteúdo que queremos está dentro da tag <string>
+        json_text = root.text
+
+        # Agora convertemos o texto JSON para objeto Python
+        data = json.loads(json_text)
+
+        return JsonResponse(data, safe=False)
+
+    except ET.ParseError:
+        return JsonResponse({'error': 'Resposta da API externa não está no formato XML válido'}, status=500)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Erro ao decodificar JSON dentro do XML'}, status=500)
+    except requests.RequestException as e:
+        return JsonResponse({'error': 'Erro ao buscar dados da API externa', 'details': str(e)}, status=500)
