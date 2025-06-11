@@ -23,6 +23,18 @@ def debug_tutorial(extra_msg=""):
 def debug_query_command(comando):
     sql = comando.strip()
     query_out = f"<div style='background:#f5f5f5;padding:8px;border-radius:4px;margin-bottom:8px;'><b>Query enviada:</b><br><code style='font-size:1.1em'>{sql}</code></div>"
+
+    palavras_proibidas = ['update', 'delete', 'insert', 'drop', 'alter', 'create']
+
+    qtd_ponto_virgula = sql.count(';')
+    if qtd_ponto_virgula > 1 or (qtd_ponto_virgula == 1 and not sql.endswith(';')):
+        return f"{query_out}<div style='color:#b00;'>Só pode haver um comando na query.</div>"
+
+    # Verifica se contém alguma palavra proibida (case insensitive)
+    for palavra in palavras_proibidas:
+        if palavra in sql.lower():
+            return f"{query_out}<div style='color:#b00;'>A query contém comandos não permitidos por segurança: <code>{palavra.upper()}</code></div>"
+
     if not sql.lower().startswith('select'):
         return f"{query_out}<div style='color:#b00;'>Apenas comandos SELECT são permitidos por segurança.</div>"
     try:
