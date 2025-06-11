@@ -135,3 +135,6 @@ dmypy.json
 
 settings/media/
 settings/static/    
+matriculas_nao_encontradas.csv
+data_log.txt
+error_cadastrar_nao_encontradas.log
