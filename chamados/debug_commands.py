@@ -26,17 +26,33 @@ def debug_query_command(comando):
 
     palavras_proibidas = ['update', 'delete', 'insert', 'drop', 'alter', 'create']
 
+    tabela_exemplo = """
+    <div style='margin-top:16px;'>
+    <b>Exemplos de queries permitidas e bloqueadas:</b>
+    <pre style='background:#fff;border:1px solid #ccc;padding:8px;overflow-x:auto;'>
+| Query                                                  | Resultado                                |
+| ------------------------------------------------------ | ---------------------------------------- |
+| <code>SELECT * FROM users</code>                       | ✅ OK                                     |
+| <code>SELECT * FROM users;</code>                      | ✅ OK                                     |
+| <code>SELECT * FROM users; DELETE FROM users;</code>   | ❌ Bloqueado (múltiplos <code>;</code>)   |
+| <code>SELECT name FROM logs WHERE action = 'delete'</code> | ✅ OK (palavra <code>delete</code> como dado) |
+| <code>SELECT * FROM logs WHERE logtext LIKE '%DROP TABLE%'</code> | ✅ OK (palavra proibida como string)      |
+| <code>SELECT * FROM users; UPDATE users SET admin = 1</code> | ❌ Bloqueado (<code>update</code> e <code>;</code> fora do fim) |
+    </pre>
+    </div>
+    """
+
     qtd_ponto_virgula = sql.count(';')
     if qtd_ponto_virgula > 1 or (qtd_ponto_virgula == 1 and not sql.endswith(';')):
-        return f"{query_out}<div style='color:#b00;'>Só pode haver um comando na query.</div>"
+        return f"{query_out}<div style='color:#b00;'>Só pode haver um comando na query.</div>{tabela_exemplo}"
 
     # Verifica se contém alguma palavra proibida (case insensitive)
     for palavra in palavras_proibidas:
         if palavra in sql.lower():
-            return f"{query_out}<div style='color:#b00;'>A query contém comandos não permitidos por segurança: <code>{palavra.upper()}</code></div>"
+            return f"{query_out}<div style='color:#b00;'>A query contém comandos não permitidos por segurança: <code>{palavra.upper()}</code></div>{tabela_exemplo}"
 
     if not sql.lower().startswith('select'):
-        return f"{query_out}<div style='color:#b00;'>Apenas comandos SELECT são permitidos por segurança.</div>"
+        return f"{query_out}<div style='color:#b00;'>Apenas comandos SELECT são permitidos por segurança.</div>{tabela_exemplo}"
     try:
         with connection.cursor() as cursor:
             cursor.execute(sql)
@@ -54,7 +70,7 @@ def debug_query_command(comando):
             result_main += "</pre>"
         return f"{query_out}{result_main}"
     except Exception as e:
-        return f"{query_out}<div style='color:#b00;'>Erro ao executar query: {e}</div>"
+        return f"{query_out}<div style='color:#b00;'>Erro ao executar query: {e}</div>{tabela_exemplo}"
 
 def debug_show_from_command(cmd):
     cmd_out = f"<div style='background:#f5f5f5;padding:8px;border-radius:4px;margin-bottom:8px;'><b>Comando enviado:</b><br><code style='font-size:1.1em'>{cmd}</code></div>"
