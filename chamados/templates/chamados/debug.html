@@ -167,6 +167,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Focus textarea on any keypress on the page
     document.addEventListener('keydown', function(e) {
+        // Tab alterna entre cmd/query se estiver no textarea
+        if (document.activeElement === debugInput && e.key === 'Tab') {
+            e.preventDefault();
+            if (debugTypeCmd.checked) {
+                debugTypeQuery.checked = true;
+            } else {
+                debugTypeCmd.checked = true;
+            }
+            updateLabel();
+            return;
+        }
         // If focus is not in textarea or a form element, focus textarea
         const tag = document.activeElement.tagName.toLowerCase();
         if (tag !== 'textarea' && tag !== 'input' && tag !== 'select' && !e.ctrlKey && !e.metaKey && !e.altKey) {
