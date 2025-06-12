@@ -301,12 +301,19 @@ class PasswordResetCompleteView(PasswordContextMixin, TemplateView):
 
 from instituicoes.forms import ServidorForm2
 from .functions import enviar_email_apos_cadastrar
+from django.http import JsonResponse
+from instituicoes.models import Dict_Mapeamento_Secretarias
+    
 def cadastro_user(request):
     if request.user.is_authenticated:
         return redirect('/')
-
+    
+    dados = list(Dict_Mapeamento_Secretarias.objects.values())
+    secretariaIntranet = JsonResponse(dados, safe=False)
+    
     context = {
         'hCAPTCHA': hCAPTCHA_PUBLIC_KEY,
+        'secretarias': secretariaIntranet
     }
 
     if request.method == "POST":
@@ -415,7 +422,6 @@ def new_cadastrar(request):
 import os
 from django.shortcuts import render
 from django.conf import settings
-from django.core.files.storage import default_storage
 from django.http import HttpResponse
 
 def upload_csv_view(request):
