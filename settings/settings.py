@@ -129,18 +129,28 @@ if sqlite_mode:
         }    
     }
 else:
-    DATABASES = {
-        'default': {
-                'ENGINE': 'django.db.backends.mysql',
-
+    if str(db_port) == "5432":
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
                 'NAME': db_name,
                 'PORT': db_port,
-
                 'USER': db_user,
                 'PASSWORD': db_passwd,
                 'HOST': db_host,
             }
-    }
+        }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME': db_name,
+                'PORT': db_port,
+                'USER': db_user,
+                'PASSWORD': db_passwd,
+                'HOST': db_host,
+            }
+        }
 
 CACHES = {    
     "default": {
