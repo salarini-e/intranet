@@ -125,12 +125,11 @@ def date_chamados_por_atendente():
 
 def date_chamados_por_mes():
     # Certifique-se de que `inicio_periodo` está no formato adequado
-    inicio_periodo =    make_aware(datetime.now() - timedelta(days=365))
+    inicio_periodo = make_aware(datetime.now() - timedelta(days=365))
     
-    # Consulta raw usando a correção do SQL
+    # Corrigido: Remover id do SELECT e usar cursor
     sql = '''
         SELECT
-            id,  -- Incluindo a chave primária na consulta
             DATE_FORMAT(dt_inclusao, '%%Y-%%m-01') AS mes,
             COUNT(id) AS total
         FROM chamados_chamado
@@ -139,9 +138,10 @@ def date_chamados_por_mes():
         ORDER BY mes ASC
     '''
     
-    # Executando a consulta e retornando os resultados
-    result = Chamado.objects.raw(sql, [inicio_periodo])
-    
+    with connection.cursor() as cursor:
+        cursor.execute(sql, [inicio_periodo])
+        result = cursor.fetchall()
+
     cores = loadColors(len(result))
     data = {
         "labels": [],
@@ -155,10 +155,10 @@ def date_chamados_por_mes():
         }]
     }
     for row in result:
-        mes = datetime.strptime(row.mes, "%Y-%m-%d")
+        mes = datetime.strptime(row[0], "%Y-%m-%d")
         mes_formatado = mes.strftime("%B de %Y")
         data["labels"].append(mes_formatado.capitalize())
-        data["datasets"][0]["data"].append(row.total)
+        data["datasets"][0]["data"].append(row[1])
     # print(data)
     return data
 
