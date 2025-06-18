@@ -1,0 +1,10 @@
+LOAD DATABASE
+     FROM mysql://salarini:salarini_123@localhost/intranet
+     INTO postgresql://salarini:salarini_123@192.168.1.220:5432/intranet
+
+ WITH data only, reset sequences
+
+ SET work_mem to '16MB', maintenance_work_mem to '512 MB'
+ CAST type datetime to timestamptz drop default using zero-dates-to-null
+ ALTER SCHEMA intranet RENAME TO public
+;
