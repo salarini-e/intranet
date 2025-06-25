@@ -1469,7 +1469,9 @@ def painel_satisfacao(request):
     def process_group_data(queryset, field):
         grouped_data = {}
         for dado in queryset:
-            nome = dado['chamado__profissional_designado__nome_servidor'].split()[0]
+            # nome = dado['chamado__profissional_designado__nome_servidor'].split()[0]
+            nome_completo = dado.get('chamado__profissional_designado__nome_servidor')
+            nome = nome_completo.split()[0] if nome_completo else 'Desconhecido'
             valor = dict(chamadoSatisfacao.AVALIACAO_CHOICES).get(dado[field])
             grouped_data.setdefault(nome, {label: 0 for label in avaliacao_labels})
             grouped_data[nome][valor] = dado['total']
