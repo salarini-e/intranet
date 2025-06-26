@@ -4,14 +4,14 @@
 {% block main %}
 <div class="row">
     <div class="col d-flex">
-        <h1 class="app-page-title">Form Fácil - Processo Digital</h1>
+        <h1 class="app-page-title">Form Fácil - Treinamento do Sistema GPI para Contadores</h1>
     </div>
 </div>
 <h3 class="mb-4 mt-3">Inscrições por Turma</h3>
 <div class="row container mx-auto g-4 mb-4 px-3">
 	<div class="d-flex align-items-center justify-content-between app-card app-card-stats-table h-100 shadow-sm p-4">  
 		<h5 class="p-0 m-0">Registros efetuados</h5>
-		<a href="{% url 'formfacil:exportar_processo_digital' %}" class="btn btn-success" style="color: white;">
+		<a href="{% url 'formfacil:exportar_sistema_GPI_contadores' %}" class="btn btn-success" style="color: white;">
 			<i class="fa-solid fa-file-excel me-2"></i>
 			Exportar para Excel
 		</a>
@@ -32,22 +32,21 @@
                 <th>Nome</th>
                 <th>CPF</th>
                 <th>Telefone</th>
-                <th>Nome da Empresa</th>
+                <th>Empresa</th>
                 <th>Dt. Inscrição</th>
             </thead>
             <tbody>
                 {% for cadastro in registros|get_item:nome_turma %}
                 <tr>
                     <td>{{ cadastro.nome }}</td>
-                    <td>{{ cadastro.matricula }}</td>
-                    <td>{{ cadastro.secretaria }}</td>
-                    <td>{{ cadastro.setor }}</td>
-                    <td>{{ cadastro.celular }}</td>
+                    <td>{{ cadastro.cpf }}</td>
+                    <td>{{ cadastro.telefone }}</td>
+                    <td>{{ cadastro.empresa }}</td>
                     <td>{{ cadastro.dt_inscricao }}</td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="text-center p-5">Nenhum registro efetuado até o momento.</td>
+                    <td colspan="5" class="text-center p-4">Nenhum registro efetuado até o momento.</td>
                 </tr>
                 {% endfor %}
             </tbody>

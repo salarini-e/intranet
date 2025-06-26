@@ -67,5 +67,12 @@ class PadronizacaoPagamentoInscricaoAdmin(admin.ModelAdmin):
     list_filter = ('turma', 'secretaria', 'setor')
     ordering = ('-dt_inscricao', 'nome')
 
+class SistemaGPIparaContadoresAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'cpf', 'telefone', 'empresa', 'turma', 'dt_inscricao')
+    search_fields = ('nome', 'cpf', 'telefone', 'empresa')
+    list_filter = ('turma',)
+    ordering = ('-dt_inscricao', 'nome')
+
 admin.site.register(ProcessoDigitalInscricao, ProcessoDigitalInscricaoAdmin)
 admin.site.register(PadronizacaoPagamentoInscricao, PadronizacaoPagamentoInscricaoAdmin)
+admin.site.register(SistemaGPIparaContadores, SistemaGPIparaContadoresAdmin)

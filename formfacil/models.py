@@ -216,3 +216,17 @@ class PadronizacaoPagamentoInscricao(models.Model):
     def __str__(self):
         return f'{self.nome} - {self.turma}'
 
+class SistemaGPIparaContadores(models.Model):
+    TURMAS = (
+        ("turma1", "Turma 1 (10h às 12h | 04/07/2025)"),
+        ("turma2", "Turma 2 (14h às 16h | 04/07/2025)")
+    )
+    nome = models.CharField(max_length=150, verbose_name='Nome Completo')
+    cpf = models.CharField(max_length=14, verbose_name='CPF')
+    telefone = models.CharField(max_length=15, verbose_name='Telefone')
+    empresa = models.CharField(max_length=150, verbose_name='Nome da Empresa de contabilidade')
+    turma = models.CharField(max_length=10, choices=TURMAS)
+    dt_inscricao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.nome} - {self.turma}'

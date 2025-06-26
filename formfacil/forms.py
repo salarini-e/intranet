@@ -16,12 +16,6 @@ class FormIndicacaoComitePSPForm(forms.ModelForm):
             'observação': forms.Textarea(attrs={'class': 'form-control', 'placeholder': '', 'rows': 4}),
         }
 
-    # def __init__(self, *args, **kwargs):
-    #     super(FormIndicacaoComitePSPForm, self).__init__(*args, **kwargs)
-    #     for field_name, field in self.fields.items():
-    #         field.widget.attrs['class'] = 'form-control'
-    #         field.widget.attrs['required'] = True
-        
 class FormCadastroWebex(forms.ModelForm):
     class Meta:
         model = CadastroWebex
@@ -45,8 +39,6 @@ class FormSugestaoSemanaNacionalCET2024Form(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'sugestao': forms.Textarea(attrs={'class': 'form-control', 'placeholder': '', 'rows': 4}),
         }
-
-# # #############################################################################
 class FormCadastroAulasProcessoDigital(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -63,8 +55,6 @@ class FormCadastroAulasProcessoDigital(forms.ModelForm):
             'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'turma_escolhida': forms.Select(attrs={'class': 'form-select mb-3'})
         }
-
-
 class CadastroAulasEmissoresForm(forms.ModelForm):
     class Meta:
         model = Cadastro_Aulas_Treinamento_Tributario_Emissores_Taxas
@@ -165,7 +155,6 @@ class AvaliacaoSistemaELForm(forms.ModelForm):
             'sugestao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
-
 class SolicitacaoEmailInstitucionalForm(forms.ModelForm):
     class Meta:
         model = SolicitacaoEmailInstitucional
@@ -182,7 +171,7 @@ class SolicitacaoEmailInstitucionalForm(forms.ModelForm):
         cpf = self.cleaned_data["cpf"].replace('.', '').replace('-', '').strip()
         cpf = validate_cpf(cpf)        
         return cpf
-
+    
 class ProcessoDigitalInscricaoForm(forms.ModelForm):
     class Meta:
         model = ProcessoDigitalInscricao
@@ -206,5 +195,17 @@ class PadronizacaoPagamentoInscricaoForm(forms.ModelForm):
             'secretaria': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'setor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'celular': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'turma': forms.Select(attrs={'class': 'form-select mb-3'})
+        }
+
+class SistemaGPIparaContadoresForm(forms.ModelForm):
+    class Meta:
+        model = SistemaGPIparaContadores
+        fields = ['nome', 'cpf', 'telefone', 'empresa', 'turma']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite seu nome completo'}),
+            'cpf': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite seu CPF', 'onkeydown': 'mascara(this, icpf)'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite seu numero de telefone', 'onkeydown': 'mascara(this, itel)'}),
+            'empresa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome da empresa de contabilidade que trabalha'}),
             'turma': forms.Select(attrs={'class': 'form-select mb-3'})
         }

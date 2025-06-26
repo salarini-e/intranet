@@ -95,11 +95,6 @@ def snct2024_export(request):
 
     return response
 
-from .aulas_processo_digital import *
-from .treinamento_tributario import * 
-from .processo_digital import cadastro_processo_digital, visualizar_processo_digital
-from .padronizacao_pagamento import cadastro_padronizacao_pagamento, visualizar_padronizacao_pagamento
-
 def index(request):
     context = {
         'registros':{
@@ -108,6 +103,7 @@ def index(request):
             'solicitacao_email_institucional_total': SolicitacaoEmailInstitucional.objects.count(),
             'processo_digital_total': ProcessoDigitalInscricao.objects.count(),
             'padronizacao_pagamento_total': PadronizacaoPagamentoInscricao.objects.count(),
+            'sistema_GPI_contadores_total': SistemaGPIparaContadores.objects.count()
         }
     }
     return render(request, 'formfacil/index.html', context)
